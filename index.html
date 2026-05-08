@@ -2604,43 +2604,18 @@ body::after {
 
 .diff-pane-canvas:active { cursor: grabbing; }
 
-/* Rotation hint — small caption at top of crystal, blinks until first drag */
-.rotation-hint {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 18px;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  z-index: 5;
+/* "Drag to rotate" — pane-header hint that blinks red until first drag */
+.drag-rotate-hint {
+  color: var(--signal-danger);
+  font-weight: 500;
+  text-shadow: 0 0 8px rgba(244, 63, 94, 0.45);
+  animation: spot-click-blink 3s step-end infinite;
 }
 
-.rotation-hint.show {
-  opacity: 1;
-  animation: rotation-hint-blink 2.4s step-end infinite;
-}
-
-.rotation-hint.gone {
+.drag-rotate-hint.gone {
+  animation: none;
   opacity: 0;
   visibility: hidden;
-}
-
-.rotation-hint-text {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--phosphor-green);
-  text-shadow: 0 0 10px var(--phosphor-glow);
-}
-
-@keyframes rotation-hint-blink {
-  0%, 50%   { opacity: 1; }
-  51%, 100% { opacity: 0; }
 }
 
 /* "Click any spot" — blinks slowly in red until a spot is clicked */
@@ -3720,7 +3695,7 @@ body::after {
                 <div class="diff-pane-title" id="latticeTitle">Crystal Lattice</div>
               </div>
               <div class="diff-pane-meta">
-                <div>Drag to rotate</div>
+                <div class="drag-rotate-hint" id="dragRotateHint">Drag to rotate</div>
                 <div><strong id="latticeMeta">FCC · a = 0.408 nm</strong></div>
               </div>
             </div>
@@ -3733,11 +3708,6 @@ body::after {
                 </defs>
                 <g id="latticeGroup"></g>
               </svg>
-
-              <!-- Rotation hint — text only, shown until first drag, reappears on reset -->
-              <div class="rotation-hint" id="rotationHint">
-                <div class="rotation-hint-text">Drag to rotate</div>
-              </div>
             </div>
           </div>
 
@@ -5310,82 +5280,52 @@ class LatticeRenderer {
       svg += `<circle class="lattice-atom" cx="${p.x.toFixed(2)}" cy="${p.y.toFixed(2)}" r="${r.toFixed(2)}" opacity="${opacity.toFixed(2)}"/>`;
     });
 
-    // ━━━ Crystal axes gizmo (bottom-left corner) ━━━
-    // Wireframe unit cube (rotates with crystal) with two curving rotation arrows
-    // beneath signalling that the user can drag to spin in 3D. a/b/c labels mark
-    // the edges meeting at the front-most corner.
-    const ox = -162, oy = 110;        // gizmo origin (shifted left, raised slightly)
-    const gscale = 32;                // cube edge length in px (larger)
-
-    // Cube corners
-    const cubeCorners = [
-      [0,0,0],[1,0,0],[1,1,0],[0,1,0],
-      [0,0,1],[1,0,1],[1,1,1],[0,1,1]
-    ];
-    const cubeEdges = [
-      [0,1],[1,2],[2,3],[3,0],
-      [4,5],[5,6],[6,7],[7,4],
-      [0,4],[1,5],[2,6],[3,7]
+    // ━━━ Crystal axes overlay (centred on the lattice origin) ━━━
+    // Three yellow arrows for a, b, c — extend just past the cell edges so they
+    // remain visible against the atoms. Rotate live with the crystal.
+    const axLen = cellSize * 1.25;    // extends a bit past the unit cell edge
+    const axisColor = '#fbbf24';      // amber/yellow
+    const axes = [
+      { vec: [1, 0, 0], label: 'a' },
+      { vec: [0, 1, 0], label: 'b' },
+      { vec: [0, 0, 1], label: 'c' }
     ];
 
-    // Project each corner using crystal rotation, centered around gizmo origin
-    const projC = cubeCorners.map(c => {
-      const local = [c[0] - 0.5, c[1] - 0.5, c[2] - 0.5];
-      const v = matVec3(rotMatrix, local);
-      return { x: ox + v[0] * gscale, y: oy - v[1] * gscale, z: v[2], orig: c };
+    svg += `<g class="axis-overlay">`;
+    // Origin marker
+    svg += `<circle cx="0" cy="0" r="2.6" fill="${axisColor}"/>`;
+
+    axes.forEach(ax => {
+      const v = matVec3(rotMatrix, ax.vec);
+      const tipX =  v[0] * axLen;
+      const tipY = -v[1] * axLen;
+
+      // Tangent direction for arrowhead
+      const dlen = Math.sqrt(tipX * tipX + tipY * tipY) || 1;
+      const ux = tipX / dlen, uy = tipY / dlen;
+      const nx = -uy, ny = ux;
+      const ah = 9;
+      const aw = 5;
+      const baseX = tipX - ux * ah;
+      const baseY = tipY - uy * ah;
+      const w1x = baseX + nx * aw, w1y = baseY + ny * aw;
+      const w2x = baseX - nx * aw, w2y = baseY - ny * aw;
+
+      // Axis line
+      svg += `<line stroke="${axisColor}" stroke-width="2" stroke-linecap="round"
+                x1="0" y1="0" x2="${tipX.toFixed(2)}" y2="${tipY.toFixed(2)}"
+                opacity="0.95"
+                style="filter: drop-shadow(0 0 5px ${axisColor}88)"/>`;
+      // Arrowhead
+      svg += `<polygon points="${tipX.toFixed(2)},${tipY.toFixed(2)} ${w1x.toFixed(2)},${w1y.toFixed(2)} ${w2x.toFixed(2)},${w2y.toFixed(2)}"
+                fill="${axisColor}"/>`;
+      // Label past the tip with dark stroke outline for legibility
+      svg += `<text fill="${axisColor}" font-family="JetBrains Mono, monospace"
+                font-size="14" font-weight="700"
+                x="${(tipX + ux * 13).toFixed(2)}" y="${(tipY + uy * 13 + 4).toFixed(2)}"
+                text-anchor="middle"
+                style="paint-order: stroke; stroke: rgba(7,9,13,0.9); stroke-width: 3px;">${ax.label}</text>`;
     });
-
-    // Sort edges back-to-front for depth shading
-    const edgesWithDepth = cubeEdges.map(([a, b]) => ({
-      a, b, depth: (projC[a].z + projC[b].z) / 2
-    }));
-    edgesWithDepth.sort((e1, e2) => e1.depth - e2.depth);
-
-    svg += `<g class="axis-gizmo">`;
-
-    // Cube wireframe — back edges dimmer, front brighter
-    edgesWithDepth.forEach(({ a, b, depth }) => {
-      const opacity = 0.35 + (depth + 0.5) * 0.55;
-      svg += `<line x1="${projC[a].x.toFixed(2)}" y1="${projC[a].y.toFixed(2)}"
-                x2="${projC[b].x.toFixed(2)}" y2="${projC[b].y.toFixed(2)}"
-                stroke="rgba(220,230,245,0.75)" stroke-width="1.1"
-                stroke-linecap="round" opacity="${opacity.toFixed(2)}"/>`;
-    });
-
-    // Find the front-most corner (largest z) — labels go on edges from this corner
-    let frontIdx = 0;
-    projC.forEach((p, i) => { if (p.z > projC[frontIdx].z) frontIdx = i; });
-    const frontCorner = projC[frontIdx];
-
-    // Labels for a, b, c — placed on the three cube edges meeting the front corner
-    const labelDirs = [
-      { axis: 0, color: '#fb7185', label: 'a' },
-      { axis: 1, color: '#5eead4', label: 'b' },
-      { axis: 2, color: '#67e8f9', label: 'c' }
-    ];
-    labelDirs.forEach(ld => {
-      // Find the neighbouring corner that differs only along this axis
-      const neighbourOrig = frontCorner.orig.slice();
-      neighbourOrig[ld.axis] = 1 - neighbourOrig[ld.axis];
-      const neighbour = projC.find(p =>
-        p.orig[0] === neighbourOrig[0] && p.orig[1] === neighbourOrig[1] && p.orig[2] === neighbourOrig[2]
-      );
-      // Place label at the midpoint of that edge, offset slightly outward from the cube centre
-      const mx = (frontCorner.x + neighbour.x) / 2;
-      const my = (frontCorner.y + neighbour.y) / 2;
-      const dxFromCentre = mx - ox;
-      const dyFromCentre = my - oy;
-      const dist = Math.sqrt(dxFromCentre*dxFromCentre + dyFromCentre*dyFromCentre) || 1;
-      const lx = mx + (dxFromCentre / dist) * 7;
-      const ly = my + (dyFromCentre / dist) * 7;
-      svg += `<text fill="${ld.color}" font-family="JetBrains Mono, monospace"
-                font-size="9" font-weight="700"
-                x="${lx.toFixed(2)}" y="${(ly + 3).toFixed(2)}"
-                text-anchor="middle">${ld.label}</text>`;
-    });
-
-    // ── Two curving rotation arrows beneath the cube — REMOVED ──
-    // (Rotation hint is now shown as a centred overlay on the crystal until first drag)
 
     svg += `</g>`;
 
@@ -5635,17 +5575,14 @@ function initDiffractionMode() {
   let isDragging = false;
   let dragStart = null;
   let rotStart = null;
-  const rotationHintEl = document.getElementById('rotationHint');
+  const dragRotateHintEl = document.getElementById('dragRotateHint');
 
   latticeCanvas.addEventListener('mousedown', e => {
     isDragging = true;
     dragStart = { x: e.clientX, y: e.clientY };
     rotStart = DIFF.rotation.map(row => row.slice());
-    // Hide rotation hint on first drag
-    if (rotationHintEl) {
-      rotationHintEl.classList.remove('show');
-      rotationHintEl.classList.add('gone');
-    }
+    // Hide blinking "Drag to rotate" hint on first drag
+    if (dragRotateHintEl) dragRotateHintEl.classList.add('gone');
     e.preventDefault();
   });
 
@@ -5835,19 +5772,16 @@ function initDiffractionMode() {
       rulerToolBtn.classList.remove('active');
       clearMeasurement();
     }
-    // Re-show the blinking "Drag to rotate" hint above the crystal
-    if (rotationHintEl) {
-      rotationHintEl.classList.remove('gone');
-      // Force animation restart by removing & re-adding `show` on next frame
-      rotationHintEl.classList.remove('show');
-      void rotationHintEl.offsetWidth;
-      rotationHintEl.classList.add('show');
+    // Re-show the blinking "Drag to rotate" hint in the pane header
+    if (dragRotateHintEl) {
+      dragRotateHintEl.classList.remove('gone');
+      void dragRotateHintEl.offsetWidth;  // restart blink animation
     }
     // Re-show the blinking "Click any spot" hint
     const spotHint = document.getElementById('spotClickHint');
     if (spotHint) {
       spotHint.classList.remove('gone');
-      void spotHint.offsetWidth;  // restart blink animation
+      void spotHint.offsetWidth;
     }
   });
 
@@ -5861,9 +5795,6 @@ function initDiffractionMode() {
   // Initial render — start at [001] zone axis
   DIFF.rotation = rotationToZone([0, 0, 1]);
   redraw();
-
-  // Show the rotation hint on initial load
-  if (rotationHintEl) rotationHintEl.classList.add('show');
 
   // Re-render on voltage change (since wavelength affects diffraction)
   TEM.subscribe(state => {
@@ -5903,10 +5834,10 @@ function initDiffractionMode() {
     DIFF.rotation = rotationToZone([0, 0, 1]);
     redraw();
 
-    // Re-show the rotation hint overlay
-    if (rotationHintEl) {
-      rotationHintEl.classList.remove('gone');
-      rotationHintEl.classList.add('show');
+    // Re-show the blinking "Drag to rotate" hint in the pane header
+    if (dragRotateHintEl) {
+      dragRotateHintEl.classList.remove('gone');
+      void dragRotateHintEl.offsetWidth;
     }
     // Re-show the blinking "Click any spot" hint
     const spotHint = document.getElementById('spotClickHint');
@@ -6853,7 +6784,7 @@ window.addEventListener('load', () => {
     const slider = document.getElementById('voltSlider');
     if (slider) slider.dispatchEvent(new Event('input'));
     // Show the welcome popup after a short settling pause
-    setTimeout(() => openWelcome('column'), 1800);
+    setTimeout(() => openWelcome('column'), 1400);
   }, 1700);
 });
 
