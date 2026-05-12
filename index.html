@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TEM Simulator — IIT Learning Module</title>
+  <meta name="description" content="A learning environment for the Transmission Electron Microscope, built for IIT students." />
+
+  <link rel="stylesheet" href="assets/css/global.css" />
+  <link rel="stylesheet" href="assets/css/landing.css" />
+</head>
+<body>
+
+  <!-- Top navigation injected by global.js -->
+  <div data-topnav data-landing="true"></div>
+
+  <main class="page">
+
+    <!-- Hero -->
+    <section class="landing-hero">
+      <div>
+        <div class="landing-hero__eyebrow">Pre-lab Simulator · v1.0</div>
+        <h1 class="landing-hero__title">
+          Learn the <em>Transmission Electron Microscope</em> before you touch one.
+        </h1>
+        <p class="landing-hero__lede">
+          A guided, instrument-faithful environment for becoming familiar with TEM
+          operation — column anatomy, alignment workflow, and diffraction — without
+          the cost of a misstep on real hardware.
+        </p>
+      </div>
+
+      <div class="landing-hero__meta">
+        <div class="landing-hero__meta-row">
+          <span class="landing-hero__meta-key">Instrument</span>
+          <span class="landing-hero__meta-val">200 kV TEM (universal interface)</span>
+        </div>
+        <div class="landing-hero__meta-row">
+          <span class="landing-hero__meta-key">Audience</span>
+          <span class="landing-hero__meta-val">IIT engineering students</span>
+        </div>
+        <div class="landing-hero__meta-row">
+          <span class="landing-hero__meta-key">Modules</span>
+          <span class="landing-hero__meta-val">Column · Microscope · Diffraction</span>
+        </div>
+        <div class="landing-hero__meta-row">
+          <span class="landing-hero__meta-key">Build</span>
+          <span class="landing-hero__meta-val">HTML · CSS · JavaScript</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intro -->
+    <section class="landing-intro">
+      <div class="landing-intro__label">About TEM</div>
+      <div class="landing-intro__body">
+        <p>
+          The <strong>Transmission Electron Microscope</strong> images a thin specimen
+          by passing a high-energy electron beam through it. Electromagnetic lenses
+          focus the beam, the specimen modulates it, and a detector captures the
+          resulting image — at resolutions far below a nanometre.
+        </p>
+        <p>
+          Operating one well requires understanding the column, the alignment
+          sequence, and the optics behind both <strong>imaging</strong> and
+          <strong>diffraction</strong> modes. This simulator gives you a safe
+          environment to build that understanding before stepping into the lab.
+        </p>
+      </div>
+    </section>
+
+    <!-- Modules grid -->
+    <section class="landing-modules">
+      <div class="landing-modules__header">
+        <h2 class="landing-modules__title">Three modules</h2>
+        <span class="landing-modules__count">03 / 03 AVAILABLE</span>
+      </div>
+
+      <div class="landing-modules__grid">
+
+        <!-- Module 01 — The Column -->
+        <a href="pages/column.html" class="module-card crosshair">
+          <div class="module-card__index">MODULE 01</div>
+
+          <svg class="module-card__icon" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="22" y="6"  width="12" height="6" />
+            <rect x="18" y="14" width="20" height="4" />
+            <rect x="22" y="20" width="12" height="8" />
+            <rect x="18" y="30" width="20" height="4" />
+            <rect x="22" y="36" width="12" height="8" />
+            <rect x="14" y="46" width="28" height="4" />
+            <line x1="28" y1="12" x2="28" y2="46" stroke-dasharray="2 2" opacity="0.5" />
+          </svg>
+
+          <h3 class="module-card__title">The Column</h3>
+          <p class="module-card__desc">
+            Explore an annotated cross-section of the TEM. Hover over the gun,
+            lenses, apertures, and detectors to learn what each component does.
+          </p>
+          <span class="module-card__cta">Enter module</span>
+        </a>
+
+        <!-- Module 02 — The Microscope -->
+        <a href="pages/microscope.html" class="module-card crosshair">
+          <div class="module-card__index">MODULE 02</div>
+
+          <svg class="module-card__icon" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="28" cy="28" r="14" />
+            <circle cx="28" cy="28" r="8" />
+            <circle cx="28" cy="28" r="2" fill="currentColor" />
+            <line x1="28" y1="6"  x2="28" y2="14" />
+            <line x1="28" y1="42" x2="28" y2="50" />
+            <line x1="6"  y1="28" x2="14" y2="28" />
+            <line x1="42" y1="28" x2="50" y2="28" />
+          </svg>
+
+          <h3 class="module-card__title">The Microscope</h3>
+          <p class="module-card__desc">
+            Operate the instrument. Choose Guided mode to learn the alignment
+            workflow step-by-step, or Experiment mode (coming soon) to practise freely.
+          </p>
+          <span class="module-card__cta">Enter module</span>
+        </a>
+
+        <!-- Module 03 — The Diffraction Lab -->
+        <a href="pages/diffraction-lab.html" class="module-card crosshair">
+          <div class="module-card__index">MODULE 03</div>
+
+          <svg class="module-card__icon" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="28" cy="28" r="2.5" fill="currentColor" />
+            <circle cx="14" cy="14" r="1.5" fill="currentColor" />
+            <circle cx="28" cy="14" r="1.5" fill="currentColor" />
+            <circle cx="42" cy="14" r="1.5" fill="currentColor" />
+            <circle cx="14" cy="28" r="1.5" fill="currentColor" />
+            <circle cx="42" cy="28" r="1.5" fill="currentColor" />
+            <circle cx="14" cy="42" r="1.5" fill="currentColor" />
+            <circle cx="28" cy="42" r="1.5" fill="currentColor" />
+            <circle cx="42" cy="42" r="1.5" fill="currentColor" />
+            <circle cx="6"  cy="6"  r="1" fill="currentColor" opacity="0.5" />
+            <circle cx="50" cy="6"  r="1" fill="currentColor" opacity="0.5" />
+            <circle cx="6"  cy="50" r="1" fill="currentColor" opacity="0.5" />
+            <circle cx="50" cy="50" r="1" fill="currentColor" opacity="0.5" />
+          </svg>
+
+          <h3 class="module-card__title">The Diffraction Lab</h3>
+          <p class="module-card__desc">
+            Investigate reciprocal-space patterns from common crystal systems.
+            Switch between lattices and observe how their geometry shapes the diffraction signal.
+          </p>
+          <span class="module-card__cta">Enter module</span>
+        </a>
+
+      </div>
+    </section>
+
+    <footer class="landing-footer">
+      <span>TEM SIMULATOR · IIT</span>
+      <span>NO REAL ELECTRONS WERE ACCELERATED IN THE MAKING OF THIS APP</span>
+    </footer>
+
+  </main>
+
+  <script src="assets/js/global.js"></script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guided Mode · TEM Simulator</title>
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/guided.css" />
+  <link rel="stylesheet" href="../assets/css/controls-panel.css" />
+</head>
+<body>
+
+  <div data-topnav data-module="microscope"></div>
+
+  <main class="guided-page">
+
+    <!-- ===========================================================
+         Status strip — indicators (left) · brand (center) ·
+         sample/mag (right) · progress bar (bottom edge)
+         =========================================================== -->
+    <div class="guided-status">
+      <div class="guided-status__left">
+        <span class="guided-status__metric">
+          <span class="guided-status__indicator" id="ind-vacuum"></span>
+          VACUUM
+        </span>
+        <span class="guided-status__metric">
+          <span class="guided-status__indicator" id="ind-beam"></span>
+          BEAM
+        </span>
+        <span class="guided-status__metric">
+          HT <strong id="ind-ht">—</strong>
+        </span>
+      </div>
+
+      <div class="guided-status__center">
+        <span class="guided-status__brand">TEM · GUIDED SESSION</span>
+      </div>
+
+      <div class="guided-status__right">
+        <span>SAMPLE <strong id="ind-sample">—</strong></span>
+        <span>MAG <strong id="ind-mag">—</strong></span>
+      </div>
+
+      <!-- Ambient progress bar — bottom edge of status strip -->
+      <div class="guided-status__progress" aria-hidden="true">
+        <div class="guided-status__progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Context bar — back · instruction (with hint) · restart -->
+    <div class="guided-context">
+      <a href="microscope.html" class="guided-context__back">
+        <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M10 2L4 8l6 6"/>
+        </svg>
+        Back to Mode Select
+      </a>
+
+      <div class="guided-context__instr">
+        <div class="guided-context__instr-icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="10" cy="10" r="7.5"/>
+            <path d="M10 6v4"/>
+            <circle cx="10" cy="13.5" r="0.6" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="guided-context__instr-body">
+          <span class="guided-context__instr-text" id="instr-text">
+            Guided session is being prepared. Step logic activates in Phase 2.
+          </span>
+          <span class="guided-context__instr-hint" id="instr-hint"></span>
+        </div>
+      </div>
+
+      <div class="guided-context__actions">
+        <button class="guided-context__restart guided-context__restart--section" id="btn-restart-section" title="Restart current section">
+          <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M3 8a5 5 0 1 0 1.5-3.5"/>
+            <path d="M3 3v2.5h2.5"/>
+          </svg>
+          Restart Section
+        </button>
+        <button class="guided-context__restart" id="btn-restart" title="Restart session">
+          <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M3 8a5 5 0 1 0 1.5-3.5"/>
+            <path d="M3 3v2.5h2.5"/>
+          </svg>
+          Restart Session
+        </button>
+      </div>
+    </div>
+
+    <!-- ===========================================================
+         Three-panel body: left controls · viewer · right controls
+         =========================================================== -->
+    <div class="guided-body">
+
+      <!-- =================== LEFT CONTROL RAIL =================== -->
+      <aside class="ctl-rail ctl-rail--left">
+        <div class="ctl-rail__inner">
+
+          <!-- Gun & Vacuum -->
+          <div class="dz">
+            <div class="dz__label">Gun &amp; Vacuum</div>
+            <div class="dz__body">
+              <div class="ctl ctl--stack" data-control="sample">
+                <div class="ctl__label">Sample</div>
+                <div class="pbtn-group pbtn-group--grid-2">
+                  <button class="pbtn" data-action="sample" data-value="nanoparticles">Nanoparticles</button>
+                  <button class="pbtn" data-action="sample" data-value="zebrafish" disabled>Zebrafish</button>
+                  <button class="pbtn" data-action="sample" data-value="metal" disabled>Metal</button>
+                  <button class="pbtn" data-action="sample" data-value="mineral" disabled>Mineral</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--row-2" data-control="airlock">
+                <div class="ctl__label">Airlock</div>
+                <button class="pbtn" data-action="airlock-pump"><span class="pbtn__led"></span>Pump</button>
+              </div>
+
+              <div class="ctl ctl--row-2" data-control="specimen-insert">
+                <div class="ctl__label">Specimen</div>
+                <button class="pbtn" data-action="specimen-insert"><span class="pbtn__led"></span>Insert</button>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="acc-voltage">
+                <div class="ctl__label">Acc. Voltage</div>
+                <div class="pbtn-group" style="--cols:2;">
+                  <button class="pbtn" data-action="acc-voltage" data-value="120">120 kV</button>
+                  <button class="pbtn" data-action="acc-voltage" data-value="200">200 kV</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--row-2" data-control="std-focus">
+                <div class="ctl__label">Std Focus</div>
+                <button class="pbtn" data-action="std-focus"><span class="pbtn__led"></span>Reset</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Beam -->
+          <div class="dz">
+            <div class="dz__label">Beam</div>
+            <div class="dz__body">
+              <div class="ctl ctl--row-2" data-control="beam-on">
+                <div class="ctl__label">Beam</div>
+                <button class="pbtn" data-action="beam-on"><span class="pbtn__led"></span>On</button>
+              </div>
+
+              <div class="dz__knob-row">
+                <div class="ctl ctl--center" data-control="beam-current">
+                  <div class="knob" data-knob="beam-current" data-min="0" data-max="100" data-value="50">
+                    <div class="knob__ring"></div>
+                    <div class="knob__arc"></div>
+                    <div class="knob__body"></div>
+                    <div class="knob__value">50</div>
+                  </div>
+                  <div class="ctl__label ctl__label--below">Beam Current</div>
+                </div>
+
+                <div class="ctl ctl--center" data-control="brightness">
+                  <div class="knob" data-knob="brightness" data-min="0" data-max="100" data-value="50">
+                    <div class="knob__ring"></div>
+                    <div class="knob__arc"></div>
+                    <div class="knob__body"></div>
+                    <div class="knob__value">50</div>
+                  </div>
+                  <div class="ctl__label ctl__label--below">Brightness</div>
+                </div>
+              </div>
+
+              <div class="dz__pad-row">
+                <div class="ctl ctl--center" data-control="beam-shift">
+                  <div class="trackpad" data-trackpad="beam-shift" data-range="-50,50">
+                    <div class="trackpad__dot"></div>
+                  </div>
+                  <div class="ctl__label ctl__label--below">Beam Shift</div>
+                </div>
+
+                <div class="ctl ctl--center" data-control="stigmator">
+                  <div class="trackpad" data-trackpad="stigmator" data-range="-50,50">
+                    <div class="trackpad__dot"></div>
+                  </div>
+                  <div class="ctl__label ctl__label--below">Stigmator</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apertures -->
+          <div class="dz">
+            <div class="dz__label">Apertures</div>
+            <div class="dz__body">
+              <div class="ctl ctl--stack" data-control="aperture-select">
+                <div class="ctl__label">Select</div>
+                <div class="pbtn-group" style="--cols:3;">
+                  <button class="pbtn" data-action="aperture-select" data-value="condenser">Cond.</button>
+                  <button class="pbtn" data-action="aperture-select" data-value="objective">Obj.</button>
+                  <button class="pbtn" data-action="aperture-select" data-value="sad">SAD</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="aperture-size">
+                <div class="ctl__label">Size</div>
+                <div class="pbtn-group" style="--cols:3;">
+                  <button class="pbtn" data-action="aperture-size" data-value="small">S</button>
+                  <button class="pbtn" data-action="aperture-size" data-value="medium">M</button>
+                  <button class="pbtn" data-action="aperture-size" data-value="large">L</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--center" data-control="aperture-align">
+                <div class="trackpad" data-trackpad="aperture-align" data-range="-50,50">
+                  <div class="trackpad__dot"></div>
+                </div>
+                <div class="ctl__label ctl__label--below">Alignment</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- =================== CENTER VIEWER =================== -->
+      <section class="viewer">
+        <header class="viewer__header">
+          <div class="viewer__tabs" role="tablist" aria-label="View">
+            <button class="viewer__tab is-active" role="tab" aria-selected="true" data-view="column">
+              <span class="viewer__tab-dot" aria-hidden="true"></span>
+              Column
+            </button>
+            <button class="viewer__tab" role="tab" aria-selected="false" data-view="screen">
+              <span class="viewer__tab-dot" aria-hidden="true"></span>
+              Viewing Screen
+            </button>
+          </div>
+          <div class="viewer__header-right">
+            <div class="viewer__caption" id="viewer-caption">FIG · ELECTRON OPTICAL COLUMN</div>
+            <button type="button" class="viewer__fullscreen" id="btn-fullscreen" title="Toggle full screen">
+              <svg class="viewer__fs-icon-enter" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/>
+              </svg>
+              <svg class="viewer__fs-icon-exit" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4"/>
+              </svg>
+              <span class="viewer__fs-label">Full Screen</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="viewer__stage">
+          <div class="viewer__panel is-active" data-view-panel="column">
+            <img src="../assets/images/microscope/diagram/tem-column.png"
+                 alt="TEM column cross-section"
+                 class="viewer__column-image" />
+            <div class="viewer__column-hotspots" id="diagram-hotspots"></div>
+          </div>
+
+          <div class="viewer__panel" data-view-panel="screen">
+            <div class="viewer__screen" id="view-screen">
+              <div class="viewer__screen-empty" id="view-empty">SCREEN OFFLINE</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================== RIGHT CONTROL RAIL =================== -->
+      <aside class="ctl-rail ctl-rail--right">
+        <div class="ctl-rail__inner">
+
+          <!-- Specimen Stage -->
+          <div class="dz">
+            <div class="dz__label">Specimen Stage</div>
+            <div class="dz__body">
+              <div class="dz__stage-grid">
+                <div class="ctl ctl--center" data-control="stage-xy">
+                  <div class="trackpad" data-trackpad="stage-xy" data-range="-100,100">
+                    <div class="trackpad__dot"></div>
+                  </div>
+                  <div class="ctl__label ctl__label--below">X / Y</div>
+                </div>
+                <div class="ctl ctl--center" data-control="stage-z">
+                  <div class="rocker">
+                    <button class="rocker__btn" data-action="stage-z" data-dir="1">+Z</button>
+                    <button class="rocker__btn" data-action="stage-z" data-dir="-1">−Z</button>
+                  </div>
+                  <div class="ctl__label ctl__label--below">Z</div>
+                </div>
+              </div>
+
+              <div class="readout-strip">
+                <div class="readout-cell">
+                  <div class="readout-cell__key">X µm</div>
+                  <div class="readout-cell__val" id="readout-x">0</div>
+                </div>
+                <div class="readout-cell">
+                  <div class="readout-cell__key">Y µm</div>
+                  <div class="readout-cell__val" id="readout-y">0</div>
+                </div>
+                <div class="readout-cell">
+                  <div class="readout-cell__key">Z µm</div>
+                  <div class="readout-cell__val" id="readout-z">0</div>
+                </div>
+              </div>
+
+              <div class="ctl ctl--center" data-control="specimen-tilt">
+                <div class="trackpad" data-trackpad="specimen-tilt" data-range="-30,30">
+                  <div class="trackpad__dot"></div>
+                </div>
+                <div class="ctl__label ctl__label--below">Specimen Tilt</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Imaging -->
+          <div class="dz">
+            <div class="dz__label">Imaging</div>
+            <div class="dz__body">
+              <div class="ctl ctl--stack" data-control="imaging-mode">
+                <div class="ctl__label">Imaging Mode</div>
+                <div class="pbtn-group" style="--cols:2;">
+                  <button class="pbtn" data-action="imaging-mode" data-value="tem">TEM</button>
+                  <button class="pbtn" data-action="imaging-mode" data-value="stem">STEM</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="mode">
+                <div class="ctl__label">Mode</div>
+                <div class="pbtn-group" style="--cols:2;">
+                  <button class="pbtn" data-action="mode" data-value="diffraction">Diffraction</button>
+                  <button class="pbtn" data-action="mode" data-value="imaging">Imaging</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="stem-imaging">
+                <div class="ctl__label">STEM Imaging</div>
+                <div class="pbtn-group" style="--cols:2;">
+                  <button class="pbtn" data-action="stem-imaging" data-value="dark">Dark Field</button>
+                  <button class="pbtn" data-action="stem-imaging" data-value="bright">Bright Field</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="stem-scan">
+                <div class="ctl__label">STEM Scan</div>
+                <div class="pbtn-group" style="--cols:2;">
+                  <button class="pbtn" data-action="stem-scan" data-value="spot">Spot</button>
+                  <button class="pbtn" data-action="stem-scan" data-value="raster">Raster</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="magnification">
+                <div class="ctl__label">Magnification</div>
+                <div class="pbtn-group" style="--cols:4;">
+                  <button class="pbtn" data-action="magnification" data-value="low">Low</button>
+                  <button class="pbtn" data-action="magnification" data-value="medium">Med</button>
+                  <button class="pbtn" data-action="magnification" data-value="high">High</button>
+                  <button class="pbtn" data-action="magnification" data-value="very-high">V.High</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="lens-select">
+                <div class="ctl__label">Lens</div>
+                <div class="pbtn-group" style="--cols:3;">
+                  <button class="pbtn" data-action="lens-select" data-value="condenser">Cond.</button>
+                  <button class="pbtn" data-action="lens-select" data-value="objective">Obj.</button>
+                  <button class="pbtn" data-action="lens-select" data-value="projector">Proj.</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--center" data-control="projector-align">
+                <div class="trackpad" data-trackpad="projector-align" data-range="-50,50">
+                  <div class="trackpad__dot"></div>
+                </div>
+                <div class="ctl__label ctl__label--below">Projector Lens Alignment</div>
+              </div>
+
+              <div class="ctl ctl--row-2" data-control="wobbler">
+                <div class="ctl__label">Wobbler</div>
+                <button class="pbtn" data-action="wobbler-toggle"><span class="pbtn__led"></span>Toggle</button>
+              </div>
+
+              <div class="ctl ctl--row-2" data-control="fft">
+                <div class="ctl__label">FFT</div>
+                <button class="pbtn" data-action="fft-toggle"><span class="pbtn__led"></span>On</button>
+              </div>
+
+              <div class="ctl ctl--center" data-control="focus">
+                <div class="knob" data-knob="focus" data-min="-50" data-max="50" data-value="0">
+                  <div class="knob__ring"></div>
+                  <div class="knob__arc"></div>
+                  <div class="knob__body"></div>
+                  <div class="knob__value">0</div>
+                </div>
+                <div class="ctl__label ctl__label--below">Obj. Lens Focus</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Capture -->
+          <div class="dz">
+            <div class="dz__label">Capture</div>
+            <div class="dz__body">
+              <div class="ctl ctl--row-2" data-control="camera-insert">
+                <div class="ctl__label">Camera</div>
+                <button class="pbtn" data-action="camera-insert"><span class="pbtn__led"></span>Insert</button>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="acquire">
+                <div class="ctl__label">Image</div>
+                <button class="pbtn pbtn--full" data-action="acquire">
+                  <span class="pbtn__led"></span>Acquire &amp; Download
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+
+
+  <script src="../assets/js/global.js"></script>
+  <!-- Embedded data (works under file:// — no fetch required) -->
+  <script src="../data/guided-data.js"></script>
+  <!-- Phase 2: actual logic. Stubs for now. -->
+  <script src="../assets/js/guided/state.js"></script>
+  <script src="../assets/js/guided/tolerance.js"></script>
+  <script src="../assets/js/guided/feedback.js"></script>
+  <script src="../assets/js/guided/controls-ui.js"></script>
+  <script src="../assets/js/guided/controls.js"></script>
+  <script src="../assets/js/guided/image-renderer.js"></script>
+  <script src="../assets/js/guided/diagram.js"></script>
+  <script src="../assets/js/guided/acquire.js"></script>
+  <script src="../assets/js/guided/guided-controller.js"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Diffraction Lab · TEM Simulator</title>
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/diffraction.css" />
+</head>
+<body>
+
+  <div data-topnav data-module="diffraction"></div>
+
+  <main class="page">
+
+    <div class="diff-page">
+
+      <header class="diff-header">
+        <div>
+          <div class="tag tag--signal" style="margin-bottom: 8px;">MODULE 03</div>
+          <h1 class="diff-header__title">Reciprocal Space</h1>
+        </div>
+        <div class="diff-header__sub">SELECT A LATTICE · OBSERVE THE PATTERN</div>
+      </header>
+
+      <!-- Crystal system selector -->
+      <aside class="diff-selector" id="diff-selector">
+        <div class="diff-selector__label">Crystal System</div>
+
+        <ul class="diff-selector__list" id="diff-list">
+          <li class="diff-selector__item is-active" data-system="cubic-simple">
+            <span class="diff-selector__name">Simple Cubic</span>
+            <span class="diff-selector__sys">SC</span>
+          </li>
+          <li class="diff-selector__item" data-system="cubic-bcc">
+            <span class="diff-selector__name">Body-Centered Cubic</span>
+            <span class="diff-selector__sys">BCC</span>
+          </li>
+          <li class="diff-selector__item" data-system="cubic-fcc">
+            <span class="diff-selector__name">Face-Centered Cubic</span>
+            <span class="diff-selector__sys">FCC</span>
+          </li>
+          <li class="diff-selector__item" data-system="hexagonal">
+            <span class="diff-selector__name">Hexagonal</span>
+            <span class="diff-selector__sys">HEX</span>
+          </li>
+          <li class="diff-selector__item" data-system="tetragonal">
+            <span class="diff-selector__name">Tetragonal</span>
+            <span class="diff-selector__sys">TET</span>
+          </li>
+        </ul>
+
+        <div class="diff-selector__params" id="diff-params">
+          <div class="diff-selector__param">
+            <span class="diff-selector__param-key">a</span>
+            <span class="diff-selector__param-val" id="param-a">—</span>
+          </div>
+          <div class="diff-selector__param">
+            <span class="diff-selector__param-key">b</span>
+            <span class="diff-selector__param-val" id="param-b">—</span>
+          </div>
+          <div class="diff-selector__param">
+            <span class="diff-selector__param-key">c</span>
+            <span class="diff-selector__param-val" id="param-c">—</span>
+          </div>
+          <div class="diff-selector__param">
+            <span class="diff-selector__param-key">zone axis</span>
+            <span class="diff-selector__param-val" id="param-zone">[001]</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Pattern viewer -->
+      <section class="diff-viewer crosshair">
+        <div class="diff-viewer__header">
+          <h2 class="diff-viewer__title">Diffraction Pattern</h2>
+          <span class="diff-viewer__tag">RECIPROCAL · 2D PROJECTION</span>
+        </div>
+
+        <div class="diff-viewer__canvas" id="diff-canvas">
+          <div class="diff-viewer__placeholder">
+            <div class="diff-viewer__placeholder-mark"></div>
+            DIFFRACTION PATTERN<br />
+            <span style="opacity: 0.6;">Renderer activates in Phase 4</span>
+          </div>
+        </div>
+
+        <div class="diff-viewer__footer">
+          <span>CAMERA LENGTH · 1000 mm</span>
+          <span>200 kV · λ ≈ 2.51 pm</span>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="../assets/js/global.js"></script>
+  <script src="../assets/js/diffraction/lattice-data.js"></script>
+  <script src="../assets/js/diffraction/reciprocal-renderer.js"></script>
+  <script src="../assets/js/diffraction/diffraction.js"></script>
+</body>
+</html>

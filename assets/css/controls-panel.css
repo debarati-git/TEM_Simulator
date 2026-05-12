@@ -1,0 +1,423 @@
+/* =========================================================================
+   TEM Simulator — Control Panel Components (Thermo-dark)
+   Knobs, trackpads, rockers, LEDs, segmented readouts, pushbuttons.
+   Sized for the horizontal bottom-drawer layout (compact).
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Generic control wrapper — applies the lock/unlock state
+   ------------------------------------------------------------------------- */
+.ctl {
+  opacity: 0.4;
+  transition: opacity var(--dur-fast) var(--ease-out);
+  pointer-events: none;
+}
+
+.ctl.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  animation: ctl-unlock 0.9s var(--ease-out);
+}
+
+@keyframes ctl-unlock {
+  0%   { box-shadow: 0 0 0 0 rgba(77, 208, 225, 0); }
+  35%  { box-shadow: 0 0 0 2px rgba(77, 208, 225, 0.55),
+                     0 0 18px rgba(77, 208, 225, 0.4); }
+  100% { box-shadow: 0 0 0 0 rgba(77, 208, 225, 0); }
+}
+
+.ctl__label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+.ctl.is-active .ctl__label {
+  color: var(--signal);
+}
+
+/* Label-below variant for centered controls (knobs, trackpads) */
+.ctl__label--below {
+  margin-top: 4px;
+  text-align: center;
+  font-size: 0.58rem;
+}
+
+/* Stack layout: label on top, control below */
+.ctl--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Center layout: control on top, label below (used by knobs and trackpads) */
+.ctl--center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Compact row: label on left, single button on right */
+.ctl--row-2 {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* -------------------------------------------------------------------------
+   Rotary knob — circular drag interaction
+   ------------------------------------------------------------------------- */
+.knob {
+  --knob-size: 48px;
+  --rot: 0deg;
+  width: var(--knob-size);
+  height: var(--knob-size);
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  cursor: grab;
+}
+
+.knob:active { cursor: grabbing; }
+
+/* Outer ring with tick marks */
+.knob__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    conic-gradient(from -135deg,
+      var(--border-strong) 0deg, var(--border-strong) 2deg,
+      transparent 2deg, transparent 27deg,
+      var(--border-strong) 27deg, var(--border-strong) 29deg,
+      transparent 29deg, transparent 54deg,
+      var(--border-strong) 54deg, var(--border-strong) 56deg,
+      transparent 56deg, transparent 81deg,
+      var(--border-strong) 81deg, var(--border-strong) 83deg,
+      transparent 83deg, transparent 108deg,
+      var(--border-strong) 108deg, var(--border-strong) 110deg,
+      transparent 110deg, transparent 135deg,
+      var(--border-strong) 135deg, var(--border-strong) 137deg,
+      transparent 137deg, transparent 162deg,
+      var(--border-strong) 162deg, var(--border-strong) 164deg,
+      transparent 164deg, transparent 189deg,
+      var(--border-strong) 189deg, var(--border-strong) 191deg,
+      transparent 191deg, transparent 216deg,
+      var(--border-strong) 216deg, var(--border-strong) 218deg,
+      transparent 218deg, transparent 243deg,
+      var(--border-strong) 243deg, var(--border-strong) 245deg,
+      transparent 245deg, transparent 270deg);
+  -webkit-mask: radial-gradient(circle, transparent 60%, #000 62%, #000 100%);
+          mask: radial-gradient(circle, transparent 60%, #000 62%, #000 100%);
+}
+
+/* Progress arc — bright cyan, indicates current value */
+.knob__arc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  --arc-deg: 0deg;
+  background: conic-gradient(
+    from -135deg,
+    var(--signal) 0deg,
+    var(--signal) var(--arc-deg),
+    transparent var(--arc-deg)
+  );
+  -webkit-mask: radial-gradient(circle, transparent 60%, #000 62%, #000 70%, transparent 72%);
+          mask: radial-gradient(circle, transparent 60%, #000 62%, #000 70%, transparent 72%);
+  filter: drop-shadow(0 0 4px var(--signal-edge));
+}
+
+/* Knob body */
+.knob__body {
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, #2a3340 0%, #1a2029 60%, #0e1218 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+  transform: rotate(var(--rot));
+  transition: transform 0.05s linear;
+}
+
+.knob__body::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  width: 2px;
+  height: 28%;
+  background: var(--signal);
+  transform: translateX(-50%);
+  border-radius: 1px;
+  box-shadow: 0 0 4px var(--signal-edge);
+}
+
+.ctl.is-active .knob__body {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.6),
+    0 0 0 1px var(--signal-edge),
+    0 0 10px var(--signal-edge);
+}
+
+/* Knob value readout — below the knob */
+.knob__value {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: var(--signal);
+  white-space: nowrap;
+  text-shadow: 0 0 6px var(--signal-edge);
+}
+
+/* Add extra margin under knob-containing ctl so the value readout has room */
+.ctl--center .knob {
+  margin-bottom: 16px;
+}
+
+/* -------------------------------------------------------------------------
+   Trackpad — square pad with draggable cursor dot
+   ------------------------------------------------------------------------- */
+.trackpad {
+  --pad-size: 72px;
+  width: var(--pad-size);
+  height: var(--pad-size);
+  position: relative;
+  background:
+    radial-gradient(circle at center, rgba(77, 208, 225, 0.04) 0%, transparent 60%),
+    linear-gradient(to right, transparent calc(50% - 0.5px), var(--border-subtle) calc(50% - 0.5px), var(--border-subtle) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom, transparent calc(50% - 0.5px), var(--border-subtle) calc(50% - 0.5px), var(--border-subtle) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(180deg, #0a0d12 0%, #131820 100%);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.03);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.ctl.is-active .trackpad {
+  border-color: var(--signal-edge);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.03),
+    0 0 0 1px var(--signal-edge),
+    0 0 10px var(--signal-soft);
+}
+
+.trackpad__dot {
+  --dot-x: 50%;
+  --dot-y: 50%;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: calc(var(--dot-x) - 5px);
+  top: calc(var(--dot-y) - 5px);
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow:
+    0 0 0 2px rgba(10, 12, 16, 0.8),
+    0 0 8px var(--signal-edge),
+    0 0 16px var(--signal-soft);
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------------
+   Z-rocker — vertical rocker for stage Z
+   ------------------------------------------------------------------------- */
+.rocker {
+  width: 44px;
+  height: 72px;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  background: var(--bg-panel-3);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 3px;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.rocker__btn {
+  background: radial-gradient(circle at 50% 30%, #2a3340 0%, #1a2029 60%, #0e1218 100%);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--signal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: all var(--dur-fast) var(--ease-out);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.06),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.rocker__btn:active {
+  background: radial-gradient(circle at 50% 30%, #1a2029 0%, #0e1218 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* -------------------------------------------------------------------------
+   Segmented LED readout
+   ------------------------------------------------------------------------- */
+.readout-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.readout-cell {
+  background: linear-gradient(180deg, #050608 0%, #0a0d12 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 2px;
+  padding: 4px 2px;
+  text-align: center;
+  font-family: var(--font-mono);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.readout-cell__key {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  margin-bottom: 1px;
+}
+
+.readout-cell__val {
+  font-size: 0.78rem;
+  color: var(--signal);
+  text-shadow: 0 0 6px var(--signal-edge);
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------------------
+   Pushbutton — physical-looking button, optional inline LED
+   ------------------------------------------------------------------------- */
+.pbtn {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  padding: 7px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #1d242f 0%, #11151c 100%);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: all var(--dur-fast) var(--ease-out);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(0, 0, 0, 0.5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.pbtn--full { width: 100%; }
+
+.pbtn:hover {
+  background: linear-gradient(180deg, #232b37 0%, #161b24 100%);
+  border-color: var(--signal-edge);
+}
+
+.pbtn:active {
+  background: linear-gradient(180deg, #0e1218 0%, #1d242f 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.pbtn.is-selected {
+  background: linear-gradient(180deg, #4dd0e1 0%, #2cb7c9 100%);
+  color: var(--bg-void);
+  border-color: var(--signal);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 0 8px var(--signal-edge);
+}
+
+.pbtn:disabled,
+.pbtn[aria-disabled="true"] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Inline LED indicator inside a button */
+.pbtn__led {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+}
+
+.pbtn.is-on .pbtn__led {
+  background: var(--success);
+  box-shadow: 0 0 4px var(--success), 0 0 8px rgba(129, 199, 132, 0.5);
+}
+
+/* Button group — pills sitting flush */
+.pbtn-group {
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(var(--cols, 2), 1fr);
+}
+
+.pbtn-group .pbtn { border-radius: 0; }
+.pbtn-group .pbtn:first-child { border-radius: 3px 0 0 3px; }
+.pbtn-group .pbtn:last-child  { border-radius: 0 3px 3px 0; }
+.pbtn-group .pbtn:not(:first-child) { border-left: none; }
+
+/* 2x2 grid variant for the Sample selector */
+.pbtn-group--grid-2 {
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.pbtn-group--grid-2 .pbtn { border-radius: 3px; border-left: 1px solid var(--border-strong); }
+
+/* -------------------------------------------------------------------------
+   Standalone LED indicator (status strip etc.)
+   ------------------------------------------------------------------------- */
+.led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.6);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.led.is-on { background: var(--success); box-shadow: 0 0 4px var(--success), 0 0 8px rgba(129, 199, 132, 0.5); }
+.led.is-on--cyan  { background: var(--signal);   box-shadow: 0 0 4px var(--signal),  0 0 8px var(--signal-edge); }
+.led.is-on--amber { background: var(--warn);     box-shadow: 0 0 4px var(--warn),    0 0 8px rgba(240, 184, 110, 0.4); }
+.led.is-on--red   { background: var(--error);    box-shadow: 0 0 4px var(--error),   0 0 8px rgba(229, 115, 115, 0.4); }

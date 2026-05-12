@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Microscope · TEM Simulator</title>
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/microscope.css" />
+</head>
+<body>
+
+  <div data-topnav data-module="microscope"></div>
+
+  <main class="page mode-page">
+
+    <header class="mode-header">
+      <div class="mode-header__eyebrow">MODULE 02 · CHOOSE A MODE</div>
+      <h1 class="mode-header__title">Operate the instrument</h1>
+      <p class="mode-header__sub">
+        Two ways to learn. Start with Guided to walk through the full alignment
+        sequence step-by-step. Experiment mode is on the way for free practice.
+      </p>
+    </header>
+
+    <section class="mode-grid">
+
+      <!-- Guided -->
+      <a href="microscope-guided.html" class="mode-card crosshair">
+        <div class="mode-card__header">
+          <span class="mode-card__num">01</span>
+          <span class="mode-card__status">AVAILABLE</span>
+        </div>
+
+        <h2 class="mode-card__title">Guided Mode</h2>
+        <p class="mode-card__desc">
+          A step-by-step walkthrough of TEM startup, alignment, and image
+          acquisition. Each control unlocks only when the workflow calls for it,
+          so you learn the correct sequence the first time.
+        </p>
+
+        <ul class="mode-card__features">
+          <li>29 steps · ~10 minutes</li>
+          <li>Inline hints when you get stuck</li>
+          <li>Restart anytime</li>
+        </ul>
+
+        <span class="mode-card__cta">Begin guided session</span>
+      </a>
+
+      <!-- Experiment (disabled) -->
+      <div class="mode-card is-disabled crosshair" aria-disabled="true">
+        <div class="mode-card__header">
+          <span class="mode-card__num">02</span>
+          <span class="mode-card__status mode-card__status--soon">COMING UP</span>
+        </div>
+
+        <h2 class="mode-card__title">Experiment Mode</h2>
+        <p class="mode-card__desc">
+          All controls unlocked from the start. Practise the alignment
+          workflow on your own, try different samples, and explore how
+          parameters interact — at your own pace.
+        </p>
+
+        <ul class="mode-card__features">
+          <li>Free-form control</li>
+          <li>Multiple sample types</li>
+          <li>Saveable session state</li>
+        </ul>
+
+        <span class="mode-card__cta">In development</span>
+      </div>
+
+    </section>
+
+    <div class="mode-footer">
+      RECOMMENDED FLOW · COMPLETE GUIDED ONCE, THEN PRACTISE IN EXPERIMENT
+    </div>
+
+  </main>
+
+  <script src="../assets/js/global.js"></script>
+  <script src="../assets/js/microscope-mode.js"></script>
+</body>
+</html>
