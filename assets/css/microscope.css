@@ -1,0 +1,205 @@
+/* =========================================================================
+   The Microscope — mode selector
+   Two large cards: Guided (active) + Experiment (coming soon)
+   ========================================================================= */
+
+.mode-page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 56px - var(--space-7) * 2);
+}
+
+.mode-header {
+  text-align: center;
+  padding: var(--space-7) 0 var(--space-8);
+}
+
+.mode-header__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--signal);
+  margin-bottom: var(--space-3);
+}
+
+.mode-header__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-3);
+}
+
+.mode-header__sub {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 56ch;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* -------------------------------------------------------------------------
+   Mode cards
+   ------------------------------------------------------------------------- */
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.mode-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  min-height: 400px;
+  text-align: left;
+  transition: all var(--dur-base) var(--ease-out);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.mode-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 50%, var(--signal-soft) 100%);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
+.mode-card:not(.is-disabled):hover {
+  border-color: var(--signal-edge);
+  transform: translateY(-3px);
+}
+
+.mode-card:not(.is-disabled):hover::before {
+  opacity: 1;
+}
+
+.mode-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-6);
+}
+
+.mode-card__num {
+  font-family: var(--font-mono);
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--text-dim);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.mode-card__status {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--signal-edge);
+  color: var(--signal);
+  border-radius: 2px;
+}
+
+.mode-card__status--soon {
+  color: var(--warn);
+  border-color: rgba(240, 184, 110, 0.35);
+}
+
+.mode-card__title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 500;
+  margin-bottom: var(--space-3);
+  letter-spacing: -0.01em;
+}
+
+.mode-card__desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: var(--space-5);
+  flex: 1;
+}
+
+.mode-card__features {
+  list-style: none;
+  margin-bottom: var(--space-5);
+}
+
+.mode-card__features li {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mode-card__features li::before {
+  content: '◇';
+  color: var(--signal);
+  font-size: 0.6rem;
+}
+
+.mode-card__cta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--signal);
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mode-card__cta::after {
+  content: '→';
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.mode-card:hover .mode-card__cta::after {
+  transform: translateX(4px);
+}
+
+/* Disabled card (Experiment mode coming soon) */
+.mode-card.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.mode-card.is-disabled .mode-card__cta {
+  color: var(--text-muted);
+}
+
+.mode-card.is-disabled .mode-card__cta::after {
+  content: '○';
+}
+
+.mode-footer {
+  text-align: center;
+  padding: var(--space-7) 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 800px) {
+  .mode-grid { grid-template-columns: 1fr; }
+}
