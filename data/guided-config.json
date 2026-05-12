@@ -1,0 +1,35 @@
+{
+  "_comment": "Tunable values for the guided simulator. Sweet-spot predicates are JS expressions evaluated with the state value(s) bound to x, y, z, or v depending on the shape: scalars bind to v; { x, y } objects bind x and y; composite stage uses x = stageX, y = stageY. Edit freely.",
+
+  "sweetSpots": {
+    "beamShift_center":   { "predicate": "abs(x) <= 8 && abs(y) <= 8" },
+    "brightness_diverge": { "predicate": "v >= 65 && v <= 80" },
+    "apertureAlign_cond": { "predicate": "abs(x) <= 8 && abs(y) <= 8" },
+    "stigmator_circular": { "predicate": "abs(x) <= 8 && abs(y) <= 8" },
+    "stageZ_eucentric":   { "predicate": "abs(v) <= 5" },
+    "apertureAlign_obj":  { "predicate": "abs(x) <= 8 && abs(y) <= 8" },
+    "stageXY_lowMag":     { "predicate": "x >= 20 && x <= 50 && y >= 10 && y <= 40" },
+    "stageXY_medMag":     { "predicate": "abs(x - 35) <= 8 && abs(y - 25) <= 8" },
+    "stageXY_highMag":    { "predicate": "abs(x - 35) <= 4 && abs(y - 25) <= 4" },
+    "focus_sharp":        { "predicate": "abs(v) <= 4" }
+  },
+
+  "hints": {
+    "wrongValueDelayMs": 3000
+  },
+
+  "samples": {
+    "nanoparticles": {
+      "low":    "../assets/images/microscope/samples/nanoparticles/nanoparticles-low.jpg",
+      "medium": "../assets/images/microscope/samples/nanoparticles/nanoparticles-medium.jpg",
+      "high":   "../assets/images/microscope/samples/nanoparticles/nanoparticles-high.jpg"
+    }
+  },
+
+  "diagramHotspots": {
+    "remove-holder":      { "x": 54, "y": 44, "w": 14, "h": 5, "label": "Remove Holder" },
+    "insert-specimen":    { "x": 54, "y": 44, "w": 14, "h": 5, "label": "Insert Specimen" },
+    "insert-condenser":   { "x": 45, "y": 18, "w": 10, "h": 3, "label": "Insert Condenser Aperture" },
+    "insert-objective":   { "x": 45, "y": 40, "w": 10, "h": 3, "label": "Insert Objective Aperture" }
+  }
+}

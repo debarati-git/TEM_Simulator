@@ -1,0 +1,10 @@
+{
+  "_comment": "TEM component descriptions for the Column module. Populated in Phase 3.",
+  "_schema": {
+    "id": "string — matches a hotspot id in the column diagram",
+    "name": "string — display title",
+    "role": "string — short tagline shown under title",
+    "body": "string[] — array of paragraphs"
+  },
+  "components": []
+}

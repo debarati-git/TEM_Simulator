@@ -1,0 +1,253 @@
+{
+  "_comment": "29-step guided sequence for the Nanoparticles sample. Each step declares the action surface, what gets unlocked next, what counts as success, and an optional hint shown after 3s of inactivity at a wrong value. Success conditions are evaluated by guided-controller.js — types: 'click' (one specific button or diagram hotspot), 'selectValue' (a control whose state must equal a target), 'valueInRange' (a sweet-spot predicate from guided-config.json), 'composite' (all listed sub-conditions must be true).",
+
+  "sample": "nanoparticles",
+
+  "steps": [
+    {
+      "id": 1,
+      "instruction": "Click REMOVE on the specimen holder in the column diagram to take out the empty holder.",
+      "hint": "Look for the holder hotspot on the column — click it to begin loading the sample.",
+      "surface": "diagram",
+      "unlocks": ["sample"],
+      "successCondition": { "type": "selectValue", "key": "holderRemoved", "value": true }
+    },
+    {
+      "id": 2,
+      "instruction": "Select Nanoparticles from the sample list. This is the specimen we'll image today.",
+      "hint": "Use the Sample selector under Gun & Vacuum.",
+      "surface": "panel",
+      "unlocks": ["sample"],
+      "successCondition": { "type": "selectValue", "key": "sample", "value": "nanoparticles" }
+    },
+    {
+      "id": 3,
+      "instruction": "Click INSERT on the column diagram to load the specimen into the airlock.",
+      "hint": "The specimen hotspot on the column is now active — click it.",
+      "surface": "diagram",
+      "unlocks": [],
+      "successCondition": { "type": "selectValue", "key": "specimenInsertedDiagram", "value": true }
+    },
+    {
+      "id": 4,
+      "instruction": "Click INSERT under Specimen on the control panel to push the specimen into the column.",
+      "hint": "Under Gun & Vacuum, press the Specimen Insert button.",
+      "surface": "panel",
+      "unlocks": ["specimen-insert"],
+      "successCondition": { "type": "selectValue", "key": "specimenInsertedPanel", "value": true }
+    },
+    {
+      "id": 5,
+      "instruction": "Select 200 kV as the accelerating voltage. Higher voltage gives better penetration of the nanoparticle sample.",
+      "hint": "200 kV is appropriate for this specimen's thickness.",
+      "surface": "panel",
+      "unlocks": ["acc-voltage"],
+      "successCondition": { "type": "selectValue", "key": "accVoltage", "value": 200 }
+    },
+    {
+      "id": 6,
+      "instruction": "Switch the beam ON. The electron source will activate and the beam will become visible on the screen.",
+      "hint": "Press the Beam On button.",
+      "surface": "panel",
+      "unlocks": ["beam-on"],
+      "successCondition": { "type": "selectValue", "key": "beamOn", "value": true },
+      "switchViewerTo": "screen"
+    },
+    {
+      "id": 7,
+      "instruction": "Center the beam on the screen using the Beam Shift trackpad.",
+      "hint": "Drag the Beam Shift dot toward the center of its trackpad until the beam sits in the middle.",
+      "surface": "panel",
+      "unlocks": ["beam-current", "beam-shift"],
+      "successCondition": { "type": "valueInRange", "key": "beamShift", "spot": "beamShift_center" }
+    },
+    {
+      "id": 8,
+      "instruction": "Diverge the beam to illuminate the full field of view by adjusting the Brightness knob.",
+      "hint": "Turn the Brightness knob clockwise until the beam fills the screen — aim for around 70.",
+      "surface": "panel",
+      "unlocks": ["brightness"],
+      "successCondition": { "type": "valueInRange", "key": "brightness", "spot": "brightness_diverge" }
+    },
+    {
+      "id": 9,
+      "instruction": "Choose Condenser as the aperture type. This will insert the first beam-shaping aperture.",
+      "hint": "Under Apertures, press Cond.",
+      "surface": "panel",
+      "unlocks": ["aperture-select"],
+      "successCondition": { "type": "selectValue", "key": "currentAperture", "value": "condenser" }
+    },
+    {
+      "id": 10,
+      "instruction": "Click INSERT on the condenser aperture in the column diagram.",
+      "hint": "The condenser aperture hotspot is highlighted — click it on the column.",
+      "surface": "diagram",
+      "unlocks": [],
+      "successCondition": { "type": "selectValue", "key": "condenserInserted", "value": true }
+    },
+    {
+      "id": 11,
+      "instruction": "Select a Medium aperture size — a good starting point for routine imaging.",
+      "hint": "Press M under Aperture Size.",
+      "surface": "panel",
+      "unlocks": ["aperture-size"],
+      "successCondition": { "type": "selectValue", "key": "condenserSize", "value": "medium" }
+    },
+    {
+      "id": 12,
+      "instruction": "Center the condenser aperture using the Aperture Alignment trackpad.",
+      "hint": "Drag the alignment dot to the centre of the pad.",
+      "surface": "panel",
+      "unlocks": ["aperture-align"],
+      "successCondition": { "type": "valueInRange", "key": "apertureAlignment", "spot": "apertureAlign_cond" }
+    },
+    {
+      "id": 13,
+      "instruction": "Adjust the Stigmator to make the beam circular and symmetric.",
+      "hint": "Drag the Stigmator dot to the centre — a circular beam means stigmation is corrected.",
+      "surface": "panel",
+      "unlocks": ["stigmator"],
+      "successCondition": { "type": "valueInRange", "key": "stigmator", "spot": "stigmator_circular" }
+    },
+    {
+      "id": 14,
+      "instruction": "Re-diverge the beam with the Brightness knob to fill the field of view again.",
+      "hint": "Turn Brightness back up to the 65–80 range.",
+      "surface": "panel",
+      "unlocks": ["brightness"],
+      "successCondition": { "type": "valueInRange", "key": "brightness", "spot": "brightness_diverge" }
+    },
+    {
+      "id": 15,
+      "instruction": "Set magnification to LOW so we can find the sample at a wide field of view.",
+      "hint": "Under Imaging, press Low.",
+      "surface": "panel",
+      "unlocks": ["magnification", "beam-current"],
+      "successCondition": { "type": "selectValue", "key": "magnification", "value": "low" }
+    },
+    {
+      "id": 16,
+      "instruction": "Turn the Wobbler ON. The image will rock back and forth — this helps you find the eucentric height.",
+      "hint": "Press the Wobbler Toggle button.",
+      "surface": "panel",
+      "unlocks": ["wobbler"],
+      "successCondition": { "type": "selectValue", "key": "wobblerOn", "value": true }
+    },
+    {
+      "id": 17,
+      "instruction": "Adjust the Z height (specimen stage) until the wobble is minimised, then turn the Wobbler OFF.",
+      "hint": "Use the +Z / -Z rocker to bring Z close to zero, then toggle the Wobbler off.",
+      "surface": "panel",
+      "unlocks": ["stage-z", "wobbler"],
+      "successCondition": {
+        "type": "composite",
+        "all": [
+          { "type": "valueInRange", "key": "stageZ", "spot": "stageZ_eucentric" },
+          { "type": "selectValue", "key": "wobblerOn", "value": false }
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "instruction": "Switch to Diffraction mode to align the objective aperture.",
+      "hint": "Under Imaging > Mode, press Diffraction.",
+      "surface": "panel",
+      "unlocks": ["mode"],
+      "successCondition": { "type": "selectValue", "key": "mode", "value": "diffraction" }
+    },
+    {
+      "id": 19,
+      "instruction": "Select Objective as the aperture, then click INSERT on the objective aperture in the diagram.",
+      "hint": "First press Obj. under Apertures, then click the objective aperture hotspot on the column.",
+      "surface": "panel-then-diagram",
+      "unlocks": ["aperture-select"],
+      "successCondition": {
+        "type": "composite",
+        "all": [
+          { "type": "selectValue", "key": "currentAperture", "value": "objective" },
+          { "type": "selectValue", "key": "objectiveInserted", "value": true }
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "instruction": "Centre the objective aperture using the Aperture Alignment trackpad.",
+      "hint": "Drag the alignment dot to the centre of the pad.",
+      "surface": "panel",
+      "unlocks": ["aperture-align"],
+      "successCondition": { "type": "valueInRange", "key": "apertureAlignment", "spot": "apertureAlign_obj" }
+    },
+    {
+      "id": 21,
+      "instruction": "Switch back to Imaging mode so you can view the specimen.",
+      "hint": "Under Imaging > Mode, press Imaging.",
+      "surface": "panel",
+      "unlocks": ["mode"],
+      "successCondition": { "type": "selectValue", "key": "mode", "value": "imaging" }
+    },
+    {
+      "id": 22,
+      "instruction": "Use the Specimen Stage X/Y trackpad to move to a region with nanoparticles in view.",
+      "hint": "Drag the stage dot toward the upper-right of the pad — the target region sits there.",
+      "surface": "panel",
+      "unlocks": ["stage-xy"],
+      "successCondition": { "type": "valueInRange", "key": "stage", "spot": "stageXY_lowMag" }
+    },
+    {
+      "id": 23,
+      "instruction": "Increase magnification to MEDIUM.",
+      "hint": "Under Imaging > Magnification, press Med.",
+      "surface": "panel",
+      "unlocks": ["magnification"],
+      "successCondition": { "type": "selectValue", "key": "magnification", "value": "medium" }
+    },
+    {
+      "id": 24,
+      "instruction": "Recentre on the region of interest at medium magnification.",
+      "hint": "The field of view shrank — nudge the stage to bring the particles back to the centre.",
+      "surface": "panel",
+      "unlocks": ["stage-xy"],
+      "successCondition": { "type": "valueInRange", "key": "stage", "spot": "stageXY_medMag" }
+    },
+    {
+      "id": 25,
+      "instruction": "Increase magnification to HIGH.",
+      "hint": "Under Imaging > Magnification, press High.",
+      "surface": "panel",
+      "unlocks": ["magnification"],
+      "successCondition": { "type": "selectValue", "key": "magnification", "value": "high" }
+    },
+    {
+      "id": 26,
+      "instruction": "Recentre on the region of interest at high magnification.",
+      "hint": "A small drift — fine-tune the stage so the particles are centred.",
+      "surface": "panel",
+      "unlocks": ["stage-xy"],
+      "successCondition": { "type": "valueInRange", "key": "stage", "spot": "stageXY_highMag" }
+    },
+    {
+      "id": 27,
+      "instruction": "Focus the image using the Objective Lens Focus knob.",
+      "hint": "Turn the Focus knob slowly until the image sharpens — aim for near zero.",
+      "surface": "panel",
+      "unlocks": ["focus"],
+      "successCondition": { "type": "valueInRange", "key": "focus", "spot": "focus_sharp" }
+    },
+    {
+      "id": 28,
+      "instruction": "Insert the camera to prepare for image acquisition.",
+      "hint": "Under Capture, press Camera Insert.",
+      "surface": "panel",
+      "unlocks": ["camera-insert"],
+      "successCondition": { "type": "selectValue", "key": "cameraInserted", "value": true }
+    },
+    {
+      "id": 29,
+      "instruction": "Press ACQUIRE & DOWNLOAD to capture the image. Your TEM micrograph will save to disk.",
+      "hint": "Final step — press the big Acquire button.",
+      "surface": "panel",
+      "unlocks": ["acquire"],
+      "successCondition": { "type": "selectValue", "key": "imageAcquired", "value": true }
+    }
+  ]
+}
