@@ -46,9 +46,17 @@
 
     // Imaging
     wobblerOn: false,
-    magnification: null,                // 'low' | 'medium' | 'high'
+    magnification: null,                // 'low' | 'medium' | 'high' | 'very-high'
     mode: null,                         // 'diffraction' | 'imaging'
+    imagingMode: 'tem',                 // 'tem' | 'stem'
+    stemImaging: null,                  // 'dark' | 'bright'
+    stemScan: null,                     // 'spot' | 'raster'
+    fft: false,
+    currentLens: null,                  // 'condenser' | 'objective' | 'projector'
+    projectorAlign: { x: 0, y: 0 },
+    specimenTilt: { x: 0, y: 0 },
     focus: 0,
+    stdFocusReset: false,
 
     // Camera
     cameraInserted: false,

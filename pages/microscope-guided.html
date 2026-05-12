@@ -73,13 +73,22 @@
         </div>
       </div>
 
-      <button class="guided-context__restart" id="btn-restart" title="Restart session">
-        <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <path d="M3 8a5 5 0 1 0 1.5-3.5"/>
-          <path d="M3 3v2.5h2.5"/>
-        </svg>
-        Restart Session
-      </button>
+      <div class="guided-context__actions">
+        <button class="guided-context__restart guided-context__restart--section" id="btn-restart-section" title="Restart current section">
+          <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M3 8a5 5 0 1 0 1.5-3.5"/>
+            <path d="M3 3v2.5h2.5"/>
+          </svg>
+          Restart Section
+        </button>
+        <button class="guided-context__restart" id="btn-restart" title="Restart session">
+          <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M3 8a5 5 0 1 0 1.5-3.5"/>
+            <path d="M3 3v2.5h2.5"/>
+          </svg>
+          Restart Session
+        </button>
+      </div>
     </div>
 
     <!-- ===========================================================
@@ -121,6 +130,11 @@
                   <button class="pbtn" data-action="acc-voltage" data-value="120">120 kV</button>
                   <button class="pbtn" data-action="acc-voltage" data-value="200">200 kV</button>
                 </div>
+              </div>
+
+              <div class="ctl ctl--row-2" data-control="std-focus">
+                <div class="ctl__label">Std Focus</div>
+                <button class="pbtn" data-action="std-focus"><span class="pbtn__led"></span>Reset</button>
               </div>
             </div>
           </div>
@@ -259,14 +273,14 @@
           <div class="dz">
             <div class="dz__label">Specimen Stage</div>
             <div class="dz__body">
-              <div class="dz__stage-grid" data-control="stage-xy">
-                <div class="ctl ctl--center">
+              <div class="dz__stage-grid">
+                <div class="ctl ctl--center" data-control="stage-xy">
                   <div class="trackpad" data-trackpad="stage-xy" data-range="-100,100">
                     <div class="trackpad__dot"></div>
                   </div>
                   <div class="ctl__label ctl__label--below">X / Y</div>
                 </div>
-                <div class="ctl ctl--center">
+                <div class="ctl ctl--center" data-control="stage-z">
                   <div class="rocker">
                     <button class="rocker__btn" data-action="stage-z" data-dir="1">+Z</button>
                     <button class="rocker__btn" data-action="stage-z" data-dir="-1">−Z</button>
@@ -289,6 +303,13 @@
                   <div class="readout-cell__val" id="readout-z">0</div>
                 </div>
               </div>
+
+              <div class="ctl ctl--center" data-control="specimen-tilt">
+                <div class="trackpad" data-trackpad="specimen-tilt" data-range="-30,30">
+                  <div class="trackpad__dot"></div>
+                </div>
+                <div class="ctl__label ctl__label--below">Specimen Tilt</div>
+              </div>
             </div>
           </div>
 
@@ -296,6 +317,14 @@
           <div class="dz">
             <div class="dz__label">Imaging</div>
             <div class="dz__body">
+              <div class="ctl ctl--stack" data-control="imaging-mode">
+                <div class="ctl__label">Imaging Mode</div>
+                <div class="pbtn-group" style="--cols:2;">
+                  <button class="pbtn" data-action="imaging-mode" data-value="tem">TEM</button>
+                  <button class="pbtn" data-action="imaging-mode" data-value="stem">STEM</button>
+                </div>
+              </div>
+
               <div class="ctl ctl--stack" data-control="mode">
                 <div class="ctl__label">Mode</div>
                 <div class="pbtn-group" style="--cols:2;">
@@ -304,18 +333,56 @@
                 </div>
               </div>
 
+              <div class="ctl ctl--stack" data-control="stem-imaging">
+                <div class="ctl__label">STEM Imaging</div>
+                <div class="pbtn-group" style="--cols:2;">
+                  <button class="pbtn" data-action="stem-imaging" data-value="dark">Dark Field</button>
+                  <button class="pbtn" data-action="stem-imaging" data-value="bright">Bright Field</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="stem-scan">
+                <div class="ctl__label">STEM Scan</div>
+                <div class="pbtn-group" style="--cols:2;">
+                  <button class="pbtn" data-action="stem-scan" data-value="spot">Spot</button>
+                  <button class="pbtn" data-action="stem-scan" data-value="raster">Raster</button>
+                </div>
+              </div>
+
               <div class="ctl ctl--stack" data-control="magnification">
                 <div class="ctl__label">Magnification</div>
-                <div class="pbtn-group" style="--cols:3;">
+                <div class="pbtn-group" style="--cols:4;">
                   <button class="pbtn" data-action="magnification" data-value="low">Low</button>
                   <button class="pbtn" data-action="magnification" data-value="medium">Med</button>
                   <button class="pbtn" data-action="magnification" data-value="high">High</button>
+                  <button class="pbtn" data-action="magnification" data-value="very-high">V.High</button>
                 </div>
+              </div>
+
+              <div class="ctl ctl--stack" data-control="lens-select">
+                <div class="ctl__label">Lens</div>
+                <div class="pbtn-group" style="--cols:3;">
+                  <button class="pbtn" data-action="lens-select" data-value="condenser">Cond.</button>
+                  <button class="pbtn" data-action="lens-select" data-value="objective">Obj.</button>
+                  <button class="pbtn" data-action="lens-select" data-value="projector">Proj.</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--center" data-control="projector-align">
+                <div class="trackpad" data-trackpad="projector-align" data-range="-50,50">
+                  <div class="trackpad__dot"></div>
+                </div>
+                <div class="ctl__label ctl__label--below">Projector Lens Alignment</div>
               </div>
 
               <div class="ctl ctl--row-2" data-control="wobbler">
                 <div class="ctl__label">Wobbler</div>
                 <button class="pbtn" data-action="wobbler-toggle"><span class="pbtn__led"></span>Toggle</button>
+              </div>
+
+              <div class="ctl ctl--row-2" data-control="fft">
+                <div class="ctl__label">FFT</div>
+                <button class="pbtn" data-action="fft-toggle"><span class="pbtn__led"></span>On</button>
               </div>
 
               <div class="ctl ctl--center" data-control="focus">

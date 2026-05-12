@@ -17,14 +17,20 @@
     bindAirlock();
     bindSpecimenInsert();
     bindAccVoltage();
+    bindStdFocus();
     bindBeamOn();
     bindKnobs();
     bindTrackpads();
     bindApertureControls();
     bindStageZ();
     bindModeSelector();
+    bindImagingMode();
+    bindStemImaging();
+    bindStemScan();
+    bindLensSelect();
     bindMagnification();
     bindWobbler();
+    bindFFT();
     bindCameraInsert();
     bindAcquire();
 
@@ -61,6 +67,10 @@
   function bindAccVoltage()      { bindSelectorGroup('acc-voltage',     'accVoltage',     v => parseInt(v, 10));  }
   function bindModeSelector()    { bindSelectorGroup('mode',            'mode');                                  }
   function bindMagnification()   { bindSelectorGroup('magnification',   'magnification');                         }
+  function bindImagingMode()     { bindSelectorGroup('imaging-mode',    'imagingMode');                           }
+  function bindStemImaging()     { bindSelectorGroup('stem-imaging',    'stemImaging');                           }
+  function bindStemScan()        { bindSelectorGroup('stem-scan',       'stemScan');                              }
+  function bindLensSelect()      { bindSelectorGroup('lens-select',     'currentLens');                           }
 
   /* -------------------- Aperture select/size (special — select drives multiple state slots) -------------------- */
 
@@ -124,6 +134,8 @@
   function bindBeamOn()         { bindToggle('beam-on',         'beamOn'); }
   function bindWobbler()        { bindToggle('wobbler-toggle',  'wobblerOn'); }
   function bindCameraInsert()   { bindToggle('camera-insert',   'cameraInserted'); }
+  function bindFFT()            { bindToggle('fft-toggle',      'fft'); }
+  function bindStdFocus()       { bindToggle('std-focus',       'stdFocusReset'); }
 
   /* -------------------- Knobs --------------------
      The Phase 1.5 controls-ui.js already binds the visual behavior; we just
@@ -151,13 +163,50 @@
 
   /* -------------------- Trackpads -------------------- */
 
+  /* Map a trackpad's data-trackpad attribute to its corresponding state key.
+     For most trackpads, simple camelization works (beam-shift → beamShift).
+     A few have explicit overrides where the state key differs from the DOM name. */
+  const TRACKPAD_STATE_KEY = {
+    'aperture-align':   'apertureAlignment',
+    'beam-shift':       'beamShift',
+    'stigmator':        'stigmator',
+    'stage-xy':         'stage',                // composed of stageX + stageY (handled below)
+    'specimen-tilt':    'specimenTilt',
+    'projector-align':  'projectorAlign',
+  };
+
   function bindTrackpads() {
     document.querySelectorAll('.trackpad').forEach(pad => {
       const key = pad.dataset.trackpad;
       const [rMin, rMax] = (pad.dataset.range || '-50,50').split(',').map(Number);
-      const stateKey = camelize(key);
-      const initial = TEM.state.get(stateKey) || { x: 0, y: 0 };
+      const stateKey = TRACKPAD_STATE_KEY[key] || camelize(key);
 
+      // stage-xy is special: it's two separate state values stageX, stageY.
+      // Handle it inline.
+      if (stateKey === 'stage') {
+        const initialX = TEM.state.get('stageX') || 0;
+        const initialY = TEM.state.get('stageY') || 0;
+        const handle = TEM.controlsUI.bindTrackpad(pad, {
+          rangeX: [rMin, rMax],
+          rangeY: [rMin, rMax],
+          valueX: initialX, valueY: initialY,
+          onChange({ x, y }) {
+            TEM.state.set('stageX', x);
+            TEM.state.set('stageY', y);
+          },
+        });
+        TEM.state.subscribeKey('stageX', (vx) => {
+          const cur = handle.value;
+          if (cur.x !== vx) handle.value = { x: vx, y: cur.y };
+        });
+        TEM.state.subscribeKey('stageY', (vy) => {
+          const cur = handle.value;
+          if (cur.y !== vy) handle.value = { x: cur.x, y: vy };
+        });
+        return;
+      }
+
+      const initial = TEM.state.get(stateKey) || { x: 0, y: 0 };
       const handle = TEM.controlsUI.bindTrackpad(pad, {
         rangeX: [rMin, rMax],
         rangeY: [rMin, rMax],

@@ -13,6 +13,7 @@
   let currentStepIndex = 0;
   let stepStartedAt = 0;
   let hintArmed = false;
+  let autoAdvanceTimer = null;
 
   /* -------------------- Boot -------------------- */
 
@@ -46,9 +47,11 @@
     // Wire fullscreen toggle
     wireFullscreen();
 
-    // Restart button
+    // Restart buttons
     const restartBtn = document.getElementById('btn-restart');
     if (restartBtn) restartBtn.addEventListener('click', restart);
+    const restartSectionBtn = document.getElementById('btn-restart-section');
+    if (restartSectionBtn) restartSectionBtn.addEventListener('click', restartSection);
 
     // Initialize control wiring (subscribers to state)
     TEM.controls.init();
@@ -112,11 +115,18 @@
     currentStepIndex = index;
     stepStartedAt = Date.now();
     hintArmed = false;
+    if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
 
     const step = steps[index];
     if (!step) {
       finish();
       return;
+    }
+
+    // Push ROI target into the renderer BEFORE the currentStepId state
+    // mutation, so renderer sees the new target on its first render.
+    if (TEM.imageRenderer && TEM.imageRenderer.setRoiTarget) {
+      TEM.imageRenderer.setRoiTarget(step.roiTarget || null);
     }
 
     TEM.state.set('currentStepId', step.id);
@@ -131,16 +141,48 @@
     // Lock all controls, then unlock just this step's targets
     applyLockState(step);
 
-    // Highlight diagram hotspot if this step has one
-    TEM.diagram.setActiveHotspot(diagramHotspotForStep(step));
+    // Highlight diagram hotspot if this step has one (declared in data)
+    TEM.diagram.setActiveHotspot(step.diagram || null);
 
-    // Update progress bar
-    setProgress((index) / steps.length);
+    // Update progress bar (the just-completed steps make the bar advance)
+    setProgress(index / steps.length);
 
-    // Optional: switch viewer at certain steps
-    if (step.switchViewerTo) setViewer(step.switchViewerTo);
+    // Auto-switch viewer
+    if (step.switchViewer) setViewer(step.switchViewer, { flash: true });
 
-    // After a brief delay, arm the hint timer if the step has a hint
+    // Blue ROI circle on the screen if this step has a target
+    if (TEM.imageRenderer && TEM.imageRenderer.setRoiTarget) {
+      TEM.imageRenderer.setRoiTarget(step.roiTarget || null);
+    }
+
+    // onEnter side-effects: events that happen automatically when this step activates
+    if (step.onEnter === 'autoAirlock') {
+      // Animate the airlock pumping: set airlockPumped=true after ~half the autoAdvance delay
+      setTimeout(() => {
+        TEM.state.set('airlockPumped', true);
+      }, Math.max(200, (step.autoAdvance || 2000) / 2));
+    }
+
+    // Prelude: nudge state into a non-trivial starting point so the success
+    // condition isn't already satisfied. This forces the user to actually
+    // interact with the control instead of the step auto-advancing.
+    //
+    // `prelude.offset`: 'beamShift' | 'stigmator' | 'apertureAlignment' | 'stage'
+    //   Sets that key (or stageX+stageY for 'stage') to an off-target value
+    //   to make the alignment task non-trivial.
+    // `prelude.set`: { key, value } — generic write.
+    if (step.prelude) {
+      applyPrelude(step.prelude);
+    }
+
+    // Auto-advance for descriptive/animation steps (no user action required)
+    if (step.autoAdvance) {
+      autoAdvanceTimer = setTimeout(() => {
+        if (currentStepIndex === index) activateStep(currentStepIndex + 1);
+      }, step.autoAdvance);
+    }
+
+    // Arm the hint timer
     if (step.hint) {
       setTimeout(() => {
         if (currentStepIndex === index && !checkSuccess(step)) {
@@ -189,26 +231,33 @@
     // Hint timer: if user is fiddling, defer the hint
     if (hintArmed && TEM.feedback) TEM.feedback.poke();
 
+    // For autoAdvance steps, the timer controls progression — don't advance on
+    // state changes (the onEnter side-effects may set state mid-step).
+    if (step.autoAdvance) return;
+
     if (checkSuccess(step)) {
       // Small delay so the user sees their final action register before advancing
       setTimeout(() => {
-        // Re-check in case state changed during the delay
         if (checkSuccess(steps[currentStepIndex])) {
           activateStep(currentStepIndex + 1);
         }
-      }, 350);
+      }, 150);
     }
   }
 
   /* -------------------- Success condition evaluation -------------------- */
 
   function checkSuccess(step) {
-    if (!step || !step.successCondition) return false;
-    return evalCondition(step.successCondition);
+    if (!step) return false;
+    const cond = step.success || step.successCondition;       // back-compat
+    if (!cond) return false;
+    return evalCondition(cond);
   }
 
   function evalCondition(cond) {
     if (!cond) return false;
+
+    if (cond.type === 'always') return true;
 
     if (cond.type === 'composite' && Array.isArray(cond.all)) {
       return cond.all.every(evalCondition);
@@ -220,7 +269,6 @@
     }
 
     if (cond.type === 'valueInRange') {
-      // The "stage" key composes stageX and stageY into { x, y } for the predicate
       let value;
       if (cond.key === 'stage') {
         value = { x: TEM.state.get('stageX'), y: TEM.state.get('stageY') };
@@ -231,31 +279,15 @@
     }
 
     if (cond.type === 'click') {
-      // 'click' is a special-case selectValue where the click target itself
-      // is what we're watching. The diagram click handlers set the
-      // corresponding state key, so we just compare to true.
       return TEM.state.get(cond.key) === true;
     }
 
     return false;
   }
 
-  /* -------------------- Map step to diagram hotspot (if any) -------------------- */
-
-  function diagramHotspotForStep(step) {
-    // Steps that involve a diagram click drive a specific hotspot.
-    switch (step.id) {
-      case 1: return 'remove-holder';
-      case 3: return 'insert-specimen';
-      case 10: return 'insert-condenser';
-      case 19: return 'insert-objective';
-      default: return null;
-    }
-  }
-
   /* -------------------- Viewer tab switcher -------------------- */
 
-  function setViewer(which) {
+  function setViewer(which, opts) {
     document.querySelectorAll('.viewer__tab').forEach(t => {
       const active = t.dataset.view === which;
       t.classList.toggle('is-active', active);
@@ -270,6 +302,18 @@
         ? 'FIG · ELECTRON OPTICAL COLUMN'
         : 'VIEWING SCREEN · PHOSPHOR';
     }
+
+    // Flash the viewer briefly when auto-switched, to draw the user's eye
+    if (opts && opts.flash) {
+      const v = document.querySelector('.viewer');
+      if (v) {
+        v.classList.remove('is-flash');
+        // Force reflow so the animation restarts
+        void v.offsetWidth;
+        v.classList.add('is-flash');
+        setTimeout(() => v.classList.remove('is-flash'), 1200);
+      }
+    }
   }
 
   /* -------------------- Progress bar -------------------- */
@@ -279,12 +323,69 @@
     if (fill) fill.style.width = `${Math.max(0, Math.min(1, t)) * 100}%`;
   }
 
+  /* -------------------- Step prelude --------------------
+     Apply a step's prelude: nudge state values away from sweet-spot zero
+     so the success condition isn't trivially satisfied. The user must
+     actually interact with the control to advance.
+  */
+  function applyPrelude(prelude) {
+    if (!prelude) return;
+
+    if (prelude.offset && prelude.amount) {
+      const { offset, amount } = prelude;
+      if (offset === 'stage') {
+        // Special case — apply to stageX and stageY separately
+        const curX = TEM.state.get('stageX') || 0;
+        const curY = TEM.state.get('stageY') || 0;
+        TEM.state.set('stageX', curX + (amount.x || 0));
+        TEM.state.set('stageY', curY + (amount.y || 0));
+      } else {
+        const cur = TEM.state.get(offset) || { x: 0, y: 0 };
+        TEM.state.set(offset, {
+          x: (cur.x || 0) + (amount.x || 0),
+          y: (cur.y || 0) + (amount.y || 0),
+        });
+      }
+    }
+
+    if (prelude.set) {
+      const { key, value } = prelude.set;
+      TEM.state.set(key, value);
+    }
+  }
+
   /* -------------------- Restart -------------------- */
 
   function restart() {
     TEM.state.reset();
+    if (TEM.imageRenderer && TEM.imageRenderer.resetReferences) {
+      TEM.imageRenderer.resetReferences();
+    }
     setViewer('column');
     activateStep(0);
+  }
+
+  /** Restart from the start of the current section.
+      Sections (approximate):
+      1-7   Setup
+      8-9   Beam alignment
+      10-15 Aperture / stigmation
+      16-19 Find sample (mag + eucentric)
+      20-24 Objective aperture / diffraction
+      25-32 Acquisition
+  */
+  function restartSection() {
+    const sectionStarts = [1, 8, 10, 16, 20, 25];
+    const currentId = steps[currentStepIndex]?.id || 1;
+    let start = 1;
+    for (const sid of sectionStarts) {
+      if (sid <= currentId) start = sid;
+    }
+    const targetIndex = steps.findIndex(s => s.id === start);
+    if (targetIndex >= 0) {
+      TEM.state.reset();
+      activateStep(targetIndex);
+    }
   }
 
   /* -------------------- Expose -------------------- */

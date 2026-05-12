@@ -1,117 +1,178 @@
 /* =========================================================================
    Guided Simulator — Viewing Screen Renderer
-   Updates the round phosphor screen based on state. The render is pure:
-   state in, DOM updates out. No business logic.
+   Pure state→DOM mapping. State changes → renderer reads → DOM updates.
 
-   Visual layers (from back to front):
-   1. Black background (always)
-   2. Beam spot (when beamOn): position from beamShift, size/brightness
-      from brightness, shape from stigmator
-   3. Sample image (when imaging mode + magnification set): swap from
-      pre-rendered set per mag level, with focus blur
-   4. Wobbler animation (when wobblerOn): horizontal oscillation tied to
-      stageZ deviation from zero
+   Layered visuals (back to front):
+     1. Background          — phosphor (green tinted) OR camera (neutral grey)
+     2. Sample image        — real PNG, scaled per magnification level
+     3. Beam spot           — circular gradient, position/size/stigmation from state
+     4. Aperture mask       — clip-path circle when an aperture is inserted
+     5. Blue ROI circle     — appears for stage-move steps with a roiTarget
+     6. Wobble transform    — animation on the whole content when wobblerOn
    ========================================================================= */
 
 (function () {
   'use strict';
 
-  let screenEl, emptyEl, beamEl, sampleEl;
+  let screenEl, emptyEl, beamEl, sampleEl, roiEl, contentEl;
+  let currentRoiTarget = null;     // set by guided-controller when a step has roiTarget
 
   function init() {
     screenEl = document.getElementById('view-screen');
     emptyEl  = document.getElementById('view-empty');
     if (!screenEl) return;
 
-    // Inject the rendering layers once. CSS handles the visual styling.
-    if (!screenEl.querySelector('.view-beam')) {
-      const beam = document.createElement('div');
-      beam.className = 'view-beam';
-      screenEl.appendChild(beam);
+    // Build the layer stack once.
+    if (!screenEl.querySelector('.view-content')) {
+      contentEl = document.createElement('div');
+      contentEl.className = 'view-content';
+      screenEl.appendChild(contentEl);
 
-      const sample = document.createElement('div');
-      sample.className = 'view-sample';
-      screenEl.appendChild(sample);
+      sampleEl = document.createElement('div');
+      sampleEl.className = 'view-sample';
+      contentEl.appendChild(sampleEl);
+
+      beamEl = document.createElement('div');
+      beamEl.className = 'view-beam';
+      contentEl.appendChild(beamEl);
+
+      roiEl = document.createElement('div');
+      roiEl.className = 'view-roi';
+      screenEl.appendChild(roiEl);
     }
-    beamEl   = screenEl.querySelector('.view-beam');
-    sampleEl = screenEl.querySelector('.view-sample');
+    contentEl = screenEl.querySelector('.view-content');
+    sampleEl  = screenEl.querySelector('.view-sample');
+    beamEl    = screenEl.querySelector('.view-beam');
+    roiEl     = screenEl.querySelector('.view-roi');
 
-    // Subscribe to every state change and re-render
+    // Set the sample background once from config
+    const cfg = TEM.tolerance.getConfig();
+    const samp = cfg?.samples?.nanoparticles;
+    if (samp?.image && sampleEl) {
+      sampleEl.style.backgroundImage = `url("${samp.image}")`;
+    }
+
     TEM.state.subscribe(() => render());
+    render();
+  }
+
+  /** Called by guided-controller when a step has a roiTarget. */
+  function setRoiTarget(target) {
+    currentRoiTarget = target || null;
     render();
   }
 
   function render() {
     if (!screenEl) return;
     const s = TEM.state.getAll();
+    const cfg = TEM.tolerance.getConfig();
 
-    const screenActive = s.beamOn;        // beam on → screen lights up
-    const showSample   = screenActive && s.mode === 'imaging' && s.magnification;
+    const beamOn        = !!s.beamOn;
+    const inImaging     = s.mode === 'imaging' || s.mode == null;
+    const inDiffraction = s.mode === 'diffraction';
+    const showSample    = beamOn && inImaging && !!s.magnification;
+    const showDiff      = beamOn && inDiffraction;
 
-    // Empty placeholder visible only before beam-on
-    if (emptyEl) emptyEl.style.opacity = screenActive ? '0' : '1';
+    // ----- Empty placeholder (only before beam) -----
+    if (emptyEl) emptyEl.style.opacity = beamOn ? '0' : '1';
+
+    // ----- Camera tint vs phosphor tint -----
+    screenEl.classList.toggle('is-camera-view', !!s.cameraInserted);
+
+    // ----- Diffraction mode visual -----
+    screenEl.classList.toggle('is-diffraction', showDiff);
+
+    // ----- Sample image -----
+    if (sampleEl) {
+      if (showSample) {
+        sampleEl.style.opacity = '1';
+
+        const mag = s.magnification;
+        const scales = cfg?.samples?.nanoparticles?.scales || { low: 0.25, medium: 0.55, high: 1.0 };
+        const baseScale = scales[mag] || 0.5;
+
+        // Focus blur — distance from 0 = blur amount
+        const blur = Math.max(0, Math.abs(s.focus ?? 0) / 5);
+
+        // Stage offset within field of view
+        const magShiftFactor = mag === 'low' ? 0.3 : mag === 'medium' ? 1.0 : 2.5;
+        const sx = -(s.stageX ?? 0) * 0.3 * magShiftFactor;
+        const sy =  (s.stageY ?? 0) * 0.3 * magShiftFactor;
+
+        sampleEl.style.transform =
+          `translate(${sx}%, ${sy}%) scale(${baseScale})`;
+        sampleEl.style.filter = blur > 0 ? `blur(${blur.toFixed(1)}px)` : '';
+      } else {
+        sampleEl.style.opacity = '0';
+      }
+    }
 
     // ----- Beam spot -----
     if (beamEl) {
-      if (screenActive && !showSample) {
+      const showBeam = beamOn && !showSample && !showDiff;
+      if (showBeam) {
         beamEl.style.opacity = '1';
 
-        // Brightness drives size and luminosity (50 baseline; 100 = full diverge)
-        const b = s.brightness / 100;                  // 0..1
-        const size = 18 + b * 70;                      // 18% → 88% of screen
-        beamEl.style.width  = `${size}%`;
-        beamEl.style.height = `${size}%`;
+        const b = (s.brightness ?? 50) / 100;
+        const baseSize = 18 + b * 70;
 
-        // Brightness vs. fill: at low brightness the spot is tiny and bright;
-        // at high brightness it expands and dims slightly (real diverged beam behaviour)
-        const luminance = 0.4 + (1 - Math.abs(b - 0.5) * 2) * 0.6;
-        beamEl.style.setProperty('--lum', luminance.toFixed(2));
+        const lum = 0.45 + (1 - Math.abs(b - 0.55) * 2) * 0.55;
+        beamEl.style.setProperty('--lum', lum.toFixed(2));
 
-        // Beam shift offsets the centre in screen %
-        const shiftX = (s.beamShift?.x ?? 0) * 0.6;    // -50..50 → -30%..30%
+        const shiftX = (s.beamShift?.x ?? 0) * 0.6;
         const shiftY = (s.beamShift?.y ?? 0) * 0.6;
-        beamEl.style.left = `calc(50% + ${shiftX}% - ${size/2}%)`;
-        beamEl.style.top  = `calc(50% - ${shiftY}% - ${size/2}%)`;
 
-        // Stigmator distorts the spot into an ellipse
-        const stigX = (s.stigmator?.x ?? 0) / 50;      // -1..1
+        const stigX = (s.stigmator?.x ?? 0) / 50;
         const stigY = (s.stigmator?.y ?? 0) / 50;
-        const sx = 1 + stigX * 0.35;
-        const sy = 1 - stigY * 0.35;
-        // Astigmatism rotates with the diagonal — combine x+y for rotation hint
-        const rot = (stigX + stigY) * 12;
-        beamEl.style.transform = `scale(${sx}, ${sy}) rotate(${rot}deg)`;
+        const scaleX = 1 + stigX * 0.45;
+        const scaleY = 1 - stigY * 0.45;
+        const rot = (stigX * stigY) * 35;
+
+        beamEl.style.width  = `${baseSize}%`;
+        beamEl.style.height = `${baseSize}%`;
+        beamEl.style.left = `calc(50% + ${shiftX}% - ${baseSize/2}%)`;
+        beamEl.style.top  = `calc(50% - ${shiftY}% - ${baseSize/2}%)`;
+        beamEl.style.transform = `scale(${scaleX}, ${scaleY}) rotate(${rot}deg)`;
       } else {
         beamEl.style.opacity = '0';
       }
     }
 
-    // ----- Sample image -----
-    if (sampleEl) {
-      if (showSample) {
-        const mag = s.magnification;          // 'low' | 'medium' | 'high'
-        sampleEl.dataset.mag = mag;
-        sampleEl.style.opacity = '1';
-
-        // Focus blur — distance from 0
-        const blur = Math.max(0, Math.abs(s.focus ?? 0) / 5);     // 0..10px
-        sampleEl.style.filter = `blur(${blur.toFixed(1)}px)`;
-
-        // Stage offset within field of view — at higher mag, smaller stage delta
-        // translates to more on-screen movement
-        const magScale = mag === 'low' ? 0.4 : mag === 'medium' ? 1.0 : 2.5;
-        const sx = -(s.stageX ?? 0) * 0.3 * magScale;
-        const sy =  (s.stageY ?? 0) * 0.3 * magScale;
-        sampleEl.style.transform = `translate(${sx}%, ${sy}%)`;
+    // ----- Aperture clip-path mask -----
+    const apertureActive = (
+      (s.currentAperture === 'condenser' && s.condenserInserted && s.condenserSize) ||
+      (s.currentAperture === 'objective' && s.objectiveInserted && s.objectiveSize)
+    );
+    if (contentEl) {
+      if (apertureActive) {
+        const size = s.currentAperture === 'condenser' ? s.condenserSize : s.objectiveSize;
+        const r = size === 'small' ? 22 : size === 'large' ? 55 : 35;
+        const ax = 50 + (s.apertureAlignment?.x ?? 0) * 0.4;
+        const ay = 50 - (s.apertureAlignment?.y ?? 0) * 0.4;
+        contentEl.style.clipPath = `circle(${r}% at ${ax}% ${ay}%)`;
       } else {
-        sampleEl.style.opacity = '0';
-        sampleEl.dataset.mag = '';
+        contentEl.style.clipPath = '';
       }
     }
 
-    // ----- Wobbler animation: applied to whole screen-content -----
-    if (s.wobblerOn && screenEl) {
-      const amp = Math.min(8, Math.abs(s.stageZ ?? 0) * 0.4);   // 0..8 px
+    // ----- Blue ROI circle -----
+    if (roiEl) {
+      if (currentRoiTarget && showSample) {
+        roiEl.style.opacity = '1';
+        const mag = s.magnification;
+        const magShiftFactor = mag === 'low' ? 0.3 : mag === 'medium' ? 1.0 : 2.5;
+        const dx = (currentRoiTarget.x - (s.stageX ?? 0)) * 0.3 * magShiftFactor;
+        const dy = (currentRoiTarget.y - (s.stageY ?? 0)) * 0.3 * magShiftFactor;
+        roiEl.style.left = `calc(50% + ${dx}% - 28px)`;
+        roiEl.style.top  = `calc(50% - ${dy}% - 28px)`;
+      } else {
+        roiEl.style.opacity = '0';
+      }
+    }
+
+    // ----- Wobble animation -----
+    if (s.wobblerOn && contentEl) {
+      const amp = Math.min(10, Math.abs(s.stageZ ?? 0) * 0.5 + 2);
       screenEl.style.setProperty('--wobble-amp', `${amp}px`);
       screenEl.classList.add('is-wobbling');
     } else {
@@ -120,5 +181,5 @@
   }
 
   window.TEM = window.TEM || {};
-  window.TEM.imageRenderer = { init, render };
+  window.TEM.imageRenderer = { init, render, setRoiTarget };
 })();
