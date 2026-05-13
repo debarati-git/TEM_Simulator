@@ -1,141 +1,315 @@
 /* =========================================================================
-   The Column page styles
-   Layout: 3D/diagram viewport (left) + component info panel (right)
+   The Column page (Module 01 · Anatomy)
+
+   Layout: full-bleed diagram viewport (left, floating) + info aside (right).
+   Header bar has been removed — the page itself uses the module tag inside
+   the viewport caption as its hierarchical anchor.
    ========================================================================= */
+
+.column-body {
+  /* Constrain page chrome so the column module gets maximum drawing real estate.
+     Override the page background here so the image's internal bg blends seamlessly
+     with the viewport in both themes (light = pure white, dark = pure black). */
+  --topnav-h: 60px;
+  --bg-void: #ffffff;          /* matches the image's baked-in white background */
+  background: #ffffff;
+}
+
+[data-theme="dark"] .column-body {
+  --bg-void: #000000;          /* matches the inverted image's black background */
+  background: #000000;
+}
+
+.page--column {
+  /* Override generic page padding so the diagram can be as large as possible */
+  max-width: 1700px;
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
 
 .column-page {
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: var(--space-5);
-  min-height: calc(100vh - 56px - var(--space-7) * 2);
-}
-
-.column-header {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: var(--space-3);
-}
-
-.column-header__title {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 500;
-}
-
-.column-header__sub {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  letter-spacing: 0.12em;
+  grid-template-columns: 1fr 320px;       /* narrower right panel → more room for image */
+  gap: var(--space-4);
+  align-items: stretch;
+  /* Fill nearly the entire viewport height — every pixel counts for label legibility */
+  height: calc(100vh - var(--topnav-h) - 16px);
+  max-height: calc(100vh - var(--topnav-h) - 16px);
 }
 
 /* -------------------------------------------------------------------------
-   Viewport: 3D / diagram area
+   Viewport — image diagram with hotspot overlay + beam animation
    ------------------------------------------------------------------------- */
 .column-viewport {
   position: relative;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  min-height: 600px;
+  background: transparent;        /* image floats — no frame around it */
+  border: none;
+  border-radius: 0;
   display: flex;
-  align-items: center;
+  align-items: stretch;           /* image-wrap fills the full grid-cell height */
   justify-content: center;
-  overflow: hidden;
+  padding: 0;
+  overflow: visible;
 }
 
-.column-viewport__placeholder {
-  text-align: center;
-  color: var(--text-muted);
+/* The image floats on the page background with a soft cyan-tinted shadow.
+   Filling the cell vertically (100% height) and locking aspect-ratio yields
+   the largest possible image — width follows automatically.                */
+.column-image-wrap {
+  position: relative;
+  aspect-ratio: 1166 / 1349;
+  height: 100%;                   /* fill the column-page row */
+  max-width: 100%;
+  min-height: 540px;
+  border-radius: 10px;
+  /* Image bg matches the viewport bg exactly — they blend seamlessly */
+  background: var(--bg-void);
+  /* Soft cyan-only glow — the same feel as dark mode's halo, no dark halo
+     that would create a visible edge on white. */
+  box-shadow:
+    0 40px 80px -32px rgba(2, 132, 199, 0.16),
+    0 14px 40px -24px rgba(2, 132, 199, 0.10),
+    0 0 0 1px rgba(2, 132, 199, 0.05) inset;
+  transition:
+    background var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.column-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  border-radius: 12px;
+  display: block;
+}
+
+/* The hotspots layer overlays the image at the same dimensions */
+.column-hotspots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;          /* let the layer pass clicks through except on children */
+}
+
+/* -------------------------------------------------------------------------
+   Floating caption + controls — positioned over the image, inside image-wrap
+   ------------------------------------------------------------------------- */
+.column-viewport__caption {
+  position: absolute;
+  left: 18px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
   letter-spacing: 0.08em;
+  pointer-events: none;
+  z-index: 4;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(2, 132, 199, 0.08);
 }
 
-.column-viewport__placeholder-mark {
-  width: 80px;
-  height: 80px;
-  border: 1px dashed var(--border-strong);
-  border-radius: 50%;
-  margin: 0 auto var(--space-4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+[data-theme="dark"] .column-viewport__caption {
+  background: rgba(11, 18, 32, 0.85);
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.column-viewport__caption-text {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  color: var(--text-dim);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  letter-spacing: 0;
+  font-style: italic;
+  font-weight: 400;
 }
 
 .column-viewport__controls {
   position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
+  top: 14px;
+  right: 14px;
   display: flex;
   gap: var(--space-2);
-}
-
-.column-viewport__caption {
-  position: absolute;
-  bottom: var(--space-4);
-  left: var(--space-4);
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  letter-spacing: 0.1em;
+  z-index: 4;
 }
 
 /* -------------------------------------------------------------------------
-   Info panel (right)
+   ANIMATED ELECTRON BEAM
+
+   The beam overlay sits on top of the column's central axis (x ~36%)
+   and runs from just below the gun (y ~14%) down to the phosphor screen
+   (y ~78%). Two staggered pulses keep the flow continuous.
+   ------------------------------------------------------------------------- */
+.column-beam {
+  position: absolute;
+  left: 36%;
+  top: 14.5%;
+  width: 5px;
+  height: 63%;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.column-beam__pulse {
+  position: absolute;
+  left: -3px;
+  width: 11px;            /* a touch wider than the rail for a glow halo */
+  height: 28%;
+  top: -28%;
+  border-radius: 50% / 30%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(125, 211, 252, 0.95) 0%,
+    rgba(56, 189, 248, 0.7) 35%,
+    rgba(56, 189, 248, 0.25) 70%,
+    rgba(56, 189, 248, 0) 100%
+  );
+  filter: blur(2px);
+  mix-blend-mode: screen;
+  animation: beam-flow 2.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.column-beam__pulse--lag {
+  animation-delay: 1.3s;
+  opacity: 0.7;
+}
+
+@keyframes beam-flow {
+  0%   { top: -30%; opacity: 0; }
+  10%  { opacity: 0.9; }
+  85%  { opacity: 0.9; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .column-beam__pulse { animation: none; }
+  /* In reduced-motion mode, just show a soft static glow along the path */
+  .column-beam__pulse {
+    top: 30%;
+    height: 40%;
+    opacity: 0.5;
+  }
+  .column-beam__pulse--lag { display: none; }
+}
+
+/* -------------------------------------------------------------------------
+   HOTSPOTS — invisible buttons over each label, lit on hover
+   ------------------------------------------------------------------------- */
+.column-hotspot {
+  position: absolute;
+  pointer-events: auto;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0;
+  cursor: help;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color   var(--dur-fast) var(--ease-out),
+    box-shadow     var(--dur-fast) var(--ease-out);
+  outline: none;
+}
+
+.column-hotspot:hover,
+.column-hotspot:focus-visible,
+.column-hotspot.is-active {
+  background: var(--signal-soft);
+  border-color: var(--signal-edge);
+  box-shadow:
+    0 0 0 1px var(--signal-edge),
+    0 6px 18px -6px rgba(2, 132, 199, 0.35);
+}
+
+/* Brief on-load reveal: every hotspot briefly tints to advertise interactivity. */
+.column-hotspots.is-intro .column-hotspot {
+  animation: hotspot-intro 1.6s var(--ease-out);
+}
+
+@keyframes hotspot-intro {
+  0%, 100% { background-color: transparent; border-color: transparent; }
+  40%, 60% { background-color: var(--signal-soft); border-color: var(--signal-edge); }
+}
+
+/* -------------------------------------------------------------------------
+   PINS — small concentric rings over the optical element on the column
+   ------------------------------------------------------------------------- */
+.column-pin {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+  z-index: 3;
+}
+
+.column-pin.is-active {
+  opacity: 1;
+}
+
+.column-pin::before,
+.column-pin::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--signal);
+}
+
+.column-pin::before {
+  background: var(--signal);
+  transform: scale(0.35);
+  box-shadow: 0 0 8px var(--signal);
+}
+
+.column-pin::after {
+  animation: pin-pulse 1.8s var(--ease-out) infinite;
+}
+
+@keyframes pin-pulse {
+  0%   { transform: scale(0.5); opacity: 1; border-width: 2px; }
+  100% { transform: scale(1.6); opacity: 0; border-width: 1px; }
+}
+
+/* -------------------------------------------------------------------------
+   INFO PANEL (right column) — detail card on top, component list at bottom.
+   Constrained to viewport height; both sections scroll internally as needed.
    ------------------------------------------------------------------------- */
 .column-info {
   background: var(--bg-panel);
   border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  padding: var(--space-5);
+  border-radius: 12px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  height: 100%;
 }
 
-.column-info__eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--signal);
-  margin-bottom: var(--space-3);
-}
-
-.column-info__title {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 500;
-  margin-bottom: var(--space-2);
-}
-
-.column-info__role {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  margin-bottom: var(--space-5);
-  padding-bottom: var(--space-4);
+/* ----- DETAIL CARD ----- */
+.column-info__detail {
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 240px;
+  overflow-y: auto;
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.column-info__body {
-  flex: 1;
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  line-height: 1.65;
-}
-
-.column-info__body p { margin-bottom: var(--space-4); }
-.column-info__body p:last-child { margin-bottom: 0; }
-
+/* Empty state — shown until the first inspection */
 .column-info__empty {
   display: flex;
   flex-direction: column;
@@ -145,18 +319,347 @@
   text-align: center;
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-2);
 }
+
+.column-info__empty[hidden],
+.column-info__content[hidden] { display: none; }
 
 .column-info__empty-mark {
-  width: 48px;
-  height: 48px;
-  border: 1px dashed var(--border-strong);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  margin-bottom: var(--space-4);
+  border: 1px dashed var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
 }
 
-@media (max-width: 1100px) {
+.column-info__empty-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.column-info__empty-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Populated content */
+.column-info__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.column-info__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--signal);
+  letter-spacing: 0.16em;
+}
+
+.column-info__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.column-info__role {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-3);
+}
+
+.column-info__body {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.column-info__body p {
+  margin: 0 0 var(--space-3);
+}
+
+.column-info__body p:last-child { margin-bottom: 0; }
+
+.column-info__body strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ----- COMPONENT LIST ----- */
+.column-info__list-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  max-height: 320px;
+  min-height: 0;
+}
+
+.column-info__list-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-5);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--signal);                /* cyan, mirrors the eyebrow in the detail panel */
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  background: var(--signal-soft);      /* faint cyan tint to match the colour */
+  border-top: 1px solid var(--signal-edge);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.column-info__list-count {
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.component-list {
+  list-style: none;
+  padding: var(--space-2) 0;
+  margin: 0;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+}
+
+.component-list__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 6px var(--space-5);
+  cursor: pointer;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  border-left: 2px solid transparent;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.component-list__item:hover {
+  background: var(--signal-soft);
+  border-left-color: var(--signal-edge);
+}
+
+.component-list__item.is-active {
+  background: var(--signal-soft);
+  border-left-color: var(--signal);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.component-list__num {
+  flex: 0 0 22px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+.component-list__item.is-active .component-list__num {
+  color: var(--signal);
+}
+
+.component-list__name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* -------------------------------------------------------------------------
+   DARK MODE — invert the image so background goes black + labels go white.
+   The page (--bg-void) and image-wrap are already pure black in dark mode
+   (set near the top of this file), so the image bg blends seamlessly.
+   ------------------------------------------------------------------------- */
+[data-theme="dark"] .column-image-wrap {
+  /* Use a softer shadow on pure-black bg */
+  box-shadow:
+    0 40px 80px -28px rgba(56, 189, 248, 0.18),
+    0 24px 50px -22px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(56, 189, 248, 0.08) inset;
+}
+
+[data-theme="dark"] .column-image {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) saturate(1.1);
+}
+
+/* The zoom-modal image gets the same treatment */
+[data-theme="dark"] .zoom-modal__image {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) saturate(1.1);
+}
+
+/* -------------------------------------------------------------------------
+   ZOOM MODAL
+   ------------------------------------------------------------------------- */
+.zoom-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-modal[hidden] { display: none; }
+
+.zoom-modal__bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: zoom-out;
+}
+
+.zoom-modal__panel {
+  position: relative;
+  width: min(96vw, 1500px);
+  height: min(94vh, 950px);
+  background: var(--bg-void);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,0.6);
+}
+
+.zoom-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-panel);
+}
+
+.zoom-modal__title { display: flex; align-items: center; gap: var(--space-3); }
+.zoom-modal__heading { font-family: var(--font-display); font-size: 1rem; color: var(--text-primary); }
+
+.zoom-modal__controls { display: flex; align-items: center; gap: var(--space-2); }
+
+.zoom-modal__scale {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--signal);
+  padding: 4px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  min-width: 64px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.zoom-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-panel);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.zoom-btn:hover {
+  background: var(--signal-soft);
+  border-color: var(--signal-edge);
+  color: var(--signal);
+}
+
+.zoom-btn--close:hover {
+  background: rgba(239, 68, 68, 0.1));
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.zoom-modal__stage {
+  position: relative;
+  overflow: hidden;
+  background:
+    repeating-conic-gradient(
+      var(--bg-panel) 0% 25%, var(--bg-void) 0% 50%
+    ) 0 0 / 18px 18px;
+  cursor: grab;
+}
+
+.zoom-modal__stage.is-panning { cursor: grabbing; }
+
+[data-theme="dark"] .zoom-modal__stage {
+  background:
+    repeating-conic-gradient(
+      rgba(15, 23, 42, 0.5) 0% 25%, rgba(11, 18, 32, 0.7) 0% 50%
+    ) 0 0 / 18px 18px;
+}
+
+.zoom-modal__image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 50% 50%;
+  user-select: none;
+  -webkit-user-drag: none;
+  will-change: transform;
+}
+
+.zoom-modal__footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-panel);
+}
+
+.zoom-modal__hint {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.zoom-modal__hint kbd {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  padding: 2px 6px;
+  background: var(--bg-void);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  margin-right: 4px;
+  color: var(--text-primary);
+}
+
+/* -------------------------------------------------------------------------
+   Responsive: drop to single column on narrow viewports
+   ------------------------------------------------------------------------- */
+@media (max-width: 980px) {
   .column-page { grid-template-columns: 1fr; }
+  .column-info { min-height: 600px; }
+  .column-image-wrap {
+    height: 70vh;
+    max-height: 70vh;
+  }
 }

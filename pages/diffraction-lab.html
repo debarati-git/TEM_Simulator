@@ -7,97 +7,424 @@
   <link rel="stylesheet" href="../assets/css/global.css" />
   <link rel="stylesheet" href="../assets/css/diffraction.css" />
 </head>
-<body>
+<body class="diff-body">
 
   <div data-topnav data-module="diffraction"></div>
 
-  <main class="page">
+  <main class="diff-page">
 
-    <div class="diff-page">
-
-      <header class="diff-header">
-        <div>
-          <div class="tag tag--signal" style="margin-bottom: 8px;">MODULE 03</div>
-          <h1 class="diff-header__title">Reciprocal Space</h1>
+    <!-- ============= TOP STRIP — module tag, title, status pills ============= -->
+    <header class="diff-header">
+      <div class="diff-header__left">
+        <span class="tag tag--signal">MODULE 03 · DIFFRACTION LAB</span>
+      </div>
+      <div class="diff-header__right">
+        <div class="diff-pill">
+          <span class="diff-pill__key">λ</span>
+          <span class="diff-pill__val"><span id="wavelengthReadout">2.51</span> pm</span>
         </div>
-        <div class="diff-header__sub">SELECT A LATTICE · OBSERVE THE PATTERN</div>
-      </header>
+        <div class="diff-pill">
+          <span class="diff-pill__key">L</span>
+          <span class="diff-pill__val"><span id="cameraValueTop">1000</span> mm</span>
+        </div>
+        <div class="diff-pill">
+          <span class="diff-pill__key">ZA</span>
+          <span class="diff-pill__val" id="zoneAxisTop">[001]</span>
+        </div>
+        <button type="button" class="diff-help-btn" id="diffHelpBtn" aria-label="Open help" title="How to use this lab">
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <circle cx="8" cy="8" r="6.6"/>
+            <path d="M 6.1 6 a 1.9 1.9 0 1 1 3.4 1.2 c -0.85 0.55 -1.5 0.85 -1.5 1.85"/>
+            <circle cx="8" cy="11.6" r="0.55" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+      </div>
+    </header>
 
-      <!-- Crystal system selector -->
-      <aside class="diff-selector" id="diff-selector">
-        <div class="diff-selector__label">Crystal System</div>
+    <!-- ============= TWO-PANE STAGE — real space | reciprocal space ============= -->
+    <section class="diff-stage">
+      <!-- LEFT: 3D crystal lattice in real space -->
+      <div class="diff-pane diff-pane--real">
+        <div class="diff-pane__header">
+          <div class="diff-pane__title-wrap">
+            <div class="diff-pane__eyebrow">REAL SPACE</div>
+            <div class="diff-pane__title" id="latticeTitle">Gold (Au)</div>
+          </div>
+          <div class="diff-pane__meta">
+            <div class="diff-hint diff-hint--blink" id="dragRotateHint">DRAG TO ROTATE</div>
+            <div class="diff-pane__meta-val" id="latticeMeta">FCC · a = 0.408 nm</div>
+          </div>
+        </div>
+        <div class="diff-pane__canvas diff-pane__canvas--real" id="latticeCanvas">
+          <svg id="latticeSVG"
+               viewBox="-200 -200 400 400"
+               preserveAspectRatio="xMidYMid meet"
+               xmlns="http://www.w3.org/2000/svg">
+            <g id="latticeGroup"></g>
+          </svg>
+        </div>
+        <div class="diff-pane__footer">
+          <span class="diff-pane__footer-key">UNIT CELL</span>
+          <span class="diff-pane__footer-val">2 × 2 × 2 cells shown</span>
+        </div>
+      </div>
 
-        <ul class="diff-selector__list" id="diff-list">
-          <li class="diff-selector__item is-active" data-system="cubic-simple">
-            <span class="diff-selector__name">Simple Cubic</span>
-            <span class="diff-selector__sys">SC</span>
-          </li>
-          <li class="diff-selector__item" data-system="cubic-bcc">
-            <span class="diff-selector__name">Body-Centered Cubic</span>
-            <span class="diff-selector__sys">BCC</span>
-          </li>
-          <li class="diff-selector__item" data-system="cubic-fcc">
-            <span class="diff-selector__name">Face-Centered Cubic</span>
-            <span class="diff-selector__sys">FCC</span>
-          </li>
-          <li class="diff-selector__item" data-system="hexagonal">
-            <span class="diff-selector__name">Hexagonal</span>
-            <span class="diff-selector__sys">HEX</span>
-          </li>
-          <li class="diff-selector__item" data-system="tetragonal">
-            <span class="diff-selector__name">Tetragonal</span>
-            <span class="diff-selector__sys">TET</span>
-          </li>
-        </ul>
+      <!-- RIGHT: Reciprocal-space SAED pattern -->
+      <div class="diff-pane diff-pane--reciprocal">
+        <div class="diff-pane__header">
+          <div class="diff-pane__title-wrap">
+            <div class="diff-pane__eyebrow">RECIPROCAL SPACE</div>
+            <div class="diff-pane__title">SAED Pattern</div>
+          </div>
+          <div class="diff-pane__meta">
+            <div class="diff-hint diff-hint--blink" id="spotClickHint">CLICK ANY SPOT</div>
+            <div class="diff-pane__meta-val">Zone: <strong id="zonePatternMeta">[001]</strong></div>
+          </div>
+        </div>
+        <div class="diff-pane__canvas diff-pane__canvas--reciprocal" id="diffCanvas">
+          <svg id="diffSVG"
+               viewBox="-200 -200 400 400"
+               preserveAspectRatio="xMidYMid meet"
+               xmlns="http://www.w3.org/2000/svg">
+            <g id="diffGroup"></g>
+            <g id="measureGroup"></g>
+          </svg>
 
-        <div class="diff-selector__params" id="diff-params">
-          <div class="diff-selector__param">
-            <span class="diff-selector__param-key">a</span>
-            <span class="diff-selector__param-val" id="param-a">—</span>
+          <!-- Floating spot info card -->
+          <div class="spot-readout" id="spotReadout">
+            <button class="spot-readout__close" id="spotReadoutClose" aria-label="Close">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="2" y1="2" x2="8" y2="8"/>
+                <line x1="8" y1="2" x2="2" y2="8"/>
+              </svg>
+            </button>
+            <div class="spot-readout__eyebrow">REFLECTION</div>
+            <div class="spot-readout__hkl" id="spotHKL">(<em>200</em>)</div>
+            <div class="spot-readout__row">
+              <span class="spot-readout__label">d-spacing</span>
+              <span class="spot-readout__value" id="spotD">0.204 nm</span>
+            </div>
+            <div class="spot-readout__row">
+              <span class="spot-readout__label">|g| (1/d)</span>
+              <span class="spot-readout__value" id="spotG">4.90 nm⁻¹</span>
+            </div>
+            <div class="spot-readout__row">
+              <span class="spot-readout__label">2θ (Bragg)</span>
+              <span class="spot-readout__value" id="spotTheta">0.71°</span>
+            </div>
+            <div class="spot-readout__row">
+              <span class="spot-readout__label">R on screen</span>
+              <span class="spot-readout__value" id="spotR">12.3 mm</span>
+            </div>
           </div>
-          <div class="diff-selector__param">
-            <span class="diff-selector__param-key">b</span>
-            <span class="diff-selector__param-val" id="param-b">—</span>
-          </div>
-          <div class="diff-selector__param">
-            <span class="diff-selector__param-key">c</span>
-            <span class="diff-selector__param-val" id="param-c">—</span>
-          </div>
-          <div class="diff-selector__param">
-            <span class="diff-selector__param-key">zone axis</span>
-            <span class="diff-selector__param-val" id="param-zone">[001]</span>
+        </div>
+        <div class="diff-pane__footer">
+          <span class="diff-pane__footer-key">d = λL / R</span>
+          <span class="diff-pane__footer-val">Spots: <span id="spotCount">—</span></span>
+        </div>
+      </div>
+
+      <!-- ============= COLLAPSIBLE THEORY PANEL — slides in from the right ============= -->
+      <aside class="diff-theory" id="diffTheory" aria-label="Theory and inference reference">
+        <button class="diff-theory__tab" id="diffTheoryTab" type="button"
+                aria-expanded="false" aria-controls="diffTheoryPanel"
+                title="Open theory & inference panel">
+          <svg class="diff-theory__tab-icon" viewBox="0 0 12 12" width="11" height="11"
+               fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <polyline points="8,3 4,6 8,9"/>
+          </svg>
+          <span class="diff-theory__tab-label">THEORY</span>
+        </button>
+        <div class="diff-theory__panel" id="diffTheoryPanel">
+          <header class="diff-theory__header">
+            <div class="diff-theory__title-wrap">
+              <div class="diff-theory__eyebrow">REFERENCE</div>
+              <h3 class="diff-theory__title">Theory &amp; Inference</h3>
+            </div>
+            <button type="button" class="diff-theory__close" id="diffTheoryClose"
+                    aria-label="Close theory panel">
+              <svg viewBox="0 0 12 12" width="11" height="11" fill="none"
+                   stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                <line x1="3" y1="3" x2="9" y2="9"/>
+                <line x1="9" y1="3" x2="3" y2="9"/>
+              </svg>
+            </button>
+          </header>
+
+          <div class="diff-theory__body">
+
+            <section class="diff-theory__section">
+              <div class="diff-theory__heading">Real ↔ Reciprocal space</div>
+              <p>Real space holds the periodic atomic lattice. Reciprocal space is its <strong>Fourier dual</strong> — what the electron beam "sees" after scattering. A crystal with plane spacing <em>d</em> produces a reciprocal-lattice point at distance <em>1/d</em> from the origin: <strong>tighter planes → wider spots</strong>.</p>
+            </section>
+
+            <section class="diff-theory__section">
+              <div class="diff-theory__heading">Why spots appear — Bragg</div>
+              <p>Each spot corresponds to a family of crystal planes <em>{hkl}</em>. Constructive interference happens only when <em>2d sin θ = nλ</em>. Spots far from the center come from planes with small <em>d</em>; spots near the center come from planes with large <em>d</em>.</p>
+            </section>
+
+            <section class="diff-theory__section">
+              <div class="diff-theory__heading">The zone axis [uvw]</div>
+              <p>The beam direction through the crystal. Only reciprocal-lattice points lying in the plane <em>perpendicular</em> to [uvw] appear in the pattern — that's why pattern geometry changes when you change zone. The pattern's symmetry mirrors the crystal's symmetry along [uvw].</p>
+            </section>
+
+            <section class="diff-theory__section">
+              <div class="diff-theory__heading">The camera equation</div>
+              <div class="diff-theory__formula">
+                <span class="diff-theory__formula-lhs">d</span>
+                <span class="diff-theory__formula-eq">=</span>
+                <span class="diff-theory__formula-rhs">λL / R</span>
+              </div>
+              <p>Measure <em>R</em> on the screen (use the <strong>Ruler</strong>), read <em>λ</em> from voltage and <em>L</em> from the slider, and the plane spacing <em>d</em> follows directly.</p>
+            </section>
+
+            <section class="diff-theory__section">
+              <div class="diff-theory__heading">What you can infer</div>
+              <ul class="diff-theory__list">
+                <li><strong>Crystal structure</strong> — from spot symmetry and systematic absences (FCC misses odd–even mixes; BCC misses h+k+l odd).</li>
+                <li><strong>Lattice parameter</strong> <em>a</em> — back-calculated from any measured <em>d</em> via the d-spacing formula.</li>
+                <li><strong>Crystal orientation</strong> — the zone axis [uvw] that gives this pattern geometry.</li>
+                <li><strong>Phase identification</strong> — match measured d-spacings against a known-material database.</li>
+              </ul>
+            </section>
+
           </div>
         </div>
       </aside>
 
-      <!-- Pattern viewer -->
-      <section class="diff-viewer crosshair">
-        <div class="diff-viewer__header">
-          <h2 class="diff-viewer__title">Diffraction Pattern</h2>
-          <span class="diff-viewer__tag">RECIPROCAL · 2D PROJECTION</span>
-        </div>
+    </section>
 
-        <div class="diff-viewer__canvas" id="diff-canvas">
-          <div class="diff-viewer__placeholder">
-            <div class="diff-viewer__placeholder-mark"></div>
-            DIFFRACTION PATTERN<br />
-            <span style="opacity: 0.6;">Renderer activates in Phase 4</span>
+    <!-- ============= BOTTOM CONTROL BAR ============= -->
+    <section class="diff-controls">
+
+      <div class="diff-control">
+        <div class="diff-control__label">CRYSTAL</div>
+        <div class="diff-select" id="crystalSelect">
+          <button class="diff-select-trigger" id="crystalTrigger" type="button">
+            <span id="crystalTriggerText">Gold (Au)</span>
+            <svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="2,4 5,7 8,4"/>
+            </svg>
+          </button>
+          <div class="diff-select-dropdown" id="crystalDropdown"></div>
+        </div>
+      </div>
+
+      <div class="diff-control">
+        <div class="diff-control__label">ZONE AXIS</div>
+        <div class="diff-select" id="zoneSelect">
+          <button class="diff-select-trigger" id="zoneTrigger" type="button">
+            <span id="zoneTriggerText">[001]</span>
+            <svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="2,4 5,7 8,4"/>
+            </svg>
+          </button>
+          <div class="diff-select-dropdown" id="zoneDropdown"></div>
+        </div>
+      </div>
+
+      <div class="diff-control diff-control--slider">
+        <div class="diff-control__label">CAMERA LENGTH L</div>
+        <div class="diff-slider-row">
+          <input type="range" id="cameraSlider"
+                 min="200" max="2000" step="50" value="1000" />
+          <span class="diff-slider-value"><span id="cameraValue">1000</span> mm</span>
+        </div>
+      </div>
+
+      <div class="diff-control">
+        <div class="diff-control__label">ACC. VOLTAGE</div>
+        <div class="diff-voltage">
+          <button type="button" class="diff-voltage__btn" data-voltage="120">120 kV</button>
+          <button type="button" class="diff-voltage__btn is-active" data-voltage="200">200 kV</button>
+        </div>
+      </div>
+
+      <div class="diff-control diff-control--tools">
+        <div class="diff-control__label">TOOLS</div>
+        <div class="diff-tools">
+          <button type="button" class="diff-tool" id="rulerTool" title="Measure between two spots">
+            <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="2" y1="14" x2="14" y2="2"/>
+              <circle cx="2" cy="14" r="1.5"/>
+              <circle cx="14" cy="2" r="1.5"/>
+            </svg>
+            <span>Ruler</span>
+          </button>
+          <button type="button" class="diff-tool" id="resetView" title="Reset to [001] zone axis">
+            <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M 14 8 a 6 6 0 1 1 -2 -4.5"/>
+              <polyline points="14,1 14,4 11,4"/>
+            </svg>
+            <span>Reset</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============= HELP MODAL — opens on every visit; reopen via header icon ============= -->
+    <div class="diff-modal" id="diffHelpModal" role="dialog" aria-modal="true" aria-labelledby="diffHelpTitle" hidden>
+      <div class="diff-modal__bg" id="diffHelpBackdrop"></div>
+      <div class="diff-modal__panel">
+        <header class="diff-modal__header">
+          <div class="diff-modal__title">
+            <span class="tag tag--signal">DIFFRACTION LAB</span>
+            <span class="diff-modal__heading" id="diffHelpTitle">How to use this lab</span>
+          </div>
+          <button type="button" class="diff-modal__close" id="diffHelpClose" aria-label="Close help">
+            <svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <line x1="3" y1="3" x2="11" y2="11"/>
+              <line x1="11" y1="3" x2="3" y2="11"/>
+            </svg>
+          </button>
+        </header>
+
+        <div class="diff-modal__body">
+          <section class="diff-modal__section">
+            <div class="diff-modal__step">01</div>
+            <div class="diff-modal__step-body">
+              <div class="diff-modal__step-title">What this is</div>
+              <p>A single-crystal <strong>SAED</strong> (Selected Area Electron Diffraction) simulator. Pick a crystal and a zone axis, then read off Miller indices and d-spacings from the pattern.</p>
+            </div>
+          </section>
+
+          <section class="diff-modal__section">
+            <div class="diff-modal__step">02</div>
+            <div class="diff-modal__step-body">
+              <div class="diff-modal__step-title">Real space — left pane</div>
+              <p><strong>Drag</strong> the lattice to rotate the crystal in 3D. The yellow [100] [010] [001] arrows are anchored to the crystal and spin with it.</p>
+            </div>
+          </section>
+
+          <section class="diff-modal__section">
+            <div class="diff-modal__step">03</div>
+            <div class="diff-modal__step-body">
+              <div class="diff-modal__step-title">Reciprocal space — right pane</div>
+              <p><strong>Click any spot</strong> to read its (<em>hkl</em>) indices, d-spacing, |g|, Bragg 2θ, and screen radius R. Use the <strong>Ruler</strong> tool to measure between two spots and infer d directly.</p>
+            </div>
+          </section>
+
+          <section class="diff-modal__section">
+            <div class="diff-modal__step">04</div>
+            <div class="diff-modal__step-body">
+              <div class="diff-modal__step-title">The controls</div>
+              <p><strong>Camera Length L</strong> scales the pattern via <code>R = λL / d</code>. <strong>Acc. Voltage</strong> sets the electron wavelength λ. <strong>Reset</strong> snaps the view back to the [001] zone axis.</p>
+            </div>
+          </section>
+
+          <div class="diff-modal__note">
+            <strong>Scope:</strong> this lab simulates <strong>single-crystal SAED only</strong>. Ring (polycrystalline) patterns and CBED are not included.
           </div>
         </div>
 
-        <div class="diff-viewer__footer">
-          <span>CAMERA LENGTH · 1000 mm</span>
-          <span>200 kV · λ ≈ 2.51 pm</span>
-        </div>
-      </section>
-
+        <footer class="diff-modal__footer">
+          <button type="button" class="diff-modal__cta" id="diffHelpGotIt">Got it — start</button>
+        </footer>
+      </div>
     </div>
 
   </main>
 
+  <!-- Scripts: load order matters — data first, then math, then renderers, then controller. -->
   <script src="../assets/js/global.js"></script>
   <script src="../assets/js/diffraction/lattice-data.js"></script>
+  <script src="../assets/js/diffraction/math3d.js"></script>
+  <script src="../assets/js/diffraction/lattice-renderer.js"></script>
   <script src="../assets/js/diffraction/reciprocal-renderer.js"></script>
   <script src="../assets/js/diffraction/diffraction.js"></script>
+
+  <!-- Sync the top status pills with controls (small inline glue) -->
+  <script>
+    (function () {
+      // Mirror camera-length slider value into the top pill
+      const slider = document.getElementById('cameraSlider');
+      const top    = document.getElementById('cameraValueTop');
+      if (slider && top) {
+        slider.addEventListener('input', () => { top.textContent = slider.value; });
+      }
+      // Mirror zone-axis trigger text into the top pill
+      const ztrig = document.getElementById('zoneTriggerText');
+      const ztop  = document.getElementById('zoneAxisTop');
+      if (ztrig && ztop) {
+        const obs = new MutationObserver(() => { ztop.textContent = ztrig.textContent; });
+        obs.observe(ztrig, { childList: true, characterData: true, subtree: true });
+      }
+      // Count spots once the renderer has run (small delay so init completes)
+      setTimeout(() => {
+        const count = document.getElementById('spotCount');
+        const svg = document.getElementById('diffSVG');
+        if (!count || !svg) return;
+        const refresh = () => {
+          const n = svg.querySelectorAll('.diff-spot').length;
+          count.textContent = n;
+        };
+        refresh();
+        // Watch for re-renders
+        const obs = new MutationObserver(refresh);
+        obs.observe(svg.querySelector('#diffGroup'), { childList: true });
+      }, 100);
+
+      // ── Help modal — auto-open on visit; reopen via header icon ────────
+      const modal       = document.getElementById('diffHelpModal');
+      const openBtn     = document.getElementById('diffHelpBtn');
+      const closeBtn    = document.getElementById('diffHelpClose');
+      const gotItBtn    = document.getElementById('diffHelpGotIt');
+      const backdrop    = document.getElementById('diffHelpBackdrop');
+
+      function openModal()  {
+        if (!modal) return;
+        modal.hidden = false;
+        // Force reflow so the open-state transition runs
+        void modal.offsetWidth;
+        modal.classList.add('is-open');
+      }
+      function closeModal() {
+        if (!modal) return;
+        modal.classList.remove('is-open');
+        // Wait for transition before hiding to avoid layout flash
+        setTimeout(() => { modal.hidden = true; }, 200);
+      }
+
+      openBtn?.addEventListener('click', openModal);
+      closeBtn?.addEventListener('click', closeModal);
+      gotItBtn?.addEventListener('click', closeModal);
+      backdrop?.addEventListener('click', closeModal);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && !modal.hidden) closeModal();
+      });
+
+      // Auto-open on page load — small delay so the page paints first
+      setTimeout(openModal, 600);
+
+      // ── Theory panel — slide-out from right ────────────────────────────
+      const theory      = document.getElementById('diffTheory');
+      const theoryTab   = document.getElementById('diffTheoryTab');
+      const theoryClose = document.getElementById('diffTheoryClose');
+
+      function toggleTheory() {
+        if (!theory) return;
+        const open = theory.classList.toggle('is-open');
+        theoryTab?.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      function closeTheory() {
+        if (!theory) return;
+        theory.classList.remove('is-open');
+        theoryTab?.setAttribute('aria-expanded', 'false');
+      }
+
+      theoryTab?.addEventListener('click', toggleTheory);
+      theoryClose?.addEventListener('click', closeTheory);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && theory?.classList.contains('is-open')) closeTheory();
+      });
+      // Click anywhere outside the panel → collapse it
+      document.addEventListener('click', (e) => {
+        if (!theory?.classList.contains('is-open')) return;
+        if (e.target.closest('.diff-theory')) return;   // click inside panel/tab — keep open
+        closeTheory();
+      });
+    })();
+  </script>
 </body>
 </html>

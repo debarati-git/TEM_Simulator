@@ -213,14 +213,8 @@
 }
 
 .guided-context__instr-hint {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--warn);
-  opacity: 0;
-  transition: opacity var(--dur-base) var(--ease-out);
+  display: none;             /* hints removed — was the orange under-instruction text */
 }
-
-.guided-context__instr-hint.is-visible { opacity: 1; }
 
 /* -------------------------------------------------------------------------
    Body — 3-panel grid
@@ -232,6 +226,7 @@
   background: var(--border-subtle);
   min-height: 0;
   overflow: hidden;
+  position: relative;  /* anchor for the theory side-panel */
 }
 
 /* -------------------------------------------------------------------------
@@ -864,4 +859,332 @@ body.is-fullscreen .viewer__fs-label::before { font-size: 0.62rem; letter-spacin
   50%  { margin-left: 0; }
   75%  { margin-left: var(--wobble-amp); }
   100% { margin-left: 0; }
+}
+
+
+/* -------------------------------------------------------------------------
+   THEORY button in the status bar
+   Triggers the centered theory modal (below). Small, mono, slate-styled.
+   ------------------------------------------------------------------------- */
+.guided-status__theory-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: var(--space-3);
+  padding: 4px 10px;
+  height: 24px;
+  background: var(--bg-panel-3);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  white-space: nowrap;
+}
+
+.guided-status__theory-btn:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+  background: var(--signal-soft);
+}
+
+.guided-status__theory-btn:active {
+  transform: scale(0.97);
+}
+
+.guided-status__theory-btn svg {
+  flex-shrink: 0;
+}
+
+:root[data-theme="dark"] .guided-status__theory-btn {
+  background: var(--bg-panel-2);
+}
+
+/* -------------------------------------------------------------------------
+   Theory modal — opened from the status-bar button. Backdrop + centered card.
+   ------------------------------------------------------------------------- */
+.guided-theory {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-out);
+}
+
+.guided-theory[hidden] {
+  display: none;
+}
+
+.guided-theory.is-open {
+  opacity: 1;
+}
+
+.guided-theory__bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
+.guided-theory__panel {
+  position: relative;
+  width: min(92vw, 600px);
+  max-height: 88vh;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -12px rgba(15, 23, 42, 0.35);
+  transform: translateY(8px);
+  transition: transform 0.24s var(--ease-out);
+}
+
+.guided-theory.is-open .guided-theory__panel {
+  transform: translateY(0);
+}
+
+:root[data-theme="dark"] .guided-theory__panel {
+  background: var(--bg-panel-2);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.6);
+}
+
+.guided-theory__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-panel-3);
+  gap: var(--space-3);
+}
+
+.guided-theory__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.guided-theory__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+}
+
+.guided-theory__close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.guided-theory__close:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  background: var(--bg-panel);
+}
+
+.guided-theory__body {
+  padding: var(--space-4) var(--space-5);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+}
+
+.guided-theory__section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.guided-theory__heading {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0369A1;            /* sky-700 — readable on light surfaces */
+  letter-spacing: -0.005em;
+}
+
+:root[data-theme="dark"] .guided-theory__heading {
+  color: var(--signal);
+}
+
+.guided-theory__section p,
+.guided-theory__section li {
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+
+.guided-theory__section strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.guided-theory__section em {
+  font-style: italic;
+  color: var(--signal);
+  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+/* Bullet list */
+.guided-theory__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  margin: 2px 0 0;
+}
+
+.guided-theory__list li {
+  position: relative;
+  padding-left: 14px;
+}
+
+.guided-theory__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  background: var(--signal);
+  border-radius: 1px;
+}
+
+/* Inline callout */
+.guided-theory__note {
+  margin-top: 6px;
+  padding: 10px var(--space-3);
+  background: var(--unlock-soft);
+  border-left: 2px solid var(--unlock);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  border-radius: 2px;
+}
+
+.guided-theory__note strong {
+  color: #B45309;
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .guided-theory__note strong {
+  color: var(--unlock);
+}
+
+.guided-theory__footer {
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: flex-end;
+  background: var(--bg-panel-3);
+}
+
+.guided-theory__cta {
+  padding: 9px var(--space-5);
+  background: var(--signal);
+  border: 1px solid var(--signal);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.guided-theory__cta:hover {
+  background: #0369A1;
+  border-color: #0369A1;
+}
+
+.guided-theory__cta:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 600px) {
+  .guided-theory__panel {
+    width: 96vw;
+  }
+  .guided-theory__header,
+  .guided-theory__body,
+  .guided-theory__footer {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Full Screen button — gentle pulsing glow to draw attention.
+   Stops once the user has entered fullscreen (they've discovered it).
+   ------------------------------------------------------------------------- */
+.viewer__fullscreen {
+  animation: viewer-fs-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes viewer-fs-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.22),
+                0 0 12px rgba(2, 132, 199, 0.18);
+  }
+}
+
+:root[data-theme="dark"] .viewer__fullscreen {
+  animation: viewer-fs-pulse-dark 2.2s ease-in-out infinite;
+}
+
+@keyframes viewer-fs-pulse-dark {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.28),
+                0 0 14px rgba(56, 189, 248, 0.22);
+  }
+}
+
+/* Pause the pulse once user is in fullscreen — they've found it */
+body.is-fullscreen .viewer__fullscreen,
+:root[data-theme="dark"] body.is-fullscreen .viewer__fullscreen {
+  animation: none;
+  box-shadow: none;
+}
+
+/* Also pause on hover so the hover state isn't fighting the pulse */
+.viewer__fullscreen:hover {
+  animation-play-state: paused;
 }

@@ -40,6 +40,15 @@
       <div class="guided-status__right">
         <span>SAMPLE <strong id="ind-sample">—</strong></span>
         <span>MAG <strong id="ind-mag">—</strong></span>
+        <button type="button" class="guided-status__theory-btn" id="guidedTheoryBtn"
+                title="Open TEM image capture theory">
+          <svg viewBox="0 0 14 14" width="11" height="11" fill="none"
+               stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <path d="M2 3.5a1.2 1.2 0 0 1 1.2 -1.2 H7 v9.4 H3.2 a1.2 1.2 0 0 1 -1.2 -1.2 Z"/>
+            <path d="M12 3.5a1.2 1.2 0 0 0 -1.2 -1.2 H7 v9.4 h3.8 a1.2 1.2 0 0 0 1.2 -1.2 Z"/>
+          </svg>
+          <span>THEORY</span>
+        </button>
       </div>
 
       <!-- Ambient progress bar — bottom edge of status strip -->
@@ -430,6 +439,76 @@
         </div>
       </aside>
 
+      <!-- ============= THEORY MODAL — opened from status-bar button ============= -->
+      <div class="guided-theory" id="guidedTheory" role="dialog" aria-modal="true" aria-labelledby="guidedTheoryTitle" hidden>
+        <div class="guided-theory__bg" id="guidedTheoryBackdrop"></div>
+        <div class="guided-theory__panel">
+          <header class="guided-theory__header">
+            <div class="guided-theory__title-wrap">
+              <span class="tag tag--signal">REFERENCE</span>
+              <h3 class="guided-theory__title" id="guidedTheoryTitle">TEM Image Capture</h3>
+            </div>
+            <button type="button" class="guided-theory__close" id="guidedTheoryClose"
+                    aria-label="Close theory">
+              <svg viewBox="0 0 14 14" width="13" height="13" fill="none"
+                   stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                <line x1="3" y1="3" x2="11" y2="11"/>
+                <line x1="11" y1="3" x2="3" y2="11"/>
+              </svg>
+            </button>
+          </header>
+
+          <div class="guided-theory__body">
+
+            <section class="guided-theory__section">
+              <div class="guided-theory__heading">What a TEM image is</div>
+              <p>A 2D <strong>projection</strong> of how each region of your specimen scatters or absorbs electrons. Bright = electrons made it through to the detector; dark = electrons were scattered away by mass, thickness, or crystal orientation. The "image" is really an <em>electron-shadow</em> map.</p>
+            </section>
+
+            <section class="guided-theory__section">
+              <div class="guided-theory__heading">Where contrast comes from</div>
+              <p>The <strong>objective aperture</strong> picks which scattered beams reach the detector — that's what defines the contrast mode:</p>
+              <ul class="guided-theory__list">
+                <li><strong>Mass-thickness</strong> — heavier or thicker regions darker (nanoparticles, biological stain).</li>
+                <li><strong>Diffraction</strong> — crystallites at the Bragg condition appear dark in bright-field, bright in dark-field.</li>
+                <li><strong>Phase</strong> — at very high mag, atomic-column interference (HRTEM). Needs careful defocus.</li>
+              </ul>
+            </section>
+
+            <section class="guided-theory__section">
+              <div class="guided-theory__heading">Focus &amp; astigmatism</div>
+              <p>The objective lens is never perfect. <strong>Focus</strong> sets sharpness — true focus is often <em>slightly under</em>, where phase contrast peaks. <strong>Astigmatism</strong> (stigmator) corrects for the lens being stronger in one direction than another — uncorrected, points become streaks. The <strong>wobbler</strong> oscillates focus to help you find eucentric height and crossover.</p>
+            </section>
+
+            <section class="guided-theory__section">
+              <div class="guided-theory__heading">Magnification regimes</div>
+              <ul class="guided-theory__list">
+                <li><strong>Low</strong> — find your specimen, scan the grid, pick a region.</li>
+                <li><strong>Medium</strong> — frame the feature, set focus, correct stigmation.</li>
+                <li><strong>High / V.High</strong> — image. Align at low mag first; alignment errors blow up with mag.</li>
+              </ul>
+            </section>
+
+            <section class="guided-theory__section">
+              <div class="guided-theory__heading">Capturing the image</div>
+              <p>Insert the camera, set exposure, acquire. Two enemies of a clean shot:</p>
+              <ul class="guided-theory__list">
+                <li><strong>Drift</strong> — specimen creeps during exposure → blur. Let the stage settle first.</li>
+                <li><strong>Beam damage</strong> — high dose breaks bonds in soft samples (biology, polymers). Keep current low for fragile specimens, push it up for robust ones.</li>
+              </ul>
+              <div class="guided-theory__note">
+                <strong>Note:</strong> the <em>Beam Current</em> knob in this simulator is wired but not visually modeled — in a real TEM it sets electron dose (brightness vs sample damage trade-off).
+              </div>
+            </section>
+
+          </div>
+
+          <footer class="guided-theory__footer">
+            <button type="button" class="guided-theory__cta" id="guidedTheoryGotIt">Got it</button>
+          </footer>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -448,5 +527,35 @@
   <script src="../assets/js/guided/diagram.js"></script>
   <script src="../assets/js/guided/acquire.js"></script>
   <script src="../assets/js/guided/guided-controller.js"></script>
+
+  <!-- Theory modal: open from status-bar button; close via X, Esc, backdrop, or Got it -->
+  <script>
+    (function () {
+      const modal      = document.getElementById('guidedTheory');
+      const openBtn    = document.getElementById('guidedTheoryBtn');
+      const closeBtn   = document.getElementById('guidedTheoryClose');
+      const gotItBtn   = document.getElementById('guidedTheoryGotIt');
+      const backdrop   = document.getElementById('guidedTheoryBackdrop');
+      if (!modal || !openBtn) return;
+
+      function openModal() {
+        modal.hidden = false;
+        void modal.offsetWidth;          // force reflow so transition runs
+        modal.classList.add('is-open');
+      }
+      function closeModal() {
+        modal.classList.remove('is-open');
+        setTimeout(() => { modal.hidden = true; }, 200);
+      }
+
+      openBtn.addEventListener('click', openModal);
+      closeBtn?.addEventListener('click', closeModal);
+      gotItBtn?.addEventListener('click', closeModal);
+      backdrop?.addEventListener('click', closeModal);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
+      });
+    })();
+  </script>
 </body>
 </html>

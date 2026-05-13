@@ -1,199 +1,1360 @@
 /* =========================================================================
    The Diffraction Lab — page styles
-   Layout: crystal-system selector (left) + reciprocal pattern viewer (right)
+   Layout: top header strip · two-pane stage (real | reciprocal) · controls
+   Matches the project's slate-based design language (light default, dark
+   theme via [data-theme="dark"]). The reciprocal-space canvas is always
+   dark — it represents an actual phosphor / electron-diffraction screen.
    ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Page shell — fills the viewport below the topnav
+   ------------------------------------------------------------------------- */
+.diff-body {
+  overflow: hidden;
+}
 
 .diff-page {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: var(--space-5);
-  min-height: calc(100vh - 56px - var(--space-7) * 2);
-  /* Pull content up to reduce the gap between topnav and the
-     "MODULE 03 / Reciprocal Space" header, matching the tighter
-     headers used on the landing and mode-select pages. */
-  margin-top: calc(-1 * var(--space-7) + var(--space-3));
+  grid-template-rows: auto 1fr auto;
+  height: calc(100vh - 56px);
+  background: var(--bg-void);
+  overflow: hidden;
 }
 
+/* -------------------------------------------------------------------------
+   Top header strip — module tag · title · status pills
+   ------------------------------------------------------------------------- */
 .diff-header {
-  grid-column: 1 / -1;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-end;
-  padding-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: #F1F5F9;
   border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: var(--space-3);
+  gap: var(--space-5);
+}
+
+:root[data-theme="dark"] .diff-header {
+  background: var(--bg-panel);
+}
+
+.diff-header__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .diff-header__title {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 1.35rem;
   font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--text-primary);
 }
 
-.diff-header__sub {
+.diff-header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.diff-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 4px var(--space-3);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 2px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  color: var(--text-muted);
+  line-height: 1.2;
 }
 
-/* -------------------------------------------------------------------------
-   Left: crystal system selector
-   ------------------------------------------------------------------------- */
-.diff-selector {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  padding: var(--space-5);
-  display: flex;
-  flex-direction: column;
-}
-
-.diff-selector__label {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: var(--space-3);
-}
-
-.diff-selector__list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-bottom: var(--space-5);
-}
-
-.diff-selector__item {
-  background: var(--bg-panel-2);
-  border: 1px solid var(--border-subtle);
-  border-left: 2px solid transparent;
-  padding: var(--space-3) var(--space-4);
-  cursor: pointer;
-  transition: all var(--dur-fast) var(--ease-out);
-  border-radius: 2px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.diff-selector__item:hover {
-  background: var(--bg-panel-3);
-  border-left-color: var(--signal-edge);
-}
-
-.diff-selector__item.is-active {
-  border-left-color: var(--signal);
-  background: var(--bg-panel-3);
-}
-
-.diff-selector__name {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-}
-
-.diff-selector__sys {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-}
-
-.diff-selector__params {
-  margin-top: auto;
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border-subtle);
-}
-
-.diff-selector__param {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  padding: var(--space-2) 0;
+.diff-pill__key {
   color: var(--text-secondary);
-  border-bottom: 1px dashed var(--border-subtle);
+  letter-spacing: 0.08em;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
-.diff-selector__param:last-child { border-bottom: none; }
-
-.diff-selector__param-key { color: var(--text-muted); letter-spacing: 0.08em; }
-.diff-selector__param-val { color: var(--signal); }
-
-/* -------------------------------------------------------------------------
-   Right: pattern viewer
-   ------------------------------------------------------------------------- */
-.diff-viewer {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  position: relative;
-  overflow: hidden;
-}
-
-.diff-viewer__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.diff-viewer__title {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
+:root[data-theme="dark"] .diff-pill__key {
+  color: var(--text-muted);
   font-weight: 500;
 }
 
-.diff-viewer__tag {
+.diff-pill__val {
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* -------------------------------------------------------------------------
+   Two-pane stage — real space on left, reciprocal on right
+   ------------------------------------------------------------------------- */
+.diff-stage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border-subtle);
+  overflow: hidden;
+  min-height: 0;
+  position: relative;  /* anchor for the theory side-panel */
+}
+
+.diff-pane {
+  background: var(--bg-panel);
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.diff-pane__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-panel-3);
+  gap: var(--space-3);
+}
+
+:root[data-theme="dark"] .diff-pane__header {
+  background: var(--bg-panel-2);
+}
+
+.diff-pane__eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #0369A1;          /* sky-700 — darker than --signal for light-mode contrast */
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .diff-pane__eyebrow {
+  color: var(--signal);
+  font-weight: 500;
+}
+
+.diff-pane__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-top: 1px;
+}
+
+.diff-pane__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+.diff-pane__meta-val strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .diff-pane__meta {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+:root[data-theme="dark"] .diff-pane__meta-val strong {
+  font-weight: 500;
+}
+
+/* Blinking attention hints */
+.diff-hint {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #B45309;            /* amber-700 — dark enough to read on light pane */
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .diff-hint {
+  color: var(--unlock);
+  font-weight: 600;
+}
+
+.diff-hint--blink {
+  animation: diff-hint-blink 2.4s step-end infinite;
+}
+
+.diff-hint.is-hidden {
+  animation: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+@keyframes diff-hint-blink {
+  0%, 55%   { opacity: 1; }
+  56%, 100% { opacity: 0.22; }
+}
+
+.diff-pane__canvas {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.diff-pane__canvas svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Real-space pane — ALWAYS dark, matching the reciprocal-space scope */
+.diff-pane__canvas--real {
+  background:
+    radial-gradient(ellipse at center, rgba(56, 189, 248, 0.05) 0%, transparent 60%),
+    var(--scope-bg);
+  cursor: grab;
+}
+
+.diff-pane__canvas--real:active {
+  cursor: grabbing;
+}
+
+/* Reciprocal-space pane — ALWAYS dark, like a real phosphor screen */
+.diff-pane__canvas--reciprocal {
+  background:
+    radial-gradient(ellipse at center, rgba(56, 189, 248, 0.05) 0%, transparent 60%),
+    var(--scope-bg);
+}
+
+.diff-pane__canvas--reciprocal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.10) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center center;
+  pointer-events: none;
+}
+
+.diff-pane__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px var(--space-4);
+  background: var(--bg-panel-3);
+  border-top: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+:root[data-theme="dark"] .diff-pane__footer {
+  background: var(--bg-panel-2);
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.diff-pane__footer-key {
+  color: var(--signal);
+  font-weight: 500;
+}
+
+.diff-pane__footer-val {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------------------
+   Lattice (real-space) elements — rendered on the always-dark scope canvas
+   ------------------------------------------------------------------------- */
+.lattice-atom {
+  fill: var(--scope-signal);
+  stroke: var(--scope-signal);
+  stroke-width: 0.6;
+  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.5));
+  transition: opacity 0.2s;
+}
+
+.lattice-cell-edge {
+  stroke: var(--scope-signal);
+  stroke-width: 1;
+  fill: none;
+  stroke-dasharray: 3 4;
+  opacity: 0.32;
+}
+
+.lattice-axes-origin {
+  fill: var(--unlock);
+}
+
+.lattice-axis-line {
+  stroke: var(--unlock);
+  stroke-width: 2;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.55));
+}
+
+.lattice-axis-head {
+  fill: var(--unlock);
+  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.55));
+}
+
+.lattice-axis-label {
+  fill: var(--unlock);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: var(--scope-bg);     /* black halo blends into the dark canvas */
+  stroke-width: 3px;
+}
+
+/* -------------------------------------------------------------------------
+   Diffraction spots (reciprocal-space)
+   ------------------------------------------------------------------------- */
+.diff-ring {
+  fill: none;
+  stroke: rgba(56, 189, 248, 0.08);
+  stroke-width: 0.5;
+  stroke-dasharray: 2 4;
+}
+
+.diff-spot {
+  cursor: pointer;
+}
+
+.diff-spot circle {
+  fill: var(--scope-signal);
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.55));
+  transition: fill 0.15s, filter 0.15s, r 0.15s;
+}
+
+.diff-spot.is-center circle {
+  fill: #FFFFFF;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
+}
+
+.diff-spot:hover circle {
+  fill: var(--unlock);
+  filter: drop-shadow(0 0 10px var(--unlock-edge));
+}
+
+.diff-spot.is-selected circle {
+  fill: var(--unlock);
+  filter: drop-shadow(0 0 14px var(--unlock-edge));
+}
+
+.diff-spot-label {
+  fill: #F1F5F9;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  text-anchor: middle;
+}
+
+.diff-spot:hover .diff-spot-label,
+.diff-spot.is-selected .diff-spot-label {
+  opacity: 1;
+}
+
+/* Measurement (ruler) overlays */
+.measure-line {
+  stroke: var(--unlock);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 3;
+  fill: none;
+  filter: drop-shadow(0 0 4px var(--unlock-edge));
+}
+
+.measure-endpoint {
+  fill: var(--unlock);
+  filter: drop-shadow(0 0 6px var(--unlock-edge));
+}
+
+.measure-readout {
+  fill: var(--scope-bg);
+  stroke: var(--unlock);
+  stroke-width: 1;
+}
+
+.measure-readout-text {
+  fill: var(--unlock);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-anchor: middle;
+}
+
+/* -------------------------------------------------------------------------
+   Floating spot-info card (on diffraction canvas)
+   ------------------------------------------------------------------------- */
+.spot-readout {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  width: 230px;
+  background: var(--scope-panel);
+  border: 1px solid var(--scope-border);
+  border-left: 2px solid var(--unlock);
+  padding: var(--space-3) var(--space-4);
+  z-index: 10;
+  opacity: 0;
+  transform: translateX(16px);
+  transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+  pointer-events: none;
+  border-radius: 2px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.spot-readout.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.spot-readout__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--unlock);
+  margin-bottom: 6px;
+}
+
+.spot-readout__hkl {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--scope-text);
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.01em;
+}
+
+.spot-readout__hkl em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--scope-signal);
+}
+
+.spot-readout__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  padding: 5px 0;
+  border-bottom: 1px dashed rgba(180, 195, 220, 0.15);
+}
+
+.spot-readout__row:last-child {
+  border-bottom: none;
+}
+
+.spot-readout__label {
+  color: rgba(180, 195, 220, 0.65);
+  font-size: 0.7rem;
+}
+
+.spot-readout__value {
+  font-family: var(--font-mono);
+  color: var(--scope-text);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.spot-readout__close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: none;
+  color: rgba(180, 195, 220, 0.5);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.spot-readout__close:hover {
+  color: var(--scope-text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* -------------------------------------------------------------------------
+   Bottom controls bar
+   ------------------------------------------------------------------------- */
+.diff-controls {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 1fr)
+    minmax(140px, 1fr)
+    minmax(220px, 1.4fr)
+    auto
+    auto;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-5);
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-subtle);
+  align-items: end;
+}
+
+:root[data-theme="dark"] .diff-controls {
+  background: var(--bg-panel-2);
+}
+
+.diff-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.diff-control__label {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+:root[data-theme="dark"] .diff-control__label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Custom select — opens UPWARD since we're at the bottom of the screen */
+.diff-select {
+  position: relative;
+}
+
+.diff-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px var(--space-3);
+  background: var(--bg-panel-3);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  text-align: left;
+  border-radius: 2px;
+}
+
+.diff-select-trigger:hover {
+  border-color: var(--signal-edge);
+  background: var(--bg-panel);
+}
+
+.diff-select-trigger.is-open {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+.diff-select-trigger svg {
+  transition: transform var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.diff-select-trigger.is-open svg {
+  transform: rotate(180deg);
+}
+
+.diff-select-dropdown {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 20;
+  display: none;
+  border-radius: 2px;
+  box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.12);
+}
+
+:root[data-theme="dark"] .diff-select-dropdown {
+  background: var(--bg-panel-3);
+  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.4);
+}
+
+.diff-select-dropdown.is-open {
+  display: block;
+}
+
+.diff-select-option {
+  padding: 8px var(--space-3);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.diff-select-option:last-child {
+  border-bottom: none;
+}
+
+.diff-select-option:hover {
+  background: var(--signal-soft);
+}
+
+.diff-select-option.is-active {
+  background: var(--signal-soft);
+}
+
+.diff-select-option-name {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.diff-select-option.is-active .diff-select-option-name {
+  color: var(--signal);
+  font-weight: 500;
+}
+
+.diff-select-option-meta {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+:root[data-theme="dark"] .diff-select-option-meta {
   color: var(--text-muted);
 }
 
-.diff-viewer__canvas {
-  background: #000;
+/* Camera-length slider */
+.diff-slider-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 4px 0;
+}
+
+.diff-slider-row input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 22px;
+}
+
+.diff-slider-row input[type="range"]::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--signal) 0%,
+    var(--signal) var(--val, 50%),
+    var(--border-strong) var(--val, 50%),
+    var(--border-strong) 100%
+  );
+}
+
+.diff-slider-row input[type="range"]::-moz-range-track {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border-strong);
+}
+
+.diff-slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--signal);
+  border: 2px solid var(--bg-panel);
+  margin-top: -7px;
+  box-shadow: 0 0 0 1px var(--signal-edge), 0 1px 3px rgba(0,0,0,0.15);
+  cursor: grab;
+}
+
+.diff-slider-row input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--signal);
+  border: 2px solid var(--bg-panel);
+  cursor: grab;
+  box-shadow: 0 0 0 1px var(--signal-edge);
+}
+
+.diff-slider-value {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+  min-width: 72px;
+  text-align: right;
+  font-weight: 500;
+}
+
+/* Voltage selector — physical-feeling buttons */
+.diff-voltage {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--bg-panel-3);
+}
+
+.diff-voltage__btn {
+  padding: 7px var(--space-3);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
   position: relative;
+}
+
+.diff-voltage__btn + .diff-voltage__btn {
+  border-left: 1px solid var(--border-strong);
+}
+
+.diff-voltage__btn:hover:not(.is-active) {
+  color: var(--text-primary);
+  background: var(--bg-panel);
+}
+
+.diff-voltage__btn.is-active {
+  background: var(--signal);
+  color: #FFFFFF;
+}
+
+/* Tool buttons */
+.diff-tools {
+  display: flex;
+  gap: 6px;
+}
+
+.diff-tool {
+  padding: 7px var(--space-3);
+  background: var(--bg-panel-3);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.diff-tool:hover {
+  color: var(--text-primary);
+  border-color: var(--signal-edge);
+  background: var(--bg-panel);
+}
+
+.diff-tool.is-active {
+  color: var(--unlock);
+  border-color: var(--unlock);
+  background: var(--unlock-soft);
+}
+
+/* -------------------------------------------------------------------------
+   Responsive: collapse to vertical on narrow viewports
+   ------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .diff-stage {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .diff-controls {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+  .diff-control--slider,
+  .diff-control--tools {
+    grid-column: 1 / -1;
+  }
+  .diff-header__right {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Help button in the status bar
+   ------------------------------------------------------------------------- */
+.diff-help-btn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-left: 4px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  padding: 0;
+}
+
+.diff-help-btn:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+  background: var(--signal-soft);
+}
+
+.diff-help-btn:active {
+  transform: scale(0.96);
+}
+
+:root[data-theme="dark"] .diff-help-btn {
+  background: var(--bg-panel-3);
+  color: var(--text-muted);
+}
+
+:root[data-theme="dark"] .diff-help-btn:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
+/* -------------------------------------------------------------------------
+   Help modal — auto-opens on every visit, reopen via header icon
+   ------------------------------------------------------------------------- */
+.diff-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-out);
+}
+
+.diff-modal[hidden] { display: none; }
+
+.diff-modal.is-open {
+  opacity: 1;
+}
+
+.diff-modal__bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
+.diff-modal__panel {
+  position: relative;
+  width: min(92vw, 580px);
+  max-height: 88vh;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   overflow: hidden;
-  background-image:
-    radial-gradient(circle at center, rgba(77, 208, 225, 0.04) 0%, transparent 70%);
+  box-shadow: 0 24px 60px -12px rgba(15, 23, 42, 0.35);
+  transform: translateY(8px);
+  transition: transform 0.24s var(--ease-out);
 }
 
-.diff-viewer__placeholder {
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  color: var(--text-muted);
+.diff-modal.is-open .diff-modal__panel {
+  transform: translateY(0);
 }
 
-.diff-viewer__placeholder-mark {
-  width: 100px;
-  height: 100px;
-  border: 1px dashed var(--text-dim);
+:root[data-theme="dark"] .diff-modal__panel {
+  background: var(--bg-panel-2);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.6);
+}
+
+.diff-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-panel-3);
+  gap: var(--space-3);
+}
+
+:root[data-theme="dark"] .diff-modal__header {
+  background: var(--bg-panel-3);
+}
+
+.diff-modal__title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.diff-modal__heading {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+.diff-modal__close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border-strong);
   border-radius: 50%;
-  margin: 0 auto var(--space-4);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  padding: 0;
+  flex-shrink: 0;
 }
 
-.diff-viewer__footer {
+.diff-modal__close:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  background: var(--bg-panel);
+}
+
+.diff-modal__body {
+  padding: var(--space-4) var(--space-5);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.diff-modal__section {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.diff-modal__step {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--signal);
+  letter-spacing: 0.08em;
+  padding-top: 2px;
+}
+
+.diff-modal__step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.diff-modal__step-title {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.005em;
+}
+
+.diff-modal__step-body p {
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+
+.diff-modal__step-body strong {
+  color: var(--signal);
+  font-weight: 600;
+}
+
+.diff-modal__step-body em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.diff-modal__step-body code {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  background: var(--signal-soft);
+  color: var(--signal);
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.diff-modal__note {
+  margin-top: 4px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--unlock-soft);
+  border-left: 2px solid var(--unlock);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  border-radius: 2px;
+}
+
+.diff-modal__note strong {
+  color: #B45309;
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .diff-modal__note strong {
+  color: var(--unlock);
+}
+
+.diff-modal__footer {
   padding: var(--space-3) var(--space-5);
   border-top: 1px solid var(--border-subtle);
   display: flex;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
+  justify-content: flex-end;
+  background: var(--bg-panel-3);
 }
 
-@media (max-width: 1100px) {
-  .diff-page { grid-template-columns: 1fr; }
+.diff-modal__cta {
+  padding: 9px var(--space-5);
+  background: var(--signal);
+  border: 1px solid var(--signal);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.diff-modal__cta:hover {
+  background: #0369A1;
+  border-color: #0369A1;
+}
+
+.diff-modal__cta:active {
+  transform: scale(0.98);
+}
+
+/* Responsive: tighten padding on narrow viewports */
+@media (max-width: 600px) {
+  .diff-modal__panel {
+    width: 96vw;
+  }
+  .diff-modal__header,
+  .diff-modal__body,
+  .diff-modal__footer {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+  .diff-modal__section {
+    grid-template-columns: 24px 1fr;
+    gap: var(--space-2);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Theory & inference side panel — slides in from the right of the stage
+   When closed, only the vertical "THEORY" tab is visible at the right edge.
+   ------------------------------------------------------------------------- */
+.diff-theory {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  z-index: 60;
+  pointer-events: none;          /* let clicks through gaps */
+  transform: translateX(320px);  /* hide the panel; tab stays at edge */
+  transition: transform 0.3s var(--ease-out);
+  will-change: transform;
+}
+
+.diff-theory.is-open {
+  transform: translateX(0);
+}
+
+.diff-theory__tab,
+.diff-theory__panel {
+  pointer-events: auto;
+}
+
+/* The always-visible horizontal tab — rides on the LEFT edge of the panel */
+.diff-theory__tab {
+  flex: 0 0 auto;
+  align-self: center;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 14px;
+  height: 34px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+  box-shadow: -3px 0 10px rgba(15, 23, 42, 0.06);
+  white-space: nowrap;
+}
+
+.diff-theory__tab:hover {
+  color: var(--signal);
+  background: var(--signal-soft);
+  border-color: var(--signal);
+}
+
+.diff-theory__tab-icon {
+  transition: transform var(--dur-base) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.diff-theory.is-open .diff-theory__tab-icon {
+  transform: rotate(180deg);
+}
+
+.diff-theory__tab-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1;
+}
+
+:root[data-theme="dark"] .diff-theory__tab {
+  background: var(--bg-panel-3);
+  border-color: var(--border-strong);
+  box-shadow: -3px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* The panel itself */
+.diff-theory__panel {
+  flex: 0 0 320px;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px -8px rgba(15, 23, 42, 0.12);
+  min-height: 0;
+}
+
+:root[data-theme="dark"] .diff-theory__panel {
+  background: var(--bg-panel-2);
+  border-left-color: var(--border-strong);
+  box-shadow: -10px 0 30px -8px rgba(0, 0, 0, 0.45);
+}
+
+.diff-theory__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--space-4) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-panel-3);
+  gap: var(--space-3);
+}
+
+:root[data-theme="dark"] .diff-theory__header {
+  background: var(--bg-panel-3);
+}
+
+.diff-theory__title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.diff-theory__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.diff-theory__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+}
+
+.diff-theory__close {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.diff-theory__close:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  background: var(--bg-panel);
+}
+
+.diff-theory__body {
+  padding: var(--space-4);
+  overflow-y: auto;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+}
+
+.diff-theory__section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.diff-theory__heading {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0369A1;            /* matches the pane eyebrow color for cohesion */
+  letter-spacing: -0.005em;
+}
+
+:root[data-theme="dark"] .diff-theory__heading {
+  color: var(--signal);
+}
+
+.diff-theory__section p,
+.diff-theory__section li {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+
+.diff-theory__section strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.diff-theory__section em {
+  font-style: italic;
+  color: var(--signal);
+  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+/* Formula callout box */
+.diff-theory__formula {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--signal-soft);
+  border-left: 2px solid var(--signal);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  margin: 4px 0;
+}
+
+.diff-theory__formula-lhs,
+.diff-theory__formula-rhs {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+}
+
+.diff-theory__formula-eq {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Inference bullet list */
+.diff-theory__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+}
+
+.diff-theory__list li {
+  position: relative;
+  padding-left: 14px;
+}
+
+.diff-theory__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  background: var(--signal);
+  border-radius: 1px;
+}
+
+/* On narrow viewports, narrow the panel so it doesn't dominate */
+@media (max-width: 700px) {
+  .diff-theory {
+    transform: translateX(min(86vw, 320px));
+  }
+  .diff-theory__panel {
+    flex: 0 0 min(86vw, 320px);
+  }
 }
