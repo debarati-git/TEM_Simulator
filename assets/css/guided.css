@@ -21,8 +21,12 @@
   align-items: center;
   padding: var(--space-2) var(--space-5);
   border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-panel);
+  background: #F1F5F9;
   gap: var(--space-5);
+}
+
+:root[data-theme="dark"] .guided-status {
+  background: var(--bg-panel);
 }
 
 .guided-status__left,
@@ -115,11 +119,13 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-2) var(--space-5);
-  background:
-    linear-gradient(180deg, rgba(77, 208, 225, 0.03) 0%, transparent 100%),
-    var(--bg-panel-2);
+  background: #F1F5F9;
   border-bottom: 1px solid var(--border-subtle);
   min-height: 52px;
+}
+
+:root[data-theme="dark"] .guided-context {
+  background: var(--bg-panel);
 }
 
 .guided-context__back,
@@ -129,8 +135,9 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-secondary);
-  background: transparent;
+  background: var(--bg-panel);
   border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   padding: var(--space-2) var(--space-3);
   border-radius: 2px;
   cursor: pointer;
@@ -199,8 +206,9 @@
 }
 
 .guided-context__instr-text {
-  font-size: 0.92rem;
-  line-height: 1.4;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
@@ -311,14 +319,14 @@
   background: var(--bg-panel);
   min-height: 0;
   overflow: hidden;
-  padding: var(--space-3) var(--space-4) 0;
+  padding: var(--space-2) var(--space-4) 0;
 }
 
 .viewer__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
 }
 
 .viewer__header-right {
@@ -425,6 +433,9 @@ body.is-fullscreen .viewer__fs-label::before { font-size: 0.62rem; letter-spacin
   position: relative;
   min-height: 0;
   overflow: hidden;
+  background: var(--scope-bg);
+  border: 1px solid var(--scope-border);
+  border-radius: 4px;
 }
 
 .viewer__panel {
@@ -444,6 +455,29 @@ body.is-fullscreen .viewer__fs-label::before { font-size: 0.62rem; letter-spacin
   visibility: visible;
 }
 
+/* The column panel sits on a white window; the screen panel keeps the
+   dark scope-bg behind the round phosphor display. The column view also
+   uses zero internal padding so the diagram fills the stage. */
+.viewer__panel[data-view-panel="column"] {
+  background: #FFFFFF;
+  padding: 0;
+}
+
+/* The screen panel: white surround, with the dark round phosphor display
+   floating in the middle. */
+.viewer__panel[data-view-panel="screen"] {
+  background: #FFFFFF;
+}
+
+/* In dark mode, the surround switches to dark theme bg so the panels
+   blend with the rest of the chrome. The column image itself stays
+   white (it's a PNG with white pixels) and reads as a bright diagram
+   board floating on the dark UI. */
+:root[data-theme="dark"] .viewer__panel[data-view-panel="column"],
+:root[data-theme="dark"] .viewer__panel[data-view-panel="screen"] {
+  background: var(--scope-bg);
+}
+
 .viewer__column-image {
   height: 100%;
   max-height: 100%;
@@ -459,65 +493,181 @@ body.is-fullscreen .viewer__fs-label::before { font-size: 0.62rem; letter-spacin
   pointer-events: none;
 }
 
-/* Individual hotspot — absolutely positioned over the column image.
-   Invisible by default; the active one pulses cyan to show the click target. */
+/* -------------------------------------------------------------------------
+   Column beam overlay — animates when state.beamOn = true.
+   Positioned to align with the column image's beam path. The image already
+   shows a static cyan beam line in its center; this overlay sits on top
+   and adds animation: brighter source at the gun, pulsing stream down the
+   column, glowing phosphor screen at the bottom.
+   ------------------------------------------------------------------------- */
+.viewer__column-beam {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.viewer__column-beam.is-on {
+  opacity: 1;
+}
+
+/* The bright "electron source" pulse at the top of the column (gun area) */
+.column-beam__source {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(180, 230, 255, 1) 0%, rgba(120, 200, 240, 0.7) 40%, transparent 70%);
+  box-shadow: 0 0 24px rgba(120, 200, 240, 0.9);
+  animation: source-pulse 1.8s ease-in-out infinite;
+}
+
+/* The flowing electron stream from gun to phosphor */
+.column-beam__stream {
+  position: absolute;
+  top: 14%;
+  bottom: 32%;
+  left: 50%;
+  width: 4px;
+  margin-left: -2px;
+  background: linear-gradient(180deg,
+    rgba(180, 230, 255, 0.95) 0%,
+    rgba(120, 200, 240, 0.7) 50%,
+    rgba(120, 200, 240, 0.4) 100%);
+  box-shadow:
+    0 0 12px rgba(120, 200, 240, 0.8),
+    0 0 24px rgba(77, 208, 225, 0.5);
+  filter: blur(0.5px);
+}
+
+/* Travelling bright dot along the stream — creates the "electrons flowing" feel */
+.column-beam__stream::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(220, 250, 255, 1) 0%, rgba(120, 200, 240, 0.5) 50%, transparent 80%);
+  animation: stream-travel 1.4s linear infinite;
+}
+
+@keyframes stream-travel {
+  0%   { top: -8px; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* The bright phosphor screen glow when the beam hits */
+.column-beam__phosphor {
+  position: absolute;
+  top: 79%;
+  left: 50%;
+  width: 60px;
+  height: 30px;
+  margin-left: -30px;
+  border-radius: 50% / 100% 100% 0 0;
+  background: radial-gradient(ellipse at center top, rgba(140, 220, 130, 0.7) 0%, rgba(100, 180, 90, 0.4) 50%, transparent 80%);
+  filter: blur(2px);
+  animation: phosphor-flicker 2.4s ease-in-out infinite;
+}
+
+@keyframes source-pulse {
+  0%, 100% { transform: scale(1);   opacity: 0.85; }
+  50%      { transform: scale(1.2); opacity: 1;    }
+}
+@keyframes phosphor-flicker {
+  0%, 100% { opacity: 0.7; }
+  40%      { opacity: 0.95; }
+  60%      { opacity: 0.6; }
+}
+
+/* Individual hotspot — absolutely positioned over the column component.
+   Stays invisible at all times; clicks pass through to the component.
+   The "Click" cue beneath the label pill is the user's visual prompt. */
 .hotspot {
   position: absolute;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 3px;
+  border: none;
+  border-radius: 0;
   cursor: pointer;
   padding: 0;
   pointer-events: none;
-  transition: all var(--dur-base) var(--ease-out);
 }
 
 .hotspot.is-active {
   pointer-events: auto;
-  border-color: var(--signal);
-  background: rgba(77, 208, 225, 0.18);
-  box-shadow:
-    0 0 0 2px var(--signal),
-    0 0 22px rgba(77, 208, 225, 0.7);
-  animation: hotspot-pulse 1.4s ease-in-out infinite;
 }
 
-.hotspot.is-active::after {
-  content: 'CLICK';
+/* -------------------------------------------------------------------------
+   Hotspot label overlay — sits over the image's text-label pill so the
+   pill itself stays clickable. When active, a blinking "Click" cue
+   appears just below it in dark orange. No background, no border.
+   ------------------------------------------------------------------------- */
+.hotspot-label {
   position: absolute;
-  top: -22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  pointer-events: none;
+  display: block;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+.hotspot-label.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hotspot-label__action {
+  /* Action text positioned just below the label pill. */
+  position: absolute;
+  top: 100%;
   left: 50%;
   transform: translateX(-50%);
+  margin-top: 1px;
+
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  color: var(--signal);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #B45309;            /* dark orange (amber-700) */
+  background: transparent;
+  border: none;
+  padding: 0;
   white-space: nowrap;
-  text-shadow:
-    0 0 8px rgba(0, 0, 0, 0.95),
-    0 0 8px var(--signal-edge);
-  background: rgba(11, 21, 28, 0.85);
-  padding: 2px 8px;
-  border-radius: 2px;
-  border: 1px solid var(--signal-edge);
+
+  animation: hotspot-click-blink 1.0s ease-in-out infinite;
 }
 
-.hotspot.is-active:hover {
-  background: rgba(77, 208, 225, 0.3);
+/* In dark mode, brighten the cue so it stays legible against dark bg.
+   Light mode keeps the deep amber-700 #B45309 for high contrast on white;
+   dark mode jumps to amber-400 #FBBF24 for the same effect on dark. */
+:root[data-theme="dark"] .hotspot-label__action {
+  color: #FBBF24;
+}
+:root[data-theme="dark"] .hotspot-label:hover .hotspot-label__action {
+  color: #FCD34D;
 }
 
-@keyframes hotspot-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 2px var(--signal),
-      0 0 22px rgba(77, 208, 225, 0.7);
-  }
-  50% {
-    box-shadow:
-      0 0 0 3px var(--signal),
-      0 0 36px rgba(77, 208, 225, 1);
-  }
+@keyframes hotspot-click-blink {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 1; }
+}
+
+.hotspot-label:hover .hotspot-label__action {
+  color: #92400E;            /* slightly darker on hover (amber-800) */
 }
 
 .viewer__screen {

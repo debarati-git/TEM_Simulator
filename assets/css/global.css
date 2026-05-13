@@ -5,29 +5,44 @@
 
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:wght@400;500;600;700&display=swap');
 
-:root {
-  /* Palette — instrument-panel dark with single signal accent */
-  --bg-void:        #0a0c10;          /* deepest background */
-  --bg-panel:       #11151c;          /* primary surface */
-  --bg-panel-2:     #161b24;          /* raised surface */
-  --bg-panel-3:     #1d242f;          /* highest surface */
-  --border-subtle:  #232c39;
-  --border-strong:  #2e3a4b;
+:root,
+:root[data-theme="light"] {
+  /* -------- LIGHT THEME (default) — slate palette -------- */
+  /* Surfaces */
+  --bg-void:        #F4F7FA;          /* app background */
+  --bg-panel:       #FFFFFF;          /* primary panel */
+  --bg-panel-2:     #FFFFFF;          /* raised — same as panel, distinguished by border */
+  --bg-panel-3:     #F8FAFC;          /* highest surface — very light slate */
+  --border-subtle:  #E2E8F0;          /* lighter borders */
+  --border-strong:  #CBD5E1;          /* the spec border */
 
-  --text-primary:   #e6edf3;
-  --text-secondary: #b4becd;          /* was #8b96a8 — lifted for ~7:1 contrast */
-  --text-muted:     #8693a6;          /* was #586475 — lifted for ~5:1 contrast */
-  --text-dim:       #525d6e;          /* was #3a4453 — lifted for ~3:1 contrast */
+  /* Text — slate-800 primary, derived secondary/muted/dim */
+  --text-primary:   #1E293B;
+  --text-secondary: #475569;
+  --text-muted:     #64748B;
+  --text-dim:       #94A3B8;
 
-  /* Signal: electron-beam cyan, used sparingly */
-  --signal:         #4dd0e1;
-  --signal-soft:    rgba(77, 208, 225, 0.12);
-  --signal-edge:    rgba(77, 208, 225, 0.35);
+  /* Signal — sky-600 from the spec */
+  --signal:         #0284C7;
+  --signal-soft:    rgba(2, 132, 199, 0.10);
+  --signal-edge:    rgba(2, 132, 199, 0.35);
+
+  /* Scope (always dark — even in light theme) */
+  --scope-bg:       #020817;          /* deepest slate */
+  --scope-panel:    #0F172A;
+  --scope-border:   #1E293B;
+  --scope-text:     #F1F5F9;
+  --scope-signal:   #38BDF8;          /* sky-400 — lighter for dark scope */
 
   /* Status */
-  --warn:           #f0b86e;
-  --error:          #e57373;
-  --success:        #81c784;
+  --warn:           #D97706;
+  --error:          #DC2626;
+  --success:        #22C55E;
+
+  /* Unlock highlight — light orange, used for "this control is now active" */
+  --unlock:         #F59E0B;                       /* amber-500 */
+  --unlock-soft:    rgba(245, 158, 11, 0.12);
+  --unlock-edge:    rgba(245, 158, 11, 0.45);
 
   /* Typography */
   --font-display:   'IBM Plex Serif', Georgia, serif;
@@ -53,6 +68,39 @@
   --dur-slow:       400ms;
 }
 
+:root[data-theme="dark"] {
+  /* -------- DARK THEME -------- Teal-tinted slates matching the reference */
+  --bg-void:        #0A1622;             /* outer page bg — deep navy */
+  --bg-panel:       #11252F;             /* default panel — dark teal */
+  --bg-panel-2:     #163040;             /* slightly elevated */
+  --bg-panel-3:     #1E3E50;             /* hover / pressed surface */
+  --border-subtle:  #1F3848;
+  --border-strong:  #2A4A5C;
+
+  --text-primary:   #E8F0F5;
+  --text-secondary: #B4BECD;
+  --text-muted:     #8693A6;
+  --text-dim:       #525D6E;
+
+  --signal:         #38BDF8;
+  --signal-soft:    rgba(56, 189, 248, 0.12);
+  --signal-edge:    rgba(56, 189, 248, 0.35);
+
+  --scope-bg:       #0F2330;
+  --scope-panel:    #142838;
+  --scope-border:   #1F3C4A;
+  --scope-text:     #F1F5F9;
+  --scope-signal:   #38BDF8;
+
+  --warn:           #FBBF24;
+  --error:          #F87171;
+  --success:        #4ADE80;
+
+  --unlock:         #FBBF24;                        /* amber-400 — brighter for dark bg */
+  --unlock-soft:    rgba(251, 191, 36, 0.15);
+  --unlock-edge:    rgba(251, 191, 36, 0.5);
+}
+
 /* -------------------------------------------------------------------------
    Reset + base
    ------------------------------------------------------------------------- */
@@ -73,7 +121,9 @@ body {
   background: var(--bg-void);
   min-height: 100vh;
   overflow-x: hidden;
+}
 
+:root[data-theme="dark"] body {
   /* Subtle grain to break flat dark */
   background-image:
     radial-gradient(ellipse 80% 50% at 50% -10%, rgba(77, 208, 225, 0.05), transparent),
@@ -104,11 +154,15 @@ h1, h2, h3, h4 {
   align-items: center;
   height: 56px;
   padding: 0 var(--space-6);
-  background: rgba(10, 12, 16, 0.85);
+  background: #F1F5F9;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-subtle);
   gap: var(--space-5);
+}
+
+:root[data-theme="dark"] .topnav {
+  background: var(--bg-panel);                 /* dark teal in dark mode */
 }
 
 .topnav__brand {
@@ -224,6 +278,8 @@ h1, h2, h3, h4 {
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--border-subtle);
   border-radius: 2px;
+  background: var(--bg-panel);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -233,8 +289,36 @@ h1, h2, h3, h4 {
 .topnav__home:hover {
   color: var(--text-primary);
   border-color: var(--signal-edge);
-  background: var(--bg-panel-2);
+  background: var(--bg-panel-3);
 }
+
+/* -------- Theme toggle button -------- */
+.topnav__theme-toggle {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 2px;
+  color: var(--text-secondary);
+  padding: 6px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.topnav__theme-toggle:hover {
+  color: var(--text-primary);
+  border-color: var(--signal-edge);
+  background: var(--bg-panel-3);
+}
+
+/* Show sun in dark mode (click to go to light), moon in light mode */
+.topnav__theme-icon-sun  { display: none; }
+.topnav__theme-icon-moon { display: inline; }
+:root[data-theme="dark"] .topnav__theme-icon-sun  { display: inline; }
+:root[data-theme="dark"] .topnav__theme-icon-moon { display: none; }
+
+/* -------- Home link & top-bar buttons -------- */
 
 .topnav__status {
   font-family: var(--font-mono);

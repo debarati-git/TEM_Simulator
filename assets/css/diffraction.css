@@ -8,6 +8,10 @@
   grid-template-columns: 320px 1fr;
   gap: var(--space-5);
   min-height: calc(100vh - 56px - var(--space-7) * 2);
+  /* Pull content up to reduce the gap between topnav and the
+     "MODULE 03 / Reciprocal Space" header, matching the tighter
+     headers used on the landing and mode-select pages. */
+  margin-top: calc(-1 * var(--space-7) + var(--space-3));
 }
 
 .diff-header {

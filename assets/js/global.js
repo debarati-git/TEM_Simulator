@@ -6,6 +6,23 @@
 (function () {
   'use strict';
 
+  /* -------- Theme: apply saved preference IMMEDIATELY (before any render) -------- */
+  try {
+    const saved = localStorage.getItem('tem-theme');
+    const theme = saved === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+
+  /** Toggle between light and dark. Persists preference. */
+  function toggleTheme() {
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = cur === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('tem-theme', next); } catch (e) { /* private mode */ }
+  }
+
   /**
    * Mobile guard — TEM simulator needs real estate, so we show a warning
    * on narrow viewports. Doesn't block, just informs.
@@ -81,6 +98,15 @@
         </div>
 
         <div class="topnav__right">
+          <button type="button" class="topnav__theme-toggle" id="theme-toggle" title="Toggle light / dark theme" aria-label="Toggle theme">
+            <svg class="topnav__theme-icon-sun" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="8" cy="8" r="3"/>
+              <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"/>
+            </svg>
+            <svg class="topnav__theme-icon-moon" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>
+            </svg>
+          </button>
           ${!isLanding ? `
             <a href="${root}index.html" class="topnav__home" title="Return to home">
               <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -103,16 +129,25 @@
   window.TEM.global = {
     injectMobileGuard,
     injectTopNav,
+    toggleTheme,
   };
+
+  /** After topnav injects, attach the theme toggle handler. */
+  function attachThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    if (btn) btn.addEventListener('click', toggleTheme);
+  }
 
   /* Auto-init on DOM ready */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       injectTopNav();
       injectMobileGuard();
+      attachThemeToggle();
     });
   } else {
     injectTopNav();
     injectMobileGuard();
+    attachThemeToggle();
   }
 })();

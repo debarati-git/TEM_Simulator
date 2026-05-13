@@ -74,19 +74,18 @@
       </div>
 
       <div class="guided-context__actions">
-        <button class="guided-context__restart guided-context__restart--section" id="btn-restart-section" title="Restart current section">
+        <button class="guided-context__restart guided-context__restart--undo" id="btn-undo-step" title="Reset and retry the current step">
           <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <path d="M3 8a5 5 0 1 0 1.5-3.5"/>
             <path d="M3 3v2.5h2.5"/>
           </svg>
-          Restart Section
+          Undo Step
         </button>
-        <button class="guided-context__restart" id="btn-restart" title="Restart session">
+        <button class="guided-context__restart" id="btn-restart" title="Restart the entire session from step 1">
           <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-            <path d="M3 8a5 5 0 1 0 1.5-3.5"/>
-            <path d="M3 3v2.5h2.5"/>
+            <path d="M2 8a6 6 0 1 0 1.8-4.2M2 2v4h4"/>
           </svg>
-          Restart Session
+          Restart
         </button>
       </div>
     </div>
@@ -254,6 +253,11 @@
             <img src="../assets/images/microscope/diagram/tem-column.png"
                  alt="TEM column cross-section"
                  class="viewer__column-image" />
+            <div class="viewer__column-beam" id="column-beam" aria-hidden="true">
+              <div class="column-beam__source"></div>
+              <div class="column-beam__stream"></div>
+              <div class="column-beam__phosphor"></div>
+            </div>
             <div class="viewer__column-hotspots" id="diagram-hotspots"></div>
           </div>
 
@@ -268,6 +272,29 @@
       <!-- =================== RIGHT CONTROL RAIL =================== -->
       <aside class="ctl-rail ctl-rail--right">
         <div class="ctl-rail__inner">
+
+          <!-- Magnification — promoted to the top of the right rail because
+               Mag + Wobbler are the controls students reach for most often
+               during sample location and eucentric-height adjustment. -->
+          <div class="dz">
+            <div class="dz__label">Magnification</div>
+            <div class="dz__body">
+              <div class="ctl ctl--stack" data-control="magnification">
+                <div class="ctl__label">Magnification</div>
+                <div class="pbtn-group" style="--cols:4;">
+                  <button class="pbtn" data-action="magnification" data-value="low">Low</button>
+                  <button class="pbtn" data-action="magnification" data-value="medium">Med</button>
+                  <button class="pbtn" data-action="magnification" data-value="high">High</button>
+                  <button class="pbtn" data-action="magnification" data-value="very-high">V.High</button>
+                </div>
+              </div>
+
+              <div class="ctl ctl--row-2" data-control="wobbler">
+                <div class="ctl__label">Wobbler</div>
+                <button class="pbtn" data-action="wobbler-toggle"><span class="pbtn__led"></span>Toggle</button>
+              </div>
+            </div>
+          </div>
 
           <!-- Specimen Stage -->
           <div class="dz">
@@ -349,16 +376,6 @@
                 </div>
               </div>
 
-              <div class="ctl ctl--stack" data-control="magnification">
-                <div class="ctl__label">Magnification</div>
-                <div class="pbtn-group" style="--cols:4;">
-                  <button class="pbtn" data-action="magnification" data-value="low">Low</button>
-                  <button class="pbtn" data-action="magnification" data-value="medium">Med</button>
-                  <button class="pbtn" data-action="magnification" data-value="high">High</button>
-                  <button class="pbtn" data-action="magnification" data-value="very-high">V.High</button>
-                </div>
-              </div>
-
               <div class="ctl ctl--stack" data-control="lens-select">
                 <div class="ctl__label">Lens</div>
                 <div class="pbtn-group" style="--cols:3;">
@@ -373,11 +390,6 @@
                   <div class="trackpad__dot"></div>
                 </div>
                 <div class="ctl__label ctl__label--below">Projector Lens Alignment</div>
-              </div>
-
-              <div class="ctl ctl--row-2" data-control="wobbler">
-                <div class="ctl__label">Wobbler</div>
-                <button class="pbtn" data-action="wobbler-toggle"><span class="pbtn__led"></span>Toggle</button>
               </div>
 
               <div class="ctl ctl--row-2" data-control="fft">

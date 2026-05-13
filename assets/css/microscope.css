@@ -11,7 +11,7 @@
 
 .mode-header {
   text-align: center;
-  padding: var(--space-7) 0 var(--space-8);
+  padding: 0 0 var(--space-8);
 }
 
 .mode-header__eyebrow {

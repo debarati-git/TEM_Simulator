@@ -14,6 +14,11 @@
   let stepStartedAt = 0;
   let hintArmed = false;
   let autoAdvanceTimer = null;
+  /** Controls that, once unlocked, stay unlocked for the rest of the session.
+      Beam Current is exposed at step 8 and stays available through alignment
+      and imaging — the user can fine-tune it any time. */
+  const STICKY_UNLOCKS = new Set(['beam-current']);
+  const everUnlocked = new Set();
 
   /* -------------------- Boot -------------------- */
 
@@ -50,8 +55,8 @@
     // Restart buttons
     const restartBtn = document.getElementById('btn-restart');
     if (restartBtn) restartBtn.addEventListener('click', restart);
-    const restartSectionBtn = document.getElementById('btn-restart-section');
-    if (restartSectionBtn) restartSectionBtn.addEventListener('click', restartSection);
+    const undoBtn = document.getElementById('btn-undo-step');
+    if (undoBtn) undoBtn.addEventListener('click', undoStep);
 
     // Initialize control wiring (subscribers to state)
     TEM.controls.init();
@@ -199,6 +204,8 @@
     if (instrEl) {
       instrEl.textContent = 'Session complete. Your image has been downloaded. Press Restart to run again.';
     }
+    // Clear any inactivity hint left over from the last step
+    if (TEM.feedback) TEM.feedback.clearHint();
     // Lock everything
     document.querySelectorAll('.ctl').forEach(c => c.classList.remove('is-active'));
     TEM.diagram.setActiveHotspot(null);
@@ -214,12 +221,29 @@
    */
   function applyLockState(step) {
     const targets = new Set(step.unlocks || []);
+    for (const key of everUnlocked) {
+      if (STICKY_UNLOCKS.has(key)) targets.add(key);
+    }
+    for (const key of (step.unlocks || [])) everUnlocked.add(key);
 
+    let firstNewlyActive = null;
     document.querySelectorAll('.ctl[data-control]').forEach(ctl => {
       const key = ctl.dataset.control;
+      const wasActive = ctl.classList.contains('is-active');
       const active = targets.has(key);
+      if (active && !wasActive && !firstNewlyActive && (step.unlocks || []).includes(key)) {
+        firstNewlyActive = ctl;
+      }
       ctl.classList.toggle('is-active', active);
     });
+
+    // Scroll the first newly-unlocked control into view inside its rail.
+    // 'nearest' so we don't yank the user if it's already visible.
+    if (firstNewlyActive) {
+      setTimeout(() => {
+        firstNewlyActive.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    }
   }
 
   /* -------------------- State change → check success -------------------- */
@@ -327,24 +351,26 @@
      Apply a step's prelude: nudge state values away from sweet-spot zero
      so the success condition isn't trivially satisfied. The user must
      actually interact with the control to advance.
+
+     Forms supported:
+       prelude: { offset: 'beamShift', amount: {x:-22, y:18} }
+       prelude: { offsets: [
+         { offset: 'beamShift', amount: {x:-22, y:18} },
+         { offset: 'stigmator', amount: {x:-18, y:22} },
+       ]}
+       prelude: { set: { key: 'foo', value: 5 } }
   */
   function applyPrelude(prelude) {
     if (!prelude) return;
 
+    // Single offset (legacy form)
     if (prelude.offset && prelude.amount) {
-      const { offset, amount } = prelude;
-      if (offset === 'stage') {
-        // Special case — apply to stageX and stageY separately
-        const curX = TEM.state.get('stageX') || 0;
-        const curY = TEM.state.get('stageY') || 0;
-        TEM.state.set('stageX', curX + (amount.x || 0));
-        TEM.state.set('stageY', curY + (amount.y || 0));
-      } else {
-        const cur = TEM.state.get(offset) || { x: 0, y: 0 };
-        TEM.state.set(offset, {
-          x: (cur.x || 0) + (amount.x || 0),
-          y: (cur.y || 0) + (amount.y || 0),
-        });
+      applyOffset(prelude.offset, prelude.amount);
+    }
+    // Multiple offsets
+    if (Array.isArray(prelude.offsets)) {
+      for (const o of prelude.offsets) {
+        if (o.offset && o.amount) applyOffset(o.offset, o.amount);
       }
     }
 
@@ -354,10 +380,26 @@
     }
   }
 
+  function applyOffset(offset, amount) {
+    if (offset === 'stage') {
+      const curX = TEM.state.get('stageX') || 0;
+      const curY = TEM.state.get('stageY') || 0;
+      TEM.state.set('stageX', curX + (amount.x || 0));
+      TEM.state.set('stageY', curY + (amount.y || 0));
+    } else {
+      const cur = TEM.state.get(offset) || { x: 0, y: 0 };
+      TEM.state.set(offset, {
+        x: (cur.x || 0) + (amount.x || 0),
+        y: (cur.y || 0) + (amount.y || 0),
+      });
+    }
+  }
+
   /* -------------------- Restart -------------------- */
 
   function restart() {
     TEM.state.reset();
+    everUnlocked.clear();
     if (TEM.imageRenderer && TEM.imageRenderer.resetReferences) {
       TEM.imageRenderer.resetReferences();
     }
@@ -365,28 +407,72 @@
     activateStep(0);
   }
 
-  /** Restart from the start of the current section.
-      Sections (approximate):
-      1-7   Setup
-      8-9   Beam alignment
-      10-15 Aperture / stigmation
-      16-19 Find sample (mag + eucentric)
-      20-24 Objective aperture / diffraction
-      25-32 Acquisition
-  */
-  function restartSection() {
-    const sectionStarts = [1, 8, 10, 16, 20, 25];
-    const currentId = steps[currentStepIndex]?.id || 1;
-    let start = 1;
-    for (const sid of sectionStarts) {
-      if (sid <= currentId) start = sid;
+  /** Undo the current step: reset any state values that this step is
+      responsible for, then re-activate the step (re-running its prelude
+      and lock state). This gives the user a way to retry just the
+      current step without losing prior progress. */
+  function undoStep() {
+    const step = steps[currentStepIndex];
+    if (!step) return;
+
+    // Clear the state key(s) this step's success condition watches, so it
+    // doesn't immediately auto-pass.
+    clearSuccessKeys(step.success);
+    activateStep(currentStepIndex);
+  }
+
+  /** For a step's success condition, reset the underlying state keys
+      back to their initial values. */
+  function clearSuccessKeys(cond) {
+    if (!cond) return;
+    if (cond.type === 'composite' && Array.isArray(cond.all)) {
+      cond.all.forEach(clearSuccessKeys);
+      return;
     }
-    const targetIndex = steps.findIndex(s => s.id === start);
-    if (targetIndex >= 0) {
-      TEM.state.reset();
-      activateStep(targetIndex);
+    const key = cond.key;
+    if (!key) return;
+    if (cond.type === 'selectValue') {
+      // Reset the boolean/string back to its initial value
+      const v = INITIAL_VALUES[key];
+      if (v !== undefined) TEM.state.set(key, v);
+    } else if (cond.type === 'valueInRange') {
+      if (key === 'stage') {
+        TEM.state.set('stageX', 0);
+        TEM.state.set('stageY', 0);
+      } else {
+        const v = INITIAL_VALUES[key];
+        TEM.state.set(key, v !== undefined ? v : { x: 0, y: 0 });
+      }
     }
   }
+
+  /** Mirror of the state store's initial values, so undoStep can reset
+      to the right defaults. Kept in sync with state.js manually. */
+  const INITIAL_VALUES = {
+    holderRemoved: false,
+    sample: null,
+    specimenInsertedDiagram: false,
+    specimenInsertedPanel: false,
+    airlockPumped: false,
+    accVoltage: null,
+    beamOn: false,
+    beamShift: { x: 0, y: 0 },
+    brightness: 50,
+    stigmator: { x: 18, y: -14 },
+    currentAperture: null,
+    condenserInserted: false,
+    objectiveInserted: false,
+    condenserSize: null,
+    objectiveSize: null,
+    apertureAlignment: { x: 0, y: 0 },
+    stageZ: 0,
+    wobblerOn: false,
+    magnification: null,
+    mode: null,
+    focus: 0,
+    cameraInserted: false,
+    imageAcquired: false,
+  };
 
   /* -------------------- Expose -------------------- */
 

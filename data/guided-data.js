@@ -83,8 +83,18 @@
         id: 8,
         instruction: 'The beam appears on the screen. Centre it using the Beam Shift trackpad.',
         hint: 'Drag the Beam Shift dot toward the centre of its trackpad.',
-        unlocks: ['beam-shift'],
-        prelude: { offset: 'beamShift', amount: { x: -22, y: 18 } },
+        unlocks: ['beam-shift', 'beam-current'],
+        prelude: {
+          offsets: [
+            { offset: 'beamShift', amount: { x: -22, y: 18 } },
+            // Stigmator off-center → beam appears as a horizontal ellipse.
+            // scaleY = 1 - 40/50 * 0.45 = 0.64, clearly non-circular. The
+            // beam stays this way through centering, divergence, aperture
+            // insertion — until step 14 (stigmator) where the user
+            // corrects it to (0,0) and the beam rounds out.
+            { offset: 'stigmator', amount: { x: 32, y: 38 } },
+          ]
+        },
         success: { type: 'valueInRange', key: 'beamShift', spot: 'beamShift_center' }
       },
       {
@@ -303,11 +313,36 @@
         scales: { low: 0.25, medium: 0.55, high: 1.0 }
       }
     },
+    // Hotspot coordinates are % of the column image bounds.
+    // Calibrated for the light-theme column image (1085×1270, aspect 0.854).
+    // labelPos values are the exact pill bounding boxes (measured from
+    // the rendered blue strokes) so the "Insert"/"Remove" cue sits
+    // precisely below each pill.
     diagramHotspots: {
-      'remove-holder':    { x: 54, y: 44, w: 14, h: 5,  label: 'Remove Holder' },
-      'insert-specimen':  { x: 54, y: 44, w: 14, h: 5,  label: 'Insert Specimen' },
-      'insert-condenser': { x: 45, y: 18, w: 10, h: 3,  label: 'Insert Condenser Aperture' },
-      'insert-objective': { x: 45, y: 40, w: 10, h: 3,  label: 'Insert Objective Aperture' }
+      'remove-holder':    {
+        x: 51, y: 43, w: 15, h: 4,
+        labelPos: { x: 81, y: 45, w: 17, h: 6 },
+        labelText: 'Specimen',
+        action: 'Remove'
+      },
+      'insert-specimen':  {
+        x: 51, y: 43, w: 15, h: 4,
+        labelPos: { x: 81, y: 45, w: 17, h: 6 },
+        labelText: 'Specimen',
+        action: 'Insert'
+      },
+      'insert-condenser': {
+        x: 41, y: 22, w: 12, h: 5,
+        labelPos: { x: 2, y: 22, w: 27, h: 6 },
+        labelText: 'Condenser aperture',
+        action: 'Insert'
+      },
+      'insert-objective': {
+        x: 41, y: 41, w: 11, h: 4,
+        labelPos: { x: 2, y: 40, w: 27, h: 6 },
+        labelText: 'Objective aperture',
+        action: 'Insert'
+      }
     }
   };
 })();

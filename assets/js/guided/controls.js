@@ -64,7 +64,31 @@
   }
 
   function bindSampleSelector()  { bindSelectorGroup('sample',          'sample');                                }
-  function bindAccVoltage()      { bindSelectorGroup('acc-voltage',     'accVoltage',     v => parseInt(v, 10));  }
+  function bindAccVoltage() {
+    bindSelectorGroup('acc-voltage', 'accVoltage', v => parseInt(v, 10));
+
+    // Voltage availability depends on sample. Nanoparticles → only 200 kV.
+    // Biological samples (zebrafish) would use 120 kV. Other materials → 200 kV.
+    const SAMPLE_VOLTAGES = {
+      'nanoparticles': [200],
+      'zebrafish':     [120],
+      'metal':         [200],
+      'mineral':       [200],
+    };
+    function applyVoltageGating(sample) {
+      const allowed = SAMPLE_VOLTAGES[sample] || [120, 200];
+      document.querySelectorAll('.pbtn[data-action="acc-voltage"]').forEach(btn => {
+        const v = parseInt(btn.dataset.value, 10);
+        const ok = allowed.includes(v);
+        btn.disabled = !ok;
+        btn.classList.toggle('is-gated-out', !ok);
+      });
+    }
+    TEM.state.subscribeKey('sample', applyVoltageGating);
+    // Apply initial state in case sample is preselected
+    const current = TEM.state.get('sample');
+    if (current) applyVoltageGating(current);
+  }
   function bindModeSelector()    { bindSelectorGroup('mode',            'mode');                                  }
   function bindMagnification()   { bindSelectorGroup('magnification',   'magnification');                         }
   function bindImagingMode()     { bindSelectorGroup('imaging-mode',    'imagingMode');                           }
