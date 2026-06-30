@@ -28,7 +28,7 @@
 
 .column-page {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 520px;
   gap: var(--space-4);
   align-items: stretch;
   height: calc(100vh - var(--topnav-h) - 16px);

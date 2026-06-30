@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TEM Simulator — IIT Learning Module</title>
-  <meta name="description" content="A learning environment for the Transmission Electron Microscope, built for IIT students." />
+  <title>TEM Simulator — JEOL JEM-2100 · IIT Learning Module</title>
+  <meta name="description" content="A pre-lab learning environment modeled on the JEOL JEM-2100 Transmission Electron Microscope, built for IIT students." />
 
   <link rel="stylesheet" href="assets/css/global.css" />
   <link rel="stylesheet" href="assets/css/landing.css" />
@@ -14,75 +14,44 @@
   <!-- Top navigation injected by global.js -->
   <div data-topnav data-landing="true"></div>
 
-  <main class="page">
+  <main class="page page--landing">
 
-    <!-- Hero -->
-    <section class="landing-hero">
-      <div>
-        <div class="landing-hero__eyebrow">Pre-lab Simulator · v1.1</div>
-        <h1 class="landing-hero__title">
-          Learn the <em>Transmission Electron Microscope</em> before you touch one.
+    <!-- LEFT COLUMN: hero text + instrument chips + 3 module cards -->
+    <div class="lp-left">
+
+      <div class="lp-hero">
+        <div class="lp-hero__eyebrow">Pre-lab Simulator · JEOL JEM-2100</div>
+        <h1 class="lp-hero__title">
+          Learn the <em>Transmission Electron Microscope</em><br/>before you touch one.
         </h1>
-        <p class="landing-hero__lede">
-          A guided, instrument-faithful environment for becoming familiar with TEM
-          operation — column anatomy, alignment workflow, and diffraction — without
+        <p class="lp-hero__lede">
+          A guided, instrument-faithful environment modeled on the
+          <strong>JEOL&nbsp;JEM-2100</strong> — explore the column anatomy,
+          walk the alignment workflow, and investigate diffraction without
           the cost of a misstep on real hardware.
         </p>
-      </div>
 
-      <div class="landing-hero__meta">
-        <div class="landing-hero__meta-row">
-          <span class="landing-hero__meta-key">Instrument</span>
-          <span class="landing-hero__meta-val">200 kV TEM (universal interface)</span>
-        </div>
-        <div class="landing-hero__meta-row">
-          <span class="landing-hero__meta-key">Audience</span>
-          <span class="landing-hero__meta-val">IIT Students</span>
-        </div>
-        <div class="landing-hero__meta-row">
-          <span class="landing-hero__meta-key">Modules</span>
-          <span class="landing-hero__meta-val">Column · Microscope · Diffraction</span>
-        </div>
-        <div class="landing-hero__meta-row">
-          <span class="landing-hero__meta-key">Build</span>
-          <span class="landing-hero__meta-val">Ver 1.1</span>
+        <div class="lp-hero__chips">
+          <div class="lp-chip">
+            <span class="lp-chip__key">Instrument</span>
+            <span class="lp-chip__val">JEOL JEM-2100 · 200&nbsp;kV</span>
+          </div>
+          <div class="lp-chip">
+            <span class="lp-chip__key">Audience</span>
+            <span class="lp-chip__val">IIT Students</span>
+          </div>
+          <div class="lp-chip">
+            <span class="lp-chip__key">Modules</span>
+            <span class="lp-chip__val">Column · Microscope · Diffraction</span>
+          </div>
         </div>
       </div>
-    </section>
 
-    <!-- Intro -->
-    <section class="landing-intro">
-      <div class="landing-intro__label">About TEM</div>
-      <div class="landing-intro__body">
-        <p>
-          The <strong>Transmission Electron Microscope</strong> images a thin specimen
-          by passing a high-energy electron beam through it. Electromagnetic lenses
-          focus the beam, the specimen modulates it, and a detector captures the
-          resulting image — at resolutions far below a nanometre.
-        </p>
-        <p>
-          Operating one well requires understanding the column, the alignment
-          sequence, and the optics behind both <strong>imaging</strong> and
-          <strong>diffraction</strong> modes. This simulator gives you a safe
-          environment to build that understanding before stepping into the lab.
-        </p>
-      </div>
-    </section>
-
-    <!-- Modules grid -->
-    <section class="landing-modules">
-      <div class="landing-modules__header">
-        <h2 class="landing-modules__title">Three modules</h2>
-        <span class="landing-modules__count">03 / 03 AVAILABLE</span>
-      </div>
-
-      <div class="landing-modules__grid">
-
-        <!-- Module 01 — The Column -->
-        <a href="pages/column.html" class="module-card crosshair">
-          <div class="module-card__index">MODULE 01</div>
-
-          <svg class="module-card__icon" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.2">
+      <div class="lp-modules">
+        <!-- Module 01 -->
+        <a href="pages/column.html" class="lp-card crosshair">
+          <span class="lp-card__badge">01</span>
+          <svg class="lp-card__icon" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.3">
             <rect x="22" y="6"  width="12" height="6" />
             <rect x="18" y="14" width="20" height="4" />
             <rect x="22" y="20" width="12" height="8" />
@@ -91,21 +60,20 @@
             <rect x="14" y="46" width="28" height="4" />
             <line x1="28" y1="12" x2="28" y2="46" stroke-dasharray="2 2" opacity="0.5" />
           </svg>
-
-          <h3 class="module-card__title">The Column</h3>
-          <p class="module-card__desc">
-            Anatomy of a real TEM in two views — a laboratory photograph of the
-            instrument, and an annotated schematic of the electron-optical
-            column. Flip between them; hover any element for an explanation.
-          </p>
-          <span class="module-card__cta">Enter module</span>
+          <div class="lp-card__body">
+            <h3 class="lp-card__title">The Column</h3>
+            <p class="lp-card__desc">
+              Explore the JEM-2100's anatomy — exterior, consoles, and an annotated
+              interior cutaway.
+            </p>
+          </div>
+          <span class="lp-card__cta">Enter →</span>
         </a>
 
-        <!-- Module 02 — The Microscope -->
-        <a href="pages/microscope.html" class="module-card crosshair">
-          <div class="module-card__index">MODULE 02</div>
-
-          <svg class="module-card__icon" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.2">
+        <!-- Module 02 -->
+        <a href="pages/microscope.html" class="lp-card crosshair">
+          <span class="lp-card__badge">02</span>
+          <svg class="lp-card__icon" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.3">
             <circle cx="28" cy="28" r="14" />
             <circle cx="28" cy="28" r="8" />
             <circle cx="28" cy="28" r="2" fill="currentColor" />
@@ -114,20 +82,19 @@
             <line x1="6"  y1="28" x2="14" y2="28" />
             <line x1="42" y1="28" x2="50" y2="28" />
           </svg>
-
-          <h3 class="module-card__title">The Microscope</h3>
-          <p class="module-card__desc">
-            Operate the instrument. Choose Guided mode to learn the alignment
-            workflow step-by-step, or Experiment mode (coming soon) to practise freely.
-          </p>
-          <span class="module-card__cta">Enter module</span>
+          <div class="lp-card__body">
+            <h3 class="lp-card__title">The Microscope</h3>
+            <p class="lp-card__desc">
+              Run the guided alignment workflow on a faithful instrument simulation.
+            </p>
+          </div>
+          <span class="lp-card__cta">Enter →</span>
         </a>
 
-        <!-- Module 03 — The Diffraction Lab -->
-        <a href="pages/diffraction-lab.html" class="module-card crosshair">
-          <div class="module-card__index">MODULE 03</div>
-
-          <svg class="module-card__icon" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.2">
+        <!-- Module 03 -->
+        <a href="pages/diffraction-lab.html" class="lp-card crosshair">
+          <span class="lp-card__badge">03</span>
+          <svg class="lp-card__icon" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.3">
             <circle cx="28" cy="28" r="2.5" fill="currentColor" />
             <circle cx="14" cy="14" r="1.5" fill="currentColor" />
             <circle cx="28" cy="14" r="1.5" fill="currentColor" />
@@ -137,27 +104,26 @@
             <circle cx="14" cy="42" r="1.5" fill="currentColor" />
             <circle cx="28" cy="42" r="1.5" fill="currentColor" />
             <circle cx="42" cy="42" r="1.5" fill="currentColor" />
-            <circle cx="6"  cy="6"  r="1" fill="currentColor" opacity="0.5" />
-            <circle cx="50" cy="6"  r="1" fill="currentColor" opacity="0.5" />
-            <circle cx="6"  cy="50" r="1" fill="currentColor" opacity="0.5" />
-            <circle cx="50" cy="50" r="1" fill="currentColor" opacity="0.5" />
           </svg>
-
-          <h3 class="module-card__title">The Diffraction Lab</h3>
-          <p class="module-card__desc">
-            Investigate reciprocal-space patterns from common crystal systems.
-            Switch between lattices and observe how their geometry shapes the diffraction signal.
-          </p>
-          <span class="module-card__cta">Enter module</span>
+          <div class="lp-card__body">
+            <h3 class="lp-card__title">The Diffraction Lab</h3>
+            <p class="lp-card__desc">
+              Generate and interpret single-crystal SAED patterns across lattice types.
+            </p>
+          </div>
+          <span class="lp-card__cta">Enter →</span>
         </a>
-
       </div>
-    </section>
 
-    <footer class="landing-footer">
-      <span>TEM SIMULATOR · IIT</span>
-      <span>NO REAL ELECTRONS WERE ACCELERATED IN THE MAKING OF THIS APP</span>
-    </footer>
+    </div>
+
+    <!-- RIGHT COLUMN: full-height instrument image -->
+    <figure class="lp-right">
+      <img src="assets/images/column/tem-photo.png"
+           alt="JEOL JEM-2100 transmission electron microscope in the lab"
+           draggable="false" />
+      <figcaption><span class="lp-figdot"></span>JEOL JEM-2100 · 200&nbsp;kV TEM</figcaption>
+    </figure>
 
   </main>
 

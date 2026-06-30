@@ -1,5 +1,129 @@
 # Changelog
 
+## v1.16 — Landing text layout: cleaner title + wider lede
+
+### Landing page
+
+- **Title forced to a clean two-line break**: "Learn the *Transmission
+  Electron Microscope*" on line one, "before you touch one." on line two —
+  subject then punchline, no awkward mid-phrase wrap.
+- **Lede paragraph fills the column width** — removed the `max-width: 52ch`
+  cap that was causing the text to wrap into a narrow column with wasted space
+  to the right. The lede now flows naturally across the available width.
+- **Left column widened** (1.1fr → 1.2fr) to give the title and lede more
+  breathing room.
+
+### Unchanged
+
+- Module 01, 02, 03 untouched.
+
+
+## v1.15 — Landing page: new instrument photo
+
+### Landing page
+
+- **Swapped the hero image** to a clean, unlabelled lab photograph of the
+  JEM-2100 (portrait, 474 x 834). No green callout labels — just the
+  instrument in its lab setting.
+
+### Unchanged
+
+- Module 01, 02, 03 untouched.
+
+
+## v1.14 — Landing module cards: persistent accent + number badge
+
+### Landing page
+
+- **Persistent top accent bar** on each module card — a signal-blue gradient
+  stripe is now always visible (not just on hover), so the cards immediately
+  read as distinct interactive entry points. On hover the bar thickens and
+  goes solid.
+- **Module number badge** ("01" / "02" / "03") — a pill in the top-right
+  corner of each card, signal-tinted background with a subtle border. Makes
+  the cards read as a numbered sequence at a glance.
+
+### Unchanged
+
+- Module 01, 02, 03 logic untouched.
+
+
+## v1.13 — Landing cards side-by-side + header module pulse
+
+### Landing page
+
+- **Module cards now sit side by side** (three in a row) below the hero text
+  on the left column, instead of stacked vertically. Cards are compact
+  vertical boxes (icon → title → description → CTA) with a top accent bar on
+  hover.
+
+### Header (global)
+
+- **Module nav links pulse** with a gentle signal-colour glow animation,
+  staggered across the three links so they don't blink in unison. The pulse
+  stops on hover (solid signal colour while interacting). The active-page
+  module retains its solid highlight and doesn't pulse.
+
+### Unchanged
+
+- Module 01, 02, 03 logic untouched.
+
+
+## v1.12 — Landing layout restructure + Module 01 panel wider
+
+### Landing page (index.html)
+
+- **Two-column layout**: left column holds the hero text (eyebrow + title +
+  lede + instrument chips) with the three module cards stacked below it; the
+  entire right column is the instrument image. Module cards are now compact
+  horizontal rows (icon · description · CTA) instead of tall vertical cards.
+- **Reduced top space** — padding above the eyebrow tightened so more vertical
+  room goes to content.
+- Single-viewport / no-scroll design maintained; responsive fallback for
+  narrow / short screens.
+
+### Module 01 · The Column
+
+- **Right info panel widened** from 460 px to 520 px, giving descriptions more
+  reading room.
+
+### Unchanged
+
+- Modules 02 and 03 logic untouched.
+
+
+## v1.11 — Landing page redesign + Module 01 panel rebalance
+
+### Landing page (index.html)
+
+- **Redesigned as a single-viewport, no-scroll layout**: a compact hero
+  (headline + lede + instrument chips) beside an instrument photo, with the
+  three module cards on one row below — all three modules and their
+  descriptions visible without scrolling.
+- **Instrument named JEOL JEM-2100** throughout (eyebrow, lede, chips, title,
+  photo caption).
+- **Static instrument image** added to the hero (the JEM-2100 lab photo).
+- **Fresh look**: framed instrument photo, signal-accent chips, animated card
+  hover (top accent bar + lift + gradient), tighter type scale via clamp().
+- A short-viewport / narrow-width fallback re-enables scrolling so content is
+  never clipped on small laptops.
+
+### Header (global)
+
+- The three module links in the top navigation now use **darker, bolder text**
+  (primary colour, weight 600) for better legibility. Applies across all pages.
+
+### Module 01 · The Column
+
+- **Rebalanced the panels**: the left diagram viewport is narrower and the
+  right info panel is wider (320 → 460 px), giving the component descriptions
+  more room for reading.
+
+### Unchanged
+
+- Modules 02 and 03 logic untouched.
+
+
 ## v1.10 — Module 02 guided diagram swap (Module 01 frozen at v1.9)
 
 ### Module 01 · The Column
