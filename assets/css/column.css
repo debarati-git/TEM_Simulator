@@ -952,3 +952,144 @@
   color: #04121f;
   background: var(--signal, #38bdf8);
 }
+
+/* =========================================================================
+   v1.9 — Drill-down expand glyph, breadcrumb, interior subsystem colours
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Subsystem palette (interior face). Four functional stages of the column.
+   ------------------------------------------------------------------------- */
+:root {
+  --sub-illumination: #f59e0b;  /* amber  — gun, condensers, apertures      */
+  --sub-specimen:     #8b5cf6;  /* violet — goniometer, holder              */
+  --sub-imaging:      #14b8a6;  /* teal   — objective, intermediates, proj. */
+  --sub-viewing:      #ec4899;  /* pink   — screens, chambers, camera       */
+}
+
+/* List: colour accent only (no headers). A left stripe + tinted number;
+   contiguous ordering makes each subsystem read as a block. */
+.component-list__item.subsystem--illumination { box-shadow: inset 3px 0 0 var(--sub-illumination); }
+.component-list__item.subsystem--specimen     { box-shadow: inset 3px 0 0 var(--sub-specimen); }
+.component-list__item.subsystem--imaging      { box-shadow: inset 3px 0 0 var(--sub-imaging); }
+.component-list__item.subsystem--viewing      { box-shadow: inset 3px 0 0 var(--sub-viewing); }
+
+.component-list__item.subsystem--illumination .component-list__num { color: var(--sub-illumination); }
+.component-list__item.subsystem--specimen     .component-list__num { color: var(--sub-specimen); }
+.component-list__item.subsystem--imaging       .component-list__num { color: var(--sub-imaging); }
+.component-list__item.subsystem--viewing       .component-list__num { color: var(--sub-viewing); }
+
+/* Keep the stripe visible on hover/active (don't let the hover bg hide it). */
+.component-list__item.subsystem--illumination:hover,
+.component-list__item.subsystem--illumination.is-active { box-shadow: inset 3px 0 0 var(--sub-illumination); }
+.component-list__item.subsystem--specimen:hover,
+.component-list__item.subsystem--specimen.is-active     { box-shadow: inset 3px 0 0 var(--sub-specimen); }
+.component-list__item.subsystem--imaging:hover,
+.component-list__item.subsystem--imaging.is-active      { box-shadow: inset 3px 0 0 var(--sub-imaging); }
+.component-list__item.subsystem--viewing:hover,
+.component-list__item.subsystem--viewing.is-active      { box-shadow: inset 3px 0 0 var(--sub-viewing); }
+
+/* Diagram hotspots: tint the hover/active highlight by subsystem so the list
+   colour and the diagram agree. (Overrides the default amber for the interior
+   face; the exterior/drill-down faces carry no subsystem class.) */
+.column-hotspot.subsystem--illumination:hover,
+.column-hotspot.subsystem--illumination:focus-visible,
+.column-hotspot.subsystem--illumination.is-active {
+  background: color-mix(in srgb, var(--sub-illumination) 22%, transparent);
+  border-color: var(--sub-illumination);
+  box-shadow: 0 0 0 1px var(--sub-illumination), 0 6px 18px -6px color-mix(in srgb, var(--sub-illumination) 45%, transparent);
+}
+.column-hotspot.subsystem--specimen:hover,
+.column-hotspot.subsystem--specimen:focus-visible,
+.column-hotspot.subsystem--specimen.is-active {
+  background: color-mix(in srgb, var(--sub-specimen) 22%, transparent);
+  border-color: var(--sub-specimen);
+  box-shadow: 0 0 0 1px var(--sub-specimen), 0 6px 18px -6px color-mix(in srgb, var(--sub-specimen) 45%, transparent);
+}
+.column-hotspot.subsystem--imaging:hover,
+.column-hotspot.subsystem--imaging:focus-visible,
+.column-hotspot.subsystem--imaging.is-active {
+  background: color-mix(in srgb, var(--sub-imaging) 22%, transparent);
+  border-color: var(--sub-imaging);
+  box-shadow: 0 0 0 1px var(--sub-imaging), 0 6px 18px -6px color-mix(in srgb, var(--sub-imaging) 45%, transparent);
+}
+.column-hotspot.subsystem--viewing:hover,
+.column-hotspot.subsystem--viewing:focus-visible,
+.column-hotspot.subsystem--viewing.is-active {
+  background: color-mix(in srgb, var(--sub-viewing) 22%, transparent);
+  border-color: var(--sub-viewing);
+  box-shadow: 0 0 0 1px var(--sub-viewing), 0 6px 18px -6px color-mix(in srgb, var(--sub-viewing) 45%, transparent);
+}
+
+/* -------------------------------------------------------------------------
+   Drill-down "expand" glyph — fades in on hover/focus of a drill-down hotspot
+   ------------------------------------------------------------------------- */
+.column-hotspot { display: flex; align-items: center; justify-content: center; }
+
+.column-hotspot__expand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: var(--signal, #0284c7);
+  box-shadow: 0 4px 10px -3px rgba(2, 132, 199, 0.6);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  pointer-events: none;
+}
+
+.column-hotspot--drilldown:hover .column-hotspot__expand,
+.column-hotspot--drilldown:focus-visible .column-hotspot__expand,
+.column-hotspot--drilldown.is-active .column-hotspot__expand {
+  opacity: 1;
+  transform: scale(1);
+}
+
+[data-theme="dark"] .column-hotspot__expand {
+  color: #04121f;
+  background: var(--signal, #38bdf8);
+}
+
+/* -------------------------------------------------------------------------
+   Breadcrumb (in the top toolbar's face indicator)
+   ------------------------------------------------------------------------- */
+.breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breadcrumb__seg {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.breadcrumb__seg--current { color: var(--text-primary); font-weight: 600; }
+
+.breadcrumb__seg--link {
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.breadcrumb__seg--link:hover,
+.breadcrumb__seg--link:focus-visible {
+  color: var(--signal);
+  text-decoration: underline;
+  outline: none;
+}
+
+.breadcrumb__sep {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}

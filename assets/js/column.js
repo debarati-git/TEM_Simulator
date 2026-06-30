@@ -51,7 +51,7 @@
   const flipEl       = document.getElementById('column-flip');
   const flipToggle   = document.getElementById('flip-toggle');
   const flipLabel    = document.querySelector('[data-flip-label]');
-  const faceIndText  = document.querySelector('[data-face-indicator-text]');
+  const breadcrumbEl = document.querySelector('[data-breadcrumb]');
   const listEl       = document.getElementById('component-list');
   const listHeading  = document.querySelector('[data-info-list-heading]');
   const backBtn      = document.getElementById('back-to-exterior');
@@ -86,6 +86,41 @@
     return 'CONTROLS';
   }
 
+  /* Breadcrumb: top-level faces show a single segment; drill-downs show
+     "Exterior › <panel>" with the first segment clickable to go back. */
+  function renderBreadcrumb(faceId) {
+    if (!breadcrumbEl) return;
+    breadcrumbEl.innerHTML = '';
+
+    function seg(label, onClick) {
+      const el = document.createElement(onClick ? 'button' : 'span');
+      el.className = 'breadcrumb__seg' + (onClick ? ' breadcrumb__seg--link' : ' breadcrumb__seg--current');
+      el.textContent = label;
+      if (onClick) {
+        el.type = 'button';
+        el.addEventListener('click', onClick);
+      }
+      breadcrumbEl.appendChild(el);
+    }
+    function sep() {
+      const s = document.createElement('span');
+      s.className = 'breadcrumb__sep';
+      s.setAttribute('aria-hidden', 'true');
+      s.textContent = '\u203a';
+      breadcrumbEl.appendChild(s);
+    }
+
+    if (drilldownFaces.indexOf(faceId) !== -1) {
+      // Drill-down: Exterior (clickable) › <panel>
+      seg('Exterior', () => exitDrilldown());
+      sep();
+      seg(faceLabel(faceId));
+    } else {
+      // Top-level face (exterior or interior)
+      seg(faceLabel(faceId));
+    }
+  }
+
   /* --------------------------------------------------------------------- */
   /*  1. Build hotspots + pins for every face                              */
   /* --------------------------------------------------------------------- */
@@ -105,6 +140,7 @@
       h.type = 'button';
       h.className = 'column-hotspot';
       if (c.drilldown) h.classList.add('column-hotspot--drilldown');
+      if (c.subsystem) h.classList.add('subsystem--' + c.subsystem);
       h.dataset.componentId = c.id;
       h.dataset.face = faceId;
       h.setAttribute('aria-label', c.name + (c.drilldown ? ' (opens detailed view)' : ''));
@@ -113,6 +149,13 @@
       h.style.top    = c.hotspot.y + '%';
       h.style.width  = c.hotspot.w + '%';
       h.style.height = c.hotspot.h + '%';
+      /* Drill-down affordance: a magnifier-plus glyph that fades in on hover. */
+      if (c.drilldown) {
+        h.innerHTML =
+          '<span class="column-hotspot__expand" aria-hidden="true">' +
+          '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7">' +
+          '<circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14M7 5v4M5 7h4"/></svg></span>';
+      }
       layerEl.appendChild(h);
 
       h.addEventListener('mouseenter', () => showComponent(c.id, faceId, { source: 'diagram' }));
@@ -169,6 +212,7 @@
       const li = document.createElement('li');
       li.className = 'component-list__item';
       if (c.drilldown) li.classList.add('component-list__item--drilldown');
+      if (c.subsystem) li.classList.add('subsystem--' + c.subsystem);
       li.dataset.componentId = c.id;
       li.dataset.face = faceId;
       li.setAttribute('role', 'option');
@@ -303,7 +347,7 @@
     if (flipLabel) {
       flipLabel.textContent = isBack ? 'Flip to see Exterior' : 'Flip to see Column Interior';
     }
-    if (faceIndText) faceIndText.textContent = faceLabel(faceId);
+    renderBreadcrumb(faceId);
 
     rebuildListFor(faceId);
     clearDetail();
@@ -340,7 +384,7 @@
     /* Controls: hide flip toggle, show back button */
     if (flipToggle) flipToggle.style.display = 'none';
     if (backBtn) backBtn.hidden = false;
-    if (faceIndText) faceIndText.textContent = faceLabel(faceId);
+    renderBreadcrumb(faceId);
 
     rebuildListFor(faceId);
     clearDetail();
@@ -372,7 +416,7 @@
     flipEl.classList.remove('is-flipped');
     flipToggle.setAttribute('aria-pressed', 'false');
     if (flipLabel) flipLabel.textContent = 'Flip to see Column Interior';
-    if (faceIndText) faceIndText.textContent = faceLabel(FLIP_FRONT);
+    renderBreadcrumb(FLIP_FRONT);
 
     if (!opts.silent) {
       rebuildListFor(FLIP_FRONT);
@@ -393,7 +437,7 @@
   /*  Initial population: exterior face + intro pulse                      */
   /* --------------------------------------------------------------------- */
   rebuildListFor(currentFaceId);
-  if (faceIndText) faceIndText.textContent = faceLabel(currentFaceId);
+  renderBreadcrumb(currentFaceId);
   if (flipLabel)   flipLabel.textContent = 'Flip to see Column Interior';
 
   function runInitialIntro() {

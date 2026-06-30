@@ -321,26 +321,26 @@
     // labelPos: placed on the right edge where labels appear in the diagram.
     diagramHotspots: {
       'remove-holder':    {
-        x: 40, y: 50, w: 16, h: 5,
-        labelPos: { x: 16, y: 47.0, w: 20, h: 3.4 },
+        x: 44, y: 46, w: 15, h: 4.5,
+        labelPos: { x: 71, y: 43.5, w: 17, h: 4.8 },
         labelText: 'Specimen',
         action: 'Remove'
       },
       'insert-specimen':  {
-        x: 40, y: 50, w: 16, h: 5,
-        labelPos: { x: 16, y: 47.0, w: 20, h: 3.4 },
+        x: 44, y: 46, w: 15, h: 4.5,
+        labelPos: { x: 71, y: 43.5, w: 17, h: 4.8 },
         labelText: 'Specimen',
         action: 'Insert'
       },
       'insert-condenser': {
-        x: 35, y: 36, w: 17, h: 5,
-        labelPos: { x: 14, y: 35.5, w: 22, h: 3.4 },
+        x: 39, y: 22, w: 17, h: 4.5,
+        labelPos: { x: 13, y: 20.5, w: 21, h: 4.8 },
         labelText: 'Condenser aperture',
         action: 'Insert'
       },
       'insert-objective': {
-        x: 42, y: 55, w: 15, h: 5,
-        labelPos: { x: 60, y: 55, w: 26, h: 4 },
+        x: 40, y: 41.5, w: 16, h: 4.5,
+        labelPos: { x: 14, y: 39.5, w: 20, h: 4.8 },
         labelText: 'Objective aperture',
         action: 'Insert'
       }

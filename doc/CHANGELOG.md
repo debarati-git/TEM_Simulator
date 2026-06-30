@@ -1,5 +1,55 @@
 # Changelog
 
+## v1.10 — Module 02 guided diagram swap (Module 01 frozen at v1.9)
+
+### Module 01 · The Column
+
+- Frozen at the v1.9 state (the v1.9-final the user chose to keep); the
+  experimental "glyph beside label / always visible" variant was not carried
+  forward.
+- Fix: the **Specimen holder** and **Foot switches** exterior hotspots were
+  re-aligned onto their text labels (their boxes were sitting slightly off the
+  text after the v1.8 image swap). Part pins unchanged.
+
+### Module 02 · The Microscope
+
+- **Replaced the guided-viewer diagram** with the new stylized beam-path
+  cutaway (`tem-guided-cutaway.png`, 960 x 857). The 3 guided hotspot targets
+  (Specimen, Condenser aperture, Objective aperture) were recalibrated to the
+  new image: the highlight rects sit on the parts and the action pills align
+  with the diagram's own labels. Beam overlay and all frozen guided-session
+  logic unchanged. (Further modifications to follow per request.)
+- Removed the now-unused `tem-interior.png` copy from the Module 02 assets.
+
+### Unchanged
+
+- Module 03 untouched.
+
+
+## v1.9 — Module 01 UX: drill-down glyph, breadcrumb, subsystem colours
+
+### Module 01 · The Column
+
+- **Drill-down affordance:** a magnifier-plus glyph now fades in on hover/focus
+  over the three drill-down hotspots (Goniometer, Control Panel L1, R1), so
+  their depth is discoverable from the diagram itself.
+- **Breadcrumb** in the top toolbar replaces the plain face label. Top-level
+  views show a single segment ("Exterior" / "Column Interior"); drill-downs
+  show "Exterior › <panel>" with the "Exterior" segment clickable to go back
+  (a second route out alongside the Back button and Esc).
+- **Interior subsystem colour-coding:** the 28 interior components are grouped
+  into four functional stages — illumination (amber), specimen (violet),
+  imaging (teal), viewing & recording (pink). The list is reordered into four
+  contiguous colour blocks (accent stripe + tinted number, no headers), and the
+  same colours tint the matching diagram hotspots on hover/active, giving a
+  beam-path mental scaffold instead of a flat list of 28.
+
+### Unchanged
+
+- Modules 02 and 03 untouched. Provisional interior descriptions unchanged
+  (exact text still pending).
+
+
 ## v1.8 — New Exterior Image
 
 ### Module 01 · The Column

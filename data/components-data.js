@@ -105,7 +105,7 @@
           'The holder is introduced through a vacuum airlock that is pumped separately before a gate valve opens to the column, protecting the column vacuum. Cleanliness of the rod tip is critical — a contaminated holder is a common source of specimen drift and contamination.'
         ],
         pin: { x: 53.1, y: 31.5 },
-        hotspot: { x: 64.8, y: 27.8, w: 16.8, h: 2.8 }
+        hotspot: { x: 69.0, y: 25.0, w: 14.5, h: 2.6 }
       },
       {
         id: 'ext-field-limiting-aperture',
@@ -253,7 +253,7 @@
         /* The component has two endpoint dots (left + right pedal). The second
            marker is rendered from `extraPins`; the hotspot box spans both. */
         extraPins: [{ x: 51.0, y: 87.9 }],
-        hotspot: { x: 50.5, y: 88.0, w: 16.5, h: 3.6 }
+        hotspot: { x: 54.5, y: 92.3, w: 13.2, h: 2.9 }
       }
     ]
   };
@@ -271,12 +271,13 @@
       width: 1135,
       height: 1136
     },
-    note: 'Descriptions are provisional (standard-TEM knowledge); exact text to be supplied.',
+    note: 'Descriptions are provisional (standard-TEM knowledge); exact text to be supplied. Components are grouped by subsystem (illumination / specimen / imaging / viewing).',
     components: [
       {
         id: 'int-electron-gun',
         name: 'Electron Gun',
         role: 'Source of the electron beam',
+        subsystem: 'illumination',
         body: [
           'The assembly at the very top of the column where electrons are generated and accelerated. It houses the cathode (filament), the Wehnelt cylinder, and the anode of the accelerating tube.'
         ],
@@ -286,6 +287,7 @@
         id: 'int-wehnelt',
         name: 'Wehnelt',
         role: 'Bias electrode that focuses emission into a fine crossover',
+        subsystem: 'illumination',
         body: [
           'A negatively-biased cap surrounding the filament tip. Its field shapes the emitted electrons into a small, bright crossover that acts as the effective source for the rest of the column.'
         ],
@@ -295,6 +297,7 @@
         id: 'int-accelerating-tube',
         name: 'Accelerating Tube',
         role: 'Accelerates electrons to the operating voltage',
+        subsystem: 'illumination',
         body: [
           'A stack of electrodes that accelerates the electrons through the chosen high voltage (e.g. 80-300 kV), setting their final wavelength before they enter the lens system.'
         ],
@@ -304,6 +307,7 @@
         id: 'int-hv-cable',
         name: 'High Voltage Cable',
         role: 'Delivers the accelerating high voltage to the gun',
+        subsystem: 'illumination',
         body: [
           'The heavily insulated cable feeding the accelerating voltage from the tank/generator to the electron gun.'
         ],
@@ -313,42 +317,17 @@
         id: 'int-condenser-lens-coil',
         name: 'Condenser Lens Coil',
         role: 'Electromagnetic coil of the condenser lens',
+        subsystem: 'illumination',
         body: [
           'The winding that produces the magnetic field of the condenser lens, controlling the diameter and intensity of the beam reaching the specimen.'
         ],
         hotspot: { x: 15.1, y: 32.0, w: 20.0, h: 2.2 }
       },
       {
-        id: 'int-spot-alignment',
-        name: 'Spot Alignment',
-        role: 'Centres the beam crossover on the axis',
-        body: [
-          'Deflection used to align the illuminating spot onto the optical axis so the beam stays centred as brightness is changed.'
-        ],
-        hotspot: { x: 58.7, y: 29.2, w: 18.0, h: 2.4 }
-      },
-      {
-        id: 'int-cl-stigmator',
-        name: 'Condenser Lens Stigmator Coil',
-        role: 'Corrects astigmatism of the illumination',
-        body: [
-          'A multipole coil that removes ellipticity from the condenser lens field, keeping the illuminating spot round.'
-        ],
-        hotspot: { x: 58.7, y: 32.5, w: 28.7, h: 2.4 }
-      },
-      {
-        id: 'int-cl-1st-deflector',
-        name: 'Condenser Lens 1st Beam Deflector',
-        role: 'Upper beam-shift / tilt coil',
-        body: [
-          'The first of a paired deflector set used to shift or tilt the beam above the specimen (beam shift, dark-field tilt).'
-        ],
-        hotspot: { x: 58.7, y: 36.2, w: 32.6, h: 2.2 }
-      },
-      {
         id: 'int-condenser-aperture',
         name: 'Condenser Aperture',
         role: 'Limits beam divergence and current',
+        subsystem: 'illumination',
         body: [
           'A metal aperture inserted into the beam to set the convergence angle and coherence of the illumination.'
         ],
@@ -358,42 +337,67 @@
         id: 'int-condenser-mini-lens',
         name: 'Condenser Mini Lens Coil',
         role: 'Auxiliary condenser lens',
+        subsystem: 'illumination',
         body: [
           'A weaker lens working with the main condenser lenses to decouple convergence angle from spot size, enabling TEM / STEM illumination modes.'
         ],
         hotspot: { x: 11.5, y: 39.6, w: 23.6, h: 2.2 }
       },
       {
+        id: 'int-cl-stigmator',
+        name: 'Condenser Lens Stigmator Coil',
+        role: 'Corrects astigmatism of the illumination',
+        subsystem: 'illumination',
+        body: [
+          'A multipole coil that removes ellipticity from the condenser lens field, keeping the illuminating spot round.'
+        ],
+        hotspot: { x: 58.7, y: 32.5, w: 28.7, h: 2.4 }
+      },
+      {
+        id: 'int-cl-1st-deflector',
+        name: 'Condenser Lens 1st Beam Deflector',
+        role: 'Upper beam-shift / tilt coil',
+        subsystem: 'illumination',
+        body: [
+          'The first of a paired deflector set used to shift or tilt the beam above the specimen (beam shift, dark-field tilt).'
+        ],
+        hotspot: { x: 58.7, y: 36.2, w: 32.6, h: 2.2 }
+      },
+      {
         id: 'int-cl-2nd-deflector',
         name: 'Condenser Lens 2nd Beam Deflector',
         role: 'Lower beam-shift / tilt coil',
+        subsystem: 'illumination',
         body: [
           'The lower deflector of the condenser pair; together with the 1st deflector it produces pure beam shift or pure beam tilt at the specimen.'
         ],
         hotspot: { x: 58.7, y: 41.7, w: 33.0, h: 2.2 }
       },
       {
+        id: 'int-spot-alignment',
+        name: 'Spot Alignment',
+        role: 'Centres the beam crossover on the axis',
+        subsystem: 'illumination',
+        body: [
+          'Deflection used to align the illuminating spot onto the optical axis so the beam stays centred as brightness is changed.'
+        ],
+        hotspot: { x: 58.7, y: 29.2, w: 18.0, h: 2.4 }
+      },
+      {
         id: 'int-gonio-meter',
         name: 'Goniometer',
         role: 'Precision specimen stage',
+        subsystem: 'specimen',
         body: [
           'The mechanical stage that holds and orients the specimen, providing X/Y/Z translation and tilt with high precision.'
         ],
         hotspot: { x: 20.5, y: 43.4, w: 14.5, h: 2.2 }
       },
       {
-        id: 'int-obj-stigmator',
-        name: 'Objective Lens Stigmator Coil',
-        role: 'Corrects objective-lens astigmatism',
-        body: [
-          'A multipole coil that compensates astigmatism in the objective lens - essential for sharp high-resolution imaging.'
-        ],
-        hotspot: { x: 58.7, y: 45.8, w: 27.5, h: 2.4 }
-      },
-      {
         id: 'int-specimen-holder',
         name: 'Specimen Holder',
         role: 'Carries the specimen into the objective gap',
+        subsystem: 'specimen',
         body: [
           'The rod that clamps the 3 mm grid and positions the specimen inside the objective-lens polepiece gap.'
         ],
@@ -403,6 +407,7 @@
         id: 'int-objective-lens-coil',
         name: 'Objective Lens Coil',
         role: 'Coil of the primary imaging lens',
+        subsystem: 'imaging',
         body: [
           'The winding of the objective lens, which forms the first magnified image and largely sets the instrument\'s resolution.'
         ],
@@ -412,15 +417,27 @@
         id: 'int-obj-mini-lens',
         name: 'Objective Mini Lens Coil',
         role: 'Fine-focus auxiliary objective lens',
+        subsystem: 'imaging',
         body: [
           'A weaker lens below the objective used for fine focusing and for low-magnification imaging.'
         ],
         hotspot: { x: 58.7, y: 51.0, w: 23.5, h: 2.4 }
       },
       {
+        id: 'int-obj-stigmator',
+        name: 'Objective Lens Stigmator Coil',
+        role: 'Corrects objective-lens astigmatism',
+        subsystem: 'imaging',
+        body: [
+          'A multipole coil that compensates astigmatism in the objective lens - essential for sharp high-resolution imaging.'
+        ],
+        hotspot: { x: 58.7, y: 45.8, w: 27.5, h: 2.4 }
+      },
+      {
         id: 'int-field-limiting-aperture',
         name: 'Field Limiting Aperture',
         role: 'Selected-area (SAD) aperture',
+        subsystem: 'imaging',
         body: [
           'An aperture in the image plane that restricts the specimen area contributing to a diffraction pattern, enabling selected-area diffraction.'
         ],
@@ -430,6 +447,7 @@
         id: 'int-1st-image-shifter',
         name: '1st Image Shifter',
         role: 'Upper image-shift deflector',
+        subsystem: 'imaging',
         body: [
           'A deflector that shifts the image (or diffraction pattern) on the screen, used with the 2nd shifter for pure image translation.'
         ],
@@ -439,42 +457,47 @@
         id: 'int-2nd-image-shifter',
         name: '2nd Image Shifter',
         role: 'Lower image-shift deflector',
+        subsystem: 'imaging',
         body: [
           'The lower image-shift deflector; paired with the 1st shifter to move the image without tilting it.'
         ],
         hotspot: { x: 58.7, y: 59.2, w: 19.7, h: 2.4 }
       },
       {
-        id: 'int-projector-beam-deflector',
-        name: 'Projector Lens Beam Deflector',
-        role: 'Centres the image on the projector axis',
-        body: [
-          'Deflection that keeps the magnified image/diffraction pattern centred through the projector lens.'
-        ],
-        hotspot: { x: 8.0, y: 60.8, w: 27.0, h: 2.4 }
-      },
-      {
-        id: 'int-projector-lens-coil',
-        name: 'Projector Lens Coil',
-        role: 'Coil of the final projection lens',
-        body: [
-          'The winding of the projector lens, which provides the final magnification onto the screen and camera.'
-        ],
-        hotspot: { x: 16.5, y: 63.9, w: 18.6, h: 2.4 }
-      },
-      {
         id: 'int-intermediate-lens-coil',
         name: 'Intermediate Lens Coil',
         role: 'Variable-magnification lens stage',
+        subsystem: 'imaging',
         body: [
           'The intermediate lenses set the magnification range and switch the column between imaging and diffraction modes.'
         ],
         hotspot: { x: 58.7, y: 64.4, w: 22.6, h: 2.2 }
       },
       {
+        id: 'int-projector-lens-coil',
+        name: 'Projector Lens Coil',
+        role: 'Coil of the final projection lens',
+        subsystem: 'imaging',
+        body: [
+          'The winding of the projector lens, which provides the final magnification onto the screen and camera.'
+        ],
+        hotspot: { x: 16.5, y: 63.9, w: 18.6, h: 2.4 }
+      },
+      {
+        id: 'int-projector-beam-deflector',
+        name: 'Projector Lens Beam Deflector',
+        role: 'Centres the image on the projector axis',
+        subsystem: 'imaging',
+        body: [
+          'Deflection that keeps the magnified image/diffraction pattern centred through the projector lens.'
+        ],
+        hotspot: { x: 8.0, y: 60.8, w: 27.0, h: 2.4 }
+      },
+      {
         id: 'int-binocular-microscope',
         name: 'Binocular Microscope',
         role: 'Optical viewing of the screen',
+        subsystem: 'viewing',
         body: [
           'Binocular optics that give the operator a magnified direct view of the fluorescent screen for focusing and astigmatism correction.'
         ],
@@ -484,6 +507,7 @@
         id: 'int-viewing-chamber',
         name: 'Viewing Chamber',
         role: 'Houses the fluorescent screen',
+        subsystem: 'viewing',
         body: [
           'The chamber containing the phosphor viewing screen where the electron image is made visible.'
         ],
@@ -493,6 +517,7 @@
         id: 'int-viewing-window',
         name: 'Viewing Window',
         role: 'Leaded-glass observation port',
+        subsystem: 'viewing',
         body: [
           'The shielded glass window through which the operator views the screen, protecting against X-rays.'
         ],
@@ -502,6 +527,7 @@
         id: 'int-small-screen',
         name: 'Small Screen',
         role: 'Focusing / high-detail viewing screen',
+        subsystem: 'viewing',
         body: [
           'A small phosphor screen used at higher optical magnification for fine focusing of the live image.'
         ],
@@ -511,6 +537,7 @@
         id: 'int-large-screen',
         name: 'Large Screen',
         role: 'Main fluorescent viewing screen',
+        subsystem: 'viewing',
         body: [
           'The large phosphor screen that displays the full electron image for general viewing and survey.'
         ],
@@ -520,6 +547,7 @@
         id: 'int-camera-chamber',
         name: 'Camera Chamber',
         role: 'Records the image below the screen',
+        subsystem: 'viewing',
         body: [
           'The chamber beneath the viewing screen housing the camera (or, historically, film) that records the image when the screen is lifted.'
         ],
