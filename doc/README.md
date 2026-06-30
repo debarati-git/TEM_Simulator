@@ -1,4 +1,4 @@
-# TEM Simulator — Version 1.7
+# TEM Simulator — Version 1.8
 
 A web-based Transmission Electron Microscope learning environment, built for
 IIT students to develop instrument intuition before working on real hardware.

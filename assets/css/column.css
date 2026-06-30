@@ -140,7 +140,7 @@
     box-shadow var(--dur-base) var(--ease-out);
 }
 
-.column-image-wrap--exterior  { aspect-ratio: 1060 / 943; }
+.column-image-wrap--exterior  { aspect-ratio: 929 / 833; }
 .column-image-wrap--interior  { aspect-ratio: 1135 / 1136; }
 .column-image-wrap--detail    { aspect-ratio: 900 / 620; }
 .column-image-wrap--l1        { aspect-ratio: 1105 / 829; }

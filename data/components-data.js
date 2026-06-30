@@ -47,8 +47,8 @@
   const exteriorFace = {
     image: {
       src: '../assets/images/column/tem-exterior.png',
-      width: 1060,
-      height: 943
+      width: 929,
+      height: 833
     },
     components: [
       {
@@ -59,8 +59,8 @@
           'The side-mounted assembly on the upper column that carries the condenser apertures. A strip of precision-drilled holes (typically 30-200 \u00b5m) can be slid into the beam; the small X/Y knobs centre the chosen hole on the optical axis.',
           'Choosing a smaller condenser aperture improves the spatial coherence of the illumination (sharper interference fringes) at the cost of beam current; a larger one gives a brighter beam for rapid survey work.'
         ],
-        pin: { x: 43.5, y: 23.4 },
-        hotspot: { x: 13.0, y: 17.3, w: 32.5, h: 7.0 }
+        pin: { x: 44.7, y: 24.0 },
+        hotspot: { x: 13.0, y: 17.6, w: 16.5, h: 6.6 }
       },
       {
         id: 'ext-cm-lens-screws',
@@ -70,8 +70,8 @@
           'A set of four screws used to mechanically centre the condenser-mini lens polepiece relative to the optical axis. Mechanical alignment of the polepiece complements the electrical (coil-based) beam alignment performed from the console.',
           'These are service / coarse-alignment adjustments — set during installation and major maintenance, not touched during routine operation.'
         ],
-        pin: { x: 40.5, y: 25.6 },
-        hotspot: { x: 8.5, y: 24.0, w: 34.0, h: 3.4 }
+        pin: { x: 41.8, y: 26.5 },
+        hotspot: { x: 9.0, y: 24.3, w: 34.5, h: 3.2 }
       },
       {
         id: 'ext-refrigerant-tank',
@@ -81,8 +81,8 @@
           'A liquid-nitrogen dewar mounted on the column. It feeds a cold finger / anti-contaminator near the specimen that condenses stray hydrocarbon molecules onto a cold surface, keeping them off the specimen and reducing carbon build-up under the beam.',
           'On instruments with a cooled detector or an energy filter, a refrigerant supply may also stabilise those subsystems. The tank is topped up regularly; letting it run dry degrades vacuum cleanliness around the sample.'
         ],
-        pin: { x: 38.2, y: 30.5 },
-        hotspot: { x: 11.0, y: 28.0, w: 28.5, h: 3.6 }
+        pin: { x: 39.3, y: 31.3 },
+        hotspot: { x: 11.0, y: 29.0, w: 18.8, h: 3.2 }
       },
       {
         id: 'ext-goniometer',
@@ -93,8 +93,8 @@
           'The mechanical stage into which the specimen holder is inserted. It controls X / Y / Z translation and \u03b1 (and on double-tilt holders \u03b2) tilt of the specimen with sub-micron and sub-degree precision, letting the operator bring a feature onto the axis and orient a crystal to a chosen zone axis.',
           'Goniometer stability is decisive for high-resolution work: thermal drift, backlash, or vibration here shows up directly as image blur. Side-entry goniometers (shown) are the most common geometry in modern TEMs.'
         ],
-        pin: { x: 49.7, y: 29.3 },
-        hotspot: { x: 65.5, y: 17.8, w: 18.0, h: 3.6 }
+        pin: { x: 51.2, y: 30.2 },
+        hotspot: { x: 66.4, y: 19.0, w: 13.6, h: 3.0 }
       },
       {
         id: 'ext-specimen-holder',
@@ -104,8 +104,8 @@
           'The rod inserted horizontally through the airlock into the goniometer. Its tip clamps the 3 mm specimen grid inside the objective-lens polepiece gap. Holders come in many types: single-tilt, double-tilt, heating, cooling (LN\u2082 / He), biasing, and in-situ straining or gas-cell designs.',
           'The holder is introduced through a vacuum airlock that is pumped separately before a gate valve opens to the column, protecting the column vacuum. Cleanliness of the rod tip is critical — a contaminated holder is a common source of specimen drift and contamination.'
         ],
-        pin: { x: 51.6, y: 30.5 },
-        hotspot: { x: 65.5, y: 27.4, w: 19.0, h: 3.6 }
+        pin: { x: 53.1, y: 31.5 },
+        hotspot: { x: 64.8, y: 27.8, w: 16.8, h: 2.8 }
       },
       {
         id: 'ext-field-limiting-aperture',
@@ -115,8 +115,8 @@
           'The assembly carrying the selected-area / field-limiting aperture, located in an image plane below the objective lens. Inserting it restricts which region of the specimen contributes to the diffraction pattern, enabling selected-area electron diffraction (SAED) from a chosen grain or phase.',
           'Like the other apertures it has X/Y centring knobs and a strip of selectable hole sizes. It is retracted during normal imaging and inserted only when isolating a region for diffraction.'
         ],
-        pin: { x: 50.7, y: 36.8 },
-        hotspot: { x: 65.5, y: 33.0, w: 24.0, h: 6.8 }
+        pin: { x: 52.2, y: 37.9 },
+        hotspot: { x: 64.8, y: 30.0, w: 21.5, h: 4.4 }
       },
       {
         id: 'ext-intermediate-screws',
@@ -126,8 +126,8 @@
           'Four screws for mechanical alignment of the intermediate lens polepiece on the optical axis. The intermediate lenses set the magnification zoom and perform the image / diffraction mode switch, so their mechanical centring underpins clean mode changes.',
           'As with the other shift-screw sets, these are coarse mechanical adjustments made during alignment and service rather than routine operation.'
         ],
-        pin: { x: 48.1, y: 39.9 },
-        hotspot: { x: 65.5, y: 38.6, w: 25.0, h: 5.6 }
+        pin: { x: 49.6, y: 41.2 },
+        hotspot: { x: 71.0, y: 35.0, w: 18.5, h: 4.4 }
       },
       {
         id: 'ext-projector-screws',
@@ -137,8 +137,8 @@
           'Four screws for mechanically centring the projector lens polepiece. The projector lens is the final magnetic lens, projecting the image or diffraction pattern onto the screen and camera, so its alignment affects how centred and distortion-free the final image is.',
           'These too are coarse mechanical alignments fixed during setup and maintenance, not part of day-to-day operation.'
         ],
-        pin: { x: 48.0, y: 43.5 },
-        hotspot: { x: 65.5, y: 44.8, w: 25.0, h: 5.6 }
+        pin: { x: 49.5, y: 44.7 },
+        hotspot: { x: 71.0, y: 40.0, w: 20.0, h: 4.6 }
       },
       {
         id: 'ext-binocular-microscope',
@@ -148,8 +148,8 @@
           'The binocular optics that look down onto the fluorescent viewing screen, giving the operator a direct, magnified optical view of the live electron image. They are the traditional tool for fine focusing and astigmatism correction, resolving screen detail finer than the naked eye.',
           'Although high-sensitivity cameras now capture the image digitally, the binoculars remain valuable for real-time alignment because the eye-screen path has no readout lag.'
         ],
-        pin: { x: 42.1, y: 45.8 },
-        hotspot: { x: 12.0, y: 38.0, w: 24.0, h: 3.6 }
+        pin: { x: 43.5, y: 47.1 },
+        hotspot: { x: 12.0, y: 39.4, w: 18.2, h: 3.2 }
       },
       {
         id: 'ext-pc-monitor',
@@ -159,8 +159,8 @@
           'The computer display showing the live camera image, column status (vacuum, lens currents, stage position), and the acquisition / analysis software menus. Most TEMs run two or more screens — one for the live image and one for column control.',
           'The monitor is the operator\u2019s main feedback surface during digital acquisition, where exposure, binning, drift correction, and image saving are managed.'
         ],
-        pin: { x: 69.5, y: 46.3 },
-        hotspot: { x: 74.5, y: 45.0, w: 16.5, h: 3.4 }
+        pin: { x: 71.2, y: 47.7 },
+        hotspot: { x: 75.0, y: 46.0, w: 12.0, h: 2.8 }
       },
       {
         id: 'ext-control-panel-l1',
@@ -171,8 +171,8 @@
           'The left-hand operator console on the desk. It typically carries the left trackball (beam shift / tilt), the brightness (C2) control, gun and condenser alignment functions, and the aperture and mode buttons used to set up the illumination.',
           'Click to open a detailed view of this console and explore its individual knobs and switches.'
         ],
-        pin: { x: 28.9, y: 53.0 },
-        hotspot: { x: 4.0, y: 49.0, w: 26.5, h: 3.6 }
+        pin: { x: 29.8, y: 54.7 },
+        hotspot: { x: 4.2, y: 50.4, w: 27.6, h: 3.2 }
       },
       {
         id: 'ext-trackball',
@@ -182,8 +182,8 @@
           'A trackball on the console used for smooth, fine positioning. Depending on the active mode it drives beam shift / tilt, image shift, or stage (specimen) movement, letting the operator slew across the specimen or recentre a feature without reaching for individual knobs.',
           'Most columns provide two trackballs (one per console) so beam and image / stage controls are available simultaneously during alignment.'
         ],
-        pin: { x: 35.9, y: 53.4 },
-        hotspot: { x: 16.5, y: 43.0, w: 14.0, h: 3.6 }
+        pin: { x: 37.0, y: 55.0 },
+        hotspot: { x: 17.0, y: 43.9, w: 10.2, h: 3.2 }
       },
       {
         id: 'ext-fluorescent-screen-lever',
@@ -193,8 +193,8 @@
           'The lever that lifts the fluorescent (phosphor) viewing screen out of the beam path. With the screen down, the operator views the live image through the binoculars; lifting it lets the beam reach the camera or a direct-electron detector below for acquisition.',
           'Screen up / down is one of the most frequent actions in a session — survey and focus on the screen, then lift it to record.'
         ],
-        pin: { x: 50.1, y: 53.7 },
-        hotspot: { x: 74.0, y: 49.6, w: 17.5, h: 5.8 }
+        pin: { x: 51.6, y: 55.5 },
+        hotspot: { x: 74.5, y: 50.0, w: 13.5, h: 4.6 }
       },
       {
         id: 'ext-control-panel-r1',
@@ -205,8 +205,8 @@
           'The right-hand operator console on the desk. It typically carries the right trackball (image shift / stage), the magnification and focus controls, the diffraction (DIFF) and imaging mode buttons, and image-shift / alignment functions.',
           'Click to open a detailed view of this console and explore its individual knobs and switches.'
         ],
-        pin: { x: 57.3, y: 55.7 },
-        hotspot: { x: 74.0, y: 55.4, w: 18.5, h: 3.4 }
+        pin: { x: 59.0, y: 57.5 },
+        hotspot: { x: 76.0, y: 55.8, w: 20.0, h: 3.0 }
       },
       {
         id: 'ext-camera-chamber-door',
@@ -216,8 +216,8 @@
           'The door of the camera (recording) chamber beneath the viewing screen. Historically this chamber held photographic film plates; today it houses the CCD / CMOS camera or a retractable detector. The door provides access for camera service and, on film-era instruments, plate loading.',
           'The chamber is part of the column vacuum, so the door is interlocked with the vacuum system and only opened under the correct conditions.'
         ],
-        pin: { x: 38.8, y: 60.9 },
-        hotspot: { x: 10.0, y: 89.0, w: 25.0, h: 3.8 }
+        pin: { x: 40.0, y: 63.0 },
+        hotspot: { x: 11.0, y: 91.0, w: 24.6, h: 3.4 }
       },
       {
         id: 'ext-cover-l2',
@@ -227,8 +227,8 @@
           'The left cabinet cover of the desk console. Behind it sit secondary control electronics and the L2 control panel for the instrument — power supplies, interface boards, and auxiliary controls that are not needed on the operator surface.',
           'These covers are access panels for service engineers; they remain closed during normal operation.'
         ],
-        pin: { x: 19.2, y: 65.5 },
-        hotspot: { x: 2.5, y: 63.3, w: 19.0, h: 5.2 }
+        pin: { x: 19.9, y: 67.3 },
+        hotspot: { x: 2.6, y: 65.2, w: 19.0, h: 6.4 }
       },
       {
         id: 'ext-cover-r2',
@@ -238,8 +238,8 @@
           'The right cabinet cover of the desk console, behind which sit the R2 control panel and additional control electronics for the instrument. Like the left cabinet it holds power and interface hardware kept off the operator surface.',
           'Opened only for maintenance and service access; closed during routine use.'
         ],
-        pin: { x: 77.8, y: 74.1 },
-        hotspot: { x: 76.0, y: 72.8, w: 20.0, h: 5.2 }
+        pin: { x: 79.7, y: 76.5 },
+        hotspot: { x: 78.0, y: 74.9, w: 20.6, h: 5.4 }
       },
       {
         id: 'ext-foot-switches',
@@ -249,11 +249,11 @@
           'The pair of floor pedals that give the operator hands-free control of frequently used functions — commonly screen lift, beam blanking, exposure / capture, or stage actions — so both hands stay on the trackballs and knobs during alignment and acquisition.',
           'Pedal assignment is configurable on most instruments to match the operator\u2019s preferred workflow.'
         ],
-        pin: { x: 40.1, y: 83.9 },
+        pin: { x: 41.5, y: 86.9 },
         /* The component has two endpoint dots (left + right pedal). The second
            marker is rendered from `extraPins`; the hotspot box spans both. */
-        extraPins: [{ x: 49.5, y: 84.9 }],
-        hotspot: { x: 53.3, y: 88.2, w: 13.8, h: 3.6 }
+        extraPins: [{ x: 51.0, y: 87.9 }],
+        hotspot: { x: 50.5, y: 88.0, w: 16.5, h: 3.6 }
       }
     ]
   };

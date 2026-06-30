@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.8 — New Exterior Image
+
+### Module 01 · The Column
+
+- **Replaced the exterior diagram** with the improved photo (929 x 833,
+  previously 1060 x 943). All 18 hotspot label-boxes and their part pins were
+  fully recalibrated to the new image (verified by overlay render); the
+  exterior image-wrap aspect-ratio was updated accordingly.
+- No other Module 01 behaviour changed (interior, goniometer, L1/R1 drill-downs
+  untouched).
+
+### Unchanged
+
+- Modules 02 and 03 untouched.
+
+
 ## v1.7 — Interior Hotspot Fix + Module 02 Diagram Swap
 
 ### Module 01 · The Column
