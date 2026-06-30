@@ -14,10 +14,7 @@
 
   <main class="guided-page">
 
-    <!-- ===========================================================
-         Status strip — indicators (left) · brand (center) ·
-         sample/mag (right) · progress bar (bottom edge)
-         =========================================================== -->
+    <!-- Status strip -->
     <div class="guided-status">
       <div class="guided-status__left">
         <span class="guided-status__metric">
@@ -51,13 +48,12 @@
         </button>
       </div>
 
-      <!-- Ambient progress bar — bottom edge of status strip -->
       <div class="guided-status__progress" aria-hidden="true">
         <div class="guided-status__progress-fill" id="progress-fill"></div>
       </div>
     </div>
 
-    <!-- Context bar — back · instruction (with hint) · restart -->
+    <!-- Context bar -->
     <div class="guided-context">
       <a href="microscope.html" class="guided-context__back">
         <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -100,16 +96,64 @@
     </div>
 
     <!-- ===========================================================
-         Three-panel body: left controls · viewer · right controls
+         Two-panel body: viewer (left) · single control rail (right)
          =========================================================== -->
     <div class="guided-body">
 
-      <!-- =================== LEFT CONTROL RAIL =================== -->
-      <aside class="ctl-rail ctl-rail--left">
+      <!-- =================== LEFT VIEWER =================== -->
+      <section class="viewer">
+        <header class="viewer__header">
+          <div class="viewer__tabs" role="tablist" aria-label="View">
+            <button class="viewer__tab is-active" role="tab" aria-selected="true" data-view="column">
+              <span class="viewer__tab-dot" aria-hidden="true"></span>
+              Column
+            </button>
+            <button class="viewer__tab" role="tab" aria-selected="false" data-view="screen">
+              <span class="viewer__tab-dot" aria-hidden="true"></span>
+              Viewing Screen
+            </button>
+          </div>
+          <div class="viewer__header-right">
+            <div class="viewer__caption" id="viewer-caption">FIG · ELECTRON OPTICAL COLUMN</div>
+            <button type="button" class="viewer__fullscreen" id="btn-fullscreen" title="Toggle full screen">
+              <svg class="viewer__fs-icon-enter" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/>
+              </svg>
+              <svg class="viewer__fs-icon-exit" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4"/>
+              </svg>
+              <span class="viewer__fs-label">Full Screen</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="viewer__stage">
+          <div class="viewer__panel is-active" data-view-panel="column">
+            <img src="../assets/images/microscope/diagram/tem-interior.png"
+                 alt="TEM column interior cutaway diagram"
+                 class="viewer__column-image" />
+            <div class="viewer__column-beam" id="column-beam" aria-hidden="true">
+              <div class="column-beam__source"></div>
+              <div class="column-beam__stream"></div>
+              <div class="column-beam__phosphor"></div>
+            </div>
+            <div class="viewer__column-hotspots" id="diagram-hotspots"></div>
+          </div>
+
+          <div class="viewer__panel" data-view-panel="screen">
+            <div class="viewer__screen" id="view-screen">
+              <div class="viewer__screen-empty" id="view-empty">SCREEN OFFLINE</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================== RIGHT CONTROL RAIL (all controls, workflow order) =================== -->
+      <aside class="ctl-rail ctl-rail--right">
         <div class="ctl-rail__inner">
 
-          <!-- Gun & Vacuum -->
-          <div class="dz">
+          <!-- 1. Gun & Vacuum -->
+          <div class="dz" data-zone="gun-vacuum">
             <div class="dz__label">Gun &amp; Vacuum</div>
             <div class="dz__body">
               <div class="ctl ctl--stack" data-control="sample">
@@ -147,8 +191,8 @@
             </div>
           </div>
 
-          <!-- Beam -->
-          <div class="dz">
+          <!-- 2. Beam -->
+          <div class="dz" data-zone="beam">
             <div class="dz__label">Beam</div>
             <div class="dz__body">
               <div class="ctl ctl--row-2" data-control="beam-on">
@@ -196,8 +240,8 @@
             </div>
           </div>
 
-          <!-- Apertures -->
-          <div class="dz">
+          <!-- 3. Apertures -->
+          <div class="dz" data-zone="apertures">
             <div class="dz__label">Apertures</div>
             <div class="dz__body">
               <div class="ctl ctl--stack" data-control="aperture-select">
@@ -227,65 +271,8 @@
             </div>
           </div>
 
-        </div>
-      </aside>
-
-      <!-- =================== CENTER VIEWER =================== -->
-      <section class="viewer">
-        <header class="viewer__header">
-          <div class="viewer__tabs" role="tablist" aria-label="View">
-            <button class="viewer__tab is-active" role="tab" aria-selected="true" data-view="column">
-              <span class="viewer__tab-dot" aria-hidden="true"></span>
-              Column
-            </button>
-            <button class="viewer__tab" role="tab" aria-selected="false" data-view="screen">
-              <span class="viewer__tab-dot" aria-hidden="true"></span>
-              Viewing Screen
-            </button>
-          </div>
-          <div class="viewer__header-right">
-            <div class="viewer__caption" id="viewer-caption">FIG · ELECTRON OPTICAL COLUMN</div>
-            <button type="button" class="viewer__fullscreen" id="btn-fullscreen" title="Toggle full screen">
-              <svg class="viewer__fs-icon-enter" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/>
-              </svg>
-              <svg class="viewer__fs-icon-exit" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4"/>
-              </svg>
-              <span class="viewer__fs-label">Full Screen</span>
-            </button>
-          </div>
-        </header>
-
-        <div class="viewer__stage">
-          <div class="viewer__panel is-active" data-view-panel="column">
-            <img src="../assets/images/microscope/diagram/tem-column.png"
-                 alt="TEM column cross-section"
-                 class="viewer__column-image" />
-            <div class="viewer__column-beam" id="column-beam" aria-hidden="true">
-              <div class="column-beam__source"></div>
-              <div class="column-beam__stream"></div>
-              <div class="column-beam__phosphor"></div>
-            </div>
-            <div class="viewer__column-hotspots" id="diagram-hotspots"></div>
-          </div>
-
-          <div class="viewer__panel" data-view-panel="screen">
-            <div class="viewer__screen" id="view-screen">
-              <div class="viewer__screen-empty" id="view-empty">SCREEN OFFLINE</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =================== RIGHT CONTROL RAIL =================== -->
-      <aside class="ctl-rail ctl-rail--right">
-        <div class="ctl-rail__inner">
-
-          <!-- Magnification — promoted to the top of the right rail because
-               Mag + Wobbler are the controls students reach for most often
-               during sample location and eucentric-height adjustment. -->
-          <div class="dz">
+          <!-- 4. Magnification -->
+          <div class="dz" data-zone="magnification">
             <div class="dz__label">Magnification</div>
             <div class="dz__body">
               <div class="ctl ctl--stack" data-control="magnification">
@@ -305,8 +292,8 @@
             </div>
           </div>
 
-          <!-- Specimen Stage -->
-          <div class="dz">
+          <!-- 5. Specimen Stage -->
+          <div class="dz" data-zone="specimen-stage">
             <div class="dz__label">Specimen Stage</div>
             <div class="dz__body">
               <div class="dz__stage-grid">
@@ -349,8 +336,8 @@
             </div>
           </div>
 
-          <!-- Imaging -->
-          <div class="dz">
+          <!-- 6. Imaging -->
+          <div class="dz" data-zone="imaging">
             <div class="dz__label">Imaging</div>
             <div class="dz__body">
               <div class="ctl ctl--stack" data-control="imaging-mode">
@@ -418,8 +405,8 @@
             </div>
           </div>
 
-          <!-- Capture -->
-          <div class="dz">
+          <!-- 7. Capture -->
+          <div class="dz" data-zone="capture">
             <div class="dz__label">Capture</div>
             <div class="dz__body">
               <div class="ctl ctl--row-2" data-control="camera-insert">
@@ -439,7 +426,7 @@
         </div>
       </aside>
 
-      <!-- ============= THEORY MODAL — opened from status-bar button ============= -->
+      <!-- ============= THEORY MODAL ============= -->
       <div class="guided-theory" id="guidedTheory" role="dialog" aria-modal="true" aria-labelledby="guidedTheoryTitle" hidden>
         <div class="guided-theory__bg" id="guidedTheoryBackdrop"></div>
         <div class="guided-theory__panel">
@@ -512,12 +499,8 @@
     </div>
   </main>
 
-
-
   <script src="../assets/js/global.js"></script>
-  <!-- Embedded data (works under file:// — no fetch required) -->
   <script src="../data/guided-data.js"></script>
-  <!-- Phase 2: actual logic. Stubs for now. -->
   <script src="../assets/js/guided/state.js"></script>
   <script src="../assets/js/guided/tolerance.js"></script>
   <script src="../assets/js/guided/feedback.js"></script>
@@ -528,33 +511,23 @@
   <script src="../assets/js/guided/acquire.js"></script>
   <script src="../assets/js/guided/guided-controller.js"></script>
 
-  <!-- Theory modal: open from status-bar button; close via X, Esc, backdrop, or Got it -->
   <script>
     (function () {
-      const modal      = document.getElementById('guidedTheory');
-      const openBtn    = document.getElementById('guidedTheoryBtn');
-      const closeBtn   = document.getElementById('guidedTheoryClose');
-      const gotItBtn   = document.getElementById('guidedTheoryGotIt');
-      const backdrop   = document.getElementById('guidedTheoryBackdrop');
+      const modal    = document.getElementById('guidedTheory');
+      const openBtn  = document.getElementById('guidedTheoryBtn');
+      const closeBtn = document.getElementById('guidedTheoryClose');
+      const gotItBtn = document.getElementById('guidedTheoryGotIt');
+      const backdrop = document.getElementById('guidedTheoryBackdrop');
       if (!modal || !openBtn) return;
 
-      function openModal() {
-        modal.hidden = false;
-        void modal.offsetWidth;          // force reflow so transition runs
-        modal.classList.add('is-open');
-      }
-      function closeModal() {
-        modal.classList.remove('is-open');
-        setTimeout(() => { modal.hidden = true; }, 200);
-      }
+      function openModal()  { modal.hidden = false; void modal.offsetWidth; modal.classList.add('is-open'); }
+      function closeModal() { modal.classList.remove('is-open'); setTimeout(() => { modal.hidden = true; }, 200); }
 
       openBtn.addEventListener('click', openModal);
       closeBtn?.addEventListener('click', closeModal);
       gotItBtn?.addEventListener('click', closeModal);
       backdrop?.addEventListener('click', closeModal);
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal.hidden) closeModal();
-      });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
     })();
   </script>
 </body>

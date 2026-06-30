@@ -17,8 +17,43 @@ click it to maximise the simulator and reduce visual distraction.
 
 ## Module 01 — The Column
 
-A scaffolded anatomy reference for the electron-optical column. (Full
-interactivity ships in a future build — see `ROADMAP.md`.)
+An exploratory anatomy reference for the microscope, opening on an annotated
+**exterior view** of the instrument and its consoles.
+
+- **Exterior view** (default on page load): the real annotated lab diagram.
+  Hover or click any of the **18 highlighted components** to read what each
+  part does — condenser aperture assembly, CM lens shift screws, refrigerant
+  tank, goniometer, specimen holder, field-limiting aperture assembly,
+  intermediate & projector lens shift screws, binocular microscope, PC
+  monitor, control panels L1 / R1, trackball, fluorescent screen lever, camera
+  chamber door, covers L2 / R2, and the foot switches.
+- **Column Interior** (flip side): reached with the **Flip to see Column
+  Interior** button (or the **F** key), which rotates the card 180°. *This
+  face is currently a placeholder — the detailed interior visualization will
+  be added in a later update.*
+
+**Drill-down consoles.** Two components open their own detailed view:
+
+- **Control Panel L1** and **Control Panel R1** are marked with a blue accent
+  and a `›` chevron in the list. Click either one (or the **Open detailed
+  view** button in the description card) and the viewport switches to a
+  close-up of that console. A **Back to Exterior** button (top-left) or the
+  **Esc** key returns you to the full instrument. *The console close-ups are
+  currently placeholders; their individual knobs and switches become
+  hotspots once the real console images are added.*
+
+**Controls:**
+
+- **Flip to see Column Interior / Exterior** button (top-right) — flips the
+  card 180° in 3D. Keyboard shortcut **F**.
+- **Zoom** button (top-right) — opens the current view in a zoom modal
+  (scroll-wheel to zoom around the cursor, click-and-drag to pan,
+  **+ / − / 0** keys to zoom in/out/reset, **Esc** to close).
+- Hover or click any hotspot, or any item in the right-hand list, to read the
+  component description.
+
+A small indicator in the top-left of the viewport always shows which view is
+currently up (**Exterior**, **Column Interior**, **Control Panel L1/R1**).
 
 ## Module 02 — The Microscope
 

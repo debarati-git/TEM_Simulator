@@ -217,11 +217,11 @@
 }
 
 /* -------------------------------------------------------------------------
-   Body — 3-panel grid
+   Body — 2-panel grid: viewer left, single control rail right
    ------------------------------------------------------------------------- */
 .guided-body {
   display: grid;
-  grid-template-columns: 280px 1fr 280px;
+  grid-template-columns: 1fr 280px;
   gap: 1px;
   background: var(--border-subtle);
   min-height: 0;
@@ -230,7 +230,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   Control rails (left and right panels)
+   Control rail — single scrollable right panel
    ------------------------------------------------------------------------- */
 .ctl-rail {
   background:
@@ -238,7 +238,15 @@
     var(--bg-panel);
   overflow-y: auto;
   overflow-x: hidden;
+  /* Smooth momentum scroll on touch devices */
+  -webkit-overflow-scrolling: touch;
+  /* Scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
 }
+.ctl-rail::-webkit-scrollbar       { width: 4px; }
+.ctl-rail::-webkit-scrollbar-track { background: transparent; }
+.ctl-rail::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 2px; }
 
 .ctl-rail__inner {
   padding: var(--space-2);
@@ -247,12 +255,19 @@
   gap: 6px;
 }
 
-/* Drawer zone (reused inside rails) */
+/* Drawer zone (reused inside rail) */
 .dz {
   padding: 8px 10px 10px;
   border: 1px solid var(--border-subtle);
   border-radius: 3px;
   background: linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%);
+  transition: border-color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+
+/* Zone highlight — fires when auto-scroll brings a zone into focus */
+.dz.is-zone-active {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 1px var(--signal), 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .dz__label {
@@ -513,7 +528,7 @@ body.is-fullscreen .viewer__fs-label::before { font-size: 0.62rem; letter-spacin
 /* The bright "electron source" pulse at the top of the column (gun area) */
 .column-beam__source {
   position: absolute;
-  top: 12%;
+  top: 4%;
   left: 50%;
   width: 22px;
   height: 22px;
@@ -527,8 +542,8 @@ body.is-fullscreen .viewer__fs-label::before { font-size: 0.62rem; letter-spacin
 /* The flowing electron stream from gun to phosphor */
 .column-beam__stream {
   position: absolute;
-  top: 14%;
-  bottom: 32%;
+  top: 6%;
+  bottom: 8%;
   left: 50%;
   width: 4px;
   margin-left: -2px;
@@ -564,7 +579,7 @@ body.is-fullscreen .viewer__fs-label::before { font-size: 0.62rem; letter-spacin
 /* The bright phosphor screen glow when the beam hits */
 .column-beam__phosphor {
   position: absolute;
-  top: 79%;
+  top: 91%;
   left: 50%;
   width: 60px;
   height: 30px;

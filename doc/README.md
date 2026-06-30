@@ -1,4 +1,4 @@
-# TEM Simulator — Version 1.0
+# TEM Simulator — Version 1.7
 
 A web-based Transmission Electron Microscope learning environment, built for
 IIT students to develop instrument intuition before working on real hardware.
@@ -11,13 +11,13 @@ and runs from a static `file://` URL so it works offline on any machine.
 
 | Module                | State          | What it does                                   |
 | --------------------- | -------------- | ---------------------------------------------- |
-| 01 · The Column       | Scaffolded     | Annotated cross-section of the electron-optical column |
+| 01 · The Column       | **Complete (v1.1)** | Flip-card anatomy view: real TEM photo (front, 7 external parts) + annotated schematic (back, 23 internal components) |
 | 02 · The Microscope   | **Complete**   | 32-step guided operation flow (Nanoparticles sample) |
 | 03 · Diffraction Lab  | **Complete**   | Single-crystal SAED pattern explorer            |
 
 ## Quick Start
 
-1. Download `tem-simulator-v1.0.zip` and unzip.
+1. Download `tem-simulator-v1.1.zip` and unzip.
 2. Open `index.html` in any modern browser (Chrome, Firefox, Edge, Safari).
 3. Pick a module from the landing page or top navigation.
 

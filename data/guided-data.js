@@ -314,32 +314,33 @@
       }
     },
     // Hotspot coordinates are % of the column image bounds.
-    // Calibrated for the light-theme column image (1085×1270, aspect 0.854).
-    // labelPos values are the exact pill bounding boxes (measured from
-    // the rendered blue strokes) so the "Insert"/"Remove" cue sits
-    // precisely below each pill.
+    // Calibrated for the ray diagram image (574×829, aspect 0.692).
+    // Specimen/holder zone:      x=8-88%, y=32-39%  → centre x=48%, y=36%
+    // Condenser aperture zone:   x=20-86%, y=19-26% → centre x=53%, y=23%
+    // Objective aperture zone:   x=11-71%, y=47-54% → centre x=41%, y=51%
+    // labelPos: placed on the right edge where labels appear in the diagram.
     diagramHotspots: {
       'remove-holder':    {
-        x: 51, y: 43, w: 15, h: 4,
-        labelPos: { x: 81, y: 45, w: 17, h: 6 },
+        x: 40, y: 50, w: 16, h: 5,
+        labelPos: { x: 16, y: 47.0, w: 20, h: 3.4 },
         labelText: 'Specimen',
         action: 'Remove'
       },
       'insert-specimen':  {
-        x: 51, y: 43, w: 15, h: 4,
-        labelPos: { x: 81, y: 45, w: 17, h: 6 },
+        x: 40, y: 50, w: 16, h: 5,
+        labelPos: { x: 16, y: 47.0, w: 20, h: 3.4 },
         labelText: 'Specimen',
         action: 'Insert'
       },
       'insert-condenser': {
-        x: 41, y: 22, w: 12, h: 5,
-        labelPos: { x: 2, y: 22, w: 27, h: 6 },
+        x: 35, y: 36, w: 17, h: 5,
+        labelPos: { x: 14, y: 35.5, w: 22, h: 3.4 },
         labelText: 'Condenser aperture',
         action: 'Insert'
       },
       'insert-objective': {
-        x: 41, y: 41, w: 11, h: 4,
-        labelPos: { x: 2, y: 40, w: 27, h: 6 },
+        x: 42, y: 55, w: 15, h: 5,
+        labelPos: { x: 60, y: 55, w: 26, h: 4 },
         labelText: 'Objective aperture',
         action: 'Insert'
       }

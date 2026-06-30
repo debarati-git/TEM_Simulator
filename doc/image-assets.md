@@ -69,26 +69,21 @@ If you want STEM to look distinct from TEM beyond a CSS filter:
 | `microscope/screen/scanline.png` | Optional CRT/phosphor scanline overlay | 1024 × 1024 (alpha PNG) | Currently a CSS repeating gradient. |
 
 
-## Module 01 — The Column (Phase 3, scaffolded)
+## Module 01 — The Column (v1.1, flip-card layout)
 
-This module is an exploratory anatomy view rather than a guided session.
-The exact image set depends on the visual approach (annotated cross-section
-vs. per-component close-ups vs. 3D rotation).
+Module 01 now uses a two-faced flip card. Each face has its own image asset.
 
 | Path | Used for | Dimensions | Notes |
 | --- | --- | --- | --- |
-| `column/tem-column-anatomy.png` | Full annotated cross-section, more detail than the Phase-2 diagram | 1500 × 1800 or larger | Higher detail than `microscope/diagram/tem-column.png`. May share that asset or be a distinct illustration. |
-| `column/components/gun.png` | Close-up of the electron gun | 800 × 800 | One per component for component-detail panel. |
-| `column/components/condenser-lens.png` | Condenser lens cutaway | 800 × 800 | |
-| `column/components/condenser-aperture.png` | Condenser aperture mechanism | 800 × 800 | |
-| `column/components/objective-lens.png` | Objective lens cutaway | 800 × 800 | |
-| `column/components/objective-aperture.png` | Objective aperture mechanism | 800 × 800 | |
-| `column/components/sad-aperture.png` | SAD aperture mechanism | 800 × 800 | |
-| `column/components/specimen-holder.png` | Side-entry specimen holder | 800 × 800 | |
-| `column/components/projector-lens.png` | Projector lens stack | 800 × 800 | |
-| `column/components/phosphor-screen.png` | Phosphor screen detail | 800 × 800 | |
-| `column/components/camera.png` | Image-recording camera bulb | 800 × 800 | |
-| `column/3d/tem-column-{front,side,iso}.png` | If a 3D-rotate view is built | 1200 × 1500 | Optional — only if the 3D path is chosen over per-component close-ups. |
+| `column/tem-photo.png` | **Front face** — real laboratory photograph of a JEOL TEM. Default view on page load. Hosts 7 hotspots over the externally visible parts (gun housing, condenser block, viewing-chamber binoculars, specimen airlock, CCD / detector, control console, monitor). | 466 × 822 (aspect ≈ 0.567) | **Present.** Hotspot coords in `data/components-data.js` (`faces.photo.components`) are calibrated against these dimensions. Re-source at higher resolution later for sharper zoom. |
+| `column/tem-schematic.png` | **Back face** — annotated block-diagram schematic showing every lens, deflector, and stigmator in the column with a printed legend. Hosts 23 hotspots over the drawn elements (IL5 has no drawn box; its hotspot covers the legend text). | 586 × 820 (aspect ≈ 0.715) | **Present.** Hotspot coords in `data/components-data.js` (`faces.schematic.components`) were derived by scanning the image for dark-pixel bands in the column-drawing strip (x ≈ 140 – 280 px). Re-source at higher resolution later for sharper zoom. |
+
+**Image-swap caveat.** Both images' hotspot percentages are tied to their exact
+source dimensions. If either image is swapped for a different one (higher
+resolution, redrawn, or differently cropped) the hotspot percentages must be
+re-derived from scratch — automated coordinate carry-over has historically
+failed. The schematic re-derivation can be repeated with the included
+`schematic_annotated.png` workflow.
 
 
 ## Module 03 — Diffraction Lab (Phase 4, complete in v1.0)
@@ -146,3 +141,82 @@ the highest-leverage assets to source are:
    sample buttons can be un-disabled.
 5. **Column-component close-ups** — only when Phase 3 (The Column module)
    is ready to be built out.
+
+---
+
+## Module 01 v1.3 — Exterior view + drill-down placeholders
+
+| Asset | Dimensions | Role | Notes |
+|-------|-----------|------|-------|
+| `tem-exterior.png` | 1060 × 943 | Default face (real annotated diagram) | Used as-is with baked-in green labels. 18 hotspots placed over the green callout dots; 1 component (foot switches) carries 2 pins. |
+| `interior-placeholder.png` | 620 × 880 | Flip partner | **Placeholder.** Replace with the real column-interior visualization; then add labelled hotspots to `interiorFace.components`. |
+| `panel-l1-placeholder.png` | 900 × 620 | Drill-down: Control Panel L1 | **Placeholder.** Replace with the real console photo; populate `panelL1Face.components` with per-control hotspots. |
+| `panel-r1-placeholder.png` | 900 × 620 | Drill-down: Control Panel R1 | **Placeholder.** Same as L1. |
+
+**Exterior hotspot derivation.** Green leader-line endpoint dots were detected
+by eroded-blob analysis (`PIL` + `scipy.ndimage`): threshold on
+`G>90, R<110, B<110, G-R>40, G-B>40`, binary-erode 2 iterations to drop thin
+text strokes, then take the centre-of-mass of blobs ≥ 8 px. 19 dots were found
+(18 components; foot switches contributes 2). Centres are stored as
+percent-of-image in `data/components-data.js`; the `box(cx,cy,w,h)` helper
+builds a centred hotspot rectangle around each.
+
+**Recalibration caveat (unchanged).** All percentages are tied to the exact
+1060 × 943 source. If the exterior image is swapped, re-run the dot detection
+and regenerate the coordinates from scratch. When real images replace the
+three placeholders, derive their internal hotspots against *those* images'
+dimensions.
+
+---
+
+## Module 01 v1.4 — Control Panel L1 (real image)
+
+| Asset | Dimensions | Role | Notes |
+|-------|-----------|------|-------|
+| `panel-l1.png` | 1105 × 829 | Drill-down: Control Panel L1 | Real JEOL console image. 11 hotspots placed on the numbered callout circles (1–11) around the periphery. Centres derived by green-ring detection (threshold on green channel, median centroid within a 30 px window per seed). |
+| `panel-r1-placeholder.png` | 900 × 620 | Drill-down: Control Panel R1 | Still a placeholder — awaiting the real R1 console image + its callout list. |
+
+`panel-l1-placeholder.png` was retired once the real image arrived.
+
+**Viewport control layout (v1.4):** the face indicator and flip toggle moved
+into a toolbar **above** the image (`.column-viewport__topbar`), and the zoom
+button became a compact icon anchored to the **top-right corner of the stage**
+(`.zoom-open-btn` inside `.column-stage`). This removes the earlier overlap of
+control text on the diagram.
+
+
+---
+
+## Module 01 v1.5 — Control Panel R1 (real image) + exterior label hotspots
+
+| Asset | Dimensions | Role | Notes |
+|-------|-----------|------|-------|
+| `panel-r1.png` | 1278 x 833 | Drill-down: Control Panel R1 | Real JEOL console image. 11 hotspots on the numbered callout circles (1-11), 7 on the left edge + 4 on the right. Centres from green-ring detection (median centroid per seed). |
+
+`panel-r1-placeholder.png` retired once the real image arrived. Only
+`interior-placeholder.png` remains a placeholder.
+
+**Exterior hotspots relocated to label text (v1.5).** The 18 exterior
+hotspot boxes were moved from the green leader-line dots onto the green
+text labels. Boxes are hardcoded top-left `{x,y,w,h}` percentages (the
+detection-heuristic for text blocks over-merged adjacent multi-line labels,
+so boxes were placed by hand and verified by overlay render). The `pin`
+values were left on the part dots, so hover lights the label box AND a pin
+on the actual component, joined by the diagram's leader line.
+
+
+---
+
+## Module 01 v1.6 — Column Interior + Goniometer (real images)
+
+| Asset | Dimensions | Role | Notes |
+|-------|-----------|------|-------|
+| `tem-interior.png` | 1135 x 1136 | Column Interior (flip partner) | Real cutaway diagram. 28 hotspots on the green text labels (16 left + 12 right columns, detected as text rows). No code-pins yet (image draws its own leader + dot per part). Descriptions PROVISIONAL. |
+| `panel-goniometer.png` | 742 x 592 | Drill-down: Goniometer | 4 hotspots on the numbered circles (1-4). Centres from green detection. Descriptions from the JEOL goniometer control sheet. |
+
+Retired `interior-placeholder.png`. **No placeholders remain** in Module 01;
+all five column images (`tem-exterior`, `tem-interior`, `panel-l1`,
+`panel-r1`, `panel-goniometer`) are real.
+
+The exterior "Goniometer" component now carries `drilldown: 'panel-goniometer'`
+in addition to the two control panels.

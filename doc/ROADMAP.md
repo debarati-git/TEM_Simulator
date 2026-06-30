@@ -5,17 +5,23 @@ within each phase. Phases can ship independently.
 
 ## Phase 3 · The Column — Interactive Anatomy
 
-Convert Module 01 from a scaffolded reference into a full anatomy walkthrough.
+**v1.1 delivered** the flip-card anatomy view (real TEM photo + annotated
+schematic, 7 + 23 hotspots, per-component descriptions, zoom on both faces).
+Remaining work for a full anatomy walkthrough:
 
-- **Clickable components** on the column diagram with per-component
-  educational copy (gun, condenser system, specimen stage, objective lens,
-  intermediate / projector lenses, viewing chamber, detectors).
-- **2D rotation control** to view the column from different angles. (A full
-  3D rotatable model was discussed; deferred until 2D rotation is shipped
-  and validated.)
-- **Component cross-references** linking each part to where it's operated in
-  Module 02 (e.g., clicking the "condenser aperture" component jumps to the
-  relevant guided-session step).
+- **Component cross-references** linking each schematic part to where it's
+  operated in Module 02 (e.g., clicking "Condenser Aperture" jumps to the
+  relevant guided-session step). Requires a routing map between component IDs
+  and step indices.
+- **Per-component close-up photos** as an optional third face or modal —
+  zoom into the real instrument for each external part instead of only the
+  wide-shot photo.
+- **2D rotation control** to view the photo and/or schematic from different
+  angles. (A full 3D rotatable model was discussed; deferred until 2D
+  rotation is shipped and validated.)
+- **Higher-resolution source images** — the v1.1 assets (466 × 822 photo,
+  586 × 820 schematic) render fine at viewport size but appear soft at high
+  zoom levels.
 
 ## Phase 4 · Diffraction Lab Expansion
 

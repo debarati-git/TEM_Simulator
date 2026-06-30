@@ -19,6 +19,68 @@ this before adding a new sample, a new step, a new crystal, or a new module.
    overrides scoped to `:root[data-theme="dark"]`. Token values live in
    `assets/css/global.css`.
 
+## Module 01 — Column Anatomy Architecture (v1.3)
+
+Module 01 is a single-page exploratory anatomy view rather than a step-gated
+session. From v1.3 it opens on an **exterior view** with a **flip partner**
+(Column Interior) and **drill-down detail faces** for two consoles.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  column.js                                                  │
+│  - Reads `window.TEM.dataColumnComponents` (faces struct).  │
+│  - Builds hotspot + pin layers for EVERY face at load time  │
+│    (exterior, interior, panel-l1, panel-r1).                │
+│  - Two navigation layers:                                   │
+│      * FLIP pair (exterior <-> interior) via setFace().     │
+│      * DRILL-DOWN (enter/exitDrilldown) overlays a detail   │
+│        face on top of the flip card and toggles the back    │
+│        button + hides the flip toggle.                      │
+│  - Rebuilds the right-hand component list per active face.  │
+│  - Single `showComponent(id, faceId)` entry point; sets the │
+│    drill-down CTA when the component carries `drilldown`.   │
+│  - Activates ALL pins for a component id (covers extraPins).│
+│  - Zoom modal swaps image src by `currentFaceId` at open.   │
+├─────────────────────────────────────────────────────────────┤
+│  column.css                                                  │
+│  - `.column-flip` perspective; `.column-flip__inner` rotates│
+│    (`rotateY(180deg)` when `.is-flipped`).                  │
+│  - `.column-detail` overlays the flip card (z-index 6) and  │
+│    is shown one at a time; `.is-hidden-by-detail` hides the │
+│    flip card beneath.                                        │
+│  - Drill-down hotspots/pins use the blue signal accent vs   │
+│    the amber default; list rows get a `›` chevron.          │
+│  - Photographic faces (exterior, detail) keep a light card  │
+│    in dark mode; interior placeholder uses a dark card.     │
+├─────────────────────────────────────────────────────────────┤
+│  data/components-data.js                                     │
+│  - faces.exterior:  18 components (default face). 2 carry    │
+│    `drilldown: 'panel-l1' | 'panel-r1'`. Foot switches has   │
+│    one entry with `extraPins` for the 2nd pedal.             │
+│  - faces.interior:  placeholder (flip partner).              │
+│  - faces['panel-l1'] / ['panel-r1']: drill-down detail,      │
+│    placeholder image + empty internal hotspot array.         │
+│  - defaultFace: 'exterior'; flipPair: [exterior, interior];  │
+│    drilldownFaces: [panel-l1, panel-r1].                     │
+│  - `box(cx,cy,w,h)` helper centres a hotspot on a dot.       │
+│  - Coordinates are percent-of-image, tied to exact image     │
+│    dimensions; any image swap requires full recalibration.   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Key behaviours:
+
+- Default face on page load is `exterior`.
+- `F` toggles the flip (exterior <-> interior); disabled while a drill-down is
+  open. `Esc` backs out of a drill-down when no zoom modal is open.
+- Hotspot intro pulse replays on every face change and on entering a drill-down.
+- Drill-downs always return to `exterior` (never to interior).
+
+Pending real assets: the interior visualization and both console close-up
+images are placeholders; replacing them is a data-only change (swap the image
+`src`/dimensions and populate the face's `components` with recalibrated
+hotspots) — no structural rebuild required.
+
 ## Module 02 — Guided Session Architecture
 
 The most complex module. Five layers, top to bottom:
@@ -219,7 +281,8 @@ bars), colours are hard-coded inline. See the comment in `global.css`.
 
 ```
 assets/js/global.js              Topnav injection, theme toggle, fullscreen
-assets/js/column.js              Column page handlers, zoom modal
+assets/js/column.js              Column flip-card: per-face hotspots, flip
+                                 toggle, face-aware zoom modal (v1.1)
 assets/js/microscope-mode.js     Mode picker on microscope.html
 assets/js/guided/state.js        Pub/sub state store
 assets/js/guided/tolerance.js    Sweet-spot predicate evaluator

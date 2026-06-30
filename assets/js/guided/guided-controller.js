@@ -237,12 +237,22 @@
       ctl.classList.toggle('is-active', active);
     });
 
-    // Scroll the first newly-unlocked control into view inside its rail.
-    // 'nearest' so we don't yank the user if it's already visible.
+    // Scroll the parent dz zone of the first newly-unlocked control into view,
+    // then briefly highlight the zone so the student's eye is drawn to it.
     if (firstNewlyActive) {
-      setTimeout(() => {
-        firstNewlyActive.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 50);
+      const zone = firstNewlyActive.closest('.dz');
+      if (zone) {
+        setTimeout(() => {
+          zone.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          // Flash the zone border for 1.6 s then remove
+          zone.classList.add('is-zone-active');
+          setTimeout(() => zone.classList.remove('is-zone-active'), 1600);
+        }, 80);
+      } else {
+        setTimeout(() => {
+          firstNewlyActive.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 80);
+      }
     }
   }
 
