@@ -833,8 +833,8 @@
   const panelGoniometerFace = {
     image: {
       src: '../assets/images/column/panel-goniometer.png',
-      width: 1051,
-      height: 838
+      width: 1028,
+      height: 866
     },
     isDrilldown: true,
     title: 'Goniometer',
@@ -847,8 +847,8 @@
         body: [
           'Indicates, when lit, that the goniometer is ready for loading of a specimen holder.'
         ],
-        pin: { x: 11.6, y: 51.5 },
-        hotspot: box(11.6, 51.5, 6, 6)
+        pin: { x: 10.7, y: 56.8 },
+        hotspot: box(10.7, 56.8, 6, 5)
       },
       {
         id: 'gonio-yellow-lamp',
@@ -857,8 +857,8 @@
         body: [
           'Indicates, when lit, that the roughing vacuum pump is evacuating the goniometer.'
         ],
-        pin: { x: 11.6, y: 63.3 },
-        hotspot: box(11.6, 63.3, 6, 6)
+        pin: { x: 10.7, y: 65.7 },
+        hotspot: box(10.7, 65.7, 6, 5)
       },
       {
         id: 'gonio-pump-air',
@@ -867,8 +867,8 @@
         body: [
           'Setting this switch to PUMP evacuates the goniometer (the yellow lamp lights up during evacuation) and setting this switch to AIR opens the goniometer to the atmosphere. Set the switch to the desired position while pulling it out.'
         ],
-        pin: { x: 11.6, y: 80.8 },
-        hotspot: box(11.6, 80.8, 6, 6)
+        pin: { x: 10.7, y: 83.9 },
+        hotspot: box(10.7, 83.9, 6, 5)
       },
       {
         id: 'gonio-connector',
@@ -877,8 +877,8 @@
         body: [
           'Used for optional specimen holders such as a double-tilt specimen holder.'
         ],
-        pin: { x: 66.4, y: 96.6 },
-        hotspot: box(66.4, 96.6, 8, 6)
+        pin: { x: 68.5, y: 97.1 },
+        hotspot: box(68.5, 97.1, 8, 5)
       }
     ]
   };
