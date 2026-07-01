@@ -841,41 +841,41 @@
     parentComponentId: 'ext-goniometer',
     components: [
       {
-        id: 'gonio-specimen-holder',
-        name: '① Specimen holder slot',
-        role: 'Specimen rod insertion point',
+        id: 'gonio-green-lamp',
+        name: '① Green lamp',
+        role: 'Ready-to-load indicator',
         body: [
-          'The opening through which the specimen holder rod is inserted into the goniometer stage. The rod slides horizontally through an airlock and O-ring seal into the objective-lens polepiece gap. Proper seating is critical — a misaligned holder introduces vibration and drift that degrades high-resolution imaging.'
+          'Indicates, when lit, that the goniometer is ready for loading of a specimen holder.'
         ],
         pin: { x: 11.6, y: 51.5 },
         hotspot: box(11.6, 51.5, 6, 6)
       },
       {
-        id: 'gonio-x-shift',
-        name: '② X SHIFT knobs',
-        role: 'Mechanical stage translation along X axis',
+        id: 'gonio-yellow-lamp',
+        name: '② Yellow lamp',
+        role: 'Evacuation indicator',
         body: [
-          'A pair of coaxial knobs that move the specimen stage along the X direction (left–right when viewed through the binocular). The outer knob gives coarse travel; the inner knob provides fine positioning. Used during initial specimen centering before switching to electronic beam/image shift.'
+          'Indicates, when lit, that the roughing vacuum pump is evacuating the goniometer.'
         ],
         pin: { x: 11.6, y: 63.3 },
         hotspot: box(11.6, 63.3, 6, 6)
       },
       {
-        id: 'gonio-y-shift',
-        name: '③ Y SHIFT knob',
-        role: 'Mechanical stage translation along Y axis',
+        id: 'gonio-pump-air',
+        name: '③ PUMP / AIR switch',
+        role: 'Evacuate or vent the goniometer airlock',
         body: [
-          'Moves the specimen stage along the Y direction (up–down when viewed through the binocular). Works in conjunction with the X SHIFT knobs to position the region of interest under the electron beam. Fine mechanical adjustment is essential when navigating to specific grains or particles.'
+          'Setting this switch to PUMP evacuates the goniometer (the yellow lamp lights up during evacuation) and setting this switch to AIR opens the goniometer to the atmosphere. Set the switch to the desired position while pulling it out.'
         ],
         pin: { x: 11.6, y: 80.8 },
         hotspot: box(11.6, 80.8, 6, 6)
       },
       {
-        id: 'gonio-binocular',
-        name: '④ Binocular microscope',
-        role: 'Optical viewing of the fluorescent screen',
+        id: 'gonio-connector',
+        name: '④ Connector',
+        role: 'Port for optional specimen holders',
         body: [
-          'A low-magnification optical binocular used to view the image formed on the fluorescent screen below the column. Provides a real-time, full-field view for initial specimen survey, focusing, and alignment before switching to CCD capture for recording.'
+          'Used for optional specimen holders such as a double-tilt specimen holder.'
         ],
         pin: { x: 66.4, y: 96.6 },
         hotspot: box(66.4, 96.6, 8, 6)
