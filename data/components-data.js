@@ -827,58 +827,58 @@
      ===================================================================== */
   /* =====================================================================
      DRILL-DOWN: GONIOMETER (real photo, 4 numbered callouts)
-     Image: 742 x 592 px. Hotspots on the numbered circles; descriptions from
+     Image: 1051 x 838 px. Hotspots on the numbered circles; descriptions from
      the JEOL goniometer control description.
      ===================================================================== */
   const panelGoniometerFace = {
     image: {
       src: '../assets/images/column/panel-goniometer.png',
-      width: 742,
-      height: 592
+      width: 1051,
+      height: 838
     },
     isDrilldown: true,
     title: 'Goniometer',
     parentComponentId: 'ext-goniometer',
     components: [
       {
-        id: 'gonio-green-lamp',
-        name: '① Green lamp',
-        role: 'Ready-to-load indicator',
+        id: 'gonio-specimen-holder',
+        name: '① Specimen holder slot',
+        role: 'Specimen rod insertion point',
         body: [
-          'Indicates, when lit, that the goniometer is ready for loading of a specimen holder.'
+          'The opening through which the specimen holder rod is inserted into the goniometer stage. The rod slides horizontally through an airlock and O-ring seal into the objective-lens polepiece gap. Proper seating is critical — a misaligned holder introduces vibration and drift that degrades high-resolution imaging.'
         ],
-        pin: { x: 15.7, y: 50.1 },
-        hotspot: box(15.7, 50.1, 7, 6)
+        pin: { x: 30.0, y: 43.0 },
+        hotspot: box(30.0, 43.0, 12, 10)
       },
       {
-        id: 'gonio-yellow-lamp',
-        name: '② Yellow lamp',
-        role: 'Evacuation indicator',
+        id: 'gonio-x-shift',
+        name: '② X SHIFT knobs',
+        role: 'Mechanical stage translation along X axis',
         body: [
-          'Indicates, when lit, that the roughing vacuum pump is evacuating the goniometer.'
+          'A pair of coaxial knobs that move the specimen stage along the X direction (left–right when viewed through the binocular). The outer knob gives coarse travel; the inner knob provides fine positioning. Used during initial specimen centering before switching to electronic beam/image shift.'
         ],
-        pin: { x: 15.6, y: 61.1 },
-        hotspot: box(15.6, 61.1, 7, 6)
+        pin: { x: 28.0, y: 64.0 },
+        hotspot: box(28.0, 64.0, 12, 10)
       },
       {
-        id: 'gonio-pump-air',
-        name: '③ PUMP / AIR switch',
-        role: 'Evacuate or vent the goniometer airlock',
+        id: 'gonio-y-shift',
+        name: '③ Y SHIFT knob',
+        role: 'Mechanical stage translation along Y axis',
         body: [
-          'Set to PUMP to evacuate the goniometer (the yellow lamp lights during evacuation); set to AIR to open the goniometer to the atmosphere. Pull the switch out before moving it to the desired position.'
+          'Moves the specimen stage along the Y direction (up–down when viewed through the binocular). Works in conjunction with the X SHIFT knobs to position the region of interest under the electron beam. Fine mechanical adjustment is essential when navigating to specific grains or particles.'
         ],
-        pin: { x: 15.5, y: 77.4 },
-        hotspot: box(15.5, 77.4, 7, 6)
+        pin: { x: 27.0, y: 83.0 },
+        hotspot: box(27.0, 83.0, 12, 10)
       },
       {
-        id: 'gonio-connector',
-        name: '④ Connector',
-        role: 'Port for optional specimen holders',
+        id: 'gonio-binocular',
+        name: '④ Binocular microscope',
+        role: 'Optical viewing of the fluorescent screen',
         body: [
-          'Used for optional specimen holders such as a double-tilt specimen holder.'
+          'A low-magnification optical binocular used to view the image formed on the fluorescent screen below the column. Provides a real-time, full-field view for initial specimen survey, focusing, and alignment before switching to CCD capture for recording.'
         ],
-        pin: { x: 59.0, y: 92.7 },
-        hotspot: box(59.0, 92.7, 7, 6)
+        pin: { x: 66.0, y: 93.0 },
+        hotspot: box(66.0, 93.0, 14, 10)
       }
     ]
   };

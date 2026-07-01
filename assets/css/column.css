@@ -216,7 +216,7 @@
 .column-image-wrap--detail    { aspect-ratio: 900 / 620; }
 .column-image-wrap--l1        { aspect-ratio: 1105 / 829; }
 .column-image-wrap--r1        { aspect-ratio: 1278 / 833; }
-.column-image-wrap--goniometer { aspect-ratio: 742 / 592; }
+.column-image-wrap--goniometer { aspect-ratio: 1051 / 838; }
 
 .column-image {
   position: absolute;
