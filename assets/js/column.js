@@ -63,7 +63,9 @@
   const titleEl    = infoPanel.querySelector('[data-info-title]');
   const roleEl     = infoPanel.querySelector('[data-info-role]');
   const bodyEl     = infoPanel.querySelector('[data-info-body]');
-  const progressEl = infoPanel.querySelector('[data-info-progress]');
+  const progressEl = document.querySelector('[data-info-progress]');
+
+  let activeComponentId = null;   /* tracks currently selected component for toggle */
 
   if (!flipEl || !listEl) {
     console.error('[column] required DOM nodes missing');
@@ -149,20 +151,11 @@
       h.style.top    = c.hotspot.y + '%';
       h.style.width  = c.hotspot.w + '%';
       h.style.height = c.hotspot.h + '%';
-      /* Drill-down affordance: a magnifier-plus glyph that fades in on hover. */
-      if (c.drilldown) {
-        h.innerHTML =
-          '<span class="column-hotspot__expand" aria-hidden="true">' +
-          '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7">' +
-          '<circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14M7 5v4M5 7h4"/></svg></span>';
-      }
       layerEl.appendChild(h);
 
-      h.addEventListener('mouseenter', () => showComponent(c.id, faceId, { source: 'diagram' }));
-      h.addEventListener('focus',      () => showComponent(c.id, faceId, { source: 'diagram' }));
       h.addEventListener('click',      () => {
+        if (activeComponentId === c.id) { clearDetail(); return; }
         showComponent(c.id, faceId, { source: 'diagram' });
-        if (c.drilldown) enterDrilldown(c.drilldown);
       });
 
       /* Primary pin */
@@ -181,10 +174,6 @@
       }
     });
 
-    wrapEl.addEventListener('mouseleave', () => {
-      layerEl.querySelectorAll('.column-hotspot.is-active').forEach(el => el.classList.remove('is-active'));
-      layerEl.querySelectorAll('.column-pin.is-active').forEach(el => el.classList.remove('is-active'));
-    });
   }
 
   function makePin(componentId, pt, isDrill) {
@@ -224,17 +213,15 @@
       listEl.appendChild(li);
       listItemById[faceId][c.id] = li;
 
-      li.addEventListener('mouseenter', () => showComponent(c.id, faceId, { source: 'list' }));
-      li.addEventListener('focus',      () => showComponent(c.id, faceId, { source: 'list' }));
       li.addEventListener('click',      () => {
+        if (activeComponentId === c.id) { clearDetail(); return; }
         showComponent(c.id, faceId, { source: 'list' });
-        if (c.drilldown) enterDrilldown(c.drilldown);
       });
       li.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
+          if (activeComponentId === c.id) { clearDetail(); return; }
           showComponent(c.id, faceId, { source: 'list' });
-          if (c.drilldown) enterDrilldown(c.drilldown);
         }
       });
     });
@@ -256,6 +243,7 @@
     if (emptyEl)   emptyEl.hidden = true;
     if (contentEl) contentEl.hidden = false;
     infoPanel.classList.add('is-populated');
+    activeComponentId = id;
 
     titleEl.textContent = c.name;
     roleEl.textContent  = c.role;
@@ -307,10 +295,14 @@
   }
 
   function clearDetail() {
+    activeComponentId = null;
     if (emptyEl)   emptyEl.hidden = false;
     if (contentEl) contentEl.hidden = true;
     if (drilldownCta) { drilldownCta.hidden = true; drilldownCta.removeAttribute('data-target'); }
     infoPanel.classList.remove('is-populated');
+    /* Clear all active highlights */
+    document.querySelectorAll('.column-hotspot.is-active, .column-pin.is-active, .component-list__item.is-active')
+      .forEach(el => el.classList.remove('is-active'));
     if (progressEl) {
       const face = root.faces[currentFaceId];
       if (face) progressEl.textContent = String(face.components.length).padStart(2, '0');
@@ -318,12 +310,7 @@
   }
 
   function replayIntro(faceId) {
-    const layer = hotspotLayerByFace[faceId];
-    if (!layer) return;
-    layer.classList.remove('is-intro');
-    void layer.offsetWidth;            // force reflow to restart animation
-    layer.classList.add('is-intro');
-    setTimeout(() => layer.classList.remove('is-intro'), 1700);
+    /* Disabled — no flash on load */
   }
 
   /* --------------------------------------------------------------------- */

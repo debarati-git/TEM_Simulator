@@ -1,16 +1,14 @@
 /* =========================================================================
-   The Column page (Module 01 · Anatomy)  v1.1
+   The Column page (Module 01 · Anatomy)  v1.20
 
-   v1.1 introduces a FLIP-CARD layout:
-     - front face = real TEM photograph (no inversion in dark mode)
-     - back  face = annotated schematic (invert in dark mode for readability)
-   A flip toggle in the top-right rotates the card 180° around its Y-axis.
+   v1.20 — THREE-COLUMN LAYOUT
+     Left panel  : scrollable component list
+     Centre      : diagram viewport (flip-card + drill-down overlays)
+     Right panel : component description (slides in on hover/click)
    ========================================================================= */
 
 .column-body {
   --topnav-h: 60px;
-  /* The page background no longer needs to match an inverted image's black bg
-     uniformly, because the two faces are styled per-face. Keep page neutral. */
   --bg-void: var(--bg-page);
   background: var(--bg-page);
 }
@@ -21,22 +19,102 @@
 }
 
 .page--column {
-  max-width: 1700px;
-  padding-top: var(--space-2);
-  padding-bottom: var(--space-2);
+  max-width: 1800px;
+  padding: var(--space-2) var(--space-3);
 }
 
 .column-page {
   display: grid;
-  grid-template-columns: 1fr 520px;
-  gap: var(--space-4);
+  grid-template-columns: 1fr 460px;
+  gap: var(--space-2);
   align-items: stretch;
   height: calc(100vh - var(--topnav-h) - 16px);
   max-height: calc(100vh - var(--topnav-h) - 16px);
 }
 
 /* -------------------------------------------------------------------------
-   Viewport — host of the flip-card and floating controls
+   LEFT PANEL — component list
+   ------------------------------------------------------------------------- */
+.column-list-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.column-list-panel__heading {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--signal);
+  text-transform: uppercase;
+  padding: var(--space-3) var(--space-4) 6px;
+}
+
+.column-list-panel__count {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.component-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--space-3) var(--space-3);
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.component-list__item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.component-list__item:hover,
+.component-list__item.is-active,
+.component-list__item:focus-visible {
+  background: var(--signal-soft);
+  border-color: var(--signal-edge);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.component-list__num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  width: 22px;
+  flex: 0 0 22px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.component-list__item.is-active .component-list__num { color: var(--signal); }
+
+.component-list__name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* -------------------------------------------------------------------------
+   CENTRE — Diagram viewport (host of the flip-card + floating controls)
    ------------------------------------------------------------------------- */
 .column-viewport {
   position: relative;
@@ -52,18 +130,17 @@
   min-height: 0;
 }
 
-/* Top toolbar — above the image; never overlaps the diagram. */
+/* Top toolbar — face indicator (left) + flip toggle (right) */
 .column-viewport__topbar {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: 0 2px 10px;
+  padding: 0 2px 8px;
 }
 
-/* Stage — hosts the flip card + overlays + corner controls. Positioned so
-   the zoom / back buttons anchor to it. */
+/* Stage — hosts the flip card + overlays + corner controls */
 .column-stage {
   position: relative;
   flex: 1 1 auto;
@@ -81,7 +158,7 @@
   width: 100%;
   height: 100%;
   min-height: 540px;
-  perspective: 2400px;             /* large perspective = subtle 3D, not a fish-eye */
+  perspective: 2400px;
 }
 
 .column-flip__inner {
@@ -91,7 +168,6 @@
   transform-style: preserve-3d;
   transform: rotateY(0deg);
   transition: transform 0.85s cubic-bezier(0.55, 0.05, 0.35, 1.05);
-  /* The slight overshoot in the easing curve gives the flip a tactile feel.   */
 }
 
 .column-flip.is-flipped .column-flip__inner {
@@ -112,25 +188,20 @@
   transform: rotateY(180deg);
 }
 
-/* While the card is mid-flip, both faces become temporarily interactive
-   blockers; hide pointer events on the non-active face to prevent ghost
-   clicks from the back face leaking through. */
 .column-flip .column-flip__face--back { pointer-events: none; }
 .column-flip .column-flip__face--front { pointer-events: auto; }
 .column-flip.is-flipped .column-flip__face--front { pointer-events: none; }
 .column-flip.is-flipped .column-flip__face--back { pointer-events: auto; }
 
 /* -------------------------------------------------------------------------
-   Per-face image-wrap — each face hosts its own image, hotspots, caption.
-   The aspect-ratio matches the source image so hotspot percent coords
-   stay perfectly aligned.
+   Per-face image-wrap
    ------------------------------------------------------------------------- */
 .column-image-wrap {
   position: relative;
   height: 100%;
   max-width: 100%;
   border-radius: 10px;
-  background: #ffffff;            /* image background — pure white default */
+  background: #ffffff;
   box-shadow:
     0 40px 80px -32px rgba(2, 132, 199, 0.16),
     0 14px 40px -24px rgba(2, 132, 199, 0.10),
@@ -166,8 +237,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   Zoom button — compact icon anchored inside the image's top-right corner.
-   Sits on .column-stage (outside the flip card) so it never rotates.
+   Zoom button
    ------------------------------------------------------------------------- */
 .zoom-open-btn {
   position: absolute;
@@ -204,37 +274,106 @@
   border-color: rgba(56, 189, 248, 0.20);
 }
 
+/* -------------------------------------------------------------------------
+   Flip toggle — top-right of topbar, prominent
+   ------------------------------------------------------------------------- */
 .flip-toggle {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 12px 7px 10px;
+  padding: 7px 14px 7px 10px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-size: 0.66rem;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
-  background: var(--bg-panel);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
+  background: var(--signal);
+  color: #ffffff;
+  font-weight: 700;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: all var(--dur-fast) var(--ease-out);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px -4px rgba(2, 132, 199, 0.5);
+  animation: flip-blink 2s ease-in-out infinite;
+}
+
+@keyframes flip-blink {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
 }
 
 .flip-toggle:hover,
 .flip-toggle:focus-visible {
-  background: var(--signal-soft);
-  border-color: var(--signal-edge);
-  color: var(--signal);
+  background: #0ea5e9;
+  color: #ffffff;
   outline: none;
+  animation: none;
+  opacity: 1;
+  box-shadow: 0 6px 16px -4px rgba(2, 132, 199, 0.65);
+  transform: translateY(-1px);
 }
 
 .flip-toggle[aria-pressed="true"] {
-  background: var(--signal-soft);
-  border-color: var(--signal-edge);
+  background: #0ea5e9;
+  color: #ffffff;
+}
+
+/* Animated mini-card flip icon */
+.flip-icon {
+  display: inline-block;
+  width: 22px;
+  height: 18px;
+  perspective: 80px;
+  flex: 0 0 22px;
+}
+
+.flip-icon__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: flip-icon-spin 3.5s ease-in-out infinite;
+}
+
+.flip-icon__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  border: 2px solid #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 800;
+  line-height: 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.flip-icon__face--front {
+  background: #ffffff;
   color: var(--signal);
+}
+
+.flip-icon__face--back {
+  background: #fbbf24;
+  color: #78350f;
+  border-color: #fbbf24;
+  transform: rotateY(180deg);
+}
+
+@keyframes flip-icon-spin {
+  0%, 30%   { transform: rotateY(0deg); }
+  45%, 55%  { transform: rotateY(180deg); }
+  70%, 100% { transform: rotateY(360deg); }
+}
+
+/* Stop icon animation on hover — feels responsive */
+.flip-toggle:hover .flip-icon__inner,
+.flip-toggle:focus-visible .flip-icon__inner {
+  animation-play-state: paused;
 }
 
 .flip-toggle__label {
@@ -243,7 +382,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   Face indicator — lives in the top toolbar (left), above the image.
+   Face indicator
    ------------------------------------------------------------------------- */
 .face-indicator {
   display: inline-flex;
@@ -283,9 +422,64 @@
 }
 
 /* -------------------------------------------------------------------------
-   BEAM — animated electron path overlay, schematic face ONLY.
-   Centreline of the schematic column = x 35.8 %.
-   Beam runs from y 5 % (just under filament) to y 80 % (entering projector).
+   Back-to-exterior control
+   ------------------------------------------------------------------------- */
+.back-to-exterior {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px 7px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--signal);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px -6px rgba(2, 132, 199, 0.5);
+  transition: transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.back-to-exterior[hidden] { display: none; }
+
+.back-to-exterior:hover,
+.back-to-exterior:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -6px rgba(2, 132, 199, 0.65);
+  outline: none;
+}
+
+/* -------------------------------------------------------------------------
+   Drill-down detail overlay
+   ------------------------------------------------------------------------- */
+.column-detail {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  z-index: 4;
+  background: var(--bg-page);
+  border-radius: 10px;
+}
+
+.column-detail[hidden] { display: none; }
+
+.column-flip.is-hidden-by-detail {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* -------------------------------------------------------------------------
+   BEAM — animated electron path overlay (schematic face ONLY)
    ------------------------------------------------------------------------- */
 .column-image-wrap--schematic .column-beam {
   position: absolute;
@@ -341,10 +535,12 @@
   .column-beam__pulse--lag { display: none; }
   .column-flip__inner { transition: none; }
   .face-indicator__dot { animation: none; }
+  .flip-icon__inner { animation: none; }
+  .flip-toggle { animation: none; }
 }
 
 /* -------------------------------------------------------------------------
-   HOTSPOTS — invisible buttons over each label / element
+   HOTSPOTS
    ------------------------------------------------------------------------- */
 .column-hotspot {
   position: absolute;
@@ -359,6 +555,9 @@
     border-color   var(--dur-fast) var(--ease-out),
     box-shadow     var(--dur-fast) var(--ease-out);
   outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .column-hotspot:hover,
@@ -371,7 +570,7 @@
     0 6px 18px -6px rgba(245, 158, 11, 0.45);
 }
 
-/* Brief on-load reveal — only on the currently-visible face */
+/* Brief on-load reveal */
 .column-hotspots.is-intro .column-hotspot {
   animation: hotspot-intro 1.6s var(--ease-out);
 }
@@ -382,7 +581,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   PINS — small concentric rings over the optical element
+   PINS
    ------------------------------------------------------------------------- */
 .column-pin {
   position: absolute;
@@ -423,9 +622,9 @@
 }
 
 /* -------------------------------------------------------------------------
-   INFO PANEL (right column)
+   RIGHT PANEL — component description
    ------------------------------------------------------------------------- */
-.column-info {
+.column-desc-panel {
   background: var(--bg-panel);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
@@ -436,52 +635,121 @@
   height: 100%;
 }
 
-.column-info__detail {
-  padding: var(--space-5) var(--space-5) var(--space-4);
-  display: flex;
-  flex-direction: column;
+/* Instrument overview — shown on load, hidden when component selected */
+.column-desc-panel__intro {
   flex: 1 1 auto;
-  min-height: 240px;
+  padding: var(--space-4) var(--space-5);
   overflow-y: auto;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.column-info__empty {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  color: var(--text-muted);
-  margin: auto 0;
+  gap: var(--space-3);
+  min-height: 0;
 }
 
-.column-info__empty-mark {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background: var(--signal-soft);
+.column-desc-panel__intro[hidden] { display: none; }
+
+.column-desc-panel__intro-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--signal);
-  margin-bottom: 4px;
 }
 
-.column-info__empty-title {
+.column-desc-panel__intro-title {
   font-family: var(--font-display);
-  font-size: 0.92rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+
+.column-desc-panel__intro-body {
+  font-size: 0.84rem;
+  line-height: 1.6;
   color: var(--text-secondary);
+}
+
+.column-desc-panel__intro-body strong {
+  color: var(--text-primary);
   font-weight: 600;
 }
 
-.column-info__empty-sub {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
+/* Component detail content — fills space above hint bar */
+.column-desc-panel__content {
+  flex: 1 1 auto;
+  padding: var(--space-4) var(--space-5);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: desc-fade-in 0.3s ease;
+  min-height: 0;
 }
 
-.column-info.is-populated .column-info__detail { padding-top: var(--space-4); }
+.column-desc-panel__content[hidden] { display: none; }
+
+@keyframes desc-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hint divider — sits between description and list */
+.column-desc-panel__hint-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 6px var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-page);
+}
+
+/* Hide hint bar once a component is selected */
+.column-desc-panel.is-populated .column-desc-panel__hint-bar {
+  display: none;
+}
+
+.column-desc-panel__hint-text {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  color: #f59e0b;
+  font-weight: 600;
+  animation: hint-blink 1.8s ease-in-out infinite;
+}
+
+@keyframes hint-blink {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 1; }
+}
+
+/* Component list — on top of right panel */
+.column-desc-panel__list-wrap {
+  flex: 0 0 auto;
+  max-height: 35%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-page);
+  overflow: hidden;
+}
+
+.column-desc-panel__list-heading {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--signal);
+  text-transform: uppercase;
+  padding: var(--space-3) var(--space-4) 6px;
+}
+
+.column-desc-panel__list-count {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
 
 .column-info__eyebrow {
   font-family: var(--font-mono);
@@ -494,7 +762,7 @@
 
 .column-info__title {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   color: var(--text-primary);
   margin: 0 0 4px;
   line-height: 1.25;
@@ -510,8 +778,8 @@
 }
 
 .column-info__body {
-  font-size: 0.86rem;
-  line-height: 1.55;
+  font-size: 0.92rem;
+  line-height: 1.6;
   color: var(--text-secondary);
 }
 
@@ -519,87 +787,8 @@
 .column-info__body p:last-child { margin-bottom: 0; }
 .column-info__body strong { color: var(--text-primary); font-weight: 600; }
 
-/* ----- COMPONENT LIST ----- */
-.column-info__list-wrap {
-  padding: var(--space-3) var(--space-4) var(--space-3);
-  background: var(--bg-page);
-  flex: 0 0 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  max-height: 38%;
-}
-
-.column-info__list-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  color: var(--signal);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-  flex: 0 0 auto;
-}
-
-.column-info__list-count { color: var(--text-muted); font-variant-numeric: tabular-nums; }
-
-.component-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
-.component-list__item {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 6px 8px;
-  border-radius: 4px;
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: all var(--dur-fast) var(--ease-out);
-}
-
-.component-list__item:hover,
-.component-list__item.is-active,
-.component-list__item:focus-visible {
-  background: var(--signal-soft);
-  border-color: var(--signal-edge);
-  color: var(--text-primary);
-  outline: none;
-}
-
-.component-list__num {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  width: 22px;
-  flex: 0 0 22px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.component-list__item.is-active .component-list__num { color: var(--signal); }
-
-.component-list__name {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 /* -------------------------------------------------------------------------
    DARK MODE per face
-   - Exterior + detail: real photos on white. Keep a light card so the photo
-     reads naturally; only dim very slightly to take the edge off pure white.
-   - Interior: placeholder is already dark-themed; give it a dark card.
    ------------------------------------------------------------------------- */
 [data-theme="dark"] .column-image-wrap {
   background: #0b1220;
@@ -609,8 +798,6 @@
     0 0 0 1px rgba(56, 189, 248, 0.08) inset;
 }
 
-/* Photographic faces: keep a near-white card behind the image so the
-   white-background diagram doesn't sit on a dark halo. */
 [data-theme="dark"] .column-image-wrap--exterior,
 [data-theme="dark"] .column-image-wrap--detail {
   background: #f1f5f9;
@@ -649,220 +836,137 @@
   background: rgba(15, 23, 42, 0.62);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  cursor: zoom-out;
 }
 
 .zoom-modal__panel {
   position: relative;
-  width: min(96vw, 1500px);
-  height: min(94vh, 950px);
-  background: var(--bg-page);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(96vw, 1400px);
+  height: min(92vh, 960px);
+  background: var(--bg-panel);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  border-radius: 14px;
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.4);
   overflow: hidden;
-  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.6);
 }
 
 .zoom-modal__header {
+  flex: 0 0 auto;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-panel);
 }
 
-.zoom-modal__title { display: flex; align-items: center; gap: var(--space-3); }
-.zoom-modal__heading { font-family: var(--font-display); font-size: 1rem; color: var(--text-primary); }
-.zoom-modal__controls { display: flex; align-items: center; gap: var(--space-2); }
+.zoom-modal__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.zoom-modal__heading {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.zoom-modal__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 
 .zoom-modal__scale {
   font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--signal);
-  padding: 4px 10px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  min-width: 64px;
-  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  min-width: 42px;
+  text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
 .zoom-btn {
-  width: 32px;
-  height: 32px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--bg-page);
   border: 1px solid var(--border-subtle);
-  background: var(--bg-panel);
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 6px;
   color: var(--text-secondary);
+  cursor: pointer;
   transition: all var(--dur-fast) var(--ease-out);
 }
 
-.zoom-btn:hover {
+.zoom-btn:hover,
+.zoom-btn:focus-visible {
   background: var(--signal-soft);
   border-color: var(--signal-edge);
   color: var(--signal);
+  outline: none;
 }
 
-.zoom-btn--close:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: #ef4444;
-  color: #ef4444;
+.zoom-btn--close {
+  margin-left: var(--space-2);
 }
 
 .zoom-modal__stage {
   position: relative;
+  flex: 1 1 auto;
   overflow: hidden;
-  background:
-    repeating-conic-gradient(
-      var(--bg-panel) 0% 25%, var(--bg-page) 0% 50%
-    ) 0 0 / 18px 18px;
   cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-page);
 }
 
 .zoom-modal__stage.is-panning { cursor: grabbing; }
-
-[data-theme="dark"] .zoom-modal__stage {
-  background:
-    repeating-conic-gradient(
-      rgba(15, 23, 42, 0.5) 0% 25%, rgba(11, 18, 32, 0.7) 0% 50%
-    ) 0 0 / 18px 18px;
-}
 
 .zoom-modal__image {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform-origin: 50% 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
   user-select: none;
   -webkit-user-drag: none;
-  will-change: transform;
 }
 
 .zoom-modal__footer {
+  flex: 0 0 auto;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2);
   border-top: 1px solid var(--border-subtle);
-  background: var(--bg-panel);
 }
 
 .zoom-modal__hint {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
-  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .zoom-modal__hint kbd {
+  display: inline-block;
+  padding: 1px 5px;
   font-family: var(--font-mono);
-  font-size: 0.66rem;
-  padding: 2px 6px;
+  font-size: 0.6rem;
+  color: var(--text-secondary);
   background: var(--bg-page);
   border: 1px solid var(--border-subtle);
   border-radius: 3px;
-  margin-right: 4px;
-  color: var(--text-primary);
 }
 
 /* -------------------------------------------------------------------------
-   Responsive: drop to single column on narrow viewports
-   ------------------------------------------------------------------------- */
-@media (max-width: 980px) {
-  .column-page { grid-template-columns: 1fr; }
-  .column-info { min-height: 600px; }
-  .column-flip   { height: 70vh; min-height: 540px; }
-}
-
-/* =========================================================================
-   v1.3 — Drill-down detail faces, back control, drill-down affordances
-   ========================================================================= */
-
-/* -------------------------------------------------------------------------
-   DRILL-DOWN DETAIL FACE — overlays the flip card when a console is opened
-   ------------------------------------------------------------------------- */
-.column-detail {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 6;                /* above the flip card */
-}
-
-.column-detail[hidden] { display: none; }
-
-.column-detail.is-active {
-  animation: detail-in var(--dur-base) var(--ease-out);
-}
-
-@keyframes detail-in {
-  0%   { opacity: 0; transform: scale(0.97); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-/* When a detail face is showing, dim/disable the flip card beneath it. */
-.column-flip.is-hidden-by-detail {
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.column-image-wrap--detail {
-  height: 100%;
-  max-height: 100%;
-}
-
-/* -------------------------------------------------------------------------
-   BACK-TO-EXTERIOR control — top-left, shown only inside a drill-down
-   ------------------------------------------------------------------------- */
-.back-to-exterior {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  z-index: 7;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 13px 7px 10px;
-  font: 600 0.78rem/1 var(--font-sans, system-ui);
-  letter-spacing: 0.01em;
-  color: #ffffff;
-  background: var(--signal, #0284c7);
-  border: 1px solid color-mix(in srgb, var(--signal, #0284c7) 80%, #000 0%);
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 8px 20px -8px rgba(2, 132, 199, 0.55);
-  transition: transform var(--dur-fast) var(--ease-out),
-              box-shadow var(--dur-fast) var(--ease-out),
-              background var(--dur-fast) var(--ease-out);
-}
-
-.back-to-exterior[hidden] { display: none; }
-
-.back-to-exterior:hover,
-.back-to-exterior:focus-visible {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 26px -8px rgba(2, 132, 199, 0.65);
-  outline: none;
-}
-
-.back-to-exterior svg { flex: none; }
-
-/* While in a drill-down, the face indicator gets a subtle "nested" hint. */
-.column-viewport.is-drilldown .face-indicator {
-  border-color: color-mix(in srgb, var(--signal, #0284c7) 40%, transparent);
-}
-
-/* -------------------------------------------------------------------------
-   DRILL-DOWN HOTSPOT + PIN variants — signal-blue accent (vs amber default)
-   to telegraph "this opens a deeper view".
+   DRILL-DOWN HOTSPOT + PIN variants (signal-blue)
    ------------------------------------------------------------------------- */
 .column-hotspot--drilldown {
   cursor: pointer;
@@ -878,8 +982,6 @@
     0 6px 18px -6px rgba(2, 132, 199, 0.5);
 }
 
-/* Drill-down pin: blue ring + a persistent faint halo so it stands out
-   among the amber default pins even before hover. */
 .column-pin--drilldown::before,
 .column-pin--drilldown::after {
   border-color: var(--signal, #0284c7);
@@ -889,11 +991,8 @@
   box-shadow: 0 0 10px var(--signal, #0284c7);
 }
 
-/* Extra pins (e.g. second foot-switch pedal) share the component's styling;
-   nothing extra needed — they inherit .column-pin. */
-
 /* -------------------------------------------------------------------------
-   DRILL-DOWN CTA — button inside the detail card for drill-down components
+   DRILL-DOWN CTA
    ------------------------------------------------------------------------- */
 .drilldown-cta {
   margin-top: 14px;
@@ -954,21 +1053,15 @@
 }
 
 /* =========================================================================
-   v1.9 — Drill-down expand glyph, breadcrumb, interior subsystem colours
+   Subsystem palette (interior face)
    ========================================================================= */
-
-/* -------------------------------------------------------------------------
-   Subsystem palette (interior face). Four functional stages of the column.
-   ------------------------------------------------------------------------- */
 :root {
-  --sub-illumination: #f59e0b;  /* amber  — gun, condensers, apertures      */
-  --sub-specimen:     #8b5cf6;  /* violet — goniometer, holder              */
-  --sub-imaging:      #14b8a6;  /* teal   — objective, intermediates, proj. */
-  --sub-viewing:      #ec4899;  /* pink   — screens, chambers, camera       */
+  --sub-illumination: #f59e0b;
+  --sub-specimen:     #8b5cf6;
+  --sub-imaging:      #14b8a6;
+  --sub-viewing:      #ec4899;
 }
 
-/* List: colour accent only (no headers). A left stripe + tinted number;
-   contiguous ordering makes each subsystem read as a block. */
 .component-list__item.subsystem--illumination { box-shadow: inset 3px 0 0 var(--sub-illumination); }
 .component-list__item.subsystem--specimen     { box-shadow: inset 3px 0 0 var(--sub-specimen); }
 .component-list__item.subsystem--imaging      { box-shadow: inset 3px 0 0 var(--sub-imaging); }
@@ -979,7 +1072,6 @@
 .component-list__item.subsystem--imaging       .component-list__num { color: var(--sub-imaging); }
 .component-list__item.subsystem--viewing       .component-list__num { color: var(--sub-viewing); }
 
-/* Keep the stripe visible on hover/active (don't let the hover bg hide it). */
 .component-list__item.subsystem--illumination:hover,
 .component-list__item.subsystem--illumination.is-active { box-shadow: inset 3px 0 0 var(--sub-illumination); }
 .component-list__item.subsystem--specimen:hover,
@@ -989,9 +1081,6 @@
 .component-list__item.subsystem--viewing:hover,
 .component-list__item.subsystem--viewing.is-active      { box-shadow: inset 3px 0 0 var(--sub-viewing); }
 
-/* Diagram hotspots: tint the hover/active highlight by subsystem so the list
-   colour and the diagram agree. (Overrides the default amber for the interior
-   face; the exterior/drill-down faces carry no subsystem class.) */
 .column-hotspot.subsystem--illumination:hover,
 .column-hotspot.subsystem--illumination:focus-visible,
 .column-hotspot.subsystem--illumination.is-active {
@@ -1022,10 +1111,8 @@
 }
 
 /* -------------------------------------------------------------------------
-   Drill-down "expand" glyph — fades in on hover/focus of a drill-down hotspot
+   Drill-down "expand" glyph
    ------------------------------------------------------------------------- */
-.column-hotspot { display: flex; align-items: center; justify-content: center; }
-
 .column-hotspot__expand {
   display: inline-flex;
   align-items: center;
@@ -1055,7 +1142,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   Breadcrumb (in the top toolbar's face indicator)
+   Breadcrumb
    ------------------------------------------------------------------------- */
 .breadcrumb {
   display: inline-flex;
@@ -1092,4 +1179,23 @@
 .breadcrumb__sep {
   color: var(--text-muted);
   font-size: 0.7rem;
+}
+
+/* -------------------------------------------------------------------------
+   Responsive fallback
+   ------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .column-page {
+    grid-template-columns: 1fr 380px;
+  }
+}
+
+@media (max-width: 900px) {
+  .column-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    height: auto;
+    max-height: none;
+  }
+  .column-desc-panel { max-height: 50vh; }
 }

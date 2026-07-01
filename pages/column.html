@@ -15,11 +15,10 @@
 
     <div class="column-page">
 
-      <!-- ============= DIAGRAM VIEWPORT (left) ============= -->
+      <!-- ============= CENTER: Diagram Viewport ============= -->
       <section class="column-viewport" id="column-viewport">
 
-        <!-- Top toolbar — sits ABOVE the image so its text never overlaps the
-             diagram. Face indicator (left) + flip toggle (right).            -->
+        <!-- Top toolbar — face indicator (left) + flip toggle (right) -->
         <div class="column-viewport__topbar">
           <div class="face-indicator" id="face-indicator" aria-live="polite">
             <span class="face-indicator__dot"></span>
@@ -28,28 +27,18 @@
 
           <button type="button" class="flip-toggle" id="flip-toggle"
                   title="Flip to see the column interior" aria-pressed="false">
-            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-              <path d="M2 5h10a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2H5"/>
-              <path d="M7 3 5 5l2 2"/>
-              <path d="M14 11H4a2 2 0 0 1-2-2v0a2 2 0 0 1 2-2h0"/>
-              <path d="M9 13l2-2-2-2"/>
-            </svg>
             <span class="flip-toggle__label" data-flip-label>Flip to see Column Interior</span>
           </button>
         </div>
 
-        <!-- Stage — hosts the flip card, drill-down overlays, and the corner
-             controls (zoom + back). Positioned, so corner buttons anchor here. -->
+        <!-- Stage — hosts the flip card, drill-down overlays, corner controls -->
         <div class="column-stage" id="column-stage">
 
-        <!-- 3D flip-card container. The .column-flip wrapper provides the
-             3D perspective; .column-flip__inner rotates, carrying the two
-             flip faces (exterior front / interior back). Drill-down detail
-             faces live OUTSIDE the flip card and overlay it when active.  -->
+        <!-- 3D flip-card container -->
         <div class="column-flip" id="column-flip">
           <div class="column-flip__inner" id="column-flip-inner">
 
-            <!-- =============== FRONT FACE — EXTERIOR DIAGRAM =============== -->
+            <!-- FRONT FACE — EXTERIOR DIAGRAM -->
             <div class="column-flip__face column-flip__face--front" data-face="exterior">
               <div class="column-image-wrap column-image-wrap--exterior" data-face-wrap="exterior">
                 <img
@@ -59,12 +48,11 @@
                   alt="Annotated exterior diagram of a transmission electron microscope and its consoles"
                   draggable="false"
                 />
-                <!-- Hotspots layer for the exterior face (built at runtime) -->
                 <div class="column-hotspots" data-face-hotspots="exterior" aria-hidden="false"></div>
               </div>
             </div>
 
-            <!-- =============== BACK FACE — COLUMN INTERIOR =============== -->
+            <!-- BACK FACE — COLUMN INTERIOR -->
             <div class="column-flip__face column-flip__face--back" data-face="interior">
               <div class="column-image-wrap column-image-wrap--interior" data-face-wrap="interior">
                 <img
@@ -81,50 +69,35 @@
           </div>
         </div>
 
-        <!-- =============== DRILL-DOWN DETAIL FACES (overlay) =============== -->
-        <!-- These sit on top of the flip card and are shown one at a time
-             when a drill-down hotspot is clicked. Hidden by default.       -->
+        <!-- DRILL-DOWN DETAIL FACES (overlay) -->
         <div class="column-detail" data-detail-face="panel-l1" hidden>
           <div class="column-image-wrap column-image-wrap--detail column-image-wrap--l1" data-face-wrap="panel-l1">
-            <img
-              class="column-image"
-              data-face-image="panel-l1"
-              src="../assets/images/column/panel-l1.png"
-              alt="Control Panel L1 detailed view"
-              draggable="false"
-            />
+            <img class="column-image" data-face-image="panel-l1"
+                 src="../assets/images/column/panel-l1.png"
+                 alt="Control Panel L1 detailed view" draggable="false" />
             <div class="column-hotspots" data-face-hotspots="panel-l1" aria-hidden="false"></div>
           </div>
         </div>
 
         <div class="column-detail" data-detail-face="panel-r1" hidden>
           <div class="column-image-wrap column-image-wrap--detail column-image-wrap--r1" data-face-wrap="panel-r1">
-            <img
-              class="column-image"
-              data-face-image="panel-r1"
-              src="../assets/images/column/panel-r1.png"
-              alt="Control Panel R1 detailed view"
-              draggable="false"
-            />
+            <img class="column-image" data-face-image="panel-r1"
+                 src="../assets/images/column/panel-r1.png"
+                 alt="Control Panel R1 detailed view" draggable="false" />
             <div class="column-hotspots" data-face-hotspots="panel-r1" aria-hidden="false"></div>
           </div>
         </div>
 
         <div class="column-detail" data-detail-face="panel-goniometer" hidden>
           <div class="column-image-wrap column-image-wrap--detail column-image-wrap--goniometer" data-face-wrap="panel-goniometer">
-            <img
-              class="column-image"
-              data-face-image="panel-goniometer"
-              src="../assets/images/column/panel-goniometer.png"
-              alt="Goniometer detailed view"
-              draggable="false"
-            />
+            <img class="column-image" data-face-image="panel-goniometer"
+                 src="../assets/images/column/panel-goniometer.png"
+                 alt="Goniometer detailed view" draggable="false" />
             <div class="column-hotspots" data-face-hotspots="panel-goniometer" aria-hidden="false"></div>
           </div>
         </div>
 
-        <!-- Zoom button — compact icon anchored INSIDE the image's top-right
-             corner. Lives outside .column-flip so it never rotates.         -->
+        <!-- Zoom button -->
         <button type="button" class="zoom-open-btn" id="zoom-open-btn" title="Open zoom view" aria-label="Open zoom view">
           <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
             <circle cx="7" cy="7" r="5"/>
@@ -132,63 +105,61 @@
           </svg>
         </button>
 
-        <!-- Back-to-exterior control: shown only while a drill-down is open.
-             Top-left of the stage.                                          -->
-        <button type="button" class="back-to-exterior" id="back-to-exterior" hidden
-                title="Back to the exterior view (Esc)">
-          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-            <path d="M10 3 5 8l5 5"/>
-          </svg>
-          <span>Back to Exterior</span>
-        </button>
-
         </div><!-- /.column-stage -->
 
       </section>
 
-      <!-- ============= INFO PANEL (right) ============= -->
-      <aside class="column-info" id="column-info">
+      <!-- ============= RIGHT PANEL: Description ============= -->
+      <aside class="column-desc-panel" id="column-info">
 
-        <!-- Detail card (top) -->
-        <div class="column-info__detail">
-
-          <!-- Empty state: shown until the first hover -->
-          <div class="column-info__empty" data-info-empty>
-            <div class="column-info__empty-mark">
-              <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-                <circle cx="16" cy="16" r="12"/>
-                <path d="M16 10v8M16 22h.01"/>
-              </svg>
-            </div>
-            <div class="column-info__empty-title">Hover or click a component</div>
-            <div class="column-info__empty-sub">on the diagram or in the list below</div>
-          </div>
-
-          <!-- Detail content -->
-          <div class="column-info__content" data-info-content hidden>
-            <div class="column-info__eyebrow" data-info-eyebrow>COMPONENT</div>
-            <h2 class="column-info__title" data-info-title></h2>
-            <div class="column-info__role" data-info-role></div>
-            <div class="column-info__body" data-info-body></div>
-            <!-- Drill-down call-to-action: shown only for drill-down components -->
-            <button type="button" class="drilldown-cta" data-drilldown-cta hidden>
-              <span>Open detailed view</span>
-              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                <path d="M6 3l5 5-5 5"/>
-              </svg>
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Component list (bottom, always visible) — populated for the current face -->
-        <div class="column-info__list-wrap">
-          <div class="column-info__list-heading">
-            <span data-info-list-heading>COMPONENTS</span>
-            <span class="column-info__list-count" data-info-progress>—</span>
+        <!-- Component list — on top -->
+        <div class="column-desc-panel__list-wrap">
+          <div class="column-desc-panel__list-heading">
+            <span data-info-list-heading>EXTERNAL PARTS</span>
+            <span class="column-desc-panel__list-count" data-info-progress>—</span>
           </div>
           <ul class="component-list" id="component-list"
               role="listbox" aria-label="Column components"></ul>
+        </div>
+
+        <!-- Hint divider — between list and description -->
+        <div class="column-desc-panel__hint-bar">
+          <span class="column-desc-panel__hint-text">
+            Click a label OR a component in list to view its description
+          </span>
+        </div>
+
+        <!-- Instrument overview — shown on load, hidden when component selected -->
+        <div class="column-desc-panel__intro" data-info-empty>
+          <div class="column-desc-panel__intro-eyebrow">INSTRUMENT OVERVIEW</div>
+          <div class="column-desc-panel__intro-title">JEOL JEM-2100</div>
+          <div class="column-desc-panel__intro-body">
+            The <strong>JEM-2100</strong> is a 200&nbsp;kV transmission electron microscope
+            built for high-resolution imaging and selected-area electron diffraction (SAED).
+            It features a <strong>LaB₆ thermionic electron gun</strong>, a five-lens
+            condenser–objective system, and a bottom-mounted CCD camera.
+            <br/><br/>
+            The instrument achieves a <strong>point resolution of 0.23&nbsp;nm</strong> and a
+            lattice resolution of 0.14&nbsp;nm, making it well suited for nanoparticle
+            characterisation, grain-boundary analysis, and crystallographic studies.
+            <br/><br/>
+            Explore the exterior components, control panels, and internal column anatomy
+            using the interactive diagrams.
+          </div>
+        </div>
+
+        <!-- Component detail — appears on click -->
+        <div class="column-desc-panel__content" data-info-content hidden>
+          <div class="column-info__eyebrow" data-info-eyebrow>COMPONENT</div>
+          <h2 class="column-info__title" data-info-title></h2>
+          <div class="column-info__role" data-info-role></div>
+          <div class="column-info__body" data-info-body></div>
+          <button type="button" class="drilldown-cta" data-drilldown-cta hidden>
+            <span>Open detailed view</span>
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M6 3l5 5-5 5"/>
+            </svg>
+          </button>
         </div>
 
       </aside>
