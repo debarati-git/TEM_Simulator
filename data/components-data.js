@@ -847,8 +847,8 @@
         body: [
           'The opening through which the specimen holder rod is inserted into the goniometer stage. The rod slides horizontally through an airlock and O-ring seal into the objective-lens polepiece gap. Proper seating is critical — a misaligned holder introduces vibration and drift that degrades high-resolution imaging.'
         ],
-        pin: { x: 30.0, y: 43.0 },
-        hotspot: box(30.0, 43.0, 12, 10)
+        pin: { x: 11.6, y: 51.5 },
+        hotspot: box(11.6, 51.5, 6, 6)
       },
       {
         id: 'gonio-x-shift',
@@ -857,8 +857,8 @@
         body: [
           'A pair of coaxial knobs that move the specimen stage along the X direction (left–right when viewed through the binocular). The outer knob gives coarse travel; the inner knob provides fine positioning. Used during initial specimen centering before switching to electronic beam/image shift.'
         ],
-        pin: { x: 28.0, y: 64.0 },
-        hotspot: box(28.0, 64.0, 12, 10)
+        pin: { x: 11.6, y: 63.3 },
+        hotspot: box(11.6, 63.3, 6, 6)
       },
       {
         id: 'gonio-y-shift',
@@ -867,8 +867,8 @@
         body: [
           'Moves the specimen stage along the Y direction (up–down when viewed through the binocular). Works in conjunction with the X SHIFT knobs to position the region of interest under the electron beam. Fine mechanical adjustment is essential when navigating to specific grains or particles.'
         ],
-        pin: { x: 27.0, y: 83.0 },
-        hotspot: box(27.0, 83.0, 12, 10)
+        pin: { x: 11.6, y: 80.8 },
+        hotspot: box(11.6, 80.8, 6, 6)
       },
       {
         id: 'gonio-binocular',
@@ -877,8 +877,8 @@
         body: [
           'A low-magnification optical binocular used to view the image formed on the fluorescent screen below the column. Provides a real-time, full-field view for initial specimen survey, focusing, and alignment before switching to CCD capture for recording.'
         ],
-        pin: { x: 66.0, y: 93.0 },
-        hotspot: box(66.0, 93.0, 14, 10)
+        pin: { x: 66.4, y: 96.6 },
+        hotspot: box(66.4, 96.6, 8, 6)
       }
     ]
   };
