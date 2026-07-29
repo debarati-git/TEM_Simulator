@@ -49,9 +49,9 @@
       "w": 12,
       "h": 8.2,
       "actionPos": {
-        "x": 68.5,
-        "y": 34.4,
-        "w": 13,
+        "x": 70.0,
+        "y": 25.4,
+        "w": 12.8,
         "h": 3.8
       },
       "labelText": "Specimen holder",
@@ -63,9 +63,9 @@
       "w": 12,
       "h": 8.2,
       "actionPos": {
-        "x": 68.5,
-        "y": 34.4,
-        "w": 13,
+        "x": 70.0,
+        "y": 25.4,
+        "w": 12.8,
         "h": 3.8
       },
       "labelText": "Specimen holder",
@@ -77,9 +77,9 @@
       "w": 12.2,
       "h": 7.2,
       "actionPos": {
-        "x": 14,
-        "y": 29.4,
-        "w": 12,
+        "x": 12.9,
+        "y": 28.2,
+        "w": 15.1,
         "h": 3.8
       },
       "labelText": "Condenser aperture",
@@ -91,9 +91,9 @@
       "w": 12.2,
       "h": 7,
       "actionPos": {
-        "x": 68.5,
-        "y": 45.8,
-        "w": 13,
+        "x": 70.0,
+        "y": 43.8,
+        "w": 13.9,
         "h": 3.8
       },
       "labelText": "Objective aperture",
