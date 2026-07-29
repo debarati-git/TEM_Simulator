@@ -83,6 +83,8 @@
         instruction: 'Switch the beam ON on the left panel.',
         hint: 'Press Beam On.',
         unlocks: ['beam-on'],
+        pcDrawer: 'tem',
+        switchViewer: 'column',
         success: { type: 'selectValue', key: 'beamOn', value: true }
       },
       {
