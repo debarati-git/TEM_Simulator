@@ -16,10 +16,11 @@
   var isRestoringState = false;
   var sessionStarted = false;
   var lastStepTargetControl = null;
+  var floatingPointerTick = null;
   var STICKY_UNLOCKS = new Set(['beam-current']);
   var everUnlocked = new Set();
   var STATE_TO_CONTROL = {
-    sample: 'sample-select', holderType: 'holder-type', stageNeutralized: 'stage-neutralize',
+    sample: 'sample', holderType: 'holder-type', stageNeutralized: 'stage-neutralize',
     holderRemoved: 'holder-remove', specimenInsertedDiagram: 'specimen-insert-diagram',
     specimenInsertedPanel: 'specimen-insert', airlockPumped: 'airlock',
     accVoltage: 'acc-voltage', beamOn: 'beam-on', brightness: 'brightness',
@@ -70,12 +71,144 @@
     TEM.fftRenderer.init();
 
     TEM.state.subscribe(onStateChange);
+    initFloatingPointer();
     showPreStart();
   }
 
   function setGuidanceActive(active) {
     var instruction = document.querySelector('.guided-context__instr');
     if (instruction) instruction.classList.toggle('is-guidance-active', !!active);
+  }
+
+  function initFloatingPointer() {
+    var guidedBody = document.querySelector('.guided-body');
+    var panelScrolls = document.querySelectorAll('.ctl-panel__scroll');
+
+    panelScrolls.forEach(function(panel) {
+      panel.addEventListener('scroll', scheduleFloatingPointerUpdate, { passive: true });
+    });
+    window.addEventListener('resize', scheduleFloatingPointerUpdate, { passive: true });
+    document.addEventListener('fullscreenchange', scheduleFloatingPointerUpdate);
+    document.addEventListener('webkitfullscreenchange', scheduleFloatingPointerUpdate);
+
+    if (guidedBody) {
+      var ro = new ResizeObserver(scheduleFloatingPointerUpdate);
+      ro.observe(guidedBody);
+    }
+  }
+
+  function scheduleFloatingPointerUpdate() {
+    if (floatingPointerTick) cancelAnimationFrame(floatingPointerTick);
+    floatingPointerTick = requestAnimationFrame(function() {
+      floatingPointerTick = null;
+      updateFloatingPointer();
+    });
+  }
+
+  function getFloatingPointerAnchor(target) {
+    if (!target) return target;
+    var controlKey = target.dataset.control || '';
+
+    // These wrappers contain labels plus one or more buttons. Anchor the cue
+    // to the actual action the learner must click rather than to the full box.
+    if (controlKey === 'sample') {
+      return target.querySelector('.pbtn[data-action="sample"][data-value="nanoparticles"]') || target;
+    }
+    if (controlKey === 'holder-type') {
+      return target.closest('fieldset.temcon-group') || target;
+    }
+    if (controlKey === 'specimen-insert') {
+      return target.querySelector('.pbtn[data-action="specimen-insert"]') || target;
+    }
+
+    // For compact row controls, a button is a more precise target than the
+    // complete label-and-button wrapper.
+    if (target.classList.contains('ctl--row-2')) {
+      return target.querySelector('.pbtn, .rocker, .trackpad, .knob') || target;
+    }
+    return target;
+  }
+
+  function updateFloatingPointer() {
+    var pointer = document.getElementById('guided-step-pointer');
+    var guidedBody = document.querySelector('.guided-body');
+    var target = document.querySelector('.ctl.is-step-target-control');
+    if (!pointer || !guidedBody || !target) {
+      if (pointer) pointer.classList.remove('is-visible');
+      return;
+    }
+
+    var bodyRect = guidedBody.getBoundingClientRect();
+    var anchor = getFloatingPointerAnchor(target);
+    var rect = anchor.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      pointer.classList.remove('is-visible');
+      return;
+    }
+
+    var pointerIcon = pointer.querySelector('.guided-step-pointer__icon');
+    var pointerSize = 34;
+    var pointerHalf = pointerSize / 2;
+    var sideGap = 5;
+    var requiredSideRoom = pointerSize + sideGap + 4;
+    var boundary = bodyRect;
+    var panel = target.closest('.ctl-panel');
+    var panelRect = panel ? panel.getBoundingClientRect() : null;
+    var leftRoom = rect.left - (panelRect ? panelRect.left : bodyRect.left);
+    var rightRoom = (panelRect ? panelRect.right : bodyRect.right) - rect.right;
+    var mode = 'down';
+    var controlKey = target.dataset.control || '';
+    var forceDownPointer = controlKey === 'holder-type' || controlKey === 'specimen-insert';
+
+    // Specimen-holder controls are intentionally indicated from above. The
+    // Holder Type step targets the full Specimen Holder fieldset, while the
+    // later Insert step targets its actual action button.
+    if (!forceDownPointer) {
+      // Prefer the inward-facing side for each physical panel. If that side
+      // lacks room, try the opposite side; otherwise retain the downward cue.
+      if (panel && panel.classList.contains('ctl-panel--left')) {
+        if (rightRoom >= requiredSideRoom) mode = 'left';
+        else if (leftRoom >= requiredSideRoom) mode = 'right';
+      } else if (panel && panel.classList.contains('ctl-panel--right')) {
+        if (leftRoom >= requiredSideRoom) mode = 'right';
+        else if (rightRoom >= requiredSideRoom) mode = 'left';
+      } else {
+        if (rightRoom >= requiredSideRoom || leftRoom >= requiredSideRoom) {
+          mode = rightRoom >= leftRoom ? 'left' : 'right';
+        }
+      }
+    }
+
+    var x;
+    var y;
+    if (mode === 'right') {
+      // Pointer sits left of the target and points right toward it.
+      x = rect.left - bodyRect.left - sideGap - pointerHalf;
+      y = rect.top - bodyRect.top + rect.height / 2;
+      if (pointerIcon) pointerIcon.textContent = '👉';
+    } else if (mode === 'left') {
+      // Pointer sits right of the target and points left toward it.
+      x = rect.right - bodyRect.left + sideGap + pointerHalf;
+      y = rect.top - bodyRect.top + rect.height / 2;
+      if (pointerIcon) pointerIcon.textContent = '👈';
+    } else {
+      x = rect.left - bodyRect.left + rect.width / 2;
+      y = rect.top - bodyRect.top - sideGap - pointerHalf;
+      if (pointerIcon) pointerIcon.textContent = '👇';
+    }
+
+    var minX = pointerHalf + 6;
+    var maxX = Math.max(minX, bodyRect.width - pointerHalf - 6);
+    var minY = pointerHalf + 6;
+    var maxY = Math.max(minY, bodyRect.height - pointerHalf - 6);
+    x = Math.max(minX, Math.min(maxX, x));
+    y = Math.max(minY, Math.min(maxY, y));
+
+    pointer.classList.remove('is-pointer-left', 'is-pointer-right', 'is-pointer-down');
+    pointer.classList.add('is-pointer-' + mode);
+    pointer.style.left = x + 'px';
+    pointer.style.top = y + 'px';
+    pointer.classList.add('is-visible');
   }
 
   /* ---- Pre-start screen ---- */
@@ -115,6 +248,7 @@
     TEM.diagram.setActiveHotspot(null);
     if (TEM.pcDrawer.setTarget) TEM.pcDrawer.setTarget('tem', false);
     TEM.pcDrawer.close();
+    scheduleFloatingPointerUpdate();
     setProgress(0);
   }
 
@@ -244,6 +378,8 @@
       }, step.autoAdvance);
     }
 
+    scheduleFloatingPointerUpdate();
+
     if (step.hint) {
       scheduleStepTimer(function() {
         if (currentStepIndex === index && !checkSuccess(step)) {
@@ -269,6 +405,7 @@
     TEM.diagram.setActiveHotspot(null);
     if (TEM.pcDrawer.setStepActive) TEM.pcDrawer.setStepActive(false);
     TEM.pcDrawer.close();
+    scheduleFloatingPointerUpdate();
   }
 
   /* ---- Lock/unlock ---- */
@@ -293,6 +430,7 @@
     var targetKey = pendingControlForStep(step);
     if (!targetKey) {
       lastStepTargetControl = null;
+      scheduleFloatingPointerUpdate();
       return;
     }
     document.querySelectorAll('.ctl[data-control="' + targetKey + '"]').forEach(function(ctl) {
@@ -302,12 +440,16 @@
     // During multi-action PC steps, move the drawer to the newly pending
     // control. In the camera sequence this makes Insert Camera, Live View,
     // and especially Raise Fluorescent Screen visible in turn.
+    scheduleFloatingPointerUpdate();
+
     if (targetKey !== lastStepTargetControl) {
       lastStepTargetControl = targetKey;
       scheduleStepTimer(function() {
         if (TEM.pcDrawer && TEM.pcDrawer.revealControl) {
           TEM.pcDrawer.revealControl(targetKey);
         }
+        scheduleFloatingPointerUpdate();
+        scheduleStepTimer(scheduleFloatingPointerUpdate, 260);
       }, 120);
     }
   }

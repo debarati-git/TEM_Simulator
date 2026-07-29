@@ -877,24 +877,21 @@ body.is-fullscreen .viewer__fullscreen { animation: none; box-shadow: none; }
 }
 
 .guided-context__restart.is-start-btn::after {
-  content: "☞";
+  content: "👉";
   position: absolute;
-  left: -46px;
+  right: calc(100% + 7px);
   top: 50%;
   transform: translateY(-50%);
   z-index: 20;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 34px;
+  font-size: 30px;
   line-height: 1;
-  color: #92400e;
-  text-shadow: 0 1px 0 #fde68a;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.34));
   pointer-events: none;
   animation: start-pointer-bounce 0.85s ease-in-out infinite;
 }
 
 @keyframes start-pointer-bounce {
-  0%, 100% { transform: translate(-3px, -50%); }
+  0%, 100% { transform: translate(-2px, -50%); }
   50% { transform: translate(5px, -50%); }
 }
 

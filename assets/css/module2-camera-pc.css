@@ -4,7 +4,7 @@
    ========================================================================= */
 
 /* -------------------------------------------------------------------------
-   Prominent instruction pointer
+   Compact blinking instruction indicator
    ------------------------------------------------------------------------- */
 .guided-context__instr {
   position: relative;
@@ -12,52 +12,32 @@
 
 .guided-context__instr-icon {
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  border-radius: 50%;
   overflow: visible;
   border: 2px solid #b45309;
-  background: linear-gradient(180deg, #fde68a 0%, #fbbf24 100%);
-  color: #3f2500;
+  background: #facc15;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.8),
-    0 0 0 4px rgba(245,158,11,0.18),
-    0 4px 10px rgba(120,53,15,0.22);
-  animation: instruction-pointer-bob 1.05s ease-in-out infinite;
+    inset 0 1px 0 rgba(255,255,255,0.72),
+    0 0 0 3px rgba(250,204,21,0.18),
+    0 0 9px rgba(245,158,11,0.58);
+  animation: instruction-dot-blink 0.95s ease-in-out infinite;
 }
 
-.guided-context__pointer-hand {
-  position: relative;
-  z-index: 2;
-  display: block;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 31px;
-  line-height: 1;
-  font-weight: 700;
-  transform: translateX(1px) rotate(-5deg);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.55);
-}
-
+.guided-context__pointer-hand,
 .guided-context__pointer-ring {
-  position: absolute;
-  inset: -7px;
-  border: 2px solid rgba(245,158,11,0.75);
-  border-radius: 50%;
-  animation: instruction-pointer-ring 1.35s ease-out infinite;
+  display: none;
 }
-
-
 
 .guided-context__instr:not(.is-guidance-active) .guided-context__instr-icon {
   display: none;
 }
-@keyframes instruction-pointer-bob {
-  0%, 100% { transform: translateX(0) scale(1); }
-  50% { transform: translateX(5px) scale(1.04); }
-}
 
-@keyframes instruction-pointer-ring {
-  0% { opacity: 0.85; transform: scale(0.82); }
-  80%, 100% { opacity: 0; transform: scale(1.28); }
+@keyframes instruction-dot-blink {
+  0%, 100% { opacity: 0.45; transform: scale(0.82); }
+  50% { opacity: 1; transform: scale(1.12); }
 }
 
 /* Exact current-step control receives a second location cue. */
@@ -67,27 +47,11 @@
 }
 
 .ctl.is-step-target-control::after {
-  content: "☞";
-  position: absolute;
-  left: -31px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 30;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 27px;
-  font-weight: 700;
-  line-height: 1;
-  color: #7c2d12;
-  text-shadow: 0 1px 0 #fde68a;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.38));
-  pointer-events: none;
-  animation: target-hand-bounce 0.8s ease-in-out infinite;
+  content: none;
 }
 
 .ctl-panel--left .ctl.is-step-target-control::after {
-  content: "☜";
-  left: auto;
-  right: -31px;
+  content: none;
 }
 
 .ctl.is-step-target-control::before {
@@ -743,4 +707,68 @@
   .viewer__screen.is-wobbling .view-wobble-ghost {
     animation: none !important;
   }
+}
+
+
+/* -------------------------------------------------------------------------
+   Floating current-step pointer overlay for panel controls
+   ------------------------------------------------------------------------- */
+.guided-step-pointer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 80;
+  width: 34px;
+  height: 34px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.guided-step-pointer.is-visible {
+  display: flex;
+}
+
+.guided-step-pointer__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  font-size: 27px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.38));
+}
+
+.guided-step-pointer.is-pointer-down .guided-step-pointer__icon {
+  animation: floating-pointer-bounce-down 0.8s ease-in-out infinite;
+}
+
+.guided-step-pointer.is-pointer-right .guided-step-pointer__icon {
+  animation: floating-pointer-bounce-right 0.8s ease-in-out infinite;
+}
+
+.guided-step-pointer.is-pointer-left .guided-step-pointer__icon {
+  animation: floating-pointer-bounce-left 0.8s ease-in-out infinite;
+}
+
+@keyframes floating-pointer-bounce-down {
+  0%, 100% { transform: translateY(-2px); }
+  50% { transform: translateY(5px); }
+}
+
+@keyframes floating-pointer-bounce-right {
+  0%, 100% { transform: translateX(-2px); }
+  50% { transform: translateX(5px); }
+}
+
+@keyframes floating-pointer-bounce-left {
+  0%, 100% { transform: translateX(2px); }
+  50% { transform: translateX(-5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guided-step-pointer__icon { animation: none !important; }
 }
