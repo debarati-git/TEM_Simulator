@@ -1,0 +1,765 @@
+/* =========================================================================
+   Module 2 — JEOL JEM-2100 TEM PC reconstruction
+   Legacy TEMCON / Windows-style interface based on the supplied manual views.
+   Loaded after guided.css and controls-panel.css.
+   ========================================================================= */
+
+/* Give the reconstructed PC enough vertical room while keeping the microscope
+   view visible above it. */
+.viewer__stage.has-drawer {
+  padding-bottom: clamp(360px, 58%, 520px);
+}
+
+.pc-drawer {
+  --pc-drawer-peek: 28px;
+  background: #bdbdbd;
+  border-top: 1px solid #5f5f5f;
+  box-shadow: 0 -5px 18px rgba(0, 0, 0, 0.24);
+}
+
+.pc-drawer__handle {
+  min-height: 27px;
+  padding: 4px 10px;
+  background: var(--module2-heading-bg);
+  border-top: 1px solid rgba(255,255,255,0.72);
+  border-bottom: 1px solid var(--module2-heading-border);
+  color: var(--module2-heading-color);
+  box-shadow: var(--module2-heading-shadow);
+}
+
+:root[data-theme="dark"] .pc-drawer__handle {
+  background: var(--module2-heading-bg);
+  border-bottom-color: var(--module2-heading-border);
+  color: var(--module2-heading-color);
+}
+
+.pc-drawer__handle-label,
+:root[data-theme="dark"] .pc-drawer__handle-label {
+  color: var(--module2-heading-color);
+  font-family: var(--module2-heading-font);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.pc-drawer__handle-icon {
+  color: var(--module2-heading-color);
+  font-size: 0.9rem;
+}
+
+.pc-drawer.is-step-active {
+  border-top: 2px solid #d97706;
+  box-shadow: 0 -3px 14px rgba(217, 119, 6, 0.26);
+}
+
+.pc-drawer.is-step-active .pc-drawer__content.is-active,
+:root[data-theme="dark"] .pc-drawer.is-step-active .pc-drawer__content.is-active {
+  background: #bdbdbd;
+}
+
+.pc-drawer__content--tem {
+  min-height: 0;
+  max-height: min(515px, 62vh);
+  overflow: auto;
+  background: #bdbdbd;
+  scrollbar-color: #777 #d7d7d7;
+  scrollbar-width: thin;
+}
+
+.pc-screen--temcon {
+  padding: 5px;
+  background: #8f8f8f;
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+  color: #101010;
+}
+
+.temcon-window,
+.temcon-window * {
+  box-sizing: border-box;
+}
+
+.temcon-window {
+  min-width: 710px;
+  color: #101010;
+  background: #c7c7c7;
+  border-top: 2px solid #f6f6f6;
+  border-left: 2px solid #f6f6f6;
+  border-right: 2px solid #484848;
+  border-bottom: 2px solid #484848;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.32);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+/* Application title bar matches the physical control-panel heading. */
+.temcon-titlebar {
+  height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 5px;
+  background: var(--module2-heading-bg);
+  color: var(--module2-heading-color);
+  border-bottom: 1px solid var(--module2-heading-border);
+  box-shadow: var(--module2-heading-shadow);
+  font-family: var(--module2-heading-font);
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.temcon-titlebar__caption {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.temcon-titlebar__icon {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  background: #d9d9d9;
+  border: 1px solid #ffffff;
+  color: #182f7d;
+  font-size: 12px;
+  text-shadow: none;
+}
+
+.temcon-titlebar__buttons {
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: repeat(3, 27px);
+  gap: 2px;
+  padding: 2px;
+}
+
+.temcon-titlebar__buttons span {
+  display: grid;
+  place-items: center;
+  background: #c9c9c9;
+  color: #000;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #3f3f3f;
+  border-bottom: 1px solid #3f3f3f;
+  font-family: Arial, sans-serif;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: none;
+}
+
+/* Main Window / Data Display Area */
+.temcon-status {
+  display: grid;
+  grid-template-columns: 62px minmax(180px, 1.65fr) minmax(120px, 1fr) minmax(145px, 1.15fr) minmax(180px, 1.3fr);
+  min-height: 85px;
+  margin: 4px;
+  background: #d5d5d5;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #777777;
+  border-bottom: 2px solid #777777;
+}
+
+.temcon-status__lamps {
+  display: grid;
+  grid-template-rows: 1fr 1.35fr;
+  gap: 3px;
+  padding: 3px;
+  border-right: 1px solid #8d8d8d;
+}
+
+.temcon-lamp {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: #9e9e9e;
+  color: #111;
+  border-top: 2px solid #ececec;
+  border-left: 2px solid #ececec;
+  border-right: 2px solid #676767;
+  border-bottom: 2px solid #676767;
+  font-size: 13px;
+  line-height: 1.02;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.temcon-lamp.is-on {
+  background: linear-gradient(180deg, #29dc6a 0%, #18b94f 100%);
+  box-shadow: inset 0 0 7px rgba(255, 255, 255, 0.35);
+}
+
+.temcon-lamp--beam strong {
+  font-size: 12px;
+}
+
+.temcon-status__cell {
+  min-width: 0;
+  padding: 7px 9px;
+  border-right: 1px solid #999999;
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  background: linear-gradient(90deg, #d8d8d8 0%, #cfcfcf 100%);
+}
+
+.temcon-status__cell:last-child {
+  border-right: 0;
+}
+
+.temcon-status__cell strong {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.temcon-status__inline,
+.temcon-status__pair {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.temcon-status__cell--illumination {
+  grid-template-columns: 1.35fr 0.8fr;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 6px;
+}
+
+.temcon-status__cell--stage {
+  grid-template-columns: auto auto;
+  grid-template-rows: repeat(3, auto);
+  column-gap: 16px;
+  row-gap: 4px;
+  align-content: center;
+}
+
+.temcon-status__stage-mode {
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Operation client area */
+.temcon-client {
+  padding: 5px 7px 7px;
+  background: #c7c7c7;
+  border-top: 1px solid #707070;
+}
+
+.temcon-main-tabs,
+.temcon-subtabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.temcon-tab,
+.temcon-subtab {
+  min-height: 30px;
+  padding: 5px 15px;
+  border: 0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #5d5d5d;
+  border-bottom: 2px solid #5d5d5d;
+  background: #c8c8c8;
+  color: #111;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.temcon-tab.is-selected,
+.temcon-subtab.is-selected {
+  position: relative;
+  z-index: 2;
+  background: #d1d1d1;
+  border-bottom-color: #d1d1d1;
+  outline: 1px dotted #333;
+  outline-offset: -5px;
+}
+
+.temcon-page {
+  min-height: 290px;
+  padding: 8px;
+  background: #d1d1d1;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #626262;
+  border-bottom: 2px solid #626262;
+}
+
+.temcon-page[hidden],
+.temcon-subpage[hidden] {
+  display: none !important;
+}
+
+.temcon-group {
+  min-width: 0;
+  margin: 0 0 8px;
+  padding: 9px 10px 10px;
+  border-top: 2px solid #7f7f7f;
+  border-left: 2px solid #7f7f7f;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  background: #d1d1d1;
+}
+
+.temcon-group legend {
+  padding: 0 5px;
+  color: #111;
+  font-size: 14px;
+  background: #d1d1d1;
+}
+
+.temcon-field-label {
+  color: #171717;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.temcon-mode-row {
+  display: grid;
+  grid-template-columns: 65px repeat(4, minmax(65px, 1fr));
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 9px;
+}
+
+.temcon-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #111;
+  white-space: nowrap;
+}
+
+.temcon-radio input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: #111111;
+  opacity: 1;
+}
+
+.temcon-illumination-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr minmax(270px, 1.45fr);
+  gap: 14px;
+  align-items: center;
+}
+
+.temcon-stepper {
+  display: grid;
+  grid-template-columns: minmax(76px, auto) 38px 35px 38px;
+  align-items: center;
+  gap: 4px;
+}
+
+.temcon-bright-dark {
+  display: grid;
+  grid-template-columns: auto auto auto 58px;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 8px;
+  border-top: 2px solid #7f7f7f;
+  border-left: 2px solid #7f7f7f;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+.temcon-btn,
+.temcon-window .pbtn {
+  min-height: 31px;
+  padding: 5px 12px;
+  border-radius: 0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #505050;
+  border-bottom: 2px solid #505050;
+  background: #c8c8c8;
+  color: #111111 !important;
+  box-shadow: none;
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.1;
+  cursor: default;
+}
+
+.temcon-btn::before,
+.temcon-window .pbtn::before {
+  display: none;
+}
+
+.temcon-btn:disabled {
+  opacity: 1;
+  color: #303030;
+}
+
+.temcon-btn.is-current,
+.temcon-window .pbtn.is-selected {
+  background: #b7b7b7;
+  border-top-color: #555555;
+  border-left-color: #555555;
+  border-right-color: #ffffff;
+  border-bottom-color: #ffffff;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.22);
+}
+
+.temcon-btn--arrow {
+  min-width: 38px;
+  padding-inline: 7px;
+  font-size: 17px;
+}
+
+.temcon-value-box,
+.temcon-select-box {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 5px;
+  background: #ffffff;
+  border-top: 2px solid #646464;
+  border-left: 2px solid #646464;
+  border-right: 2px solid #eeeeee;
+  border-bottom: 2px solid #eeeeee;
+  color: #111111;
+  font: inherit;
+}
+
+.temcon-value-box {
+  justify-content: center;
+}
+
+.temcon-function-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(58px, 1fr)) minmax(10px, 0.7fr) 42px 42px;
+  gap: 7px;
+  align-items: center;
+}
+
+.temcon-function-spacer {
+  min-width: 8px;
+}
+
+.temcon-def-grid {
+  display: grid;
+  grid-template-columns: 105px repeat(4, minmax(76px, 110px));
+  gap: 5px 8px;
+  align-items: center;
+}
+
+.temcon-focus-row {
+  display: flex;
+  align-items: center;
+  gap: 70px;
+  padding: 2px 11px 8px;
+}
+
+.temcon-focus-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.temcon-focus-row .temcon-select-box {
+  min-width: 83px;
+}
+
+.temcon-subpage {
+  min-height: 64px;
+  padding: 12px;
+  background: #d1d1d1;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #626262;
+  border-bottom: 2px solid #626262;
+}
+
+.temcon-subpage[data-temcon-subpage="wobbler"] {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(70px, 110px)) 1fr minmax(115px, 155px);
+  gap: 8px;
+}
+
+.temcon-info-grid {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(100px, 1fr);
+  align-items: center;
+  gap: 7px 14px;
+  color: #111;
+}
+
+.temcon-info-grid strong {
+  min-height: 26px;
+  padding: 4px 6px;
+  background: #ffffff;
+  border-top: 2px solid #686868;
+  border-left: 2px solid #686868;
+  border-right: 2px solid #efefef;
+  border-bottom: 2px solid #efefef;
+  font-weight: 500;
+}
+
+.temcon-ok {
+  color: #006b22;
+}
+
+/* Stage page: contains the controls required by guided steps 1 and 2. */
+.temcon-stage-layout {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) minmax(250px, 1.05fr) minmax(230px, 1fr);
+  gap: 9px;
+  align-items: stretch;
+}
+
+.temcon-stage-layout > .temcon-group {
+  margin: 0;
+}
+
+.temcon-guided-control.ctl {
+  margin: 0 0 10px;
+  padding: 5px;
+  border-radius: 0;
+}
+
+.temcon-guided-control.ctl.is-active {
+  background: #fff2b6;
+  border: 2px solid #d97706;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2), 0 0 12px rgba(217, 119, 6, 0.28);
+  animation: none;
+}
+
+.temcon-window .pbtn-group {
+  gap: 5px;
+}
+
+.temcon-window .pbtn-group .pbtn,
+.temcon-window .pbtn-group .pbtn:first-child,
+.temcon-window .pbtn-group .pbtn:last-child,
+.temcon-window .pbtn-group .pbtn:not(:first-child) {
+  border-radius: 0;
+  border-left: 2px solid #ffffff;
+}
+
+.temcon-window .pbtn:active {
+  transform: none;
+  background: #b7b7b7;
+  border-top-color: #555555;
+  border-left-color: #555555;
+  border-right-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+
+.temcon-window .pbtn__led {
+  width: 7px;
+  height: 7px;
+}
+
+.temcon-info-grid--compact {
+  grid-template-columns: 1fr 1.25fr;
+  font-size: 12px;
+}
+
+.temcon-stage-coordinates {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  margin-bottom: 9px;
+}
+
+.temcon-stage-coordinates div {
+  display: grid;
+  grid-template-columns: 26px 1fr 24px;
+  align-items: center;
+  gap: 4px;
+}
+
+.temcon-stage-coordinates strong {
+  padding: 4px 5px;
+  text-align: right;
+  background: #ffffff;
+  border-top: 2px solid #686868;
+  border-left: 2px solid #686868;
+  border-right: 2px solid #eeeeee;
+  border-bottom: 2px solid #eeeeee;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.temcon-stage-coordinates small {
+  font-size: 11px;
+}
+
+.temcon-stage-mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.temcon-vacuum-line {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 9px;
+  padding: 6px;
+  background: #c5c5c5;
+  border-top: 2px solid #777;
+  border-left: 2px solid #777;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.temcon-vacuum-line .pc-readout__indicator {
+  width: 9px;
+  height: 9px;
+  background: #b32020;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.temcon-vacuum-line .pc-readout__indicator.is-on {
+  background: #22b54b;
+  box-shadow: 0 0 5px rgba(34, 181, 75, 0.75);
+}
+
+.temcon-progress {
+  height: 14px;
+  margin-top: 9px;
+  padding: 2px;
+  background: #ffffff;
+  border-top: 2px solid #666;
+  border-left: 2px solid #666;
+  border-right: 2px solid #eee;
+  border-bottom: 2px solid #eee;
+}
+
+.temcon-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: repeating-linear-gradient(90deg, #0b55b9 0 7px, #4d8ddd 7px 10px);
+  transition: width 0.45s ease;
+}
+
+.temcon-progress.is-busy span {
+  width: 58%;
+  animation: temcon-progress-pulse 0.7s linear infinite alternate;
+}
+
+.temcon-progress.is-ready span {
+  width: 100%;
+  background: #1aa44a;
+}
+
+@keyframes temcon-progress-pulse {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+.temcon-statusbar {
+  min-height: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 3px 6px;
+  background: #c7c7c7;
+  border-top: 2px solid #777777;
+  color: #111111;
+  font-size: 12px;
+}
+
+.temcon-statusbar > span {
+  padding: 2px 5px;
+  border-top: 1px solid #777;
+  border-left: 1px solid #777;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+/* Dark application theme must not recolour the legacy workstation itself. */
+:root[data-theme="dark"] .pc-screen--temcon,
+:root[data-theme="dark"] .temcon-window,
+:root[data-theme="dark"] .temcon-client,
+:root[data-theme="dark"] .temcon-page,
+:root[data-theme="dark"] .temcon-group,
+:root[data-theme="dark"] .temcon-group legend,
+:root[data-theme="dark"] .temcon-subpage,
+:root[data-theme="dark"] .temcon-statusbar {
+  color: #101010;
+}
+
+/* Responsive compaction for narrower centre viewports. */
+@media (max-width: 1250px) {
+  .viewer__stage.has-drawer { padding-bottom: clamp(390px, 63%, 545px); }
+  .temcon-window { min-width: 650px; font-size: 12px; }
+  .temcon-status { grid-template-columns: 58px 1.6fr 1fr 1.1fr 1.25fr; }
+  .temcon-status__cell { padding: 6px; }
+  .temcon-illumination-row { grid-template-columns: 1fr 1fr; }
+  .temcon-bright-dark { grid-column: 1 / -1; }
+  .temcon-stage-layout { grid-template-columns: 1fr 1fr; }
+  .temcon-group--vacuum { grid-column: 1 / -1; }
+}
+
+@media (max-width: 900px) {
+  .pc-drawer__content--tem { overflow: auto; }
+  .temcon-window { min-width: 690px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .temcon-progress.is-busy span { animation: none; }
+}
+
+/* ---------------------------------------------------------------------
+   v7 tweak — slower, easier-to-follow PC drawer motion
+   --------------------------------------------------------------------- */
+.pc-drawer {
+  transition: transform 0.75s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.pc-drawer__content {
+  opacity: 0;
+  transition: opacity 0.38s ease;
+}
+.pc-drawer.is-open .pc-drawer__content.is-active {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------
+   v9 tweaks — enhanced workstation column image + slower PC drawer motion
+   --------------------------------------------------------------------- */
+.viewer__panel[data-view-panel="column"] {
+  padding: 0;
+}
+.viewer__column-image {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center center;
+}
+
+/* Slower and more readable drawer motion */
+.pc-drawer {
+  transition: transform 1.05s cubic-bezier(0.2, 0.72, 0.18, 1);
+}
+.pc-drawer__handle-icon {
+  transition: transform 0.95s cubic-bezier(0.2, 0.72, 0.18, 1);
+}
+.pc-drawer__content {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.pc-drawer.is-open .pc-drawer__content.is-active {
+  opacity: 1;
+}

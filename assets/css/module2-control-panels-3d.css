@@ -1,0 +1,952 @@
+/* ==========================================================================
+   JEOL JEM-2100 TEM Simulator — Module 2 Control Panels: 3D Enhancement
+   --------------------------------------------------------------------------
+   Load this file AFTER:
+     1. guided.css
+     2. controls-panel.css
+
+   This stylesheet is an override only. No HTML or JavaScript changes are
+   required. It preserves the existing control selectors and guided-step logic.
+   ========================================================================== */
+
+/* Shared Module 2 heading treatment. The physical-panel headers, drawer
+   handle, and TEM/camera application title bars use these same values. */
+:root {
+  --module2-heading-bg:
+    linear-gradient(180deg,
+      #f0ede8 0%,
+      #dfdcd6 42%,
+      #c9c5bf 100%);
+  --module2-heading-color: #383530;
+  --module2-heading-border: #918d87;
+  --module2-heading-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.90),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.12);
+  --module2-heading-font: Tahoma, "Segoe UI", Arial, sans-serif;
+}
+
+:root[data-theme="dark"] {
+  --module2-heading-bg:
+    linear-gradient(180deg,
+      #294f78 0%,
+      #1e3a5f 52%,
+      #152b49 100%);
+  --module2-heading-color: #c7e1ff;
+  --module2-heading-border: #0b1e33;
+  --module2-heading-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.32),
+    0 2px 5px rgba(0, 0, 0, 0.36);
+}
+
+/* --------------------------------------------------------------------------
+   1. PANEL BODY — metallic hardware enclosure
+   -------------------------------------------------------------------------- */
+.ctl-panel {
+  position: relative;
+  isolation: isolate;
+  transform-style: preserve-3d;
+  background-color: #cbc8c2;
+  background-image:
+    radial-gradient(circle at 10px 10px,
+      #77736e 0 1px,
+      #aaa69f 1.5px 2.5px,
+      transparent 3px),
+    radial-gradient(circle at calc(100% - 10px) 10px,
+      #77736e 0 1px,
+      #aaa69f 1.5px 2.5px,
+      transparent 3px),
+    radial-gradient(circle at 10px calc(100% - 10px),
+      #77736e 0 1px,
+      #aaa69f 1.5px 2.5px,
+      transparent 3px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px),
+      #77736e 0 1px,
+      #aaa69f 1.5px 2.5px,
+      transparent 3px),
+    linear-gradient(90deg,
+      rgba(255, 255, 255, 0.24) 0%,
+      transparent 12%,
+      transparent 86%,
+      rgba(0, 0, 0, 0.07) 100%),
+    linear-gradient(180deg,
+      #e4e1dc 0%,
+      #d8d5cf 10%,
+      #cbc8c2 55%,
+      #bbb7b1 100%);
+  border-top: 2px solid #f3f1ed;
+  border-left: 2px solid #ece9e4;
+  border-right: 2px solid #8e8a84;
+  border-bottom: 3px solid #77736e;
+  border-radius: 3px;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.72),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.08),
+    inset 0 12px 18px rgba(255, 255, 255, 0.10),
+    0 2px 0 rgba(255, 255, 255, 0.45),
+    0 6px 14px rgba(0, 0, 0, 0.20);
+}
+
+.ctl-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(115deg,
+      rgba(255, 255, 255, 0.16) 0%,
+      rgba(255, 255, 255, 0.04) 22%,
+      transparent 42%,
+      transparent 100%);
+  mix-blend-mode: screen;
+}
+
+.ctl-panel__header {
+  position: relative;
+  z-index: 5;
+  background: var(--module2-heading-bg);
+  border-bottom: 1px solid var(--module2-heading-border);
+  box-shadow: var(--module2-heading-shadow);
+}
+
+.ctl-panel__title {
+  color: var(--module2-heading-color);
+  font-family: var(--module2-heading-font);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75),
+    0 -1px 0 rgba(0, 0, 0, 0.08);
+}
+
+.ctl-panel__badge {
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(226, 232, 240, 0.86) 100%);
+  border: 1px solid color-mix(in srgb, var(--signal) 65%, #6d6963 35%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.90),
+    0 2px 3px rgba(0, 0, 0, 0.12);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.ctl-panel__scroll {
+  position: relative;
+  z-index: 3;
+  background:
+    linear-gradient(90deg,
+      rgba(0, 0, 0, 0.035) 0%,
+      transparent 6%,
+      transparent 94%,
+      rgba(255, 255, 255, 0.11) 100%);
+}
+
+/* --------------------------------------------------------------------------
+   2. CONTROL ZONES — recessed instrument sections
+   -------------------------------------------------------------------------- */
+.dz {
+  border: 1px solid #97938d;
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.23) 0%,
+      rgba(255, 255, 255, 0.04) 16%,
+      rgba(0, 0, 0, 0.025) 100%),
+    linear-gradient(180deg,
+      #d6d3cd 0%,
+      #c4c0ba 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.13),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.54),
+    0 1px 0 rgba(255, 255, 255, 0.55),
+    0 3px 6px rgba(0, 0, 0, 0.10);
+}
+
+.dz::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.dz.is-zone-active {
+  border-color: var(--signal);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.13),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.54),
+    0 0 0 1px var(--signal),
+    0 0 13px var(--signal-edge),
+    0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.dz__label {
+  color: #3e3b36;
+  border-bottom-color: #9e9a94;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.72),
+    0 -1px 0 rgba(0, 0, 0, 0.07);
+}
+
+.dz__label::before {
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, #f4f2ee 0%, #77736e 52%, #44413d 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 1px 1px rgba(0, 0, 0, 0.28);
+}
+
+/* --------------------------------------------------------------------------
+   3. GUIDED ACTIVE/LOCKED CONTROL FRAME
+   -------------------------------------------------------------------------- */
+.ctl {
+  border-radius: 5px;
+  transform: translateZ(0);
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.ctl.is-active {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--unlock-soft) 76%, white 24%) 0%,
+      var(--unlock-soft) 100%);
+  border-color: var(--unlock-edge);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 0 0 1px var(--unlock-soft),
+    0 3px 7px rgba(0, 0, 0, 0.09);
+}
+
+/* --------------------------------------------------------------------------
+   4. PUSH BUTTONS — raised caps with real press travel
+   -------------------------------------------------------------------------- */
+.pbtn {
+  min-height: 30px;
+  padding: 7px 9px 8px;
+  color: #292722;
+  border: 1px solid #706c66;
+  border-bottom-color: #5d5954;
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg,
+      #ffffff 0%,
+      #f6f4f1 12%,
+      #e8e5e0 52%,
+      #d4d0ca 100%);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.82);
+  transform: translateY(0);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.09),
+    0 2px 0 #8f8a83,
+    0 4px 6px rgba(0, 0, 0, 0.15);
+  transition:
+    transform 80ms ease-out,
+    box-shadow 80ms ease-out,
+    background 120ms ease-out,
+    border-color 120ms ease-out,
+    filter 120ms ease-out;
+}
+
+.pbtn::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  left: 3px;
+  height: 36%;
+  border-radius: 3px 3px 45% 45%;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+.pbtn:hover:not(:disabled):not([aria-disabled="true"]):not(.is-gated-out) {
+  border-color: #56524d;
+  background:
+    linear-gradient(180deg,
+      #ffffff 0%,
+      #faf9f7 14%,
+      #eeebe7 52%,
+      #dcd8d2 100%);
+  filter: brightness(1.025);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.08),
+    0 3px 0 #89847d,
+    0 6px 9px rgba(0, 0, 0, 0.18);
+}
+
+.pbtn:active:not(:disabled):not([aria-disabled="true"]):not(.is-gated-out),
+.pbtn.is-on {
+  transform: translateY(2px);
+  background:
+    linear-gradient(180deg,
+      #d3cfc9 0%,
+      #e3dfda 45%,
+      #f0eeeb 100%);
+  box-shadow:
+    inset 0 3px 5px rgba(0, 0, 0, 0.19),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.55),
+    0 1px 0 #89847d,
+    0 2px 3px rgba(0, 0, 0, 0.10);
+}
+
+.pbtn.is-selected {
+  color: #ffffff;
+  border-color: color-mix(in srgb, var(--signal) 72%, #2a2a2a 28%);
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--signal) 84%, white 16%) 0%,
+      var(--signal) 45%,
+      color-mix(in srgb, var(--signal) 67%, black 33%) 100%);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.42);
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.22),
+    0 1px 0 color-mix(in srgb, var(--signal) 50%, black 50%),
+    0 0 10px var(--signal-edge),
+    0 4px 7px rgba(0, 0, 0, 0.14);
+}
+
+.pbtn:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+.pbtn:disabled,
+.pbtn[aria-disabled="true"],
+.pbtn.is-gated-out {
+  filter: saturate(0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.52),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.07),
+    0 1px 0 #99958f;
+}
+
+.pbtn__led {
+  width: 7px;
+  height: 7px;
+  border: 1px solid rgba(0, 0, 0, 0.34);
+  background:
+    radial-gradient(circle at 35% 30%, #bdbab5 0%, #706d68 58%, #3f3c38 100%);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.26),
+    0 1px 1px rgba(0, 0, 0, 0.30);
+}
+
+.pbtn.is-on .pbtn__led {
+  border-color: color-mix(in srgb, var(--success) 70%, black 30%);
+  background:
+    radial-gradient(circle at 35% 28%, #ffffff 0%, var(--success) 26%,
+      color-mix(in srgb, var(--success) 64%, black 36%) 100%);
+  box-shadow:
+    0 0 4px var(--success),
+    0 0 10px color-mix(in srgb, var(--success) 58%, transparent 42%),
+    inset 0 1px 1px rgba(255, 255, 255, 0.66);
+}
+
+/* Keep grouped buttons individually raised rather than visually flat. */
+.pbtn-group {
+  gap: 4px;
+}
+
+.pbtn-group .pbtn,
+.pbtn-group .pbtn:first-child,
+.pbtn-group .pbtn:last-child,
+.pbtn-group .pbtn:not(:first-child) {
+  border-radius: 4px;
+  border-left: 1px solid #706c66;
+}
+
+.pbtn-group--grid-2 {
+  gap: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   5. ROTARY KNOBS — cylindrical body, rim and directional highlight
+   -------------------------------------------------------------------------- */
+.knob {
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.18));
+}
+
+.knob__ring {
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.50))
+    drop-shadow(0 2px 2px rgba(0, 0, 0, 0.18));
+}
+
+.knob__arc {
+  filter:
+    drop-shadow(0 0 3px var(--signal-edge))
+    drop-shadow(0 0 6px var(--signal-soft));
+}
+
+.knob__body {
+  inset: 5px;
+  border: 1px solid #706c66;
+  background:
+    radial-gradient(circle at 33% 25%,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.68) 13%,
+      transparent 29%),
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 255, 255, 0.09) 0deg 4deg,
+      rgba(0, 0, 0, 0.035) 4deg 8deg),
+    radial-gradient(circle at 43% 37%,
+      #f9f8f6 0%,
+      #e8e5e0 34%,
+      #c7c3bd 70%,
+      #99958f 100%);
+  box-shadow:
+    inset 2px 3px 4px rgba(255, 255, 255, 0.82),
+    inset -3px -5px 7px rgba(0, 0, 0, 0.17),
+    0 2px 0 #88837c,
+    0 5px 8px rgba(0, 0, 0, 0.22);
+}
+
+.knob__body::after {
+  top: 3px;
+  width: 3px;
+  height: 30%;
+  border-radius: 2px;
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--signal) 75%, black 25%) 0%,
+      var(--signal) 48%,
+      color-mix(in srgb, var(--signal) 78%, white 22%) 100%);
+  box-shadow:
+    0 0 4px var(--signal-edge),
+    0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
+.knob:active .knob__body {
+  box-shadow:
+    inset 2px 3px 4px rgba(255, 255, 255, 0.66),
+    inset -3px -5px 7px rgba(0, 0, 0, 0.22),
+    0 1px 0 #88837c,
+    0 3px 5px rgba(0, 0, 0, 0.18);
+}
+
+.ctl.is-active .knob__body {
+  border-color: var(--unlock-edge);
+  box-shadow:
+    inset 2px 3px 4px rgba(255, 255, 255, 0.78),
+    inset -3px -5px 7px rgba(0, 0, 0, 0.17),
+    0 2px 0 #88837c,
+    0 0 0 1px var(--unlock-edge),
+    0 0 12px var(--unlock-edge),
+    0 5px 8px rgba(0, 0, 0, 0.20);
+}
+
+.knob__value {
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(35, 38, 42, 0.88);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.70),
+    0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* --------------------------------------------------------------------------
+   6. TRACKPAD — recessed X/Y control well
+   -------------------------------------------------------------------------- */
+.trackpad {
+  overflow: hidden;
+  border: 1px solid #77736d;
+  border-radius: 5px;
+  background:
+    radial-gradient(circle at center,
+      rgba(255, 255, 255, 0.11) 0%,
+      transparent 52%),
+    linear-gradient(180deg,
+      #aaa69f 0%,
+      #c3bfb8 32%,
+      #d0ccc5 100%);
+  box-shadow:
+    inset 0 5px 8px rgba(0, 0, 0, 0.22),
+    inset 3px 0 5px rgba(0, 0, 0, 0.09),
+    inset -2px -2px 2px rgba(255, 255, 255, 0.36),
+    0 1px 0 rgba(255, 255, 255, 0.60),
+    0 3px 5px rgba(0, 0, 0, 0.10);
+}
+
+.trackpad::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(59, 56, 52, 0.30);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 1px 0 rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+.trackpad::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right,
+      transparent calc(50% - 0.5px),
+      rgba(64, 61, 57, 0.34) calc(50% - 0.5px),
+      rgba(64, 61, 57, 0.34) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom,
+      transparent calc(50% - 0.5px),
+      rgba(64, 61, 57, 0.34) calc(50% - 0.5px),
+      rgba(64, 61, 57, 0.34) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px));
+  pointer-events: none;
+}
+
+.ctl.is-active .trackpad {
+  border-color: var(--unlock-edge);
+  box-shadow:
+    inset 0 5px 8px rgba(0, 0, 0, 0.22),
+    inset 3px 0 5px rgba(0, 0, 0, 0.09),
+    inset -2px -2px 2px rgba(255, 255, 255, 0.36),
+    0 0 0 1px var(--unlock-edge),
+    0 0 12px var(--unlock-soft),
+    0 3px 5px rgba(0, 0, 0, 0.10);
+}
+
+.trackpad__dot {
+  z-index: 2;
+  width: 12px;
+  height: 12px;
+  left: calc(var(--dot-x) - 6px);
+  top: calc(var(--dot-y) - 6px);
+  border: 1px solid rgba(0, 0, 0, 0.56);
+  background:
+    radial-gradient(circle at 35% 28%,
+      #ffffff 0%,
+      var(--signal) 27%,
+      color-mix(in srgb, var(--signal) 60%, black 40%) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.52),
+    0 2px 4px rgba(0, 0, 0, 0.38),
+    0 0 8px var(--signal-edge),
+    0 0 15px var(--signal-soft);
+}
+
+/* --------------------------------------------------------------------------
+   7. ROCKER SWITCH — framed mechanical two-way switch
+   -------------------------------------------------------------------------- */
+.rocker {
+  border: 1px solid #716d67;
+  border-radius: 5px;
+  padding: 4px;
+  background:
+    linear-gradient(180deg,
+      #8c8882 0%,
+      #aaa69f 48%,
+      #c2beb7 100%);
+  box-shadow:
+    inset 0 4px 6px rgba(0, 0, 0, 0.25),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.55),
+    0 3px 5px rgba(0, 0, 0, 0.13);
+}
+
+.rocker__btn {
+  position: relative;
+  color: #292722;
+  border: 1px solid #68645e;
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg,
+      #ffffff 0%,
+      #eeebe7 45%,
+      #cecac4 100%);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.10),
+    0 2px 0 #79746e,
+    0 3px 4px rgba(0, 0, 0, 0.16);
+  transition:
+    transform 70ms ease-out,
+    box-shadow 70ms ease-out,
+    background 100ms ease-out;
+}
+
+.rocker__btn::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  left: 3px;
+  height: 35%;
+  border-radius: 2px;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.68),
+    transparent);
+  pointer-events: none;
+}
+
+.rocker__btn:active {
+  transform: translateY(2px);
+  background:
+    linear-gradient(180deg,
+      #cbc7c1 0%,
+      #dfdcd7 48%,
+      #efede9 100%);
+  box-shadow:
+    inset 0 3px 5px rgba(0, 0, 0, 0.20),
+    0 0 0 transparent;
+}
+
+/* --------------------------------------------------------------------------
+   8. DIGITAL READOUTS — recessed glass display windows
+   -------------------------------------------------------------------------- */
+.readout-cell,
+.defstig-readout-bar {
+  border: 1px solid #605d58;
+  background:
+    linear-gradient(180deg,
+      #2b302f 0%,
+      #111615 42%,
+      #080c0b 100%);
+  box-shadow:
+    inset 0 3px 5px rgba(0, 0, 0, 0.82),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.42),
+    0 3px 5px rgba(0, 0, 0, 0.14);
+}
+
+.readout-cell {
+  border-radius: 3px;
+}
+
+.defstig-readout-bar {
+  border-radius: 3px;
+}
+
+.readout-cell__key,
+.defstig-readout-bar__key {
+  color: #9baba7;
+  text-shadow: 0 1px 1px #000;
+}
+
+.readout-cell__val,
+.defstig-readout-bar__val {
+  color: var(--signal);
+  text-shadow:
+    0 0 3px var(--signal),
+    0 0 8px var(--signal-edge),
+    0 1px 1px #000;
+}
+
+.defstig-readout-bar__divider {
+  background: #434845;
+  box-shadow: 1px 0 0 rgba(255, 255, 255, 0.035);
+}
+
+/* --------------------------------------------------------------------------
+   9. STANDALONE LEDs — domed glass indicators
+   -------------------------------------------------------------------------- */
+.led {
+  border: 1px solid rgba(0, 0, 0, 0.42);
+  background:
+    radial-gradient(circle at 35% 30%,
+      #c9c6c0 0%,
+      #77736d 52%,
+      #403d39 100%);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.32);
+}
+
+.led.is-on,
+.led.is-on--cyan,
+.led.is-on--amber,
+.led.is-on--red {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.62),
+    0 1px 2px rgba(0, 0, 0, 0.24),
+    0 0 5px currentColor,
+    0 0 11px currentColor;
+}
+
+/* --------------------------------------------------------------------------
+   10. DARK THEME — black/graphite JEOL-style hardware
+   -------------------------------------------------------------------------- */
+:root[data-theme="dark"] .ctl-panel {
+  background-color: #20252c;
+  background-image:
+    radial-gradient(circle at 10px 10px,
+      #0b0e12 0 1px,
+      #4b515a 1.5px 2.5px,
+      transparent 3px),
+    radial-gradient(circle at calc(100% - 10px) 10px,
+      #0b0e12 0 1px,
+      #4b515a 1.5px 2.5px,
+      transparent 3px),
+    radial-gradient(circle at 10px calc(100% - 10px),
+      #0b0e12 0 1px,
+      #4b515a 1.5px 2.5px,
+      transparent 3px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px),
+      #0b0e12 0 1px,
+      #4b515a 1.5px 2.5px,
+      transparent 3px),
+    linear-gradient(90deg,
+      rgba(255, 255, 255, 0.055) 0%,
+      transparent 12%,
+      transparent 86%,
+      rgba(0, 0, 0, 0.26) 100%),
+    linear-gradient(180deg,
+      #343b45 0%,
+      #262c34 14%,
+      #191e25 62%,
+      #10141a 100%);
+  border-top-color: #555d68;
+  border-left-color: #48505a;
+  border-right-color: #080a0e;
+  border-bottom-color: #050609;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.07),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.56),
+    0 6px 16px rgba(0, 0, 0, 0.46);
+}
+
+:root[data-theme="dark"] .ctl-panel__header {
+  background: var(--module2-heading-bg);
+  border-bottom-color: var(--module2-heading-border);
+  box-shadow: var(--module2-heading-shadow);
+}
+
+:root[data-theme="dark"] .ctl-panel__title {
+  color: var(--module2-heading-color);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.72);
+}
+
+:root[data-theme="dark"] .ctl-panel__badge {
+  background: linear-gradient(180deg, #182430 0%, #0e171f 100%);
+  text-shadow: 0 1px 1px #000;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 2px 4px rgba(0, 0, 0, 0.38);
+}
+
+:root[data-theme="dark"] .dz {
+  border-color: #0b0e12;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.035) 0%,
+      transparent 18%),
+    linear-gradient(180deg,
+      #252b33 0%,
+      #171c22 100%);
+  box-shadow:
+    inset 0 3px 5px rgba(0, 0, 0, 0.58),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.035),
+    0 1px 0 rgba(255, 255, 255, 0.04),
+    0 3px 7px rgba(0, 0, 0, 0.30);
+}
+
+:root[data-theme="dark"] .dz__label {
+  color: #bbc0c7;
+  border-bottom-color: #3a414b;
+  text-shadow: 0 1px 1px #000;
+}
+
+:root[data-theme="dark"] .pbtn {
+  color: #e2e4e8;
+  border-color: #080a0d;
+  border-bottom-color: #020304;
+  background:
+    linear-gradient(180deg,
+      #414852 0%,
+      #303740 18%,
+      #222830 58%,
+      #151a20 100%);
+  text-shadow: 0 1px 1px #000;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.11),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.54),
+    0 2px 0 #05070a,
+    0 5px 7px rgba(0, 0, 0, 0.40);
+}
+
+:root[data-theme="dark"] .pbtn::before {
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.105),
+    transparent);
+}
+
+:root[data-theme="dark"] .pbtn:hover:not(:disabled):not([aria-disabled="true"]):not(.is-gated-out) {
+  border-color: #020304;
+  background:
+    linear-gradient(180deg,
+      #515a65 0%,
+      #3a424c 20%,
+      #282f38 60%,
+      #1a2027 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.13),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.52),
+    0 3px 0 #05070a,
+    0 7px 10px rgba(0, 0, 0, 0.46);
+}
+
+:root[data-theme="dark"] .pbtn:active:not(:disabled):not([aria-disabled="true"]):not(.is-gated-out),
+:root[data-theme="dark"] .pbtn.is-on {
+  background:
+    linear-gradient(180deg,
+      #151a20 0%,
+      #242b33 55%,
+      #303740 100%);
+  box-shadow:
+    inset 0 4px 7px rgba(0, 0, 0, 0.78),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.035),
+    0 1px 0 #05070a;
+}
+
+:root[data-theme="dark"] .pbtn-group .pbtn,
+:root[data-theme="dark"] .pbtn-group .pbtn:first-child,
+:root[data-theme="dark"] .pbtn-group .pbtn:last-child,
+:root[data-theme="dark"] .pbtn-group .pbtn:not(:first-child) {
+  border-left-color: #080a0d;
+}
+
+:root[data-theme="dark"] .knob__body {
+  border-color: #080a0d;
+  background:
+    radial-gradient(circle at 33% 25%,
+      rgba(255, 255, 255, 0.16) 0%,
+      rgba(255, 255, 255, 0.055) 17%,
+      transparent 31%),
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 255, 255, 0.035) 0deg 4deg,
+      rgba(0, 0, 0, 0.09) 4deg 8deg),
+    radial-gradient(circle at 43% 37%,
+      #48505a 0%,
+      #303740 35%,
+      #1d232a 70%,
+      #0b0e12 100%);
+  box-shadow:
+    inset 2px 3px 4px rgba(255, 255, 255, 0.09),
+    inset -4px -6px 8px rgba(0, 0, 0, 0.62),
+    0 2px 0 #05070a,
+    0 6px 10px rgba(0, 0, 0, 0.48);
+}
+
+:root[data-theme="dark"] .trackpad {
+  border-color: #06080b;
+  background:
+    radial-gradient(circle at center,
+      rgba(77, 208, 225, 0.04) 0%,
+      transparent 54%),
+    linear-gradient(180deg,
+      #080b0f 0%,
+      #11161c 42%,
+      #1a2027 100%);
+  box-shadow:
+    inset 0 6px 10px rgba(0, 0, 0, 0.86),
+    inset 3px 0 6px rgba(0, 0, 0, 0.45),
+    inset -2px -2px 2px rgba(255, 255, 255, 0.025),
+    0 1px 0 rgba(255, 255, 255, 0.04),
+    0 3px 6px rgba(0, 0, 0, 0.32);
+}
+
+:root[data-theme="dark"] .trackpad::before {
+  border-color: rgba(160, 174, 192, 0.16);
+}
+
+:root[data-theme="dark"] .trackpad::after {
+  background:
+    linear-gradient(to right,
+      transparent calc(50% - 0.5px),
+      rgba(148, 163, 184, 0.22) calc(50% - 0.5px),
+      rgba(148, 163, 184, 0.22) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom,
+      transparent calc(50% - 0.5px),
+      rgba(148, 163, 184, 0.22) calc(50% - 0.5px),
+      rgba(148, 163, 184, 0.22) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px));
+}
+
+:root[data-theme="dark"] .rocker {
+  border-color: #05070a;
+  background: linear-gradient(180deg, #080b0f 0%, #171c22 52%, #272e36 100%);
+  box-shadow:
+    inset 0 5px 8px rgba(0, 0, 0, 0.82),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.035),
+    0 1px 0 rgba(255, 255, 255, 0.04),
+    0 4px 6px rgba(0, 0, 0, 0.38);
+}
+
+:root[data-theme="dark"] .rocker__btn {
+  color: #e0e3e7;
+  border-color: #05070a;
+  background: linear-gradient(180deg, #404852 0%, #2c333c 45%, #171c22 100%);
+  text-shadow: 0 1px 1px #000;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.095),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.56),
+    0 2px 0 #05070a,
+    0 4px 5px rgba(0, 0, 0, 0.40);
+}
+
+:root[data-theme="dark"] .rocker__btn:active {
+  background: linear-gradient(180deg, #12171c 0%, #252b33 55%, #343b45 100%);
+  box-shadow: inset 0 4px 7px rgba(0, 0, 0, 0.78);
+}
+
+/* --------------------------------------------------------------------------
+   11. OPTIONAL WHOLE-PANEL PERSPECTIVE
+   --------------------------------------------------------------------------
+   Add class "ctl-panels-use-perspective" to <body> if a subtle inward-facing
+   panel angle is desired. It is intentionally OFF by default to protect text
+   readability and pointer accuracy.
+   -------------------------------------------------------------------------- */
+@media (min-width: 1180px) {
+  body.ctl-panels-use-perspective .ctl-panel--left {
+    transform: perspective(1500px) rotateY(2.25deg);
+    transform-origin: right center;
+  }
+
+  body.ctl-panels-use-perspective .ctl-panel--right {
+    transform: perspective(1500px) rotateY(-2.25deg);
+    transform-origin: left center;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. ACCESSIBILITY AND INPUT BEHAVIOUR
+   -------------------------------------------------------------------------- */
+@media (hover: none) {
+  .pbtn:hover:not(:disabled):not([aria-disabled="true"]):not(.is-gated-out) {
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pbtn,
+  .rocker__btn,
+  .ctl,
+  .knob__body {
+    transition: none !important;
+  }
+}

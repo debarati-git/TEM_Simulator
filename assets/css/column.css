@@ -234,6 +234,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* syncOverlays() overrides left/top/width/height via inline styles
+     for pixel-perfect alignment. inset:0 is the fallback. */
 }
 
 /* -------------------------------------------------------------------------
@@ -563,11 +565,9 @@
 .column-hotspot:hover,
 .column-hotspot:focus-visible,
 .column-hotspot.is-active {
-  background: rgba(245, 158, 11, 0.22);
-  border-color: #f59e0b;
-  box-shadow:
-    0 0 0 1px #f59e0b,
-    0 6px 18px -6px rgba(245, 158, 11, 0.45);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 /* Brief on-load reveal */
@@ -585,17 +585,20 @@
    ------------------------------------------------------------------------- */
 .column-pin {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
   opacity: 0;
-  transition: opacity var(--dur-fast) var(--ease-out);
+  transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 3;
 }
 
-.column-pin.is-active { opacity: 1; }
+.column-pin.is-active {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.4);
+}
 
 .column-pin::before,
 .column-pin::after {
@@ -603,14 +606,28 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1.5px solid var(--signal);
+  border: 2px solid #dc2626;
 }
 
 .column-pin::before {
-  background: var(--signal);
-  transform: scale(0.35);
-  box-shadow: 0 0 8px var(--signal);
+  background: #dc2626;
+  transform: scale(0.45);
+  box-shadow: 0 0 10px #dc2626, 0 0 20px rgba(220, 38, 38, 0.4);
 }
+
+.column-pin::after {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+/* Pulse ring only when component is selected */
+.column-pin.is-active::after {
+  opacity: 1;
+  animation: pin-pulse 2s var(--ease-out) infinite;
+}
+
+/* Subsystem pin colors removed — all pins are red for max visibility.
+   Subsystem color coding lives in the component list only. */
 
 .column-pin::after {
   animation: pin-pulse 1.8s var(--ease-out) infinite;
@@ -711,9 +728,9 @@
 
 .column-desc-panel__hint-text {
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.78rem;
   letter-spacing: 0.06em;
-  color: #f59e0b;
+  color: #1e3a5f;
   font-weight: 600;
   animation: hint-blink 1.8s ease-in-out infinite;
 }
@@ -969,27 +986,18 @@
    DRILL-DOWN HOTSPOT + PIN variants (signal-blue)
    ------------------------------------------------------------------------- */
 .column-hotspot--drilldown {
-  cursor: pointer;
+  cursor: help;
 }
 
 .column-hotspot--drilldown:hover,
 .column-hotspot--drilldown:focus-visible,
 .column-hotspot--drilldown.is-active {
-  background: rgba(2, 132, 199, 0.20);
-  border-color: var(--signal, #0284c7);
-  box-shadow:
-    0 0 0 1px var(--signal, #0284c7),
-    0 6px 18px -6px rgba(2, 132, 199, 0.5);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
-.column-pin--drilldown::before,
-.column-pin--drilldown::after {
-  border-color: var(--signal, #0284c7);
-}
-.column-pin--drilldown::before {
-  background: var(--signal, #0284c7);
-  box-shadow: 0 0 10px var(--signal, #0284c7);
-}
+/* Drilldown pin colors — same red as all other pins */
 
 /* -------------------------------------------------------------------------
    DRILL-DOWN CTA
@@ -1081,34 +1089,69 @@
 .component-list__item.subsystem--viewing:hover,
 .component-list__item.subsystem--viewing.is-active      { box-shadow: inset 3px 0 0 var(--sub-viewing); }
 
+/* Subsystem hotspot highlights — hidden (clean image, no colored boxes) */
 .column-hotspot.subsystem--illumination:hover,
 .column-hotspot.subsystem--illumination:focus-visible,
-.column-hotspot.subsystem--illumination.is-active {
+.column-hotspot.subsystem--illumination.is-active,
+.column-hotspot.subsystem--specimen:hover,
+.column-hotspot.subsystem--specimen:focus-visible,
+.column-hotspot.subsystem--specimen.is-active,
+.column-hotspot.subsystem--imaging:hover,
+.column-hotspot.subsystem--imaging:focus-visible,
+.column-hotspot.subsystem--imaging.is-active,
+.column-hotspot.subsystem--viewing:hover,
+.column-hotspot.subsystem--viewing:focus-visible,
+.column-hotspot.subsystem--viewing.is-active {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* -------------------------------------------------------------------------
+   INTERIOR VIEW — restore orange hotspot boxes (override transparent)
+   Scoped to [data-face="interior"] so exterior stays clean.
+   ------------------------------------------------------------------------- */
+[data-face="interior"] .column-hotspot:hover,
+[data-face="interior"] .column-hotspot:focus-visible,
+[data-face="interior"] .column-hotspot.is-active {
+  background: rgba(245, 158, 11, 0.22);
+  border-color: #f59e0b;
+  box-shadow:
+    0 0 0 1px #f59e0b,
+    0 6px 18px -6px rgba(245, 158, 11, 0.45);
+}
+
+[data-face="interior"] .column-hotspot.subsystem--illumination:hover,
+[data-face="interior"] .column-hotspot.subsystem--illumination:focus-visible,
+[data-face="interior"] .column-hotspot.subsystem--illumination.is-active {
   background: color-mix(in srgb, var(--sub-illumination) 22%, transparent);
   border-color: var(--sub-illumination);
   box-shadow: 0 0 0 1px var(--sub-illumination), 0 6px 18px -6px color-mix(in srgb, var(--sub-illumination) 45%, transparent);
 }
-.column-hotspot.subsystem--specimen:hover,
-.column-hotspot.subsystem--specimen:focus-visible,
-.column-hotspot.subsystem--specimen.is-active {
+[data-face="interior"] .column-hotspot.subsystem--specimen:hover,
+[data-face="interior"] .column-hotspot.subsystem--specimen:focus-visible,
+[data-face="interior"] .column-hotspot.subsystem--specimen.is-active {
   background: color-mix(in srgb, var(--sub-specimen) 22%, transparent);
   border-color: var(--sub-specimen);
   box-shadow: 0 0 0 1px var(--sub-specimen), 0 6px 18px -6px color-mix(in srgb, var(--sub-specimen) 45%, transparent);
 }
-.column-hotspot.subsystem--imaging:hover,
-.column-hotspot.subsystem--imaging:focus-visible,
-.column-hotspot.subsystem--imaging.is-active {
+[data-face="interior"] .column-hotspot.subsystem--imaging:hover,
+[data-face="interior"] .column-hotspot.subsystem--imaging:focus-visible,
+[data-face="interior"] .column-hotspot.subsystem--imaging.is-active {
   background: color-mix(in srgb, var(--sub-imaging) 22%, transparent);
   border-color: var(--sub-imaging);
   box-shadow: 0 0 0 1px var(--sub-imaging), 0 6px 18px -6px color-mix(in srgb, var(--sub-imaging) 45%, transparent);
 }
-.column-hotspot.subsystem--viewing:hover,
-.column-hotspot.subsystem--viewing:focus-visible,
-.column-hotspot.subsystem--viewing.is-active {
+[data-face="interior"] .column-hotspot.subsystem--viewing:hover,
+[data-face="interior"] .column-hotspot.subsystem--viewing:focus-visible,
+[data-face="interior"] .column-hotspot.subsystem--viewing.is-active {
   background: color-mix(in srgb, var(--sub-viewing) 22%, transparent);
   border-color: var(--sub-viewing);
   box-shadow: 0 0 0 1px var(--sub-viewing), 0 6px 18px -6px color-mix(in srgb, var(--sub-viewing) 45%, transparent);
 }
+
+/* Hide red pins in interior view — hotspot boxes serve as the indicator */
+[data-face="interior"] .column-pin { display: none; }
 
 /* -------------------------------------------------------------------------
    Drill-down "expand" glyph

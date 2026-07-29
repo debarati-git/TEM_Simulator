@@ -54,39 +54,43 @@
       {
         id: 'ext-condenser-aperture',
         name: 'Condenser Aperture Assembly',
+        subsystem: 'illumination',
         role: 'Selects the illumination aperture above the specimen',
         body: [
           'The side-mounted assembly on the upper column that carries the condenser apertures. A strip of precision-drilled holes (typically 30-200 \u00b5m) can be slid into the beam; the small X/Y knobs centre the chosen hole on the optical axis.',
           'Choosing a smaller condenser aperture improves the spatial coherence of the illumination (sharper interference fringes) at the cost of beam current; a larger one gives a brighter beam for rapid survey work.'
         ],
         pin: { x: 44.7, y: 24.0 },
-        hotspot: { x: 13.0, y: 17.6, w: 16.5, h: 6.6 }
+        hotspot: { x: 11.1, y: 18.5, w: 20.1, h: 7.6 }
       },
       {
         id: 'ext-cm-lens-screws',
         name: 'CM Lens Shift Screws (4 pcs.)',
+        subsystem: 'illumination',
         role: 'Mechanical alignment of the condenser-mini (CM) lens',
         body: [
           'A set of four screws used to mechanically centre the condenser-mini lens polepiece relative to the optical axis. Mechanical alignment of the polepiece complements the electrical (coil-based) beam alignment performed from the console.',
           'These are service / coarse-alignment adjustments — set during installation and major maintenance, not touched during routine operation.'
         ],
         pin: { x: 41.8, y: 26.5 },
-        hotspot: { x: 9.0, y: 24.3, w: 34.5, h: 3.2 }
+        hotspot: { x: 9.9, y: 22.2, w: 35.3, h: 5.0 }
       },
       {
         id: 'ext-refrigerant-tank',
         name: 'Refrigerant Tank (LN\u2082 Dewar)',
+        subsystem: 'specimen',
         role: 'Liquid-nitrogen reservoir for the anti-contamination cold trap',
         body: [
           'A liquid-nitrogen dewar mounted on the column. It feeds a cold finger / anti-contaminator near the specimen that condenses stray hydrocarbon molecules onto a cold surface, keeping them off the specimen and reducing carbon build-up under the beam.',
           'On instruments with a cooled detector or an energy filter, a refrigerant supply may also stabilise those subsystems. The tank is topped up regularly; letting it run dry degrades vacuum cleanliness around the sample.'
         ],
         pin: { x: 39.3, y: 31.3 },
-        hotspot: { x: 11.0, y: 29.0, w: 18.8, h: 3.2 }
+        hotspot: { x: 12.2, y: 29.3, w: 19.3, h: 2.2 }
       },
       {
         id: 'ext-goniometer',
         name: 'Goniometer',
+        subsystem: 'specimen',
         role: 'Precision specimen stage — position and tilt control',
         drilldown: 'panel-goniometer',
         body: [
@@ -94,77 +98,84 @@
           'Goniometer stability is decisive for high-resolution work: thermal drift, backlash, or vibration here shows up directly as image blur. Side-entry goniometers (shown) are the most common geometry in modern TEMs.'
         ],
         pin: { x: 51.2, y: 30.2 },
-        hotspot: { x: 66.4, y: 19.0, w: 13.6, h: 3.0 }
+        hotspot: { x: 64.5, y: 18.8, w: 14.4, h: 1.8 }
       },
       {
         id: 'ext-specimen-holder',
         name: 'Specimen Holder',
+        subsystem: 'specimen',
         role: 'Rod that carries the specimen into the column',
         body: [
           'The rod inserted horizontally through the airlock into the goniometer. Its tip clamps the 3 mm specimen grid inside the objective-lens polepiece gap. Holders come in many types: single-tilt, double-tilt, heating, cooling (LN\u2082 / He), biasing, and in-situ straining or gas-cell designs.',
           'The holder is introduced through a vacuum airlock that is pumped separately before a gate valve opens to the column, protecting the column vacuum. Cleanliness of the rod tip is critical — a contaminated holder is a common source of specimen drift and contamination.'
         ],
         pin: { x: 53.1, y: 31.5 },
-        hotspot: { x: 69.0, y: 25.0, w: 14.5, h: 2.6 }
+        hotspot: { x: 67.2, y: 25.0, w: 16.4, h: 4.4 }
       },
       {
         id: 'ext-field-limiting-aperture',
         name: 'Field-Limiting Aperture Assembly',
+        subsystem: 'imaging',
         role: 'Selected-area (SAD) aperture in the image plane',
         body: [
           'The assembly carrying the selected-area / field-limiting aperture, located in an image plane below the objective lens. Inserting it restricts which region of the specimen contributes to the diffraction pattern, enabling selected-area electron diffraction (SAED) from a chosen grain or phase.',
           'Like the other apertures it has X/Y centring knobs and a strip of selectable hole sizes. It is retracted during normal imaging and inserted only when isolating a region for diffraction.'
         ],
         pin: { x: 52.2, y: 37.9 },
-        hotspot: { x: 64.8, y: 30.0, w: 21.5, h: 4.4 }
+        hotspot: { x: 62.9, y: 28.8, w: 23.4, h: 7.4 }
       },
       {
         id: 'ext-intermediate-screws',
         name: 'Intermediate Lens Shift Screws (4 pcs.)',
+        subsystem: 'imaging',
         role: 'Mechanical centring of the intermediate lens',
         body: [
           'Four screws for mechanical alignment of the intermediate lens polepiece on the optical axis. The intermediate lenses set the magnification zoom and perform the image / diffraction mode switch, so their mechanical centring underpins clean mode changes.',
           'As with the other shift-screw sets, these are coarse mechanical adjustments made during alignment and service rather than routine operation.'
         ],
         pin: { x: 49.6, y: 41.2 },
-        hotspot: { x: 71.0, y: 35.0, w: 18.5, h: 4.4 }
+        hotspot: { x: 69.1, y: 34.5, w: 19.6, h: 6.8 }
       },
       {
         id: 'ext-projector-screws',
         name: 'Projector Lens Shift Screws (4 pcs.)',
+        subsystem: 'imaging',
         role: 'Mechanical centring of the projector lens',
         body: [
           'Four screws for mechanically centring the projector lens polepiece. The projector lens is the final magnetic lens, projecting the image or diffraction pattern onto the screen and camera, so its alignment affects how centred and distortion-free the final image is.',
           'These too are coarse mechanical alignments fixed during setup and maintenance, not part of day-to-day operation.'
         ],
         pin: { x: 49.5, y: 44.7 },
-        hotspot: { x: 71.0, y: 40.0, w: 20.0, h: 4.6 }
+        hotspot: { x: 69.1, y: 37.9, w: 19.6, h: 7.1 }
       },
       {
         id: 'ext-binocular-microscope',
         name: 'Binocular Microscope',
+        subsystem: 'viewing',
         role: 'Optical eyepieces for viewing the phosphor screen',
         body: [
           'The binocular optics that look down onto the fluorescent viewing screen, giving the operator a direct, magnified optical view of the live electron image. They are the traditional tool for fine focusing and astigmatism correction, resolving screen detail finer than the naked eye.',
           'Although high-sensitivity cameras now capture the image digitally, the binoculars remain valuable for real-time alignment because the eye-screen path has no readout lag.'
         ],
         pin: { x: 43.5, y: 47.1 },
-        hotspot: { x: 12.0, y: 39.4, w: 18.2, h: 3.2 }
+        hotspot: { x: 13.8, y: 39.7, w: 17.2, h: 2.2 }
       },
       {
         id: 'ext-pc-monitor',
         name: 'PC Monitor',
+        subsystem: 'viewing',
         role: 'Live image, column status, and acquisition software display',
         body: [
           'The computer display showing the live camera image, column status (vacuum, lens currents, stage position), and the acquisition / analysis software menus. Most TEMs run two or more screens — one for the live image and one for column control.',
           'The monitor is the operator\u2019s main feedback surface during digital acquisition, where exposure, binning, drift correction, and image saving are managed.'
         ],
         pin: { x: 71.2, y: 47.7 },
-        hotspot: { x: 75.0, y: 46.0, w: 12.0, h: 2.8 }
+        hotspot: { x: 73.1, y: 43.9, w: 13.6, h: 6.7 }
       },
       {
         id: 'ext-control-panel-l1',
         name: 'Control Panel L1',
+        subsystem: 'illumination',
         role: 'Left operator console — beam / illumination controls',
         drilldown: 'panel-l1',
         body: [
@@ -172,33 +183,36 @@
           'Click to open a detailed view of this console and explore its individual knobs and switches.'
         ],
         pin: { x: 29.8, y: 54.7 },
-        hotspot: { x: 4.2, y: 50.4, w: 27.6, h: 3.2 }
+        hotspot: { x: 5.4, y: 50.9, w: 25.1, h: 4.4 }
       },
       {
         id: 'ext-trackball',
         name: 'Trackball',
+        subsystem: 'specimen',
         role: 'Beam / image / stage positioning control',
         body: [
           'A trackball on the console used for smooth, fine positioning. Depending on the active mode it drives beam shift / tilt, image shift, or stage (specimen) movement, letting the operator slew across the specimen or recentre a feature without reaching for individual knobs.',
           'Most columns provide two trackballs (one per console) so beam and image / stage controls are available simultaneously during alignment.'
         ],
         pin: { x: 37.0, y: 55.0 },
-        hotspot: { x: 17.0, y: 43.9, w: 10.2, h: 3.2 }
+        hotspot: { x: 18.3, y: 44.2, w: 10.5, h: 1.8 }
       },
       {
         id: 'ext-fluorescent-screen-lever',
         name: 'Fluorescent Screen Lever',
+        subsystem: 'viewing',
         role: 'Raises / lowers the phosphor viewing screen',
         body: [
           'The lever that lifts the fluorescent (phosphor) viewing screen out of the beam path. With the screen down, the operator views the live image through the binoculars; lifting it lets the beam reach the camera or a direct-electron detector below for acquisition.',
           'Screen up / down is one of the most frequent actions in a session — survey and focus on the screen, then lift it to record.'
         ],
         pin: { x: 51.6, y: 55.5 },
-        hotspot: { x: 74.5, y: 50.0, w: 13.5, h: 4.6 }
+        hotspot: { x: 72.7, y: 47.9, w: 13.5, h: 6.4 }
       },
       {
         id: 'ext-control-panel-r1',
         name: 'Control Panel R1',
+        subsystem: 'imaging',
         role: 'Right operator console — imaging / focus controls',
         drilldown: 'panel-r1',
         body: [
@@ -206,44 +220,48 @@
           'Click to open a detailed view of this console and explore its individual knobs and switches.'
         ],
         pin: { x: 59.0, y: 57.5 },
-        hotspot: { x: 76.0, y: 55.8, w: 20.0, h: 3.0 }
+        hotspot: { x: 74.2, y: 53.7, w: 20.3, h: 4.9 }
       },
       {
         id: 'ext-camera-chamber-door',
         name: 'Camera Chamber Door',
+        subsystem: 'viewing',
         role: 'Access to the recording chamber below the screen',
         body: [
           'The door of the camera (recording) chamber beneath the viewing screen. Historically this chamber held photographic film plates; today it houses the CCD / CMOS camera or a retractable detector. The door provides access for camera service and, on film-era instruments, plate loading.',
           'The chamber is part of the column vacuum, so the door is interlocked with the vacuum system and only opened under the correct conditions.'
         ],
         pin: { x: 40.0, y: 63.0 },
-        hotspot: { x: 11.0, y: 91.0, w: 24.6, h: 3.4 }
+        hotspot: { x: 11.6, y: 89.0, w: 22.2, h: 6.0 }
       },
       {
         id: 'ext-cover-l2',
         name: 'Cover L2 (Control Panel L2)',
+        subsystem: 'viewing',
         role: 'Left cabinet — houses secondary control electronics',
         body: [
           'The left cabinet cover of the desk console. Behind it sit secondary control electronics and the L2 control panel for the instrument — power supplies, interface boards, and auxiliary controls that are not needed on the operator surface.',
           'These covers are access panels for service engineers; they remain closed during normal operation.'
         ],
         pin: { x: 19.9, y: 67.3 },
-        hotspot: { x: 2.6, y: 65.2, w: 19.0, h: 6.4 }
+        hotspot: { x: 3.9, y: 66.1, w: 16.6, h: 4.3 }
       },
       {
         id: 'ext-cover-r2',
         name: 'Cover R2 (Control Panel R2)',
+        subsystem: 'viewing',
         role: 'Right cabinet — houses secondary control electronics',
         body: [
           'The right cabinet cover of the desk console, behind which sit the R2 control panel and additional control electronics for the instrument. Like the left cabinet it holds power and interface hardware kept off the operator surface.',
           'Opened only for maintenance and service access; closed during routine use.'
         ],
         pin: { x: 79.7, y: 76.5 },
-        hotspot: { x: 78.0, y: 74.9, w: 20.6, h: 5.4 }
+        hotspot: { x: 79.0, y: 75.4, w: 18.3, h: 4.6 }
       },
       {
         id: 'ext-foot-switches',
         name: 'Foot Switches',
+        subsystem: 'viewing',
         role: 'Hands-free controls for frequent actions',
         body: [
           'The pair of floor pedals that give the operator hands-free control of frequently used functions — commonly screen lift, beam blanking, exposure / capture, or stage actions — so both hands stay on the trackballs and knobs during alignment and acquisition.',
@@ -253,7 +271,7 @@
         /* The component has two endpoint dots (left + right pedal). The second
            marker is rendered from `extraPins`; the hotspot box spans both. */
         extraPins: [{ x: 51.0, y: 87.9 }],
-        hotspot: { x: 54.5, y: 92.3, w: 13.2, h: 2.9 }
+        hotspot: { x: 50.2, y: 87.9, w: 16.6, h: 6.4 }
       }
     ]
   };
@@ -281,6 +299,7 @@
         body: [
           'The assembly at the very top of the column where electrons are generated and accelerated. It houses the cathode (filament), the Wehnelt cylinder, and the anode of the accelerating tube.'
         ],
+        pin: { x: 48.5, y: 16.9 },
         hotspot: { x: 20.4, y: 12.0, w: 14.6, h: 2.4 }
       },
       {
@@ -291,6 +310,7 @@
         body: [
           'A negatively-biased cap surrounding the filament tip. Its field shapes the emitted electrons into a small, bright crossover that acts as the effective source for the rest of the column.'
         ],
+        pin: { x: 48.7, y: 17.9 },
         hotspot: { x: 23.5, y: 16.9, w: 11.5, h: 2.2 }
       },
       {
@@ -301,6 +321,7 @@
         body: [
           'A stack of electrodes that accelerates the electrons through the chosen high voltage (e.g. 80-300 kV), setting their final wavelength before they enter the lens system.'
         ],
+        pin: { x: 48.6, y: 21.0 },
         hotspot: { x: 16.8, y: 21.8, w: 18.2, h: 2.4 }
       },
       {
@@ -311,6 +332,7 @@
         body: [
           'The heavily insulated cable feeding the accelerating voltage from the tank/generator to the electron gun.'
         ],
+        pin: { x: 63.0, y: 14.4 },
         hotspot: { x: 67.0, y: 8.2, w: 15.5, h: 2.6 }
       },
       {
@@ -321,6 +343,7 @@
         body: [
           'The winding that produces the magnetic field of the condenser lens, controlling the diameter and intensity of the beam reaching the specimen.'
         ],
+        pin: { x: 45.6, y: 33.0 },
         hotspot: { x: 15.1, y: 32.0, w: 20.0, h: 2.2 }
       },
       {
@@ -331,6 +354,7 @@
         body: [
           'A metal aperture inserted into the beam to set the convergence angle and coherence of the illumination.'
         ],
+        pin: { x: 46.0, y: 35.3 },
         hotspot: { x: 14.9, y: 36.2, w: 20.2, h: 2.4 }
       },
       {
@@ -341,6 +365,7 @@
         body: [
           'A weaker lens working with the main condenser lenses to decouple convergence angle from spot size, enabling TEM / STEM illumination modes.'
         ],
+        pin: { x: 37.4, y: 38.8 },
         hotspot: { x: 11.5, y: 39.6, w: 23.6, h: 2.2 }
       },
       {
@@ -351,6 +376,7 @@
         body: [
           'A multipole coil that removes ellipticity from the condenser lens field, keeping the illuminating spot round.'
         ],
+        pin: { x: 46.0, y: 37.6 },
         hotspot: { x: 58.7, y: 32.5, w: 28.7, h: 2.4 }
       },
       {
@@ -361,6 +387,7 @@
         body: [
           'The first of a paired deflector set used to shift or tilt the beam above the specimen (beam shift, dark-field tilt).'
         ],
+        pin: { x: 49.2, y: 40.1 },
         hotspot: { x: 58.7, y: 36.2, w: 32.6, h: 2.2 }
       },
       {
@@ -371,6 +398,7 @@
         body: [
           'The lower deflector of the condenser pair; together with the 1st deflector it produces pure beam shift or pure beam tilt at the specimen.'
         ],
+        pin: { x: 49.1, y: 42.7 },
         hotspot: { x: 58.7, y: 41.7, w: 33.0, h: 2.2 }
       },
       {
@@ -381,6 +409,7 @@
         body: [
           'Deflection used to align the illuminating spot onto the optical axis so the beam stays centred as brightness is changed.'
         ],
+        pin: { x: 50.0, y: 30.0 },
         hotspot: { x: 58.7, y: 29.2, w: 18.0, h: 2.4 }
       },
       {
@@ -391,6 +420,7 @@
         body: [
           'The mechanical stage that holds and orients the specimen, providing X/Y/Z translation and tilt with high precision.'
         ],
+        pin: { x: 45.9, y: 43.1 },
         hotspot: { x: 20.5, y: 43.4, w: 14.5, h: 2.2 }
       },
       {
@@ -401,6 +431,7 @@
         body: [
           'The rod that clamps the 3 mm grid and positions the specimen inside the objective-lens polepiece gap.'
         ],
+        pin: { x: 34.2, y: 48.5 },
         hotspot: { x: 17.3, y: 47.3, w: 17.8, h: 2.4 }
       },
       {
@@ -411,6 +442,7 @@
         body: [
           'The winding of the objective lens, which forms the first magnified image and largely sets the instrument\'s resolution.'
         ],
+        pin: { x: 44.0, y: 52.6 },
         hotspot: { x: 16.2, y: 51.3, w: 18.9, h: 2.4 }
       },
       {
@@ -421,6 +453,7 @@
         body: [
           'A weaker lens below the objective used for fine focusing and for low-magnification imaging.'
         ],
+        pin: { x: 49.0, y: 53.2 },
         hotspot: { x: 58.7, y: 51.0, w: 23.5, h: 2.4 }
       },
       {
@@ -431,6 +464,7 @@
         body: [
           'A multipole coil that compensates astigmatism in the objective lens - essential for sharp high-resolution imaging.'
         ],
+        pin: { x: 49.1, y: 44.5 },
         hotspot: { x: 58.7, y: 45.8, w: 27.5, h: 2.4 }
       },
       {
@@ -441,6 +475,7 @@
         body: [
           'An aperture in the image plane that restricts the specimen area contributing to a diffraction pattern, enabling selected-area diffraction.'
         ],
+        pin: { x: 38.1, y: 58.0 },
         hotspot: { x: 13.6, y: 57.1, w: 21.5, h: 2.4 }
       },
       {
@@ -451,6 +486,7 @@
         body: [
           'A deflector that shifts the image (or diffraction pattern) on the screen, used with the 2nd shifter for pure image translation.'
         ],
+        pin: { x: 49.2, y: 54.8 },
         hotspot: { x: 58.7, y: 55.3, w: 19.4, h: 2.4 }
       },
       {
@@ -461,6 +497,7 @@
         body: [
           'The lower image-shift deflector; paired with the 1st shifter to move the image without tilting it.'
         ],
+        pin: { x: 52.0, y: 59.9 },
         hotspot: { x: 58.7, y: 59.2, w: 19.7, h: 2.4 }
       },
       {
@@ -471,6 +508,7 @@
         body: [
           'The intermediate lenses set the magnification range and switch the column between imaging and diffraction modes.'
         ],
+        pin: { x: 52.3, y: 62.9 },
         hotspot: { x: 58.7, y: 64.4, w: 22.6, h: 2.2 }
       },
       {
@@ -481,6 +519,7 @@
         body: [
           'The winding of the projector lens, which provides the final magnification onto the screen and camera.'
         ],
+        pin: { x: 52.0, y: 65.9 },
         hotspot: { x: 16.5, y: 63.9, w: 18.6, h: 2.4 }
       },
       {
@@ -491,6 +530,7 @@
         body: [
           'Deflection that keeps the magnified image/diffraction pattern centred through the projector lens.'
         ],
+        pin: { x: 45.9, y: 68.8 },
         hotspot: { x: 8.0, y: 60.8, w: 27.0, h: 2.4 }
       },
       {
@@ -501,6 +541,7 @@
         body: [
           'Binocular optics that give the operator a magnified direct view of the fluorescent screen for focusing and astigmatism correction.'
         ],
+        pin: { x: 38.1, y: 72.4 },
         hotspot: { x: 13.8, y: 67.8, w: 21.2, h: 2.4 }
       },
       {
@@ -511,6 +552,7 @@
         body: [
           'The chamber containing the phosphor viewing screen where the electron image is made visible.'
         ],
+        pin: { x: 47.7, y: 80.6 },
         hotspot: { x: 17.1, y: 76.9, w: 18.0, h: 2.4 }
       },
       {
@@ -521,6 +563,7 @@
         body: [
           'The shielded glass window through which the operator views the screen, protecting against X-rays.'
         ],
+        pin: { x: 40.7, y: 82.2 },
         hotspot: { x: 18.1, y: 80.6, w: 16.9, h: 2.4 }
       },
       {
@@ -531,6 +574,7 @@
         body: [
           'A small phosphor screen used at higher optical magnification for fine focusing of the live image.'
         ],
+        pin: { x: 49.4, y: 82.7 },
         hotspot: { x: 58.7, y: 75.0, w: 16.4, h: 2.2 }
       },
       {
@@ -541,6 +585,7 @@
         body: [
           'The large phosphor screen that displays the full electron image for general viewing and survey.'
         ],
+        pin: { x: 49.4, y: 86.1 },
         hotspot: { x: 58.7, y: 78.9, w: 16.3, h: 2.4 }
       },
       {
@@ -551,6 +596,7 @@
         body: [
           'The chamber beneath the viewing screen housing the camera (or, historically, film) that records the image when the screen is lifted.'
         ],
+        pin: { x: 38.0, y: 93.3 },
         hotspot: { x: 13.0, y: 90.5, w: 22.0, h: 2.5 }
       }
     ]

@@ -90,6 +90,44 @@
 
   /* Breadcrumb: top-level faces show a single segment; drill-downs show
      "Exterior › <panel>" with the first segment clickable to go back. */
+  /* --------------------------------------------------------------------- */
+  /*  Hotspot-overlay sync: match overlay to image's rendered rect         */
+  /*  Fixes drift caused by object-fit:contain letterboxing               */
+  /* --------------------------------------------------------------------- */
+  function syncOverlays() {
+    document.querySelectorAll('.column-image-wrap').forEach(function(wrap) {
+      var img   = wrap.querySelector('.column-image');
+      var layer = wrap.querySelector('.column-hotspots');
+      if (!img || !layer || !img.naturalWidth) return;
+
+      var wW = wrap.clientWidth,  wH = wrap.clientHeight;
+      var iAR = img.naturalWidth / img.naturalHeight;
+      var cAR = wW / wH;
+      var rW, rH, oX, oY;
+
+      if (iAR > cAR) {
+        rW = wW; rH = wW / iAR;
+        oX = 0;  oY = (wH - rH) / 2;
+      } else {
+        rH = wH; rW = wH * iAR;
+        oX = (wW - rW) / 2; oY = 0;
+      }
+
+      layer.style.left   = oX + 'px';
+      layer.style.top    = oY + 'px';
+      layer.style.width  = rW + 'px';
+      layer.style.height = rH + 'px';
+      layer.style.right  = 'auto';
+      layer.style.bottom = 'auto';
+    });
+  }
+
+  window.addEventListener('resize', syncOverlays);
+  document.querySelectorAll('.column-image').forEach(function(img) {
+    img.addEventListener('load', syncOverlays);
+    if (img.complete) syncOverlays();
+  });
+
   function renderBreadcrumb(faceId) {
     if (!breadcrumbEl) return;
     breadcrumbEl.innerHTML = '';
@@ -104,6 +142,13 @@
       }
       breadcrumbEl.appendChild(el);
     }
+    function segLink(label, href) {
+      const a = document.createElement('a');
+      a.className = 'breadcrumb__seg breadcrumb__seg--link';
+      a.textContent = label;
+      a.href = href;
+      breadcrumbEl.appendChild(a);
+    }
     function sep() {
       const s = document.createElement('span');
       s.className = 'breadcrumb__sep';
@@ -112,13 +157,17 @@
       breadcrumbEl.appendChild(s);
     }
 
+    /* Always start with Home */
+    segLink('Home', '../index.html');
+    sep();
+
     if (drilldownFaces.indexOf(faceId) !== -1) {
-      // Drill-down: Exterior (clickable) › <panel>
+      /* Home › Exterior › Panel */
       seg('Exterior', () => exitDrilldown());
       sep();
       seg(faceLabel(faceId));
     } else {
-      // Top-level face (exterior or interior)
+      /* Home › Exterior  or  Home › Interior */
       seg(faceLabel(faceId));
     }
   }
@@ -145,8 +194,8 @@
       if (c.subsystem) h.classList.add('subsystem--' + c.subsystem);
       h.dataset.componentId = c.id;
       h.dataset.face = faceId;
-      h.setAttribute('aria-label', c.name + (c.drilldown ? ' (opens detailed view)' : ''));
-      h.title = c.name + (c.drilldown ? ' — click to open detailed view' : '');
+      h.setAttribute('aria-label', c.name);
+      h.title = c.name;
       h.style.left   = c.hotspot.x + '%';
       h.style.top    = c.hotspot.y + '%';
       h.style.width  = c.hotspot.w + '%';
@@ -160,14 +209,14 @@
 
       /* Primary pin */
       if (c.pin) {
-        const p = makePin(c.id, c.pin, c.drilldown);
+        const p = makePin(c.id, c.pin, c.drilldown, c.subsystem);
         layerEl.appendChild(p);
         pinByComponent[faceId][c.id] = p;
       }
       /* Extra pins (e.g. the two foot-switch pedals share one component) */
       if (Array.isArray(c.extraPins)) {
         c.extraPins.forEach((pt) => {
-          const ep = makePin(c.id, pt, c.drilldown);
+          const ep = makePin(c.id, pt, c.drilldown, c.subsystem);
           ep.classList.add('column-pin--extra');
           layerEl.appendChild(ep);
         });
@@ -176,9 +225,10 @@
 
   }
 
-  function makePin(componentId, pt, isDrill) {
+  function makePin(componentId, pt, isDrill, subsystem) {
     const p = document.createElement('div');
     p.className = 'column-pin' + (isDrill ? ' column-pin--drilldown' : '');
+    if (subsystem) p.classList.add('subsystem--' + subsystem);
     p.dataset.componentId = componentId;
     p.style.left = pt.x + '%';
     p.style.top  = pt.y + '%';
@@ -200,7 +250,6 @@
     face.components.forEach((c, i) => {
       const li = document.createElement('li');
       li.className = 'component-list__item';
-      if (c.drilldown) li.classList.add('component-list__item--drilldown');
       if (c.subsystem) li.classList.add('subsystem--' + c.subsystem);
       li.dataset.componentId = c.id;
       li.dataset.face = faceId;
@@ -208,8 +257,7 @@
       li.setAttribute('tabindex', '0');
       li.innerHTML =
         `<span class="component-list__num">${String(i + 1).padStart(2, '0')}</span>` +
-        `<span class="component-list__name">${c.name}</span>` +
-        (c.drilldown ? '<span class="component-list__chev" aria-hidden="true">\u203a</span>' : '');
+        `<span class="component-list__name">${c.name}</span>`;
       listEl.appendChild(li);
       listItemById[faceId][c.id] = li;
 
@@ -339,6 +387,9 @@
     rebuildListFor(faceId);
     clearDetail();
     replayIntro(faceId);
+    /* Sync hotspot overlays after flip transition settles */
+    setTimeout(syncOverlays, 50);
+    setTimeout(syncOverlays, 900);
   }
 
   if (flipToggle) {
@@ -382,6 +433,7 @@
       showComponent(face.components[0].id, faceId, { source: 'list' });
     }
     replayIntro(faceId);
+    setTimeout(syncOverlays, 50);
   }
 
   function exitDrilldown(opts) {
@@ -410,6 +462,7 @@
       clearDetail();
       replayIntro(FLIP_FRONT);
     }
+    setTimeout(syncOverlays, 50);
   }
 
   if (backBtn) backBtn.addEventListener('click', () => exitDrilldown());
@@ -426,9 +479,11 @@
   rebuildListFor(currentFaceId);
   renderBreadcrumb(currentFaceId);
   if (flipLabel)   flipLabel.textContent = 'Flip to see Column Interior';
+  syncOverlays();
 
   function runInitialIntro() {
     replayIntro(currentFaceId);
+    syncOverlays();
   }
   const firstImage = document.querySelector(`[data-face-image="${currentFaceId}"]`);
   if (firstImage) {

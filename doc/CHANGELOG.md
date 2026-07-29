@@ -1,3 +1,9 @@
+## Module 2 focus, FFT and wobble fixes — v5
+
+- Objective focusing now requires Coarse Focus followed by a separate Fine Focus adjustment.
+- Removed the camera histogram and automatically reveal the Live FFT after the fluorescent screen is raised.
+- Wobble meter, ghost images and motion overlay are cleared immediately after eucentric height is reached.
+
 # Changelog
 
 ## v1.16 — Landing text layout: cleaner title + wider lede
@@ -457,3 +463,11 @@
   a placeholder; the real Diffraction Lab renderer is not yet plumbed into
   the Module 02 viewer.
 - **Ring (polycrystalline) patterns** and **CBED** are out of scope.
+
+## 2026-07-29 — Guided interaction fixes
+
+- Fixed step-wise Undo using per-step state snapshots and timer cancellation.
+- Kept the PC drawer collapsed by default while leaving its handle available for manual opening.
+- PC-targeted steps now select and highlight the correct software drawer without forcing it open.
+- Repositioned specimen, condenser-aperture and objective-aperture INSERT/REMOVE buttons below their diagram labels.
+- Removed the old baked-in specimen REMOVE text from the column image.

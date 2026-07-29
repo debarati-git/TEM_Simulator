@@ -1,42 +1,45 @@
 /* =========================================================================
-   Guided Simulator — Step Orchestrator
-   The heart of guided mode. Loads steps from JSON, manages the active
-   step, locks/unlocks controls accordingly, watches state for success
-   conditions, advances when satisfied, and updates the UI (instruction
-   text, progress bar, viewer auto-switch).
+   Guided Simulator — Step Orchestrator  (v2.0)
+   Loads steps, manages lock/unlock, evaluates success, auto-advances,
+   opens/closes PC drawer as steps require.
    ========================================================================= */
-
 (function () {
   'use strict';
 
-  let steps = [];
-  let currentStepIndex = 0;
-  let stepStartedAt = 0;
-  let hintArmed = false;
-  let autoAdvanceTimer = null;
-  /** Controls that, once unlocked, stay unlocked for the rest of the session.
-      Beam Current is exposed at step 8 and stays available through alignment
-      and imaging — the user can fine-tune it any time. */
-  const STICKY_UNLOCKS = new Set(['beam-current']);
-  const everUnlocked = new Set();
+  var steps = [];
+  var currentStepIndex = -1;   // -1 = pre-start
+  var stepStartedAt = 0;
+  var hintArmed = false;
+  var autoAdvanceTimer = null;
+  var stepTimers = [];
+  var stepEntrySnapshots = [];
+  var isRestoringState = false;
+  var sessionStarted = false;
+  var lastStepTargetControl = null;
+  var STICKY_UNLOCKS = new Set(['beam-current']);
+  var everUnlocked = new Set();
+  var STATE_TO_CONTROL = {
+    sample: 'sample-select', holderType: 'holder-type', stageNeutralized: 'stage-neutralize',
+    holderRemoved: 'holder-remove', specimenInsertedDiagram: 'specimen-insert-diagram',
+    specimenInsertedPanel: 'specimen-insert', airlockPumped: 'airlock',
+    accVoltage: 'acc-voltage', beamOn: 'beam-on', brightness: 'brightness',
+    defStigMode: 'def-stig-mode', beamShift: 'def-stig-pad', condStig: 'def-stig-pad', objStig: 'def-stig-pad',
+    currentAperture: 'aperture-select', condenserInserted: 'condenser-insert', objectiveInserted: 'objective-insert',
+    condenserSize: 'aperture-size', objectiveSize: 'aperture-size', apertureAlignment: 'aperture-align',
+    stage: 'stage-xy', stageX: 'stage-xy', stageY: 'stage-xy', stageZ: 'stage-z',
+    imagingMode: 'imaging-mode', magnification: 'magnification', wobblerOn: 'wobbler',
+    focusCoarse: 'focus-coarse', focusFine: 'focus-fine',
+    focusCoarseAdjusted: 'focus-coarse', focusFineAdjusted: 'focus-fine', stdFocusReset: 'std-focus',
+    cameraInserted: 'camera-insert', cameraLiveView: 'live-view', screenRaised: 'screen-raise',
+    imageAcquired: 'acquire'
+  };
 
-  /* -------------------- Boot -------------------- */
-
-  async function init() {
+  /* ---- Boot ---- */
+  function init() {
     try {
-      // Prefer embedded data (works under file:// too). Fall back to fetch.
       if (window.TEM && window.TEM.dataGuidedSteps) {
         steps = window.TEM.dataGuidedSteps.steps;
-        await TEM.tolerance.load();
-      } else {
-        const [stepsRes] = await Promise.all([
-          fetch('../data/guided-steps.json').then(r => {
-            if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            return r.json();
-          }),
-          TEM.tolerance.load(),
-        ]);
-        steps = stepsRes.steps;
+        TEM.tolerance.load();
       }
     } catch (e) {
       console.error('Guided controller init failed:', e);
@@ -44,152 +47,205 @@
       return;
     }
 
-    // Wire viewer tabs (column / screen toggle)
-    document.querySelectorAll('.viewer__tab').forEach(tab => {
-      tab.addEventListener('click', () => setViewer(tab.dataset.view));
+    document.querySelectorAll('.viewer__tab').forEach(function(tab) {
+      tab.addEventListener('click', function() { setViewer(tab.dataset.view); });
     });
-
-    // Wire fullscreen toggle
     wireFullscreen();
 
-    // Restart buttons
-    const restartBtn = document.getElementById('btn-restart');
-    if (restartBtn) restartBtn.addEventListener('click', restart);
-    const undoBtn = document.getElementById('btn-undo-step');
+    var restartBtn = document.getElementById('btn-restart');
+    if (restartBtn) restartBtn.addEventListener('click', function() {
+      if (!sessionStarted) {
+        startSession();
+      } else {
+        restart();
+      }
+    });
+    var undoBtn = document.getElementById('btn-undo-step');
     if (undoBtn) undoBtn.addEventListener('click', undoStep);
 
-    // Initialize control wiring (subscribers to state)
     TEM.controls.init();
     TEM.diagram.init();
     TEM.imageRenderer.init();
+    TEM.pcDrawer.init();
+    TEM.fftRenderer.init();
 
-    // Subscribe to state to check success after every mutation
     TEM.state.subscribe(onStateChange);
+    showPreStart();
+  }
 
-    // Show step 1
+  function setGuidanceActive(active) {
+    var instruction = document.querySelector('.guided-context__instr');
+    if (instruction) instruction.classList.toggle('is-guidance-active', !!active);
+  }
+
+  /* ---- Pre-start screen ---- */
+  function showPreStart() {
+    sessionStarted = false;
+    currentStepIndex = -1;
+    hintArmed = false;
+    setGuidanceActive(false);
+
+    // Restart/pre-start must not retain the delayed orange hint from the
+    // previously active step. Clear both the feedback timer and DOM state.
+    if (TEM.feedback && TEM.feedback.clearHint) TEM.feedback.clearHint();
+    var hintEl = document.getElementById('instr-hint');
+    if (hintEl) {
+      hintEl.classList.remove('is-visible');
+      hintEl.textContent = '';
+    }
+
+    var instrEl = document.getElementById('instr-text');
+    if (instrEl) instrEl.textContent = 'Welcome to the Guided TEM Session. All controls are locked until each step activates them. Press START to begin.';
+
+    var restartBtn = document.getElementById('btn-restart');
+    if (restartBtn) {
+      restartBtn.querySelector('span') || null;
+      restartBtn.innerHTML = '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8l5-5 5 5M3 8l5 5 5-5" opacity="0"/><circle cx="8" cy="8" r="5"/><path d="M6 8l1.5 1.5L10 6.5"/></svg><span>Start</span>';
+      restartBtn.classList.add('is-start-btn');
+    }
+
+    var undoBtn = document.getElementById('btn-undo-step');
+    if (undoBtn) undoBtn.style.display = 'none';
+
+    // Lock all controls
+    document.querySelectorAll('.ctl').forEach(function(c) {
+      c.classList.remove('is-active');
+      c.classList.remove('is-step-target-control');
+    });
+    TEM.diagram.setActiveHotspot(null);
+    if (TEM.pcDrawer.setTarget) TEM.pcDrawer.setTarget('tem', false);
+    TEM.pcDrawer.close();
+    setProgress(0);
+  }
+
+  function startSession() {
+    sessionStarted = true;
+
+    var restartBtn = document.getElementById('btn-restart');
+    if (restartBtn) {
+      restartBtn.innerHTML = '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8a6 6 0 1 0 1.8-4.2M2 2v4h4"/></svg><span>Restart</span>';
+      restartBtn.classList.remove('is-start-btn');
+    }
+
+    var undoBtn = document.getElementById('btn-undo-step');
+    if (undoBtn) undoBtn.style.display = '';
+
     activateStep(0);
   }
 
-  /** If we couldn't load data, surface a readable error rather than
-      leaving every control silently locked. */
   function showInitError(e) {
-    const instrEl = document.getElementById('instr-text');
-    if (instrEl) {
-      instrEl.textContent =
-        'Guided session couldn\'t load. Try opening the simulator via a local web server ' +
-        '(e.g. `python3 -m http.server` in the project root) or check the browser console.';
-    }
+    setGuidanceActive(false);
+    var instrEl = document.getElementById('instr-text');
+    if (instrEl) instrEl.textContent = 'Guided session couldn\'t load. Check the console.';
   }
 
-  /* -------------------- Fullscreen toggle --------------------
-     Uses the native Fullscreen API to make the entire simulator (the
-     whole document body) fill the screen. Browser chrome hides; the
-     user sees only the simulator. Esc returns to normal.
-  */
+  /* ---- Fullscreen ---- */
   function wireFullscreen() {
-    const btn = document.getElementById('btn-fullscreen');
+    var btn = document.getElementById('btn-fullscreen');
     if (!btn) return;
-
-    btn.addEventListener('click', () => {
-      const inFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    btn.addEventListener('click', function() {
+      var inFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
       if (inFS) {
-        const exit = document.exitFullscreen || document.webkitExitFullscreen;
-        if (exit) try { exit.call(document); } catch (e) { /* ignore */ }
+        var exit = document.exitFullscreen || document.webkitExitFullscreen;
+        if (exit) try { exit.call(document); } catch(e) {}
       } else {
-        const target = document.documentElement;          // entire app
-        const req = target.requestFullscreen || target.webkitRequestFullscreen;
-        if (req) try { req.call(target); } catch (e) { /* ignore */ }
+        var target = document.documentElement;
+        var req = target.requestFullscreen || target.webkitRequestFullscreen;
+        if (req) try { req.call(target); } catch(e) {}
       }
     });
-
-    // Sync class state when user enters or exits (also handles Esc)
-    const onFSChange = () => {
-      const active = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    var onFSChange = function() {
+      var active = !!(document.fullscreenElement || document.webkitFullscreenElement);
       document.body.classList.toggle('is-fullscreen', active);
-      if (TEM.diagram && TEM.diagram.repositionHotspots) {
-        setTimeout(TEM.diagram.repositionHotspots, 100);
-      }
+      if (TEM.diagram && TEM.diagram.repositionHotspots) setTimeout(TEM.diagram.repositionHotspots, 100);
     };
     document.addEventListener('fullscreenchange', onFSChange);
     document.addEventListener('webkitfullscreenchange', onFSChange);
   }
 
-  /* -------------------- Step activation -------------------- */
+  /* ---- Step activation ---- */
+  function clearStepTimers() {
+    if (autoAdvanceTimer) {
+      clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer = null;
+    }
+    stepTimers.forEach(function(timerId) { clearTimeout(timerId); });
+    stepTimers = [];
+  }
+
+  function scheduleStepTimer(fn, delay) {
+    var timerId = setTimeout(function() {
+      var index = stepTimers.indexOf(timerId);
+      if (index >= 0) stepTimers.splice(index, 1);
+      fn();
+    }, delay);
+    stepTimers.push(timerId);
+    return timerId;
+  }
 
   function activateStep(index) {
+    clearStepTimers();
+
+    var step = steps[index];
+    if (!step) { finish(); return; }
+    setGuidanceActive(true);
+
+    // Save the exact state that existed before this step. Undo restores this
+    // snapshot and then re-enters the preceding step, including its prelude.
+    stepEntrySnapshots[index] = TEM.state.getAll();
+    stepEntrySnapshots.length = index + 1;
+
     currentStepIndex = index;
     stepStartedAt = Date.now();
     hintArmed = false;
-    if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
+    lastStepTargetControl = null;
 
-    const step = steps[index];
-    if (!step) {
-      finish();
-      return;
-    }
-
-    // Push ROI target into the renderer BEFORE the currentStepId state
-    // mutation, so renderer sees the new target on its first render.
     if (TEM.imageRenderer && TEM.imageRenderer.setRoiTarget) {
       TEM.imageRenderer.setRoiTarget(step.roiTarget || null);
     }
 
     TEM.state.set('currentStepId', step.id);
 
-    // Update instruction text
-    const instrEl = document.getElementById('instr-text');
+    var instrEl = document.getElementById('instr-text');
     if (instrEl) instrEl.textContent = step.instruction;
 
-    // Clear any visible hint from the previous step
     if (TEM.feedback && TEM.feedback.clearHint) TEM.feedback.clearHint();
 
-    // Lock all controls, then unlock just this step's targets
     applyLockState(step);
-
-    // Highlight diagram hotspot if this step has one (declared in data)
     TEM.diagram.setActiveHotspot(step.diagram || null);
-
-    // Update progress bar (the just-completed steps make the bar advance)
     setProgress(index / steps.length);
 
-    // Auto-switch viewer
     if (step.switchViewer) setViewer(step.switchViewer, { flash: true });
 
-    // Blue ROI circle on the screen if this step has a target
-    if (TEM.imageRenderer && TEM.imageRenderer.setRoiTarget) {
-      TEM.imageRenderer.setRoiTarget(step.roiTarget || null);
+    // PC-targeted steps open the required TEM or camera interface
+    // automatically. All other steps begin with the drawer collapsed, while
+    // the handle stays available so the learner can inspect the PC at any time.
+    if (step.pcDrawer) {
+      if (TEM.pcDrawer.setTarget) TEM.pcDrawer.setTarget(step.pcDrawer, true);
+      TEM.pcDrawer.open(step.pcDrawer);
+    } else {
+      if (TEM.pcDrawer.setTarget) TEM.pcDrawer.setTarget('tem', false);
+      TEM.pcDrawer.close();
     }
 
-    // onEnter side-effects: events that happen automatically when this step activates
+    // onEnter side-effects
     if (step.onEnter === 'autoAirlock') {
-      // Animate the airlock pumping: set airlockPumped=true after ~half the autoAdvance delay
-      setTimeout(() => {
-        TEM.state.set('airlockPumped', true);
+      scheduleStepTimer(function() {
+        if (currentStepIndex === index) TEM.state.set('airlockPumped', true);
       }, Math.max(200, (step.autoAdvance || 2000) / 2));
     }
 
-    // Prelude: nudge state into a non-trivial starting point so the success
-    // condition isn't already satisfied. This forces the user to actually
-    // interact with the control instead of the step auto-advancing.
-    //
-    // `prelude.offset`: 'beamShift' | 'stigmator' | 'apertureAlignment' | 'stage'
-    //   Sets that key (or stageX+stageY for 'stage') to an off-target value
-    //   to make the alignment task non-trivial.
-    // `prelude.set`: { key, value } — generic write.
-    if (step.prelude) {
-      applyPrelude(step.prelude);
-    }
+    if (step.prelude) applyPrelude(step.prelude);
 
-    // Auto-advance for descriptive/animation steps (no user action required)
     if (step.autoAdvance) {
-      autoAdvanceTimer = setTimeout(() => {
+      autoAdvanceTimer = scheduleStepTimer(function() {
+        autoAdvanceTimer = null;
         if (currentStepIndex === index) activateStep(currentStepIndex + 1);
       }, step.autoAdvance);
     }
 
-    // Arm the hint timer
     if (step.hint) {
-      setTimeout(() => {
+      scheduleStepTimer(function() {
         if (currentStepIndex === index && !checkSuccess(step)) {
           if (TEM.feedback) TEM.feedback.armHint(step.hint, 3000);
           hintArmed = true;
@@ -199,79 +255,115 @@
   }
 
   function finish() {
+    clearStepTimers();
+    setGuidanceActive(false);
     setProgress(1);
-    const instrEl = document.getElementById('instr-text');
-    if (instrEl) {
-      instrEl.textContent = 'Session complete. Your image has been downloaded. Press Restart to run again.';
-    }
-    // Clear any inactivity hint left over from the last step
+    var instrEl = document.getElementById('instr-text');
+    if (instrEl) instrEl.textContent = 'Session complete. Your image has been downloaded. Press Restart to run again.';
     if (TEM.feedback) TEM.feedback.clearHint();
-    // Lock everything
-    document.querySelectorAll('.ctl').forEach(c => c.classList.remove('is-active'));
+    document.querySelectorAll('.ctl').forEach(function(c) {
+      c.classList.remove('is-active');
+      c.classList.remove('is-step-target-control');
+    });
+    document.querySelectorAll('.dz.is-zone-active').forEach(function(z) { z.classList.remove('is-zone-active'); });
     TEM.diagram.setActiveHotspot(null);
+    if (TEM.pcDrawer.setStepActive) TEM.pcDrawer.setStepActive(false);
+    TEM.pcDrawer.close();
   }
 
-  /* -------------------- Lock / unlock controls -------------------- */
-
-  /**
-   * Strict guided mode: every control with [data-control] is locked, then
-   * only the targets in step.unlocks are unlocked. Buttons with [data-action]
-   * inside locked controls are also disabled at the button level so disabled
-   * styles apply cleanly.
-   */
-  function applyLockState(step) {
-    const targets = new Set(step.unlocks || []);
-    for (const key of everUnlocked) {
-      if (STICKY_UNLOCKS.has(key)) targets.add(key);
-    }
-    for (const key of (step.unlocks || [])) everUnlocked.add(key);
-
-    let firstNewlyActive = null;
-    document.querySelectorAll('.ctl[data-control]').forEach(ctl => {
-      const key = ctl.dataset.control;
-      const wasActive = ctl.classList.contains('is-active');
-      const active = targets.has(key);
-      if (active && !wasActive && !firstNewlyActive && (step.unlocks || []).includes(key)) {
-        firstNewlyActive = ctl;
+  /* ---- Lock/unlock ---- */
+  function pendingControlForStep(step) {
+    if (!step) return null;
+    var cond = step.success || step.successCondition;
+    if (cond && cond.type === 'composite' && Array.isArray(cond.all)) {
+      for (var i = 0; i < cond.all.length; i++) {
+        if (!evalCondition(cond.all[i])) {
+          return STATE_TO_CONTROL[cond.all[i].key] || (step.unlocks && step.unlocks[0]) || null;
+        }
       }
-      ctl.classList.toggle('is-active', active);
+    }
+    if (cond && cond.key) return STATE_TO_CONTROL[cond.key] || (step.unlocks && step.unlocks[0]) || null;
+    return (step.unlocks && step.unlocks[0]) || null;
+  }
+
+  function refreshStepTargetLocator(step) {
+    document.querySelectorAll('.ctl.is-step-target-control').forEach(function(ctl) {
+      ctl.classList.remove('is-step-target-control');
+    });
+    var targetKey = pendingControlForStep(step);
+    if (!targetKey) {
+      lastStepTargetControl = null;
+      return;
+    }
+    document.querySelectorAll('.ctl[data-control="' + targetKey + '"]').forEach(function(ctl) {
+      ctl.classList.add('is-step-target-control');
     });
 
-    // Scroll the parent dz zone of the first newly-unlocked control into view,
-    // then briefly highlight the zone so the student's eye is drawn to it.
-    if (firstNewlyActive) {
-      const zone = firstNewlyActive.closest('.dz');
-      if (zone) {
-        setTimeout(() => {
-          zone.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          // Flash the zone border for 1.6 s then remove
-          zone.classList.add('is-zone-active');
-          setTimeout(() => zone.classList.remove('is-zone-active'), 1600);
-        }, 80);
-      } else {
-        setTimeout(() => {
-          firstNewlyActive.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 80);
-      }
+    // During multi-action PC steps, move the drawer to the newly pending
+    // control. In the camera sequence this makes Insert Camera, Live View,
+    // and especially Raise Fluorescent Screen visible in turn.
+    if (targetKey !== lastStepTargetControl) {
+      lastStepTargetControl = targetKey;
+      scheduleStepTimer(function() {
+        if (TEM.pcDrawer && TEM.pcDrawer.revealControl) {
+          TEM.pcDrawer.revealControl(targetKey);
+        }
+      }, 120);
     }
   }
 
-  /* -------------------- State change → check success -------------------- */
+  function applyLockState(step) {
+    var targets = new Set(step.unlocks || []);
+    for (var key of everUnlocked) {
+      if (STICKY_UNLOCKS.has(key)) targets.add(key);
+    }
+    for (var k of (step.unlocks || [])) everUnlocked.add(k);
 
+    // Clear all zone highlights first
+    document.querySelectorAll('.dz.is-zone-active').forEach(function(z) {
+      z.classList.remove('is-zone-active');
+    });
+
+    var activeZones = new Set();
+    document.querySelectorAll('.ctl[data-control]').forEach(function(ctl) {
+      var ctlKey = ctl.dataset.control;
+      var active = targets.has(ctlKey);
+      ctl.classList.toggle('is-active', active);
+      // Mark parent zone as active if this control is unlocked by the current step
+      if (active && (step.unlocks || []).includes(ctlKey)) {
+        var zone = ctl.closest('.dz');
+        if (zone && !activeZones.has(zone)) {
+          activeZones.add(zone);
+        }
+      }
+    });
+
+    refreshStepTargetLocator(step);
+
+    // Apply persistent zone highlight and scroll first one into view
+    var first = true;
+    activeZones.forEach(function(zone) {
+      zone.classList.add('is-zone-active');
+      if (first) {
+        first = false;
+        setTimeout(function() {
+          zone.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 80);
+      }
+    });
+  }
+
+  /* ---- State change → check success ---- */
   function onStateChange(key, value, prev, all) {
-    const step = steps[currentStepIndex];
+    if (isRestoringState) return;
+    var step = steps[currentStepIndex];
     if (!step) return;
-
-    // Hint timer: if user is fiddling, defer the hint
+    refreshStepTargetLocator(step);
     if (hintArmed && TEM.feedback) TEM.feedback.poke();
-
-    // For autoAdvance steps, the timer controls progression — don't advance on
-    // state changes (the onEnter side-effects may set state mid-step).
     if (step.autoAdvance) return;
 
     if (checkSuccess(step)) {
-      // Small delay so the user sees their final action register before advancing
-      setTimeout(() => {
+      scheduleStepTimer(function() {
         if (checkSuccess(steps[currentStepIndex])) {
           activateStep(currentStepIndex + 1);
         }
@@ -279,31 +371,25 @@
     }
   }
 
-  /* -------------------- Success condition evaluation -------------------- */
-
+  /* ---- Success evaluation ---- */
   function checkSuccess(step) {
     if (!step) return false;
-    const cond = step.success || step.successCondition;       // back-compat
+    var cond = step.success || step.successCondition;
     if (!cond) return false;
     return evalCondition(cond);
   }
 
   function evalCondition(cond) {
     if (!cond) return false;
-
     if (cond.type === 'always') return true;
-
     if (cond.type === 'composite' && Array.isArray(cond.all)) {
       return cond.all.every(evalCondition);
     }
-
     if (cond.type === 'selectValue') {
-      const actual = TEM.state.get(cond.key);
-      return actual === cond.value;
+      return TEM.state.get(cond.key) === cond.value;
     }
-
     if (cond.type === 'valueInRange') {
-      let value;
+      var value;
       if (cond.key === 'stage') {
         value = { x: TEM.state.get('stageX'), y: TEM.state.get('stageY') };
       } else {
@@ -311,193 +397,122 @@
       }
       return TEM.tolerance.inSweetSpot(cond.spot, value);
     }
-
     if (cond.type === 'click') {
       return TEM.state.get(cond.key) === true;
     }
-
     return false;
   }
 
-  /* -------------------- Viewer tab switcher -------------------- */
-
+  /* ---- Viewer tab switcher ---- */
   function setViewer(which, opts) {
-    document.querySelectorAll('.viewer__tab').forEach(t => {
-      const active = t.dataset.view === which;
+    document.querySelectorAll('.viewer__tab').forEach(function(t) {
+      var active = t.dataset.view === which;
       t.classList.toggle('is-active', active);
       t.setAttribute('aria-selected', String(active));
     });
-    document.querySelectorAll('.viewer__panel').forEach(p => {
+    document.querySelectorAll('.viewer__panel').forEach(function(p) {
       p.classList.toggle('is-active', p.dataset.viewPanel === which);
     });
-    const caption = document.getElementById('viewer-caption');
+    var caption = document.getElementById('viewer-caption');
     if (caption) {
-      caption.textContent = which === 'column'
-        ? 'FIG · ELECTRON OPTICAL COLUMN'
-        : 'VIEWING SCREEN · PHOSPHOR';
+      caption.textContent = which === 'column' ? 'ELECTRON OPTICAL COLUMN' : 'VIEWING SCREEN · PHOSPHOR';
     }
-
-    // Flash the viewer briefly when auto-switched, to draw the user's eye
     if (opts && opts.flash) {
-      const v = document.querySelector('.viewer');
+      var v = document.querySelector('.viewport-wrap');
       if (v) {
         v.classList.remove('is-flash');
-        // Force reflow so the animation restarts
         void v.offsetWidth;
         v.classList.add('is-flash');
-        setTimeout(() => v.classList.remove('is-flash'), 1200);
+        setTimeout(function() { v.classList.remove('is-flash'); }, 1200);
       }
     }
   }
 
-  /* -------------------- Progress bar -------------------- */
-
   function setProgress(t) {
-    const fill = document.getElementById('progress-fill');
-    if (fill) fill.style.width = `${Math.max(0, Math.min(1, t)) * 100}%`;
+    var fill = document.getElementById('progress-fill');
+    if (fill) fill.style.width = (Math.max(0, Math.min(1, t)) * 100) + '%';
   }
 
-  /* -------------------- Step prelude --------------------
-     Apply a step's prelude: nudge state values away from sweet-spot zero
-     so the success condition isn't trivially satisfied. The user must
-     actually interact with the control to advance.
-
-     Forms supported:
-       prelude: { offset: 'beamShift', amount: {x:-22, y:18} }
-       prelude: { offsets: [
-         { offset: 'beamShift', amount: {x:-22, y:18} },
-         { offset: 'stigmator', amount: {x:-18, y:22} },
-       ]}
-       prelude: { set: { key: 'foo', value: 5 } }
-  */
+  /* ---- Prelude ---- */
   function applyPrelude(prelude) {
     if (!prelude) return;
-
-    // Single offset (legacy form)
-    if (prelude.offset && prelude.amount) {
-      applyOffset(prelude.offset, prelude.amount);
-    }
-    // Multiple offsets
+    if (prelude.offset && prelude.amount) applyOffset(prelude.offset, prelude.amount);
     if (Array.isArray(prelude.offsets)) {
-      for (const o of prelude.offsets) {
+      for (var i = 0; i < prelude.offsets.length; i++) {
+        var o = prelude.offsets[i];
         if (o.offset && o.amount) applyOffset(o.offset, o.amount);
       }
     }
-
-    if (prelude.set) {
-      const { key, value } = prelude.set;
-      TEM.state.set(key, value);
-    }
+    if (prelude.set) TEM.state.set(prelude.set.key, prelude.set.value);
   }
 
   function applyOffset(offset, amount) {
     if (offset === 'stage') {
-      const curX = TEM.state.get('stageX') || 0;
-      const curY = TEM.state.get('stageY') || 0;
-      TEM.state.set('stageX', curX + (amount.x || 0));
-      TEM.state.set('stageY', curY + (amount.y || 0));
+      TEM.state.set('stageX', (TEM.state.get('stageX') || 0) + (amount.x || 0));
+      TEM.state.set('stageY', (TEM.state.get('stageY') || 0) + (amount.y || 0));
     } else {
-      const cur = TEM.state.get(offset) || { x: 0, y: 0 };
-      TEM.state.set(offset, {
-        x: (cur.x || 0) + (amount.x || 0),
-        y: (cur.y || 0) + (amount.y || 0),
-      });
+      var cur = TEM.state.get(offset) || { x: 0, y: 0 };
+      TEM.state.set(offset, { x: (cur.x || 0) + (amount.x || 0), y: (cur.y || 0) + (amount.y || 0) });
     }
   }
 
-  /* -------------------- Restart -------------------- */
+  /* ---- Restart / Undo ---- */
+  function restoreState(snapshot) {
+    if (!snapshot) return;
+    isRestoringState = true;
+    try {
+      Object.keys(snapshot).forEach(function(key) {
+        TEM.state.set(key, snapshot[key]);
+      });
+    } finally {
+      isRestoringState = false;
+    }
+  }
+
+  function rebuildUnlockHistory(targetIndex) {
+    everUnlocked.clear();
+    for (var i = 0; i < targetIndex; i++) {
+      (steps[i].unlocks || []).forEach(function(key) { everUnlocked.add(key); });
+    }
+  }
 
   function restart() {
-    TEM.state.reset();
-    everUnlocked.clear();
-    if (TEM.imageRenderer && TEM.imageRenderer.resetReferences) {
-      TEM.imageRenderer.resetReferences();
-    }
-    setViewer('column');
-    activateStep(0);
+    // A restart is intentionally a full Module 2 page reload. This clears all
+    // state, timers, canvas references, drawer positions, selected controls,
+    // hints and transient animations exactly as a fresh page visit would.
+    clearStepTimers();
+    if (TEM.feedback && TEM.feedback.clearHint) TEM.feedback.clearHint();
+    window.location.reload();
   }
 
-  /** Undo the current step: reset any state values that this step is
-      responsible for, then re-activate the step (re-running its prelude
-      and lock state). This gives the user a way to retry just the
-      current step without losing prior progress. */
   function undoStep() {
-    const step = steps[currentStepIndex];
-    if (!step) return;
+    if (!sessionStarted || currentStepIndex < 0) return;
 
-    // Clear the state key(s) this step's success condition watches, so it
-    // doesn't immediately auto-pass.
-    clearSuccessKeys(step.success);
-    activateStep(currentStepIndex);
+    // Undo one complete guided step. At Step 1, restore and retry Step 1.
+    var targetIndex = Math.max(0, currentStepIndex - 1);
+    var snapshot = stepEntrySnapshots[targetIndex] || TEM.state.getInitial();
+
+    clearStepTimers();
+    restoreState(snapshot);
+    rebuildUnlockHistory(targetIndex);
+    stepEntrySnapshots.length = targetIndex + 1;
+    activateStep(targetIndex);
   }
 
-  /** For a step's success condition, reset the underlying state keys
-      back to their initial values. */
-  function clearSuccessKeys(cond) {
-    if (!cond) return;
-    if (cond.type === 'composite' && Array.isArray(cond.all)) {
-      cond.all.forEach(clearSuccessKeys);
-      return;
-    }
-    const key = cond.key;
-    if (!key) return;
-    if (cond.type === 'selectValue') {
-      // Reset the boolean/string back to its initial value
-      const v = INITIAL_VALUES[key];
-      if (v !== undefined) TEM.state.set(key, v);
-    } else if (cond.type === 'valueInRange') {
-      if (key === 'stage') {
-        TEM.state.set('stageX', 0);
-        TEM.state.set('stageY', 0);
-      } else {
-        const v = INITIAL_VALUES[key];
-        TEM.state.set(key, v !== undefined ? v : { x: 0, y: 0 });
-      }
-    }
-  }
-
-  /** Mirror of the state store's initial values, so undoStep can reset
-      to the right defaults. Kept in sync with state.js manually. */
-  const INITIAL_VALUES = {
-    holderRemoved: false,
-    sample: null,
-    specimenInsertedDiagram: false,
-    specimenInsertedPanel: false,
-    airlockPumped: false,
-    accVoltage: null,
-    beamOn: false,
-    beamShift: { x: 0, y: 0 },
-    brightness: 50,
-    stigmator: { x: 18, y: -14 },
-    currentAperture: null,
-    condenserInserted: false,
-    objectiveInserted: false,
-    condenserSize: null,
-    objectiveSize: null,
-    apertureAlignment: { x: 0, y: 0 },
-    stageZ: 0,
-    wobblerOn: false,
-    magnification: null,
-    mode: null,
-    focus: 0,
-    cameraInserted: false,
-    imageAcquired: false,
-  };
-
-  /* -------------------- Expose -------------------- */
-
+  /* ---- Expose ---- */
   window.TEM = window.TEM || {};
   window.TEM.guidedController = {
-    init, restart, setViewer, setProgress,
-    activateStep,
+    init: init, restart: restart, undoStep: undoStep,
+    setViewer: setViewer, setProgress: setProgress,
+    activateStep: activateStep,
     get currentStep() { return steps[currentStepIndex]; },
     get currentIndex() { return currentStepIndex; },
-    get totalSteps() { return steps.length; },
+    get totalSteps() { return steps.length; }
   };
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { init().catch(console.error); });
+    document.addEventListener('DOMContentLoaded', function() { init(); });
   } else {
-    init().catch(console.error);
+    init();
   }
 })();

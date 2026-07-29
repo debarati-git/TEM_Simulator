@@ -1,29 +1,35 @@
 /* =========================================================================
-   TEM Simulator — Guided steps data (37 steps, MyScope-faithful)
-   Loaded as a JS file so it works under file:// without fetch.
+   TEM Simulator — Guided steps data  (v2.0, 35 steps)
+   Panel-faithful flow per Debarati's operating procedure.
    ========================================================================= */
 (function () {
   'use strict';
   window.TEM = window.TEM || {};
 
-  /* The 37-step canonical flow for the Nanoparticles sample. Each step has:
-       id           — sequential
-       instruction  — what the user sees
-       hint         — shown after 3s of inactivity
-       unlocks      — which .ctl[data-control] elements become interactive
-       success      — condition that advances to the next step
-       diagram      — id of column hotspot to highlight, or null
-       autoAdvance  — true if step should advance after a delay with no input
-       switchViewer — auto-switch to 'column' or 'screen' on entry
-  */
   window.TEM.dataGuidedSteps = {
     sample: 'nanoparticles',
-    totalSteps: 32,
+    totalSteps: 35,
     steps: [
-      // ----- Setup (1-7) -----
+      // ===== PHASE 1: SETUP (1–8) =====
       {
         id: 1,
-        instruction: 'Click REMOVE on the specimen holder in the column diagram.',
+        instruction: 'Select the holder type. Use Single Tilt for routine nanoparticle imaging.',
+        hint: 'Open the PC drawer and choose Single Tilt.',
+        unlocks: ['holder-type'],
+        pcDrawer: 'tem',
+        success: { type: 'selectValue', key: 'holderType', value: 'single-tilt' }
+      },
+      {
+        id: 2,
+        instruction: 'Click Stage Neutralize to return the stage to a safe insertion position.',
+        hint: 'Press the Neutralize button in the PC drawer.',
+        unlocks: ['stage-neutralize'],
+        pcDrawer: 'tem',
+        success: { type: 'selectValue', key: 'stageNeutralized', value: true }
+      },
+      {
+        id: 3,
+        instruction: 'Click REMOVE on the specimen holder in the column diagram to take out the empty holder.',
         hint: 'The holder hotspot on the column is highlighted — click it.',
         unlocks: [],
         diagram: 'remove-holder',
@@ -31,15 +37,15 @@
         success: { type: 'selectValue', key: 'holderRemoved', value: true }
       },
       {
-        id: 2,
+        id: 4,
         instruction: 'Select Nanoparticles from the sample list.',
-        hint: 'Under Gun & Vacuum, press Nanoparticles.',
+        hint: 'Under Sample on the right panel, press Nanoparticles.',
         unlocks: ['sample'],
         success: { type: 'selectValue', key: 'sample', value: 'nanoparticles' }
       },
       {
-        id: 3,
-        instruction: 'Click INSERT on the column diagram to load the specimen.',
+        id: 5,
+        instruction: 'Click INSERT on the column diagram to load the specimen into the airlock.',
         hint: 'The specimen hotspot on the column is highlighted.',
         unlocks: [],
         diagram: 'insert-specimen',
@@ -47,72 +53,74 @@
         success: { type: 'selectValue', key: 'specimenInsertedDiagram', value: true }
       },
       {
-        id: 4,
-        instruction: 'Holder repositions and the airlock pumps automatically.',
+        id: 6,
+        instruction: 'The airlock pumps automatically. Wait for vacuum ready.',
         hint: null,
         unlocks: [],
         autoAdvance: 2200,
         onEnter: 'autoAirlock',
+        pcDrawer: 'tem',
         success: { type: 'selectValue', key: 'airlockPumped', value: true }
       },
       {
-        id: 5,
-        instruction: 'Click INSERT under Specimen on the control panel to push the specimen into the column.',
-        hint: 'Under Gun & Vacuum, press Specimen Insert.',
+        id: 7,
+        instruction: 'Click INSERT under Holder on the right panel to push the specimen into the column.',
+        hint: 'Under Sample, press Holder Insert.',
         unlocks: ['specimen-insert'],
         success: { type: 'selectValue', key: 'specimenInsertedPanel', value: true }
       },
       {
-        id: 6,
+        id: 8,
         instruction: 'Select the accelerating voltage. Use 200 kV for nanoparticle samples.',
-        hint: 'Press 200 kV under Acc. Voltage. (120 kV is for biological samples.)',
+        hint: 'Press 200 kV under Acc. Voltage.',
         unlocks: ['acc-voltage'],
         success: { type: 'selectValue', key: 'accVoltage', value: 200 }
       },
+
+      // ===== PHASE 2: BEAM ON & ALIGNMENT (9–17) =====
       {
-        id: 7,
-        instruction: 'Switch the beam ON.',
-        hint: 'Press the Beam On button.',
+        id: 9,
+        instruction: 'Switch the beam ON on the left panel.',
+        hint: 'Press Beam On.',
         unlocks: ['beam-on'],
-        switchViewer: 'screen',
         success: { type: 'selectValue', key: 'beamOn', value: true }
       },
-
-      // ----- Beam alignment (8-15) -----
       {
-        id: 8,
-        instruction: 'The beam appears on the screen. Centre it using the Beam Shift trackpad.',
-        hint: 'Drag the Beam Shift dot toward the centre of its trackpad.',
-        unlocks: ['beam-shift', 'beam-current'],
+        id: 10,
+        instruction: 'The beam appears off-center. Set DEF/STIG mode to SHIFT and centre the beam using the trackpad.',
+        switchViewer: 'screen',
+        hint: 'Press Shift under DEF/STIG Mode, then drag the pad to centre.',
+        unlocks: ['def-stig-mode', 'def-stig-pad', 'beam-current'],
         prelude: {
           offsets: [
             { offset: 'beamShift', amount: { x: -22, y: 18 } },
-            // Stigmator off-center → beam appears as a horizontal ellipse.
-            // scaleY = 1 - 40/50 * 0.45 = 0.64, clearly non-circular. The
-            // beam stays this way through centering, divergence, aperture
-            // insertion — until step 14 (stigmator) where the user
-            // corrects it to (0,0) and the beam rounds out.
-            { offset: 'stigmator', amount: { x: 32, y: 38 } },
+            { offset: 'condStig', amount: { x: 32, y: 38 } }
           ]
         },
-        success: { type: 'valueInRange', key: 'beamShift', spot: 'beamShift_center' }
+        success: {
+          type: 'composite',
+          all: [
+            { type: 'selectValue', key: 'defStigMode', value: 'shift' },
+            { type: 'valueInRange', key: 'beamShift', spot: 'beamShift_center' }
+          ]
+        }
       },
       {
-        id: 9,
-        instruction: 'Diverge the beam to cover the full field of view using the Brightness knob.',
+        id: 11,
+        instruction: 'Diverge the beam to fill the field of view using the Brightness knob.',
         hint: 'Turn Brightness clockwise to around 70.',
         unlocks: ['brightness'],
         success: { type: 'valueInRange', key: 'brightness', spot: 'brightness_diverge' }
       },
       {
-        id: 10,
+        id: 12,
         instruction: 'Select Condenser as the aperture type.',
-        hint: 'Under Apertures, press Cond.',
+        hint: 'Under Apertures on the right panel, press Cond.',
         unlocks: ['aperture-select'],
         success: { type: 'selectValue', key: 'currentAperture', value: 'condenser' }
       },
       {
-        id: 11,
+        id: 13,
         instruction: 'Click INSERT on the condenser aperture in the column diagram.',
         hint: 'The condenser aperture hotspot is highlighted.',
         unlocks: [],
@@ -121,15 +129,15 @@
         success: { type: 'selectValue', key: 'condenserInserted', value: true }
       },
       {
-        id: 12,
-        instruction: 'Select an aperture size. Medium is a good starting choice.',
+        id: 14,
+        instruction: 'Select a Medium aperture size.',
         hint: 'Press M under Aperture Size.',
         unlocks: ['aperture-size'],
         switchViewer: 'screen',
         success: { type: 'selectValue', key: 'condenserSize', value: 'medium' }
       },
       {
-        id: 13,
+        id: 15,
         instruction: 'Centre the condenser aperture using the Aperture Alignment trackpad.',
         hint: 'Drag the alignment dot to the centre of the pad.',
         unlocks: ['aperture-align'],
@@ -137,15 +145,20 @@
         success: { type: 'valueInRange', key: 'apertureAlignment', spot: 'apertureAlign_cond' }
       },
       {
-        id: 14,
-        instruction: 'Adjust the Stigmator to make the beam circular.',
-        hint: 'Drag the Stigmator dot toward (0,0) to round the beam.',
-        unlocks: ['stigmator'],
-        prelude: { offset: 'stigmator', amount: { x: -24, y: 20 } },
-        success: { type: 'valueInRange', key: 'stigmator', spot: 'stigmator_circular' }
+        id: 16,
+        instruction: 'Switch DEF/STIG to C.STIG and correct condenser astigmatism to make the beam circular.',
+        hint: 'Press C.Stig, then drag the DEF/STIG pad toward centre.',
+        unlocks: ['def-stig-mode', 'def-stig-pad'],
+        success: {
+          type: 'composite',
+          all: [
+            { type: 'selectValue', key: 'defStigMode', value: 'condStig' },
+            { type: 'valueInRange', key: 'condStig', spot: 'stigmator_circular' }
+          ]
+        }
       },
       {
-        id: 15,
+        id: 17,
         instruction: 'Re-diverge the beam with the Brightness knob.',
         hint: 'Turn Brightness back to the 65–80 range.',
         unlocks: ['brightness'],
@@ -153,63 +166,70 @@
         success: { type: 'valueInRange', key: 'brightness', spot: 'brightness_diverge' }
       },
 
-      // ----- Find sample (16-19) -----
+      // ===== PHASE 3: FIND SAMPLE & EUCENTRIC HEIGHT (18–22) =====
       {
-        id: 16,
+        id: 18,
         instruction: 'Set magnification to LOW to find the sample.',
-        hint: 'Under Imaging > Magnification, press Low.',
+        hint: 'Under Magnification on the right panel, press Low.',
         unlocks: ['magnification'],
         success: { type: 'selectValue', key: 'magnification', value: 'low' }
       },
       {
-        id: 17,
-        instruction: 'Activate the Wobbler to find the eucentric height.',
-        hint: 'Press Wobbler Toggle.',
+        id: 19,
+        instruction: 'Press Standard Focus to reset the objective lens.',
+        hint: 'Press Std Focus Reset on the right panel.',
+        unlocks: ['std-focus'],
+        success: { type: 'selectValue', key: 'stdFocusReset', value: true }
+      },
+      {
+        id: 20,
+        instruction: 'Turn the Wobbler ON to find eucentric height.',
+        hint: 'Press Wobble X.',
         unlocks: ['wobbler'],
         success: { type: 'selectValue', key: 'wobblerOn', value: true }
       },
       {
-        id: 18,
-        instruction: 'Adjust Z height to minimise the wobble.',
-        hint: 'Use the +Z / −Z rocker to bring Z close to zero.',
+        id: 21,
+        instruction: 'Adjust Z while observing the phosphor screen. The lateral image swing should shrink near eucentric height and grow when moving away.',
+        hint: 'Use +Z / −Z and continue in the direction that reduces the displayed wobble amplitude.',
         unlocks: ['stage-z'],
         prelude: { set: { key: 'stageZ', value: 22 } },
         success: { type: 'valueInRange', key: 'stageZ', spot: 'stageZ_eucentric' }
       },
       {
-        id: 19,
-        instruction: 'Eucentric height found. Deactivate the Wobbler.',
-        hint: 'Press Wobbler Toggle again.',
+        id: 22,
+        instruction: 'Eucentric height found. Turn the Wobbler OFF.',
+        hint: 'Press Wobble X again.',
         unlocks: ['wobbler'],
         success: { type: 'selectValue', key: 'wobblerOn', value: false }
       },
 
-      // ----- Objective alignment (20-24) -----
+      // ===== PHASE 4: OBJECTIVE APERTURE ALIGNMENT (23–27) =====
       {
-        id: 20,
-        instruction: 'Switch to Diffraction mode.',
-        hint: 'Under Imaging > Mode, press Diffraction.',
-        unlocks: ['mode'],
-        success: { type: 'selectValue', key: 'mode', value: 'diffraction' }
+        id: 23,
+        instruction: 'Switch to DIFF mode on the right panel.',
+        hint: 'Press DIFF under Imaging Mode.',
+        unlocks: ['imaging-mode'],
+        success: { type: 'selectValue', key: 'imagingMode', value: 'diff' }
       },
       {
-        id: 21,
+        id: 24,
         instruction: 'Select Objective as the aperture type.',
         hint: 'Under Apertures, press Obj.',
         unlocks: ['aperture-select'],
         success: { type: 'selectValue', key: 'currentAperture', value: 'objective' }
       },
       {
-        id: 22,
+        id: 25,
         instruction: 'Click INSERT on the objective aperture in the column diagram.',
-        hint: 'The objective aperture hotspot is highlighted on the column.',
+        hint: 'The objective aperture hotspot is highlighted.',
         unlocks: [],
         diagram: 'insert-objective',
         switchViewer: 'column',
         success: { type: 'selectValue', key: 'objectiveInserted', value: true }
       },
       {
-        id: 23,
+        id: 26,
         instruction: 'Centre the objective aperture using the Aperture Alignment trackpad.',
         hint: 'Drag the alignment dot to the centre.',
         unlocks: ['aperture-align'],
@@ -218,31 +238,31 @@
         success: { type: 'valueInRange', key: 'apertureAlignment', spot: 'apertureAlign_obj' }
       },
       {
-        id: 24,
-        instruction: 'Switch back to Imaging mode.',
-        hint: 'Under Imaging > Mode, press Imaging.',
-        unlocks: ['mode'],
-        success: { type: 'selectValue', key: 'mode', value: 'imaging' }
+        id: 27,
+        instruction: 'Switch back to MAG1 imaging mode.',
+        hint: 'Press MAG1 under Imaging Mode.',
+        unlocks: ['imaging-mode'],
+        success: { type: 'selectValue', key: 'imagingMode', value: 'mag1' }
       },
 
-      // ----- Image acquisition (25-32) -----
+      // ===== PHASE 5: IMAGE ACQUISITION (28–35) =====
       {
-        id: 25,
+        id: 28,
         instruction: 'Move the stage to the region of interest (blue circle).',
-        hint: 'Drag the Stage X/Y dot toward the upper-right.',
+        hint: 'Drag the Stage X/Y pad toward the target.',
         unlocks: ['stage-xy'],
         roiTarget: { x: 35, y: 25 },
         success: { type: 'valueInRange', key: 'stage', spot: 'stageXY_lowMag' }
       },
       {
-        id: 26,
+        id: 29,
         instruction: 'Increase magnification to MEDIUM.',
-        hint: 'Under Magnification, press Med.',
+        hint: 'Press Med under Magnification.',
         unlocks: ['magnification'],
         success: { type: 'selectValue', key: 'magnification', value: 'medium' }
       },
       {
-        id: 27,
+        id: 30,
         instruction: 'Recentre on the region of interest at medium magnification.',
         hint: 'Drag the stage to bring the blue circle to centre.',
         unlocks: ['stage-xy'],
@@ -251,41 +271,64 @@
         success: { type: 'valueInRange', key: 'stage', spot: 'stageXY_medMag' }
       },
       {
-        id: 28,
+        id: 31,
         instruction: 'Increase magnification to HIGH.',
-        hint: 'Under Magnification, press High.',
+        hint: 'Press High under Magnification.',
         unlocks: ['magnification'],
         success: { type: 'selectValue', key: 'magnification', value: 'high' }
       },
       {
-        id: 29,
-        instruction: 'Recentre on the region of interest at high magnification.',
-        hint: 'Fine-tune the stage so the blue circle is centred.',
-        unlocks: ['stage-xy'],
-        roiTarget: { x: 35, y: 25 },
-        prelude: { offset: 'stage', amount: { x: -6, y: 5 } },
-        success: { type: 'valueInRange', key: 'stage', spot: 'stageXY_highMag' }
-      },
-      {
-        id: 30,
-        instruction: 'Focus the image using the Objective Lens Focus knob.',
-        hint: 'Turn Focus slowly until the image sharpens — aim for near zero.',
-        unlocks: ['focus'],
-        prelude: { set: { key: 'focus', value: 18 } },
-        success: { type: 'valueInRange', key: 'focus', spot: 'focus_sharp' }
-      },
-      {
-        id: 31,
-        instruction: 'Insert the camera to prepare for acquisition.',
-        hint: 'Under Capture, press Camera Insert.',
-        unlocks: ['camera-insert'],
-        success: { type: 'selectValue', key: 'cameraInserted', value: true }
-      },
-      {
         id: 32,
-        instruction: 'Press ACQUIRE & DOWNLOAD to save the image.',
-        hint: 'Final step — press the Acquire button.',
+        instruction: 'Focus the image. Use the Coarse focus first, then Fine focus for sharpness.',
+        hint: 'Turn the focus knobs until the image is sharp — aim for near zero.',
+        unlocks: ['focus-coarse', 'focus-fine'],
+        prelude: { set: { key: 'focusCoarse', value: 18 } },
+        success: {
+          type: 'composite',
+          all: [
+            { type: 'selectValue', key: 'focusCoarseAdjusted', value: true },
+            { type: 'valueInRange', key: 'focusCoarse', spot: 'focus_sharp' },
+            { type: 'selectValue', key: 'focusFineAdjusted', value: true },
+            { type: 'valueInRange', key: 'focusFine', spot: 'focus_sharp' }
+          ]
+        }
+      },
+      {
+        id: 33,
+        instruction: 'Insert the camera, start Live View, and raise the screen.',
+        hint: 'In the Camera drawer: Insert → Live → Raise Screen.',
+        unlocks: ['camera-insert', 'live-view', 'screen-raise'],
+        pcDrawer: 'cam',
+        success: {
+          type: 'composite',
+          all: [
+            { type: 'selectValue', key: 'cameraInserted', value: true },
+            { type: 'selectValue', key: 'cameraLiveView', value: true },
+            { type: 'selectValue', key: 'screenRaised', value: true }
+          ]
+        }
+      },
+      {
+        id: 34,
+        instruction: 'Switch DEF/STIG to O.STIG and correct objective astigmatism while watching the FFT — make the rings round.',
+        hint: 'Press O.Stig, then drag the DEF/STIG pad until FFT rings are circular.',
+        unlocks: ['def-stig-mode', 'def-stig-pad'],
+        pcDrawer: 'cam',
+        prelude: { offset: 'objStig', amount: { x: -20, y: 18 } },
+        success: {
+          type: 'composite',
+          all: [
+            { type: 'selectValue', key: 'defStigMode', value: 'objStig' },
+            { type: 'valueInRange', key: 'objStig', spot: 'objStig_round' }
+          ]
+        }
+      },
+      {
+        id: 35,
+        instruction: 'Press ACQUIRE to capture and download the image.',
+        hint: 'Press Acquire in the Camera drawer.',
         unlocks: ['acquire'],
+        pcDrawer: 'cam',
         success: { type: 'selectValue', key: 'imageAcquired', value: true }
       }
     ]
@@ -297,6 +340,7 @@
       brightness_diverge: { predicate: 'v >= 65 && v <= 80' },
       apertureAlign_cond: { predicate: 'abs(x) <= 12 && abs(y) <= 12' },
       stigmator_circular: { predicate: 'abs(x) <= 12 && abs(y) <= 12' },
+      objStig_round:      { predicate: 'abs(x) <= 12 && abs(y) <= 12' },
       stageZ_eucentric:   { predicate: 'abs(v) <= 5' },
       apertureAlign_obj:  { predicate: 'abs(x) <= 12 && abs(y) <= 12' },
       stageXY_lowMag:     { predicate: 'abs(x - 35) <= 15 && abs(y - 25) <= 15' },
@@ -308,42 +352,14 @@
     samples: {
       nanoparticles: {
         image: '../assets/images/microscope/samples/nanoparticles/nanoparticles.png',
-        // Scale factor applied at each mag level. Lower scale = more particles
-        // visible (zoomed out). The base image is "high mag" — 1.0.
         scales: { low: 0.25, medium: 0.55, high: 1.0 }
       }
     },
-    // Hotspot coordinates are % of the column image bounds.
-    // Calibrated for the ray diagram image (574×829, aspect 0.692).
-    // Specimen/holder zone:      x=8-88%, y=32-39%  → centre x=48%, y=36%
-    // Condenser aperture zone:   x=20-86%, y=19-26% → centre x=53%, y=23%
-    // Objective aperture zone:   x=11-71%, y=47-54% → centre x=41%, y=51%
-    // labelPos: placed on the right edge where labels appear in the diagram.
     diagramHotspots: {
-      'remove-holder':    {
-        x: 44, y: 46, w: 15, h: 4.5,
-        labelPos: { x: 71, y: 43.5, w: 17, h: 4.8 },
-        labelText: 'Specimen',
-        action: 'Remove'
-      },
-      'insert-specimen':  {
-        x: 44, y: 46, w: 15, h: 4.5,
-        labelPos: { x: 71, y: 43.5, w: 17, h: 4.8 },
-        labelText: 'Specimen',
-        action: 'Insert'
-      },
-      'insert-condenser': {
-        x: 39, y: 22, w: 17, h: 4.5,
-        labelPos: { x: 13, y: 20.5, w: 21, h: 4.8 },
-        labelText: 'Condenser aperture',
-        action: 'Insert'
-      },
-      'insert-objective': {
-        x: 40, y: 41.5, w: 16, h: 4.5,
-        labelPos: { x: 14, y: 39.5, w: 20, h: 4.8 },
-        labelText: 'Objective aperture',
-        action: 'Insert'
-      }
+      'remove-holder':    { x: 47.0, y: 33.5, w: 12.0, h: 8.2, actionPos: { x: 68.5, y: 34.4, w: 13.0, h: 3.8 }, labelText: 'Specimen holder', action: 'Remove' },
+      'insert-specimen':  { x: 47.0, y: 33.5, w: 12.0, h: 8.2, actionPos: { x: 68.5, y: 34.4, w: 13.0, h: 3.8 }, labelText: 'Specimen holder', action: 'Insert' },
+      'insert-condenser': { x: 37.5, y: 24.6, w: 12.2, h: 7.2, actionPos: { x: 14.0, y: 29.4, w: 12.0, h: 3.8 }, labelText: 'Condenser aperture', action: 'Insert' },
+      'insert-objective': { x: 46.6, y: 43.6, w: 12.2, h: 7.0, actionPos: { x: 68.5, y: 45.8, w: 13.0, h: 3.8 }, labelText: 'Objective aperture', action: 'Insert' }
     }
   };
 })();

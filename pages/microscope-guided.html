@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="../assets/css/global.css" />
   <link rel="stylesheet" href="../assets/css/guided.css" />
   <link rel="stylesheet" href="../assets/css/controls-panel.css" />
+  <link rel="stylesheet" href="../assets/css/module2-control-panels-3d.css" />
+  <link rel="stylesheet" href="../assets/css/module2-tem-pc.css" />
+  <link rel="stylesheet" href="../assets/css/module2-camera-pc.css" />
 </head>
 <body>
 
@@ -14,7 +17,7 @@
 
   <main class="guided-page">
 
-    <!-- Status strip -->
+    <!-- ═══════════ STATUS STRIP ═══════════ -->
     <div class="guided-status">
       <div class="guided-status__left">
         <span class="guided-status__metric">
@@ -29,11 +32,9 @@
           HT <strong id="ind-ht">—</strong>
         </span>
       </div>
-
       <div class="guided-status__center">
         <span class="guided-status__brand">TEM · GUIDED SESSION</span>
       </div>
-
       <div class="guided-status__right">
         <span>SAMPLE <strong id="ind-sample">—</strong></span>
         <span>MAG <strong id="ind-mag">—</strong></span>
@@ -47,46 +48,42 @@
           <span>THEORY</span>
         </button>
       </div>
-
       <div class="guided-status__progress" aria-hidden="true">
         <div class="guided-status__progress-fill" id="progress-fill"></div>
       </div>
     </div>
 
-    <!-- Context bar -->
+    <!-- ═══════════ INSTRUCTION BAR ═══════════ -->
     <div class="guided-context">
       <a href="microscope.html" class="guided-context__back">
         <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <path d="M10 2L4 8l6 6"/>
         </svg>
-        Back to Mode Select
+        Back
       </a>
 
       <div class="guided-context__instr">
         <div class="guided-context__instr-icon" aria-hidden="true">
-          <svg viewBox="0 0 20 20" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="10" cy="10" r="7.5"/>
-            <path d="M10 6v4"/>
-            <circle cx="10" cy="13.5" r="0.6" fill="currentColor"/>
-          </svg>
+          <span class="guided-context__pointer-hand">☞</span>
+          <span class="guided-context__pointer-ring"></span>
         </div>
         <div class="guided-context__instr-body">
           <span class="guided-context__instr-text" id="instr-text">
-            Guided session is being prepared. Step logic activates in Phase 2.
+            Preparing guided session…
           </span>
           <span class="guided-context__instr-hint" id="instr-hint"></span>
         </div>
       </div>
 
       <div class="guided-context__actions">
-        <button class="guided-context__restart guided-context__restart--undo" id="btn-undo-step" title="Reset and retry the current step">
+        <button class="guided-context__restart guided-context__restart--undo" id="btn-undo-step" title="Go back one guided step">
           <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <path d="M3 8a5 5 0 1 0 1.5-3.5"/>
             <path d="M3 3v2.5h2.5"/>
           </svg>
-          Undo Step
+          Undo
         </button>
-        <button class="guided-context__restart" id="btn-restart" title="Restart the entire session from step 1">
+        <button class="guided-context__restart" id="btn-restart" title="Restart entire session">
           <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <path d="M2 8a6 6 0 1 0 1.8-4.2M2 2v4h4"/>
           </svg>
@@ -95,13 +92,92 @@
       </div>
     </div>
 
-    <!-- ===========================================================
-         Two-panel body: viewer (left) · single control rail (right)
-         =========================================================== -->
+    <!-- ═══════════ THREE-COLUMN BODY ═══════════ -->
     <div class="guided-body">
 
-      <!-- =================== LEFT VIEWER =================== -->
-      <section class="viewer">
+      <!-- ════════ L1 — LEFT CONTROL PANEL ════════ -->
+      <aside class="ctl-panel ctl-panel--left" id="panel-l1">
+        <div class="ctl-panel__header">
+          <span class="ctl-panel__title">Left Control Panel</span>
+          <span class="ctl-panel__badge">L1</span>
+        </div>
+        <div class="ctl-panel__scroll">
+
+          <!-- BEAM -->
+          <div class="dz" data-zone="beam">
+            <div class="dz__label">Beam</div>
+            <div class="dz__body">
+              <div class="ctl ctl--row-2" data-control="beam-on">
+                <div class="ctl__label">Beam</div>
+                <button class="pbtn" data-action="beam-on"><span class="pbtn__led"></span>On</button>
+              </div>
+              <div class="ctl ctl--center" data-control="brightness">
+                <div class="knob" data-knob="brightness" data-min="0" data-max="100" data-value="50">
+                  <div class="knob__ring"></div>
+                  <div class="knob__arc"></div>
+                  <div class="knob__body"></div>
+                  <div class="knob__value">50</div>
+                </div>
+                <div class="ctl__label ctl__label--below">Brightness</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DEF / STIG -->
+          <div class="dz" data-zone="def-stig">
+            <div class="dz__label">DEF / STIG</div>
+            <div class="dz__body">
+              <div class="ctl ctl--stack" data-control="def-stig-mode">
+                <div class="ctl__label">Mode</div>
+                <div class="pbtn-group" style="--cols:3;">
+                  <button class="pbtn" data-action="def-stig-mode" data-value="shift">Shift</button>
+                  <button class="pbtn" data-action="def-stig-mode" data-value="condStig">C.Stig</button>
+                  <button class="pbtn" data-action="def-stig-mode" data-value="objStig">O.Stig</button>
+                </div>
+              </div>
+              <div class="ctl ctl--center" data-control="def-stig-pad">
+                <div class="trackpad" data-trackpad="def-stig" data-range="-50,50">
+                  <div class="trackpad__dot"></div>
+                </div>
+                <div class="ctl__label ctl__label--below" id="def-stig-label">DEF / STIG X · Y</div>
+              </div>
+              <div class="defstig-readout-bar">
+                <div class="defstig-readout-bar__cell">
+                  <span class="defstig-readout-bar__key">X</span>
+                  <span class="defstig-readout-bar__val" id="readout-def-x">0</span>
+                </div>
+                <div class="defstig-readout-bar__divider"></div>
+                <div class="defstig-readout-bar__cell">
+                  <span class="defstig-readout-bar__key">Y</span>
+                  <span class="defstig-readout-bar__val" id="readout-def-y">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BEAM CURRENT -->
+          <div class="dz" data-zone="beam-current">
+            <div class="dz__label">Beam Current</div>
+            <div class="dz__body">
+              <div class="ctl ctl--center" data-control="beam-current">
+                <div class="knob" data-knob="beam-current" data-min="0" data-max="100" data-value="50">
+                  <div class="knob__ring"></div>
+                  <div class="knob__arc"></div>
+                  <div class="knob__body"></div>
+                  <div class="knob__value">50</div>
+                </div>
+                <div class="ctl__label ctl__label--below">Beam Current</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- ════════ CENTER — VIEWPORT + PC DRAWER ════════ -->
+      <section class="viewport-wrap" id="viewport-wrap">
+
+        <!-- Viewport header -->
         <header class="viewer__header">
           <div class="viewer__tabs" role="tablist" aria-label="View">
             <button class="viewer__tab is-active" role="tab" aria-selected="true" data-view="column">
@@ -114,7 +190,7 @@
             </button>
           </div>
           <div class="viewer__header-right">
-            <div class="viewer__caption" id="viewer-caption">FIG · ELECTRON OPTICAL COLUMN</div>
+            <div class="viewer__caption" id="viewer-caption">ELECTRON OPTICAL COLUMN</div>
             <button type="button" class="viewer__fullscreen" id="btn-fullscreen" title="Toggle full screen">
               <svg class="viewer__fs-icon-enter" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                 <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/>
@@ -127,172 +203,416 @@
           </div>
         </header>
 
-        <div class="viewer__stage">
+        <!-- Viewport stage -->
+        <div class="viewer__stage" id="viewer-stage">
+          <!-- Column view -->
           <div class="viewer__panel is-active" data-view-panel="column">
             <img src="../assets/images/microscope/diagram/tem-guided-cutaway.png"
-                 alt="TEM column cutaway with beam path and key apertures"
+                 alt="TEM column cutaway"
                  class="viewer__column-image" />
-            <div class="viewer__column-beam" id="column-beam" aria-hidden="true">
-              <div class="column-beam__source"></div>
-              <div class="column-beam__stream"></div>
-              <div class="column-beam__phosphor"></div>
-            </div>
             <div class="viewer__column-hotspots" id="diagram-hotspots"></div>
           </div>
 
+          <!-- Screen view -->
           <div class="viewer__panel" data-view-panel="screen">
             <div class="viewer__screen" id="view-screen">
               <div class="viewer__screen-empty" id="view-empty">SCREEN OFFLINE</div>
             </div>
           </div>
+
+          <!-- PC DRAWER — slides up from bottom of viewport -->
+          <div class="pc-drawer" id="pc-drawer" aria-hidden="false">
+            <div class="pc-drawer__handle" id="pc-drawer-handle" role="button" tabindex="0" aria-expanded="false" aria-controls="pc-tem pc-cam" title="Open PC drawer">
+              <span class="pc-drawer__handle-label" id="pc-drawer-title">PC · TEM CONTROL</span>
+              <span class="pc-drawer__handle-icon">▾</span>
+            </div>
+
+            <!-- PC1: JEOL JEM-2100 TEM Control Software -->
+            <div class="pc-drawer__content pc-drawer__content--tem" id="pc-tem" hidden>
+              <div class="pc-screen pc-screen--temcon">
+                <div class="temcon-window" aria-label="JEOL JEM-2100 TEM control software">
+
+                  <div class="temcon-titlebar">
+                    <div class="temcon-titlebar__caption">
+                      <span class="temcon-titlebar__icon" aria-hidden="true">✣</span>
+                      <span>Operation</span>
+                    </div>
+                    <div class="temcon-titlebar__buttons" aria-hidden="true">
+                      <span>—</span><span>□</span><span>×</span>
+                    </div>
+                  </div>
+
+                  <div class="temcon-status" aria-label="TEM main data display area">
+                    <div class="temcon-status__lamps">
+                      <div class="temcon-lamp" id="pc-ht-lamp">HT</div>
+                      <div class="temcon-lamp temcon-lamp--beam" id="pc-beam-lamp">Beam<br><strong>OFF</strong></div>
+                    </div>
+                    <div class="temcon-status__cell temcon-status__cell--illumination">
+                      <div><span>Acc.</span> <strong id="pc-acc-value">— kV</strong></div>
+                      <div><span>Beam Current</span> <strong id="pc-beam-current">50 µA</strong></div>
+                      <div class="temcon-status__inline"><strong>TEM</strong><strong>Spot 1</strong></div>
+                      <div class="temcon-status__inline"><span></span><strong>Alpha 3</strong></div>
+                    </div>
+                    <div class="temcon-status__cell">
+                      <div class="temcon-status__pair"><span>MAG :</span><strong id="pc-mag-value">X20k</strong></div>
+                      <div class="temcon-status__pair"><span>Defocus:</span><strong id="pc-defocus-value">0.0 nm</strong></div>
+                    </div>
+                    <div class="temcon-status__cell">
+                      <div class="temcon-status__pair"><span>Cur. Dens.</span><strong id="pc-current-density">0.8 pA/cm²</strong></div>
+                      <div class="temcon-status__pair"><span>Exp. Time</span><strong>1 sec M</strong></div>
+                    </div>
+                    <div class="temcon-status__cell temcon-status__cell--stage">
+                      <div><span>X=</span> <strong id="pc-stg-x">0.0</strong></div>
+                      <div><span>Y=</span> <strong id="pc-stg-y">0.0</strong></div>
+                      <div><span>Z=</span> <strong id="pc-stg-z">0.0</strong></div>
+                      <div><span>TX=</span> <strong id="pc-stg-tx">0.0</strong></div>
+                      <div><span>TY=</span> <strong id="pc-stg-ty">0.0</strong></div>
+                      <div class="temcon-status__stage-mode">Super Fine</div>
+                    </div>
+                  </div>
+
+                  <div class="temcon-client">
+                    <div class="temcon-main-tabs" role="tablist" aria-label="Operation pages">
+                      <button type="button" class="temcon-tab is-selected" role="tab" aria-selected="true" data-temcon-tab="standard">Standard</button>
+                      <button type="button" class="temcon-tab" role="tab" aria-selected="false" data-temcon-tab="stage">Stage</button>
+                    </div>
+
+                    <section class="temcon-page is-selected" role="tabpanel" data-temcon-page="standard">
+                      <fieldset class="temcon-group temcon-group--illumination">
+                        <legend>Illumination</legend>
+                        <div class="temcon-mode-row">
+                          <span class="temcon-field-label">Mode</span>
+                          <label class="temcon-radio"><input type="radio" checked disabled><span>TEM</span></label>
+                          <label class="temcon-radio"><input type="radio" disabled><span>EDS</span></label>
+                          <label class="temcon-radio"><input type="radio" disabled><span>NBD</span></label>
+                          <label class="temcon-radio"><input type="radio" disabled><span>CBD</span></label>
+                        </div>
+                        <div class="temcon-illumination-row">
+                          <div class="temcon-stepper">
+                            <span class="temcon-field-label">Spot Size:</span>
+                            <button type="button" class="temcon-btn temcon-btn--arrow" disabled aria-label="Decrease spot size">◀</button>
+                            <output class="temcon-value-box">1</output>
+                            <button type="button" class="temcon-btn temcon-btn--arrow" disabled aria-label="Increase spot size">▶</button>
+                          </div>
+                          <div class="temcon-stepper">
+                            <span class="temcon-field-label">Alpha:</span>
+                            <button type="button" class="temcon-btn temcon-btn--arrow" disabled aria-label="Decrease alpha">◀</button>
+                            <output class="temcon-value-box">3</output>
+                            <button type="button" class="temcon-btn temcon-btn--arrow" disabled aria-label="Increase alpha">▶</button>
+                          </div>
+                          <div class="temcon-bright-dark">
+                            <span class="temcon-field-label">Bright/Dark</span>
+                            <label class="temcon-radio"><input type="radio" checked disabled><span>Bright</span></label>
+                            <label class="temcon-radio"><input type="radio" disabled><span>Dark</span></label>
+                            <output class="temcon-select-box">1 <span>▼</span></output>
+                          </div>
+                        </div>
+                      </fieldset>
+
+                      <fieldset class="temcon-group">
+                        <legend>Function</legend>
+                        <div class="temcon-function-row">
+                          <button type="button" class="temcon-btn" data-temcon-mode="mag1" disabled>MAG</button>
+                          <button type="button" class="temcon-btn" disabled>MAG2</button>
+                          <button type="button" class="temcon-btn" data-temcon-mode="lowmag" disabled>LMAG</button>
+                          <button type="button" class="temcon-btn" disabled>SAM</button>
+                          <button type="button" class="temcon-btn" data-temcon-mode="diff" disabled>DIFF</button>
+                          <button type="button" class="temcon-btn" disabled>MAG3</button>
+                          <span class="temcon-function-spacer"></span>
+                          <button type="button" class="temcon-btn temcon-btn--arrow" disabled>◀</button>
+                          <button type="button" class="temcon-btn temcon-btn--arrow" disabled>▶</button>
+                        </div>
+                      </fieldset>
+
+                      <fieldset class="temcon-group">
+                        <legend>DEF Select</legend>
+                        <div class="temcon-def-grid">
+                          <span class="temcon-field-label">Alignment:</span>
+                          <button type="button" class="temcon-btn" disabled>Gun</button>
+                          <button type="button" class="temcon-btn" disabled>CL</button>
+                          <button type="button" class="temcon-btn" disabled>Image</button>
+                          <button type="button" class="temcon-btn" disabled>PROJ</button>
+                          <span class="temcon-field-label">Stigmator:</span>
+                          <button type="button" class="temcon-btn" data-temcon-stig="condStig" disabled>CL</button>
+                          <button type="button" class="temcon-btn" data-temcon-stig="objStig" disabled>OL</button>
+                          <button type="button" class="temcon-btn" disabled>IL</button>
+                        </div>
+                      </fieldset>
+
+                      <div class="temcon-focus-row">
+                        <label>OBJ Focus Step: <output class="temcon-select-box">1 <span>▼</span></output></label>
+                        <label>OL Stig: <output class="temcon-select-box">1 <span>▼</span></output></label>
+                      </div>
+
+                      <div class="temcon-subtabs" role="tablist" aria-label="Standard subpages">
+                        <button type="button" class="temcon-subtab is-selected" data-temcon-subtab="wobbler">Wobbler</button>
+                        <button type="button" class="temcon-subtab" data-temcon-subtab="screen">Screen</button>
+                        <button type="button" class="temcon-subtab" data-temcon-subtab="settings">Settings</button>
+                      </div>
+
+                      <div class="temcon-subpage is-selected" data-temcon-subpage="wobbler">
+                        <button type="button" class="temcon-btn" data-temcon-wobbler="ht" disabled>HT</button>
+                        <button type="button" class="temcon-btn" data-temcon-wobbler="obj" disabled>OBJ</button>
+                        <button type="button" class="temcon-btn" data-temcon-wobbler="image-x" disabled>Image X</button>
+                        <button type="button" class="temcon-btn" disabled>Y</button>
+                        <span></span>
+                        <button type="button" class="temcon-btn" disabled>Freq/Amp...</button>
+                      </div>
+                      <div class="temcon-subpage" data-temcon-subpage="screen" hidden>
+                        <div class="temcon-info-grid">
+                          <span>Fluorescent Screen</span><strong id="pc-screen-state">DOWN</strong>
+                          <span>Camera</span><strong id="pc-camera-state">RETRACTED</strong>
+                        </div>
+                      </div>
+                      <div class="temcon-subpage" data-temcon-subpage="settings" hidden>
+                        <div class="temcon-info-grid">
+                          <span>Control Sensitivity</span><strong>Super Fine</strong>
+                          <span>Communication</span><strong class="temcon-ok">TEM Connected</strong>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section class="temcon-page" role="tabpanel" data-temcon-page="stage" hidden>
+                      <div class="temcon-stage-layout">
+                        <fieldset class="temcon-group">
+                          <legend>Specimen Holder</legend>
+                          <div class="ctl ctl--stack temcon-guided-control" data-control="holder-type">
+                            <div class="temcon-field-label">Holder Type</div>
+                            <div class="pbtn-group temcon-choice-group" style="--cols:2;">
+                              <button class="pbtn" data-action="holder-type" data-value="single-tilt">Single Tilt</button>
+                              <button class="pbtn" data-action="holder-type" data-value="double-tilt">Double Tilt</button>
+                            </div>
+                          </div>
+                          <div class="temcon-info-grid temcon-info-grid--compact">
+                            <span>Holder Status</span><strong id="pc-holder-status">NOT SELECTED</strong>
+                            <span>Specimen</span><strong id="pc-specimen-status">OUTSIDE COLUMN</strong>
+                          </div>
+                        </fieldset>
+
+                        <fieldset class="temcon-group">
+                          <legend>Stage Position</legend>
+                          <div class="temcon-stage-coordinates">
+                            <div><span>X</span><strong id="pc-stage-x-detail">0.000</strong><small>µm</small></div>
+                            <div><span>Y</span><strong id="pc-stage-y-detail">0.000</strong><small>µm</small></div>
+                            <div><span>Z</span><strong id="pc-stage-z-detail">0.000</strong><small>µm</small></div>
+                            <div><span>TX</span><strong>0.00</strong><small>°</small></div>
+                            <div><span>TY</span><strong>0.00</strong><small>°</small></div>
+                          </div>
+                          <div class="ctl ctl--row-2 temcon-guided-control" data-control="stage-neutralize">
+                            <div class="temcon-field-label">Stage</div>
+                            <button class="pbtn" data-action="stage-neutralize"><span class="pbtn__led"></span>Neutralize</button>
+                          </div>
+                          <div class="temcon-stage-mode-row">
+                            <label class="temcon-radio"><input type="radio" disabled><span>Coarse</span></label>
+                            <label class="temcon-radio"><input type="radio" disabled><span>Fine</span></label>
+                            <label class="temcon-radio"><input type="radio" checked disabled><span>Super Fine</span></label>
+                          </div>
+                        </fieldset>
+
+                        <fieldset class="temcon-group temcon-group--vacuum">
+                          <legend>Specimen Exchange / Vacuum</legend>
+                          <div class="temcon-vacuum-line">
+                            <span class="pc-readout__indicator" id="pc-vac-ind"></span>
+                            <span>Airlock</span>
+                            <strong id="pc-vac-text">NOT READY</strong>
+                          </div>
+                          <div class="temcon-info-grid temcon-info-grid--compact">
+                            <span>Column Vacuum</span><strong id="pc-column-vacuum">READY</strong>
+                            <span>Airlock Valve</span><strong id="pc-airlock-valve">CLOSED</strong>
+                            <span>Pressure</span><strong id="pc-vac-pressure">— Pa</strong>
+                          </div>
+                          <div class="temcon-progress" aria-hidden="true"><span id="pc-vac-progress"></span></div>
+                        </fieldset>
+                      </div>
+                    </section>
+                  </div>
+
+                  <div class="temcon-statusbar">
+                    <span id="pc-system-message">TEM Connected</span>
+                    <span>Communication: <strong class="temcon-ok">OK</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- PC2: Legacy scientific camera workstation -->
+            <div class="pc-drawer__content pc-drawer__content--cam" id="pc-cam" hidden>
+              <div class="camera-workstation" aria-label="TEM camera acquisition software">
+                <div class="camera-titlebar">
+                  <div class="camera-titlebar__caption">
+                    <span class="camera-titlebar__icon" aria-hidden="true">DM</span>
+                    <span>DigitalMicrograph — Camera View</span>
+                  </div>
+                  <div class="camera-titlebar__buttons" aria-hidden="true">
+                    <span>—</span><span>□</span><span>×</span>
+                  </div>
+                </div>
+
+                <div class="camera-menubar" aria-label="Application menu">
+                  <span>File</span><span>Edit</span><span>Camera</span><span>Acquire</span><span>Process</span><span>Display</span><span>Window</span><span>Help</span>
+                </div>
+
+                <div class="camera-toolbar" aria-hidden="true">
+                  <button type="button" tabindex="-1">New</button>
+                  <button type="button" tabindex="-1">Open</button>
+                  <button type="button" tabindex="-1">Save</button>
+                  <span class="camera-toolbar__sep"></span>
+                  <button type="button" tabindex="-1">1:1</button>
+                  <button type="button" tabindex="-1">Fit</button>
+                  <button type="button" tabindex="-1">ROI</button>
+                  <span class="camera-toolbar__sep"></span>
+                  <div class="camera-toolbar__status"><span id="pc-cam-comm-led"></span>Camera communication OK</div>
+                </div>
+
+                <div class="camera-desktop">
+                  <section class="camera-image-window">
+                    <div class="camera-child-titlebar">
+                      <span id="pc-cam-file-name">Live View — Nanoparticles</span>
+                      <span class="camera-child-titlebar__buttons" aria-hidden="true">_ □ ×</span>
+                    </div>
+                    <div class="camera-image-tools" aria-hidden="true">
+                      <span>Pointer</span><span>Zoom</span><span>Line ROI</span><span>Measure</span>
+                      <strong id="pc-cam-zoom">100%</strong>
+                    </div>
+                    <div class="pc-cam-live" id="pc-cam-live">
+                      <div class="pc-cam-live__placeholder" id="pc-cam-placeholder">CAMERA RETRACTED — NO LIVE SIGNAL</div>
+                      <canvas class="pc-cam-live__canvas" id="pc-cam-canvas" width="640" height="480"></canvas>
+                      <div class="camera-live-overlay">
+                        <span id="pc-cam-overlay-mag">MAG X100k</span>
+                        <span id="pc-cam-overlay-exp">1.00 s</span>
+                      </div>
+                    </div>
+                    <div class="camera-image-statusbar">
+                      <span id="pc-cam-resolution">2048 × 2048</span>
+                      <span>16 bit</span>
+                      <span id="pc-cam-cursor">X: 1024&nbsp;&nbsp;Y: 1024</span>
+                      <span id="pc-cam-image-state">No image</span>
+                    </div>
+                  </section>
+
+                  <aside class="camera-side-column">
+                    <section class="camera-palette camera-palette--acquisition">
+                      <div class="camera-palette__title">Camera Acquisition</div>
+                      <div class="camera-palette__body">
+                        <div class="camera-status-grid">
+                          <span>Camera</span><strong id="pc-cam-camera-state">Retracted</strong>
+                          <span>Fluor. Screen</span><strong id="pc-cam-screen-state">Down</strong>
+                          <span>Live View</span><strong id="pc-cam-live-state">Stopped</strong>
+                          <span>Exposure</span><strong>1.00 s</strong>
+                          <span>Binning</span><strong>1 × 1</strong>
+                          <span>Readout</span><strong>Normal</strong>
+                        </div>
+
+                        <div class="camera-control-stack pc-cam-controls">
+                          <div class="ctl camera-guided-control" data-control="camera-insert">
+                            <button class="pbtn pbtn--full" data-action="camera-insert"><span class="pbtn__led"></span><span>Insert Camera</span></button>
+                          </div>
+                          <div class="ctl camera-guided-control" data-control="live-view">
+                            <button class="pbtn pbtn--full" data-action="live-view"><span class="pbtn__led"></span><span>Start Live View</span></button>
+                          </div>
+                          <div class="ctl camera-guided-control" data-control="screen-raise">
+                            <button class="pbtn pbtn--full" data-action="screen-raise"><span class="pbtn__led"></span><span>Raise Fluorescent Screen</span></button>
+                          </div>
+                          <div class="ctl camera-guided-control" data-control="acquire">
+                            <button class="pbtn pbtn--full camera-acquire-btn" data-action="acquire"><span class="pbtn__led"></span><span>Acquire Image</span></button>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section class="camera-palette camera-palette--fft" id="pc-cam-fft">
+                      <div class="camera-palette__title">Live FFT</div>
+                      <canvas class="pc-cam-fft__canvas" id="pc-fft-canvas" width="220" height="180"></canvas>
+                      <div class="camera-fft-status"><span>Rings:</span><strong id="pc-cam-fft-state">No signal</strong></div>
+                    </section>
+                  </aside>
+                </div>
+
+                <div class="camera-statusbar">
+                  <span id="pc-cam-message">Camera workstation ready</span>
+                  <span>CCD Temperature: −25.0 °C</span>
+                  <span id="pc-cam-ready-state">READY</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- =================== RIGHT CONTROL RAIL (all controls, workflow order) =================== -->
-      <aside class="ctl-rail ctl-rail--right">
-        <div class="ctl-rail__inner">
+      <!-- ════════ R1 — RIGHT CONTROL PANEL ════════ -->
+      <aside class="ctl-panel ctl-panel--right" id="panel-r1">
+        <div class="ctl-panel__header">
+          <span class="ctl-panel__title">Right Control Panel</span>
+          <span class="ctl-panel__badge">R1</span>
+        </div>
+        <div class="ctl-panel__scroll">
 
-          <!-- 1. Gun & Vacuum -->
-          <div class="dz" data-zone="gun-vacuum">
-            <div class="dz__label">Gun &amp; Vacuum</div>
+          <!-- IMAGING MODE -->
+          <div class="dz" data-zone="imaging-mode">
+            <div class="dz__label">Imaging Mode</div>
             <div class="dz__body">
-              <div class="ctl ctl--stack" data-control="sample">
-                <div class="ctl__label">Sample</div>
-                <div class="pbtn-group pbtn-group--grid-2">
-                  <button class="pbtn" data-action="sample" data-value="nanoparticles">Nanoparticles</button>
-                  <button class="pbtn" data-action="sample" data-value="zebrafish" disabled>Zebrafish</button>
-                  <button class="pbtn" data-action="sample" data-value="metal" disabled>Metal</button>
-                  <button class="pbtn" data-action="sample" data-value="mineral" disabled>Mineral</button>
-                </div>
-              </div>
-
-              <div class="ctl ctl--row-2" data-control="airlock">
-                <div class="ctl__label">Airlock</div>
-                <button class="pbtn" data-action="airlock-pump"><span class="pbtn__led"></span>Pump</button>
-              </div>
-
-              <div class="ctl ctl--row-2" data-control="specimen-insert">
-                <div class="ctl__label">Specimen</div>
-                <button class="pbtn" data-action="specimen-insert"><span class="pbtn__led"></span>Insert</button>
-              </div>
-
-              <div class="ctl ctl--stack" data-control="acc-voltage">
-                <div class="ctl__label">Acc. Voltage</div>
-                <div class="pbtn-group" style="--cols:2;">
-                  <button class="pbtn" data-action="acc-voltage" data-value="120">120 kV</button>
-                  <button class="pbtn" data-action="acc-voltage" data-value="200">200 kV</button>
-                </div>
-              </div>
-
-              <div class="ctl ctl--row-2" data-control="std-focus">
-                <div class="ctl__label">Std Focus</div>
-                <button class="pbtn" data-action="std-focus"><span class="pbtn__led"></span>Reset</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 2. Beam -->
-          <div class="dz" data-zone="beam">
-            <div class="dz__label">Beam</div>
-            <div class="dz__body">
-              <div class="ctl ctl--row-2" data-control="beam-on">
-                <div class="ctl__label">Beam</div>
-                <button class="pbtn" data-action="beam-on"><span class="pbtn__led"></span>On</button>
-              </div>
-
-              <div class="dz__knob-row">
-                <div class="ctl ctl--center" data-control="beam-current">
-                  <div class="knob" data-knob="beam-current" data-min="0" data-max="100" data-value="50">
-                    <div class="knob__ring"></div>
-                    <div class="knob__arc"></div>
-                    <div class="knob__body"></div>
-                    <div class="knob__value">50</div>
-                  </div>
-                  <div class="ctl__label ctl__label--below">Beam Current</div>
-                </div>
-
-                <div class="ctl ctl--center" data-control="brightness">
-                  <div class="knob" data-knob="brightness" data-min="0" data-max="100" data-value="50">
-                    <div class="knob__ring"></div>
-                    <div class="knob__arc"></div>
-                    <div class="knob__body"></div>
-                    <div class="knob__value">50</div>
-                  </div>
-                  <div class="ctl__label ctl__label--below">Brightness</div>
-                </div>
-              </div>
-
-              <div class="dz__pad-row">
-                <div class="ctl ctl--center" data-control="beam-shift">
-                  <div class="trackpad" data-trackpad="beam-shift" data-range="-50,50">
-                    <div class="trackpad__dot"></div>
-                  </div>
-                  <div class="ctl__label ctl__label--below">Beam Shift</div>
-                </div>
-
-                <div class="ctl ctl--center" data-control="stigmator">
-                  <div class="trackpad" data-trackpad="stigmator" data-range="-50,50">
-                    <div class="trackpad__dot"></div>
-                  </div>
-                  <div class="ctl__label ctl__label--below">Stigmator</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 3. Apertures -->
-          <div class="dz" data-zone="apertures">
-            <div class="dz__label">Apertures</div>
-            <div class="dz__body">
-              <div class="ctl ctl--stack" data-control="aperture-select">
-                <div class="ctl__label">Select</div>
+              <div class="ctl ctl--stack" data-control="imaging-mode">
                 <div class="pbtn-group" style="--cols:3;">
-                  <button class="pbtn" data-action="aperture-select" data-value="condenser">Cond.</button>
-                  <button class="pbtn" data-action="aperture-select" data-value="objective">Obj.</button>
-                  <button class="pbtn" data-action="aperture-select" data-value="sad">SAD</button>
+                  <button class="pbtn" data-action="imaging-mode" data-value="mag1">MAG1</button>
+                  <button class="pbtn" data-action="imaging-mode" data-value="lowmag">LOW</button>
+                  <button class="pbtn" data-action="imaging-mode" data-value="diff">DIFF</button>
                 </div>
-              </div>
-
-              <div class="ctl ctl--stack" data-control="aperture-size">
-                <div class="ctl__label">Size</div>
-                <div class="pbtn-group" style="--cols:3;">
-                  <button class="pbtn" data-action="aperture-size" data-value="small">S</button>
-                  <button class="pbtn" data-action="aperture-size" data-value="medium">M</button>
-                  <button class="pbtn" data-action="aperture-size" data-value="large">L</button>
-                </div>
-              </div>
-
-              <div class="ctl ctl--center" data-control="aperture-align">
-                <div class="trackpad" data-trackpad="aperture-align" data-range="-50,50">
-                  <div class="trackpad__dot"></div>
-                </div>
-                <div class="ctl__label ctl__label--below">Alignment</div>
               </div>
             </div>
           </div>
 
-          <!-- 4. Magnification -->
+          <!-- MAGNIFICATION -->
           <div class="dz" data-zone="magnification">
             <div class="dz__label">Magnification</div>
             <div class="dz__body">
               <div class="ctl ctl--stack" data-control="magnification">
-                <div class="ctl__label">Magnification</div>
                 <div class="pbtn-group" style="--cols:4;">
                   <button class="pbtn" data-action="magnification" data-value="low">Low</button>
                   <button class="pbtn" data-action="magnification" data-value="medium">Med</button>
                   <button class="pbtn" data-action="magnification" data-value="high">High</button>
-                  <button class="pbtn" data-action="magnification" data-value="very-high">V.High</button>
+                  <button class="pbtn" data-action="magnification" data-value="very-high">V.Hi</button>
                 </div>
-              </div>
-
-              <div class="ctl ctl--row-2" data-control="wobbler">
-                <div class="ctl__label">Wobbler</div>
-                <button class="pbtn" data-action="wobbler-toggle"><span class="pbtn__led"></span>Toggle</button>
               </div>
             </div>
           </div>
 
-          <!-- 5. Specimen Stage -->
+          <!-- FOCUS -->
+          <div class="dz" data-zone="focus">
+            <div class="dz__label">OBJ Focus</div>
+            <div class="dz__body">
+              <div class="dz__knob-row">
+                <div class="ctl ctl--center" data-control="focus-coarse">
+                  <div class="knob" data-knob="focus-coarse" data-min="-50" data-max="50" data-value="0">
+                    <div class="knob__ring"></div>
+                    <div class="knob__arc"></div>
+                    <div class="knob__body"></div>
+                    <div class="knob__value">0</div>
+                  </div>
+                  <div class="ctl__label ctl__label--below">Coarse</div>
+                </div>
+                <div class="ctl ctl--center" data-control="focus-fine">
+                  <div class="knob" data-knob="focus-fine" data-min="-50" data-max="50" data-value="0">
+                    <div class="knob__ring"></div>
+                    <div class="knob__arc"></div>
+                    <div class="knob__body"></div>
+                    <div class="knob__value">0</div>
+                  </div>
+                  <div class="ctl__label ctl__label--below">Fine</div>
+                </div>
+              </div>
+              <div class="ctl ctl--row-2" data-control="std-focus">
+                <div class="ctl__label">Std Focus</div>
+                <button class="pbtn" data-action="std-focus"><span class="pbtn__led"></span>Reset</button>
+              </div>
+              <div class="ctl ctl--row-2" data-control="wobbler">
+                <div class="ctl__label">Wobbler</div>
+                <button class="pbtn" data-action="wobbler-toggle"><span class="pbtn__led"></span>Wobble X</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SPECIMEN STAGE -->
           <div class="dz" data-zone="specimen-stage">
             <div class="dz__label">Specimen Stage</div>
             <div class="dz__body">
@@ -311,7 +631,6 @@
                   <div class="ctl__label ctl__label--below">Z</div>
                 </div>
               </div>
-
               <div class="readout-strip">
                 <div class="readout-cell">
                   <div class="readout-cell__key">X µm</div>
@@ -326,99 +645,61 @@
                   <div class="readout-cell__val" id="readout-z">0</div>
                 </div>
               </div>
-
-              <div class="ctl ctl--center" data-control="specimen-tilt">
-                <div class="trackpad" data-trackpad="specimen-tilt" data-range="-30,30">
-                  <div class="trackpad__dot"></div>
-                </div>
-                <div class="ctl__label ctl__label--below">Specimen Tilt</div>
-              </div>
             </div>
           </div>
 
-          <!-- 6. Imaging -->
-          <div class="dz" data-zone="imaging">
-            <div class="dz__label">Imaging</div>
+          <!-- APERTURES -->
+          <div class="dz" data-zone="apertures">
+            <div class="dz__label">Apertures</div>
             <div class="dz__body">
-              <div class="ctl ctl--stack" data-control="imaging-mode">
-                <div class="ctl__label">Imaging Mode</div>
-                <div class="pbtn-group" style="--cols:2;">
-                  <button class="pbtn" data-action="imaging-mode" data-value="tem">TEM</button>
-                  <button class="pbtn" data-action="imaging-mode" data-value="stem">STEM</button>
-                </div>
-              </div>
-
-              <div class="ctl ctl--stack" data-control="mode">
-                <div class="ctl__label">Mode</div>
-                <div class="pbtn-group" style="--cols:2;">
-                  <button class="pbtn" data-action="mode" data-value="diffraction">Diffraction</button>
-                  <button class="pbtn" data-action="mode" data-value="imaging">Imaging</button>
-                </div>
-              </div>
-
-              <div class="ctl ctl--stack" data-control="stem-imaging">
-                <div class="ctl__label">STEM Imaging</div>
-                <div class="pbtn-group" style="--cols:2;">
-                  <button class="pbtn" data-action="stem-imaging" data-value="dark">Dark Field</button>
-                  <button class="pbtn" data-action="stem-imaging" data-value="bright">Bright Field</button>
-                </div>
-              </div>
-
-              <div class="ctl ctl--stack" data-control="stem-scan">
-                <div class="ctl__label">STEM Scan</div>
-                <div class="pbtn-group" style="--cols:2;">
-                  <button class="pbtn" data-action="stem-scan" data-value="spot">Spot</button>
-                  <button class="pbtn" data-action="stem-scan" data-value="raster">Raster</button>
-                </div>
-              </div>
-
-              <div class="ctl ctl--stack" data-control="lens-select">
-                <div class="ctl__label">Lens</div>
+              <div class="ctl ctl--stack" data-control="aperture-select">
+                <div class="ctl__label">Select</div>
                 <div class="pbtn-group" style="--cols:3;">
-                  <button class="pbtn" data-action="lens-select" data-value="condenser">Cond.</button>
-                  <button class="pbtn" data-action="lens-select" data-value="objective">Obj.</button>
-                  <button class="pbtn" data-action="lens-select" data-value="projector">Proj.</button>
+                  <button class="pbtn" data-action="aperture-select" data-value="condenser">Cond.</button>
+                  <button class="pbtn" data-action="aperture-select" data-value="objective">Obj.</button>
+                  <button class="pbtn" data-action="aperture-select" data-value="sad">SAD</button>
                 </div>
               </div>
-
-              <div class="ctl ctl--center" data-control="projector-align">
-                <div class="trackpad" data-trackpad="projector-align" data-range="-50,50">
+              <div class="ctl ctl--stack" data-control="aperture-size">
+                <div class="ctl__label">Size</div>
+                <div class="pbtn-group" style="--cols:3;">
+                  <button class="pbtn" data-action="aperture-size" data-value="small">S</button>
+                  <button class="pbtn" data-action="aperture-size" data-value="medium">M</button>
+                  <button class="pbtn" data-action="aperture-size" data-value="large">L</button>
+                </div>
+              </div>
+              <div class="ctl ctl--center" data-control="aperture-align">
+                <div class="trackpad" data-trackpad="aperture-align" data-range="-50,50">
                   <div class="trackpad__dot"></div>
                 </div>
-                <div class="ctl__label ctl__label--below">Projector Lens Alignment</div>
-              </div>
-
-              <div class="ctl ctl--row-2" data-control="fft">
-                <div class="ctl__label">FFT</div>
-                <button class="pbtn" data-action="fft-toggle"><span class="pbtn__led"></span>On</button>
-              </div>
-
-              <div class="ctl ctl--center" data-control="focus">
-                <div class="knob" data-knob="focus" data-min="-50" data-max="50" data-value="0">
-                  <div class="knob__ring"></div>
-                  <div class="knob__arc"></div>
-                  <div class="knob__body"></div>
-                  <div class="knob__value">0</div>
-                </div>
-                <div class="ctl__label ctl__label--below">Obj. Lens Focus</div>
+                <div class="ctl__label ctl__label--below">Aperture Align</div>
               </div>
             </div>
           </div>
 
-          <!-- 7. Capture -->
-          <div class="dz" data-zone="capture">
-            <div class="dz__label">Capture</div>
+          <!-- SAMPLE (for guided insertion steps) -->
+          <div class="dz" data-zone="sample">
+            <div class="dz__label">Sample</div>
             <div class="dz__body">
-              <div class="ctl ctl--row-2" data-control="camera-insert">
-                <div class="ctl__label">Camera</div>
-                <button class="pbtn" data-action="camera-insert"><span class="pbtn__led"></span>Insert</button>
+              <div class="ctl ctl--stack" data-control="sample">
+                <div class="ctl__label">Specimen</div>
+                <div class="pbtn-group pbtn-group--grid-2">
+                  <button class="pbtn" data-action="sample" data-value="nanoparticles">Nanoparticles</button>
+                  <button class="pbtn" data-action="sample" data-value="zebrafish" disabled>Zebrafish</button>
+                  <button class="pbtn" data-action="sample" data-value="metal" disabled>Metal</button>
+                  <button class="pbtn" data-action="sample" data-value="mineral" disabled>Mineral</button>
+                </div>
               </div>
-
-              <div class="ctl ctl--stack" data-control="acquire">
-                <div class="ctl__label">Image</div>
-                <button class="pbtn pbtn--full" data-action="acquire">
-                  <span class="pbtn__led"></span>Acquire &amp; Download
-                </button>
+              <div class="ctl ctl--row-2" data-control="specimen-insert">
+                <div class="ctl__label">Holder</div>
+                <button class="pbtn" data-action="specimen-insert"><span class="pbtn__led"></span>Insert</button>
+              </div>
+              <div class="ctl ctl--stack" data-control="acc-voltage">
+                <div class="ctl__label">Acc. Voltage</div>
+                <div class="pbtn-group" style="--cols:2;">
+                  <button class="pbtn" data-action="acc-voltage" data-value="120">120 kV</button>
+                  <button class="pbtn" data-action="acc-voltage" data-value="200">200 kV</button>
+                </div>
               </div>
             </div>
           </div>
@@ -426,77 +707,56 @@
         </div>
       </aside>
 
-      <!-- ============= THEORY MODAL ============= -->
-      <div class="guided-theory" id="guidedTheory" role="dialog" aria-modal="true" aria-labelledby="guidedTheoryTitle" hidden>
-        <div class="guided-theory__bg" id="guidedTheoryBackdrop"></div>
-        <div class="guided-theory__panel">
-          <header class="guided-theory__header">
-            <div class="guided-theory__title-wrap">
-              <span class="tag tag--signal">REFERENCE</span>
-              <h3 class="guided-theory__title" id="guidedTheoryTitle">TEM Image Capture</h3>
-            </div>
-            <button type="button" class="guided-theory__close" id="guidedTheoryClose"
-                    aria-label="Close theory">
-              <svg viewBox="0 0 14 14" width="13" height="13" fill="none"
-                   stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-                <line x1="3" y1="3" x2="11" y2="11"/>
-                <line x1="11" y1="3" x2="3" y2="11"/>
-              </svg>
-            </button>
-          </header>
-
-          <div class="guided-theory__body">
-
-            <section class="guided-theory__section">
-              <div class="guided-theory__heading">What a TEM image is</div>
-              <p>A 2D <strong>projection</strong> of how each region of your specimen scatters or absorbs electrons. Bright = electrons made it through to the detector; dark = electrons were scattered away by mass, thickness, or crystal orientation. The "image" is really an <em>electron-shadow</em> map.</p>
-            </section>
-
-            <section class="guided-theory__section">
-              <div class="guided-theory__heading">Where contrast comes from</div>
-              <p>The <strong>objective aperture</strong> picks which scattered beams reach the detector — that's what defines the contrast mode:</p>
-              <ul class="guided-theory__list">
-                <li><strong>Mass-thickness</strong> — heavier or thicker regions darker (nanoparticles, biological stain).</li>
-                <li><strong>Diffraction</strong> — crystallites at the Bragg condition appear dark in bright-field, bright in dark-field.</li>
-                <li><strong>Phase</strong> — at very high mag, atomic-column interference (HRTEM). Needs careful defocus.</li>
-              </ul>
-            </section>
-
-            <section class="guided-theory__section">
-              <div class="guided-theory__heading">Focus &amp; astigmatism</div>
-              <p>The objective lens is never perfect. <strong>Focus</strong> sets sharpness — true focus is often <em>slightly under</em>, where phase contrast peaks. <strong>Astigmatism</strong> (stigmator) corrects for the lens being stronger in one direction than another — uncorrected, points become streaks. The <strong>wobbler</strong> oscillates focus to help you find eucentric height and crossover.</p>
-            </section>
-
-            <section class="guided-theory__section">
-              <div class="guided-theory__heading">Magnification regimes</div>
-              <ul class="guided-theory__list">
-                <li><strong>Low</strong> — find your specimen, scan the grid, pick a region.</li>
-                <li><strong>Medium</strong> — frame the feature, set focus, correct stigmation.</li>
-                <li><strong>High / V.High</strong> — image. Align at low mag first; alignment errors blow up with mag.</li>
-              </ul>
-            </section>
-
-            <section class="guided-theory__section">
-              <div class="guided-theory__heading">Capturing the image</div>
-              <p>Insert the camera, set exposure, acquire. Two enemies of a clean shot:</p>
-              <ul class="guided-theory__list">
-                <li><strong>Drift</strong> — specimen creeps during exposure → blur. Let the stage settle first.</li>
-                <li><strong>Beam damage</strong> — high dose breaks bonds in soft samples (biology, polymers). Keep current low for fragile specimens, push it up for robust ones.</li>
-              </ul>
-              <div class="guided-theory__note">
-                <strong>Note:</strong> the <em>Beam Current</em> knob in this simulator is wired but not visually modeled — in a real TEM it sets electron dose (brightness vs sample damage trade-off).
-              </div>
-            </section>
-
-          </div>
-
-          <footer class="guided-theory__footer">
-            <button type="button" class="guided-theory__cta" id="guidedTheoryGotIt">Got it</button>
-          </footer>
-        </div>
-      </div>
-
     </div>
+
+    <!-- ═══════════ THEORY MODAL ═══════════ -->
+    <div class="guided-theory" id="guidedTheory" role="dialog" aria-modal="true" aria-labelledby="guidedTheoryTitle" hidden>
+      <div class="guided-theory__bg" id="guidedTheoryBackdrop"></div>
+      <div class="guided-theory__panel">
+        <header class="guided-theory__header">
+          <div class="guided-theory__title-wrap">
+            <span class="tag tag--signal">REFERENCE</span>
+            <h3 class="guided-theory__title" id="guidedTheoryTitle">TEM Image Capture</h3>
+          </div>
+          <button type="button" class="guided-theory__close" id="guidedTheoryClose" aria-label="Close theory">
+            <svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/>
+            </svg>
+          </button>
+        </header>
+        <div class="guided-theory__body">
+          <section class="guided-theory__section">
+            <div class="guided-theory__heading">What a TEM image is</div>
+            <p>A 2D <strong>projection</strong> of how each region of your specimen scatters or absorbs electrons. Bright = electrons made it through; dark = electrons were scattered away by mass, thickness, or crystal orientation.</p>
+          </section>
+          <section class="guided-theory__section">
+            <div class="guided-theory__heading">Where contrast comes from</div>
+            <p>The <strong>objective aperture</strong> picks which scattered beams reach the detector:</p>
+            <ul class="guided-theory__list">
+              <li><strong>Mass-thickness</strong> — heavier or thicker regions darker.</li>
+              <li><strong>Diffraction</strong> — crystallites at the Bragg condition appear dark in bright-field.</li>
+              <li><strong>Phase</strong> — atomic-column interference (HRTEM). Needs careful defocus.</li>
+            </ul>
+          </section>
+          <section class="guided-theory__section">
+            <div class="guided-theory__heading">Focus &amp; astigmatism</div>
+            <p><strong>Focus</strong> sets sharpness. <strong>Astigmatism</strong> (stigmator) corrects for the lens being stronger in one direction. The <strong>wobbler</strong> oscillates focus to find eucentric height.</p>
+          </section>
+          <section class="guided-theory__section">
+            <div class="guided-theory__heading">The DEF/STIG knobs</div>
+            <p>The same physical X/Y knobs on the left panel serve <strong>three functions</strong> depending on which mode is active: <em>Beam Shift</em> moves the beam position, <em>Cond. Stig</em> corrects condenser astigmatism, and <em>Obj. Stig</em> corrects objective astigmatism. Press the mode button first, then adjust.</p>
+          </section>
+          <section class="guided-theory__section">
+            <div class="guided-theory__heading">Capturing the image</div>
+            <p>Insert the camera, start live view, raise the fluorescent screen so the beam hits the CCD, then acquire. Use the <strong>Live FFT</strong> to assess focus and stigmation — round rings = good; streaked = astigmatism remains.</p>
+          </section>
+        </div>
+        <footer class="guided-theory__footer">
+          <button type="button" class="guided-theory__cta" id="guidedTheoryGotIt">Got it</button>
+        </footer>
+      </div>
+    </div>
+
   </main>
 
   <script src="../assets/js/global.js"></script>
@@ -508,26 +768,26 @@
   <script src="../assets/js/guided/controls.js"></script>
   <script src="../assets/js/guided/image-renderer.js"></script>
   <script src="../assets/js/guided/diagram.js"></script>
+  <script src="../assets/js/guided/pc-drawer.js"></script>
+  <script src="../assets/js/guided/fft-renderer.js"></script>
   <script src="../assets/js/guided/acquire.js"></script>
   <script src="../assets/js/guided/guided-controller.js"></script>
 
   <script>
     (function () {
-      const modal    = document.getElementById('guidedTheory');
-      const openBtn  = document.getElementById('guidedTheoryBtn');
-      const closeBtn = document.getElementById('guidedTheoryClose');
-      const gotItBtn = document.getElementById('guidedTheoryGotIt');
-      const backdrop = document.getElementById('guidedTheoryBackdrop');
+      var modal    = document.getElementById('guidedTheory');
+      var openBtn  = document.getElementById('guidedTheoryBtn');
+      var closeBtn = document.getElementById('guidedTheoryClose');
+      var gotItBtn = document.getElementById('guidedTheoryGotIt');
+      var backdrop = document.getElementById('guidedTheoryBackdrop');
       if (!modal || !openBtn) return;
-
       function openModal()  { modal.hidden = false; void modal.offsetWidth; modal.classList.add('is-open'); }
-      function closeModal() { modal.classList.remove('is-open'); setTimeout(() => { modal.hidden = true; }, 200); }
-
+      function closeModal() { modal.classList.remove('is-open'); setTimeout(function(){ modal.hidden = true; }, 200); }
       openBtn.addEventListener('click', openModal);
-      closeBtn?.addEventListener('click', closeModal);
-      gotItBtn?.addEventListener('click', closeModal);
-      backdrop?.addEventListener('click', closeModal);
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (gotItBtn) gotItBtn.addEventListener('click', closeModal);
+      if (backdrop) backdrop.addEventListener('click', closeModal);
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !modal.hidden) closeModal(); });
     })();
   </script>
 </body>

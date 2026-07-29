@@ -46,14 +46,12 @@
 
       // The label overlay (over the text label on the image)
       let label = null;
-      if (spec.labelPos) {
+      if (spec.actionPos || spec.labelPos) {
         label = document.createElement('button');
         label.type = 'button';
         label.className = 'hotspot-label';
         label.dataset.hotspot = id;
-        // The cue text reflects what the user is about to do — "Insert"
-        // for component insertions, "Remove" / "Insert" for the specimen
-        // depending on which step is active.
+        label.hidden = true;                       // hidden until step activates it
         label.innerHTML = `
           <span class="hotspot-label__action">${spec.action}</span>
         `;
@@ -98,8 +96,8 @@
       h.rect.style.width  = `${(s.w / 100) * imgB.width}px`;
       h.rect.style.height = `${(s.h / 100) * imgB.height}px`;
       // Position label overlay
-      if (h.label && s.labelPos) {
-        const lp = s.labelPos;
+      if (h.label && (s.actionPos || s.labelPos)) {
+        const lp = s.actionPos || s.labelPos;
         h.label.style.left   = `${dx + (lp.x / 100) * imgB.width}px`;
         h.label.style.top    = `${dy + (lp.y / 100) * imgB.height}px`;
         h.label.style.width  = `${(lp.w / 100) * imgB.width}px`;
@@ -122,10 +120,12 @@
       h.rect.classList.toggle('is-active', active);
       h.rect.style.pointerEvents = active ? 'auto' : 'none';
       if (h.label) {
+        h.label.hidden = !active;
         h.label.classList.toggle('is-active', active);
         h.label.style.pointerEvents = active ? 'auto' : 'none';
       }
     }
+    if (id) positionHotspots();
   }
 
   window.TEM = window.TEM || {};
