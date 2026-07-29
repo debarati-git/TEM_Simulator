@@ -98,6 +98,16 @@
   white-space: nowrap;
 }
 
+.lp-hero__screen-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-3);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.lp-hero__screen-note svg { flex-shrink: 0; opacity: 0.8; }
+
 /* -------------------------------------------------------------------------
    MODULE CARDS — compact horizontal rows (icon · text · CTA)
    ------------------------------------------------------------------------- */

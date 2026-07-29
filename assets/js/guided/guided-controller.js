@@ -70,9 +70,25 @@
     TEM.pcDrawer.init();
     TEM.fftRenderer.init();
 
+    if (TEM.audio) {
+      TEM.audio.init(document.getElementById('btn-audio-toggle'), function () {
+        var instrEl = document.getElementById('instr-text');
+        return instrEl ? instrEl.textContent : null;
+      });
+    }
+
     TEM.state.subscribe(onStateChange);
     initFloatingPointer();
     showPreStart();
+  }
+
+  /** Single write-point for the instruction text: updates the DOM and, if
+   *  the learner has audio on, speaks it aloud. Keeps voice output
+   *  automatically in sync with whatever text is shown on screen. */
+  function setInstructionText(text) {
+    var instrEl = document.getElementById('instr-text');
+    if (instrEl) instrEl.textContent = text;
+    if (TEM.audio) TEM.audio.speak(text);
   }
 
   function setGuidanceActive(active) {
@@ -227,8 +243,7 @@
       hintEl.textContent = '';
     }
 
-    var instrEl = document.getElementById('instr-text');
-    if (instrEl) instrEl.textContent = 'Welcome to the Guided TEM Session. All controls are locked until each step activates them. Press START to begin.';
+    setInstructionText('Welcome to the Guided TEM Session. All controls are locked until each step activates them. Press START to begin.');
 
     var restartBtn = document.getElementById('btn-restart');
     if (restartBtn) {
@@ -340,8 +355,7 @@
 
     TEM.state.set('currentStepId', step.id);
 
-    var instrEl = document.getElementById('instr-text');
-    if (instrEl) instrEl.textContent = step.instruction;
+    setInstructionText(step.instruction);
 
     if (TEM.feedback && TEM.feedback.clearHint) TEM.feedback.clearHint();
 
@@ -394,8 +408,7 @@
     clearStepTimers();
     setGuidanceActive(false);
     setProgress(1);
-    var instrEl = document.getElementById('instr-text');
-    if (instrEl) instrEl.textContent = 'Session complete. Your image has been downloaded. Press Restart to run again.';
+    setInstructionText('Session complete. Your image has been downloaded. Press Restart to run again.');
     if (TEM.feedback) TEM.feedback.clearHint();
     document.querySelectorAll('.ctl').forEach(function(c) {
       c.classList.remove('is-active');

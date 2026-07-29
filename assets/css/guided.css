@@ -31,7 +31,7 @@
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.1em;
-  color: var(--text-muted);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: var(--space-4);
@@ -83,7 +83,7 @@
   display: inline-flex; align-items: center; gap: 6px;
   margin-left: var(--space-3); padding: 4px 10px; height: 24px;
   background: var(--bg-panel-3); border: 1px solid var(--border-strong);
-  border-radius: 3px; color: var(--text-secondary);
+  border-radius: 3px; color: var(--text-primary);
   font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600;
   letter-spacing: 0.14em; text-transform: uppercase;
   cursor: pointer; transition: all var(--dur-fast) var(--ease-out); white-space: nowrap;
@@ -93,6 +93,36 @@
 }
 .guided-status__theory-btn svg { flex-shrink: 0; }
 :root[data-theme="dark"] .guided-status__theory-btn { background: var(--bg-panel-2); }
+
+/* Voice-instruction toggle */
+.guided-status__audio-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-left: var(--space-3); padding: 4px 10px; height: 24px;
+  background: var(--bg-panel-3); border: 1px solid var(--border-strong);
+  border-radius: 3px; color: var(--text-primary);
+  font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  cursor: pointer; transition: all var(--dur-fast) var(--ease-out); white-space: nowrap;
+}
+.guided-status__audio-toggle:hover {
+  color: var(--signal); border-color: var(--signal); background: var(--signal-soft);
+}
+.guided-status__audio-toggle svg { flex-shrink: 0; }
+.guided-status__audio-toggle .guided-status__audio-icon-off { display: inline-flex; }
+.guided-status__audio-toggle .guided-status__audio-icon-on { display: none; }
+:root[data-theme="dark"] .guided-status__audio-toggle { background: var(--bg-panel-2); }
+
+/* Clearly distinct ON state — filled signal colour, not just an outline,
+   so it reads unambiguously as "active" at a glance. */
+.guided-status__audio-toggle.is-active {
+  color: #FFFFFF; background: var(--signal); border-color: var(--signal);
+  box-shadow: 0 0 0 3px var(--signal-soft);
+}
+.guided-status__audio-toggle.is-active:hover { background: #0284C7; border-color: #0284C7; }
+.guided-status__audio-toggle.is-active .guided-status__audio-icon-off { display: none; }
+.guided-status__audio-toggle.is-active .guided-status__audio-icon-on { display: inline-flex; }
+.guided-status__audio-toggle.is-unsupported { opacity: 0.4; cursor: not-allowed; }
+.guided-status__audio-toggle.is-unsupported:hover { color: var(--text-secondary); border-color: var(--border-strong); background: var(--bg-panel-3); box-shadow: none; }
 
 /* -------------------------------------------------------------------------
    Instruction bar
@@ -113,7 +143,7 @@
 .guided-context__restart {
   font-family: var(--font-mono); font-size: 0.66rem;
   letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--text-secondary); background: var(--bg-panel);
+  color: var(--text-primary); background: var(--bg-panel);
   border: 1px solid var(--border-subtle);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   padding: var(--space-2) var(--space-3); border-radius: 2px;
