@@ -55,6 +55,7 @@
 
     var restartBtn = document.getElementById('btn-restart');
     if (restartBtn) restartBtn.addEventListener('click', function() {
+      if (TEM.audio && TEM.audio.dismissHint) TEM.audio.dismissHint();
       if (!sessionStarted) {
         startSession();
       } else {
@@ -265,6 +266,8 @@
     TEM.pcDrawer.close();
     scheduleFloatingPointerUpdate();
     setProgress(0);
+
+    if (TEM.audio && TEM.audio.showHintOnce) TEM.audio.showHintOnce();
   }
 
   function startSession() {

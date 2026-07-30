@@ -80,6 +80,36 @@
 
   function isEnabled() { return enabled; }
 
+  var HINT_KEY = 'tem_audio_hint_seen_v1';
+  var hintTimer = null;
+
+  function markHintSeen() {
+    try { window.localStorage.setItem(HINT_KEY, '1'); } catch (e) { /* storage unavailable — ok to skip */ }
+  }
+
+  function hintAlreadySeen() {
+    try { return window.localStorage.getItem(HINT_KEY) === '1'; } catch (e) { return false; }
+  }
+
+  /** Show the "psst, audio exists" callout once, ever, per browser. Marks
+   *  itself seen the moment it's shown (not just on dismiss), so it can
+   *  never reappear even if the learner navigates away mid-timer. */
+  function showHintOnce() {
+    if (!supported || hintAlreadySeen()) return;
+    var hintEl = document.getElementById('audio-hint');
+    if (!hintEl) return;
+
+    markHintSeen();
+    hintEl.classList.add('is-visible');
+    hintTimer = window.setTimeout(dismissHint, 6000);
+  }
+
+  function dismissHint() {
+    var hintEl = document.getElementById('audio-hint');
+    if (hintEl) hintEl.classList.remove('is-visible');
+    if (hintTimer) { window.clearTimeout(hintTimer); hintTimer = null; }
+  }
+
   function init(toggleBtnEl, currentTextFn) {
     toggleBtn = toggleBtnEl || null;
     getCurrentText = typeof currentTextFn === 'function' ? currentTextFn : null;
@@ -100,9 +130,13 @@
 
     if (toggleBtn) {
       toggleBtn.addEventListener('click', function () {
+        dismissHint();
         setEnabled(!enabled);
       });
     }
+
+    var closeBtn = document.getElementById('audio-hint-close');
+    if (closeBtn) closeBtn.addEventListener('click', dismissHint);
 
     // Stop any speech if the learner navigates away.
     window.addEventListener('beforeunload', stop);
@@ -117,6 +151,8 @@
     speak: speak,
     stop: stop,
     setEnabled: setEnabled,
-    isEnabled: isEnabled
+    isEnabled: isEnabled,
+    showHintOnce: showHintOnce,
+    dismissHint: dismissHint
   };
 })();
