@@ -267,7 +267,7 @@
     scheduleFloatingPointerUpdate();
     setProgress(0);
 
-    if (TEM.audio && TEM.audio.showHintOnce) TEM.audio.showHintOnce();
+    if (TEM.audio && TEM.audio.showHint) TEM.audio.showHint();
   }
 
   function startSession() {

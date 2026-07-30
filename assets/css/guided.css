@@ -467,7 +467,7 @@ body.is-fullscreen .viewer__fs-label::before { font-size: 0.62rem; letter-spacin
 :root[data-theme="dark"] .viewer__panel[data-view-panel="screen"] { background: var(--scope-bg); }
 
 .viewer__column-image {
-  height: 100%; max-height: 100%; width: auto; max-width: 100%;
+  height: calc(100% - 34px); max-height: calc(100% - 34px); width: auto; max-width: 100%;
   object-fit: contain; display: block;
 }
 .viewer__column-hotspots {

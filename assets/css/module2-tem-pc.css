@@ -763,3 +763,23 @@
 .pc-drawer.is-open .pc-drawer__content.is-active {
   opacity: 1;
 }
+
+/* ---------------------------------------------------------------------
+   Permanent viewport safe area for the collapsed PC drawer strip
+   --------------------------------------------------------------------- */
+.viewer__stage {
+  --pc-drawer-reserved-space: 28px;
+}
+
+/* Keep both centre-view panels fully above the always-visible drawer handle.
+   The hotspot layer remains inside the Column panel, so its coordinates stay
+   aligned with the resized, object-fit: contain image. */
+.viewer__stage > .viewer__panel[data-view-panel="column"],
+.viewer__stage > .viewer__panel[data-view-panel="screen"] {
+  bottom: var(--pc-drawer-reserved-space);
+}
+
+/* Use the same single source of truth for the drawer peek height. */
+.viewer__stage > .pc-drawer {
+  --pc-drawer-peek: var(--pc-drawer-reserved-space);
+}
