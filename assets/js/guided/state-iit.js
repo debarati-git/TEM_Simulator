@@ -1,11 +1,18 @@
 /* =========================================================================
-   Guided Simulator — State Store  (v2.0)
+   Guided Simulator — State Store  (v4.0 IIT SOP)
    Flat key-value store with pub/sub.
+   Extended with pre-flight, spot size, and alpha selector keys.
    ========================================================================= */
 (function () {
   'use strict';
 
   var initial = {
+    // Pre-flight checks (IIT SOP)
+    preflightVacuum: false,
+    preflightSIP: false,
+    preflightHV: false,
+    preflightACD: false,
+
     // Sample & holder
     sample: null,
     holderType: null,
@@ -16,15 +23,16 @@
     airlockPumped: false,
 
     // Beam
-    accVoltage: null,
+    accVoltage: 200,   // Pre-set via HV ramp in pre-flight
     beamOn: false,
     beamCurrent: 50,
     brightness: 50,
 
+    // Spot Size & Alpha Selector (IIT SOP)
+    spotSize: null,
+    alphaSelector: null,
+
     // DEF/STIG — paired X/Y knobs, multi-mode
-    // No DEF/STIG mode is preselected. The learner must explicitly choose
-    // SHIFT at the beam-centring step, after which the selected button stays
-    // visibly highlighted like the other selector controls.
     defStigMode: null,
     beamShift:   { x: 0, y: 0 },
     condStig:    { x: 0, y: 0 },
@@ -47,8 +55,6 @@
     wobblerOn: false,
     focusCoarse: 0,
     focusFine: 0,
-    // Focus-step interaction flags. Fine adjustment is accepted only after
-    // the learner has first operated the coarse-focus knob.
     focusCoarseAdjusted: false,
     focusFineAdjusted: false,
     stdFocusReset: false,

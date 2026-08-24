@@ -1,3 +1,10 @@
+## 2026-08-03 — Module visibility and beam-shift controls
+
+- Hidden Module 3 (Diffraction Lab) from the landing page and global navigation.
+- Replaced the left-panel DEF/STIG trackpad with separate X and Y rotary knobs.
+- Retained mode routing so the same knobs operate Beam Shift, condenser stigmation, or objective stigmation according to the selected DEF/STIG mode.
+- Updated guided instructions and cue targeting for the paired knobs.
+
 ## Module 2 focus, FFT and wobble fixes — v5
 
 - Objective focusing now requires Coarse Focus followed by a separate Fine Focus adjustment.

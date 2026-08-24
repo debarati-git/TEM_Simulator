@@ -137,6 +137,9 @@
     if (controlKey === 'specimen-insert') {
       return target.querySelector('.pbtn[data-action="specimen-insert"]') || target;
     }
+    if (controlKey === 'def-stig-pad') {
+      return target.querySelector('.defstig-knob-row') || target;
+    }
 
     // For compact row controls, a button is a more precise target than the
     // complete label-and-button wrapper.
@@ -149,13 +152,40 @@
   function updateFloatingPointer() {
     var pointer = document.getElementById('guided-step-pointer');
     var guidedBody = document.querySelector('.guided-body');
-    var target = document.querySelector('.ctl.is-step-target-control');
-    if (!pointer || !guidedBody || !target) {
+    var targets = document.querySelectorAll('.ctl.is-step-target-control');
+    if (!pointer || !guidedBody || targets.length === 0) {
       if (pointer) pointer.classList.remove('is-visible');
+      // Also hide any secondary pointers
+      var sec = document.getElementById('guided-step-pointer-2');
+      if (sec) sec.classList.remove('is-visible');
       return;
     }
 
     var bodyRect = guidedBody.getBoundingClientRect();
+
+    // Position pointer(s) — one per target
+    var pointers = [pointer];
+    if (targets.length > 1) {
+      var sec = document.getElementById('guided-step-pointer-2');
+      if (!sec) {
+        sec = pointer.cloneNode(true);
+        sec.id = 'guided-step-pointer-2';
+        pointer.parentNode.appendChild(sec);
+      }
+      pointers.push(sec);
+    } else {
+      var sec = document.getElementById('guided-step-pointer-2');
+      if (sec) sec.classList.remove('is-visible');
+    }
+
+    targets.forEach(function(target, idx) {
+      if (idx >= pointers.length) return;
+      var p = pointers[idx];
+      positionSinglePointer(p, target, bodyRect, guidedBody);
+    });
+  }
+
+  function positionSinglePointer(pointer, target, bodyRect, guidedBody) {
     var anchor = getFloatingPointerAnchor(target);
     var rect = anchor.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) {
@@ -167,53 +197,13 @@
     var pointerSize = 34;
     var pointerHalf = pointerSize / 2;
     var sideGap = 5;
-    var requiredSideRoom = pointerSize + sideGap + 4;
-    var boundary = bodyRect;
-    var panel = target.closest('.ctl-panel');
-    var panelRect = panel ? panel.getBoundingClientRect() : null;
-    var leftRoom = rect.left - (panelRect ? panelRect.left : bodyRect.left);
-    var rightRoom = (panelRect ? panelRect.right : bodyRect.right) - rect.right;
-    var mode = 'down';
-    var controlKey = target.dataset.control || '';
-    var forceDownPointer = controlKey === 'holder-type' || controlKey === 'specimen-insert';
 
-    // Specimen-holder controls are intentionally indicated from above. The
-    // Holder Type step targets the full Specimen Holder fieldset, while the
-    // later Insert step targets its actual action button.
-    if (!forceDownPointer) {
-      // Prefer the inward-facing side for each physical panel. If that side
-      // lacks room, try the opposite side; otherwise retain the downward cue.
-      if (panel && panel.classList.contains('ctl-panel--left')) {
-        if (rightRoom >= requiredSideRoom) mode = 'left';
-        else if (leftRoom >= requiredSideRoom) mode = 'right';
-      } else if (panel && panel.classList.contains('ctl-panel--right')) {
-        if (leftRoom >= requiredSideRoom) mode = 'right';
-        else if (rightRoom >= requiredSideRoom) mode = 'left';
-      } else {
-        if (rightRoom >= requiredSideRoom || leftRoom >= requiredSideRoom) {
-          mode = rightRoom >= leftRoom ? 'left' : 'right';
-        }
-      }
-    }
+    // Position above the target with down-pointing hand
+    var x = rect.left - bodyRect.left + rect.width / 2;
+    var y = rect.top - bodyRect.top - sideGap - pointerHalf;
+    if (pointerIcon) pointerIcon.textContent = '👇';
 
-    var x;
-    var y;
-    if (mode === 'right') {
-      // Pointer sits left of the target and points right toward it.
-      x = rect.left - bodyRect.left - sideGap - pointerHalf;
-      y = rect.top - bodyRect.top + rect.height / 2;
-      if (pointerIcon) pointerIcon.textContent = '👉';
-    } else if (mode === 'left') {
-      // Pointer sits right of the target and points left toward it.
-      x = rect.right - bodyRect.left + sideGap + pointerHalf;
-      y = rect.top - bodyRect.top + rect.height / 2;
-      if (pointerIcon) pointerIcon.textContent = '👈';
-    } else {
-      x = rect.left - bodyRect.left + rect.width / 2;
-      y = rect.top - bodyRect.top - sideGap - pointerHalf;
-      if (pointerIcon) pointerIcon.textContent = '👇';
-    }
-
+    // Clamp to visible body area
     var minX = pointerHalf + 6;
     var maxX = Math.max(minX, bodyRect.width - pointerHalf - 6);
     var minY = pointerHalf + 6;
@@ -221,8 +211,16 @@
     x = Math.max(minX, Math.min(maxX, x));
     y = Math.max(minY, Math.min(maxY, y));
 
+    // If the pointer ended up clamped at or near the bottom edge
+    // (control is inside PC drawer below the viewport), hide it —
+    // the drawer already highlights the active control.
+    if (y >= maxY - 4) {
+      pointer.classList.remove('is-visible');
+      return;
+    }
+
     pointer.classList.remove('is-pointer-left', 'is-pointer-right', 'is-pointer-down');
-    pointer.classList.add('is-pointer-' + mode);
+    pointer.classList.add('is-pointer-down');
     pointer.style.left = x + 'px';
     pointer.style.top = y + 'px';
     pointer.classList.add('is-visible');
@@ -374,6 +372,10 @@
     if (step.pcDrawer) {
       if (TEM.pcDrawer.setTarget) TEM.pcDrawer.setTarget(step.pcDrawer, true);
       TEM.pcDrawer.open(step.pcDrawer);
+      // Switch to the requested TEMCON tab if specified
+      if (step.pcTab && TEM.pcDrawer.setTEMTab) {
+        TEM.pcDrawer.setTEMTab(step.pcTab);
+      }
     } else {
       if (TEM.pcDrawer.setTarget) TEM.pcDrawer.setTarget('tem', false);
       TEM.pcDrawer.close();
@@ -384,6 +386,9 @@
       scheduleStepTimer(function() {
         if (currentStepIndex === index) TEM.state.set('airlockPumped', true);
       }, Math.max(200, (step.autoAdvance || 2000) / 2));
+    }
+    if (step.onEnter === 'openPreflightModal' && window._openPreflightModal) {
+      window._openPreflightModal();
     }
 
     if (step.prelude) applyPrelude(step.prelude);
@@ -498,16 +503,12 @@
 
     refreshStepTargetLocator(step);
 
-    // Apply persistent zone highlight and scroll first one into view
-    var first = true;
+    // Apply persistent zone highlight and scroll into view in each panel
     activeZones.forEach(function(zone) {
       zone.classList.add('is-zone-active');
-      if (first) {
-        first = false;
-        setTimeout(function() {
-          zone.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 80);
-      }
+      setTimeout(function() {
+        zone.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 80);
     });
   }
 
@@ -545,6 +546,10 @@
     }
     if (cond.type === 'selectValue') {
       return TEM.state.get(cond.key) === cond.value;
+    }
+    if (cond.type === 'selectOneOf') {
+      var cur = TEM.state.get(cond.key);
+      return Array.isArray(cond.values) && cond.values.indexOf(cur) >= 0;
     }
     if (cond.type === 'valueInRange') {
       var value;

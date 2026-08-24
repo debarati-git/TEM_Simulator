@@ -1,35 +1,60 @@
 /* =========================================================================
-   TEM Simulator — Guided steps data  (v2.0, 35 steps)
-   Panel-faithful flow per Debarati's operating procedure.
+   TEM Simulator — Guided steps data  (v4.0, 39 steps)
+   IIT SOP flow per Adem Ahmed Aliy & Sakshi Nigavekar operating procedures
+   and meeting notes from IIT Hyderabad.
    ========================================================================= */
 (function () {
   'use strict';
   window.TEM = window.TEM || {};
 
   window.TEM.dataGuidedSteps = {
-    sample: 'nanoparticles',
-    totalSteps: 35,
+    sample: null,
+    totalSteps: 39,
     steps: [
-      // ===== PHASE 1: SETUP (1–8) =====
+      // ===== PHASE 0: PRE-FLIGHT CHECKS (1–4) — shown in modal overlay =====
       {
         id: 1,
-        instruction: 'Select the holder type. Use Single Tilt for routine nanoparticle imaging.',
-        hint: 'Open the PC drawer and choose Single Tilt.',
-        unlocks: ['holder-type'],
-        pcDrawer: 'tem',
-        success: { type: 'selectValue', key: 'holderType', value: 'single-tilt' }
+        instruction: 'Check that the column vacuum is good. Click Column Vacuum in the checklist to confirm.',
+        hint: 'Click the Column Vacuum row in the pre-flight checklist.',
+        unlocks: ['preflight-vacuum'],
+        onEnter: 'openPreflightModal',
+        success: { type: 'selectValue', key: 'preflightVacuum', value: true }
       },
       {
         id: 2,
-        instruction: 'Click Stage Neutralize to return the stage to a safe insertion position.',
-        hint: 'Press the Neutralize button in the PC drawer.',
-        unlocks: ['stage-neutralize'],
-        pcDrawer: 'tem',
-        success: { type: 'selectValue', key: 'stageNeutralized', value: true }
+        instruction: 'Verify the Sputter Ion Pump (SIP) LED is green. Click the SIP row to confirm.',
+        hint: 'Click the SIP Gauge LED row in the checklist.',
+        unlocks: ['preflight-sip'],
+        success: { type: 'selectValue', key: 'preflightSIP', value: true }
       },
       {
         id: 3,
-        instruction: 'Click REMOVE on the specimen holder in the column diagram to take out the empty holder.',
+        instruction: 'Ramp the High Voltage to 200 kV. Click the HV row — the ramp animation will run automatically.',
+        hint: 'Click the High Voltage Ramp row in the checklist.',
+        unlocks: ['preflight-hv'],
+        success: { type: 'selectValue', key: 'preflightHV', value: true }
+      },
+      {
+        id: 4,
+        instruction: 'Fill liquid nitrogen in the Anti-Contamination Device (ACD). Click the ACD row to confirm.',
+        hint: 'Click the ACD Liquid Nitrogen row in the checklist.',
+        unlocks: ['preflight-acd'],
+        success: { type: 'selectValue', key: 'preflightACD', value: true }
+      },
+
+      // ===== PHASE 1: HOLDER LOADING (5–11) =====
+      {
+        id: 5,
+        instruction: 'Click Stage Neutralize to return the stage to a safe insertion position. Always neutralize before loading or removing a holder.',
+        hint: 'Press the Neutralize button in the PC drawer.',
+        unlocks: ['stage-neutralize'],
+        pcDrawer: 'tem',
+        pcTab: 'stage',
+        success: { type: 'selectValue', key: 'stageNeutralized', value: true }
+      },
+      {
+        id: 6,
+        instruction: 'Click REMOVE on the specimen holder in the column diagram. The previous user may have left a holder inside.',
         hint: 'The holder hotspot on the column is highlighted — click it.',
         unlocks: [],
         diagram: 'remove-holder',
@@ -37,14 +62,23 @@
         success: { type: 'selectValue', key: 'holderRemoved', value: true }
       },
       {
-        id: 4,
-        instruction: 'Select Nanoparticles from the sample list.',
-        hint: 'Under Sample on the right panel, press Nanoparticles.',
+        id: 7,
+        instruction: 'Select the sample type. Choose from Nanoparticles (suspension), Bulk Metallic (electropolished), or Cross-section (FIB).',
+        hint: 'Under Sample on the right panel, choose your specimen.',
         unlocks: ['sample'],
-        success: { type: 'selectValue', key: 'sample', value: 'nanoparticles' }
+        success: { type: 'selectOneOf', key: 'sample', values: ['nanoparticles', 'bulk-metallic', 'cross-section'] }
       },
       {
-        id: 5,
+        id: 8,
+        instruction: 'Select the holder type. Use Single Tilt for routine imaging or Double Tilt for crystallographic work.',
+        hint: 'Open the PC drawer (Stage tab) and choose Single Tilt.',
+        unlocks: ['holder-type'],
+        pcDrawer: 'tem',
+        pcTab: 'stage',
+        success: { type: 'selectOneOf', key: 'holderType', values: ['single-tilt', 'double-tilt'] }
+      },
+      {
+        id: 9,
         instruction: 'Click INSERT on the column diagram to load the specimen into the airlock.',
         hint: 'The specimen hotspot on the column is highlighted.',
         unlocks: [],
@@ -53,42 +87,50 @@
         success: { type: 'selectValue', key: 'specimenInsertedDiagram', value: true }
       },
       {
-        id: 6,
+        id: 10,
         instruction: 'The airlock pumps automatically. Wait for vacuum ready.',
         hint: null,
         unlocks: [],
         autoAdvance: 2200,
         onEnter: 'autoAirlock',
         pcDrawer: 'tem',
+        pcTab: 'stage',
         success: { type: 'selectValue', key: 'airlockPumped', value: true }
       },
       {
-        id: 7,
+        id: 11,
         instruction: 'Click INSERT under Holder on the right panel to push the specimen into the column.',
         hint: 'Under Sample, press Holder Insert.',
         unlocks: ['specimen-insert'],
         success: { type: 'selectValue', key: 'specimenInsertedPanel', value: true }
       },
-      {
-        id: 8,
-        instruction: 'Select the accelerating voltage. Use 200 kV for nanoparticle samples.',
-        hint: 'Press 200 kV under Acc. Voltage.',
-        unlocks: ['acc-voltage'],
-        success: { type: 'selectValue', key: 'accVoltage', value: 200 }
-      },
 
-      // ===== PHASE 2: BEAM ON & ALIGNMENT (9–17) =====
+      // ===== PHASE 2: BEAM ON & ALIGNMENT (12–21) =====
       {
-        id: 9,
-        instruction: 'Switch the beam ON on the left panel.',
-        hint: 'Press Beam On.',
+        id: 12,
+        instruction: 'Switch the beam ON. The filament will warm up and beam current will auto-stabilize to ~103 µA.',
+        hint: 'Press Beam On on the left panel.',
         unlocks: ['beam-on'],
         pcDrawer: 'tem',
         switchViewer: 'column',
         success: { type: 'selectValue', key: 'beamOn', value: true }
       },
       {
-        id: 10,
+        id: 13,
+        instruction: 'Set Spot Size to 1 and α Selector to α3. These control beam convergence and illuminated area.',
+        hint: 'Use the Spot Size and Alpha Selector controls on the left panel.',
+        unlocks: ['spot-size', 'alpha-selector'],
+        switchViewer: 'screen',
+        success: {
+          type: 'composite',
+          all: [
+            { type: 'selectValue', key: 'spotSize', value: 1 },
+            { type: 'selectValue', key: 'alphaSelector', value: 3 }
+          ]
+        }
+      },
+      {
+        id: 14,
         instruction: 'The beam appears off-center. Set DEF/STIG mode to SHIFT and centre the beam using the X and Y knobs.',
         switchViewer: 'screen',
         hint: 'Press Shift under DEF/STIG Mode, then adjust the X and Y knobs to centre the beam.',
@@ -108,21 +150,21 @@
         }
       },
       {
-        id: 11,
+        id: 15,
         instruction: 'Diverge the beam to fill the field of view using the Brightness knob.',
         hint: 'Turn Brightness clockwise to around 70.',
         unlocks: ['brightness'],
         success: { type: 'valueInRange', key: 'brightness', spot: 'brightness_diverge' }
       },
       {
-        id: 12,
+        id: 16,
         instruction: 'Select Condenser as the aperture type.',
         hint: 'Under Apertures on the right panel, press Cond.',
         unlocks: ['aperture-select'],
         success: { type: 'selectValue', key: 'currentAperture', value: 'condenser' }
       },
       {
-        id: 13,
+        id: 17,
         instruction: 'Click INSERT on the condenser aperture in the column diagram.',
         hint: 'The condenser aperture hotspot is highlighted.',
         unlocks: [],
@@ -131,7 +173,7 @@
         success: { type: 'selectValue', key: 'condenserInserted', value: true }
       },
       {
-        id: 14,
+        id: 18,
         instruction: 'Select a Medium aperture size.',
         hint: 'Press M under Aperture Size.',
         unlocks: ['aperture-size'],
@@ -139,7 +181,7 @@
         success: { type: 'selectValue', key: 'condenserSize', value: 'medium' }
       },
       {
-        id: 15,
+        id: 19,
         instruction: 'Centre the condenser aperture using the Aperture Alignment trackpad.',
         hint: 'Drag the alignment dot to the centre of the pad.',
         unlocks: ['aperture-align'],
@@ -147,7 +189,7 @@
         success: { type: 'valueInRange', key: 'apertureAlignment', spot: 'apertureAlign_cond' }
       },
       {
-        id: 16,
+        id: 20,
         instruction: 'Switch DEF/STIG to C.STIG and correct condenser astigmatism to make the beam circular.',
         hint: 'Press C.Stig, then drag the DEF/STIG pad toward centre.',
         unlocks: ['def-stig-mode', 'def-stig-pad'],
@@ -160,7 +202,7 @@
         }
       },
       {
-        id: 17,
+        id: 21,
         instruction: 'Re-diverge the beam with the Brightness knob.',
         hint: 'Turn Brightness back to the 65–80 range.',
         unlocks: ['brightness'],
@@ -168,30 +210,30 @@
         success: { type: 'valueInRange', key: 'brightness', spot: 'brightness_diverge' }
       },
 
-      // ===== PHASE 3: FIND SAMPLE & EUCENTRIC HEIGHT (18–22) =====
+      // ===== PHASE 3: FIND SAMPLE & EUCENTRIC HEIGHT (22–26) =====
       {
-        id: 18,
+        id: 22,
         instruction: 'Set magnification to LOW to find the sample.',
         hint: 'Under Magnification on the right panel, press Low.',
         unlocks: ['magnification'],
         success: { type: 'selectValue', key: 'magnification', value: 'low' }
       },
       {
-        id: 19,
+        id: 23,
         instruction: 'Press Standard Focus to reset the objective lens.',
         hint: 'Press Std Focus Reset on the right panel.',
         unlocks: ['std-focus'],
         success: { type: 'selectValue', key: 'stdFocusReset', value: true }
       },
       {
-        id: 20,
+        id: 24,
         instruction: 'Turn the Wobbler ON to find eucentric height.',
         hint: 'Press Wobble X.',
         unlocks: ['wobbler'],
         success: { type: 'selectValue', key: 'wobblerOn', value: true }
       },
       {
-        id: 21,
+        id: 25,
         instruction: 'Adjust Z while observing the phosphor screen. The lateral image swing should shrink near eucentric height and grow when moving away.',
         hint: 'Use +Z / −Z and continue in the direction that reduces the displayed wobble amplitude.',
         unlocks: ['stage-z'],
@@ -199,30 +241,30 @@
         success: { type: 'valueInRange', key: 'stageZ', spot: 'stageZ_eucentric' }
       },
       {
-        id: 22,
+        id: 26,
         instruction: 'Eucentric height found. Turn the Wobbler OFF.',
         hint: 'Press Wobble X again.',
         unlocks: ['wobbler'],
         success: { type: 'selectValue', key: 'wobblerOn', value: false }
       },
 
-      // ===== PHASE 4: OBJECTIVE APERTURE ALIGNMENT (23–27) =====
+      // ===== PHASE 4: OBJECTIVE APERTURE ALIGNMENT (27–31) =====
       {
-        id: 23,
+        id: 27,
         instruction: 'Switch to DIFF mode on the right panel.',
         hint: 'Press DIFF under Imaging Mode.',
         unlocks: ['imaging-mode'],
         success: { type: 'selectValue', key: 'imagingMode', value: 'diff' }
       },
       {
-        id: 24,
+        id: 28,
         instruction: 'Select Objective as the aperture type.',
         hint: 'Under Apertures, press Obj.',
         unlocks: ['aperture-select'],
         success: { type: 'selectValue', key: 'currentAperture', value: 'objective' }
       },
       {
-        id: 25,
+        id: 29,
         instruction: 'Click INSERT on the objective aperture in the column diagram.',
         hint: 'The objective aperture hotspot is highlighted.',
         unlocks: [],
@@ -231,7 +273,7 @@
         success: { type: 'selectValue', key: 'objectiveInserted', value: true }
       },
       {
-        id: 26,
+        id: 30,
         instruction: 'Centre the objective aperture using the Aperture Alignment trackpad.',
         hint: 'Drag the alignment dot to the centre.',
         unlocks: ['aperture-align'],
@@ -240,16 +282,16 @@
         success: { type: 'valueInRange', key: 'apertureAlignment', spot: 'apertureAlign_obj' }
       },
       {
-        id: 27,
+        id: 31,
         instruction: 'Switch back to MAG1 imaging mode.',
         hint: 'Press MAG1 under Imaging Mode.',
         unlocks: ['imaging-mode'],
         success: { type: 'selectValue', key: 'imagingMode', value: 'mag1' }
       },
 
-      // ===== PHASE 5: IMAGE ACQUISITION (28–35) =====
+      // ===== PHASE 5: IMAGE ACQUISITION (32–39) =====
       {
-        id: 28,
+        id: 32,
         instruction: 'Move the stage to the region of interest (blue circle).',
         hint: 'Drag the Stage X/Y pad toward the target.',
         unlocks: ['stage-xy'],
@@ -257,14 +299,14 @@
         success: { type: 'valueInRange', key: 'stage', spot: 'stageXY_lowMag' }
       },
       {
-        id: 29,
+        id: 33,
         instruction: 'Increase magnification to MEDIUM.',
         hint: 'Press Med under Magnification.',
         unlocks: ['magnification'],
         success: { type: 'selectValue', key: 'magnification', value: 'medium' }
       },
       {
-        id: 30,
+        id: 34,
         instruction: 'Recentre on the region of interest at medium magnification.',
         hint: 'Drag the stage to bring the blue circle to centre.',
         unlocks: ['stage-xy'],
@@ -273,14 +315,14 @@
         success: { type: 'valueInRange', key: 'stage', spot: 'stageXY_medMag' }
       },
       {
-        id: 31,
+        id: 35,
         instruction: 'Increase magnification to HIGH.',
         hint: 'Press High under Magnification.',
         unlocks: ['magnification'],
         success: { type: 'selectValue', key: 'magnification', value: 'high' }
       },
       {
-        id: 32,
+        id: 36,
         instruction: 'Focus the image. Use the Coarse focus first, then Fine focus for sharpness.',
         hint: 'Turn the focus knobs until the image is sharp — aim for near zero.',
         unlocks: ['focus-coarse', 'focus-fine'],
@@ -296,7 +338,7 @@
         }
       },
       {
-        id: 33,
+        id: 37,
         instruction: 'Insert the camera, start Live View, and raise the screen.',
         hint: 'In the Camera drawer: Insert → Live → Raise Screen.',
         unlocks: ['camera-insert', 'live-view', 'screen-raise'],
@@ -311,7 +353,7 @@
         }
       },
       {
-        id: 34,
+        id: 38,
         instruction: 'Switch DEF/STIG to O.STIG and correct objective astigmatism while watching the FFT — make the rings round.',
         hint: 'Press O.Stig, then drag the DEF/STIG pad until FFT rings are circular.',
         unlocks: ['def-stig-mode', 'def-stig-pad'],
@@ -326,7 +368,7 @@
         }
       },
       {
-        id: 35,
+        id: 39,
         instruction: 'Press ACQUIRE to capture and download the image.',
         hint: 'Press Acquire in the Camera drawer.',
         unlocks: ['acquire'],
@@ -353,6 +395,20 @@
     hints: { wrongValueDelayMs: 3000 },
     samples: {
       nanoparticles: {
+        label: 'Nanoparticles',
+        desc: 'Suspension on carbon grid',
+        image: '../assets/images/microscope/samples/nanoparticles/nanoparticles.png',
+        scales: { low: 0.25, medium: 0.55, high: 1.0 }
+      },
+      'bulk-metallic': {
+        label: 'Bulk Metallic',
+        desc: 'Electropolished / ion milled',
+        image: '../assets/images/microscope/samples/nanoparticles/nanoparticles.png',
+        scales: { low: 0.25, medium: 0.55, high: 1.0 }
+      },
+      'cross-section': {
+        label: 'Cross-section',
+        desc: 'FIB / ion milled',
         image: '../assets/images/microscope/samples/nanoparticles/nanoparticles.png',
         scales: { low: 0.25, medium: 0.55, high: 1.0 }
       }

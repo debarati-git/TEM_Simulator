@@ -88,8 +88,8 @@
     },
     {
       "id": 7,
-      "instruction": "Center the beam on the screen using the Beam Shift trackpad.",
-      "hint": "Drag the Beam Shift dot toward the center of its trackpad until the beam sits in the middle.",
+      "instruction": "Center the beam on the screen using the Beam Shift X and Y knobs.",
+      "hint": "Adjust the Beam Shift X and Y knobs until the beam sits in the middle of the screen.",
       "surface": "panel",
       "unlocks": [
         "beam-current",

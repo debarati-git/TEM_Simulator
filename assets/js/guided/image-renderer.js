@@ -200,11 +200,11 @@
     // Wobble: stage-Z error controls the lateral image oscillation.
     // At eucentric height the image is nearly stationary; moving away in
     // either Z direction increases amplitude again.
-    // Show the instructional wobble overlay only while the learner is
-    // actively adjusting Z (guided Step 21). Once eucentric height is found
-    // and the workflow advances, remove the meter, ghosts and animation even
-    // though the next instruction still asks the learner to switch Wobble off.
-    var wobbleFeedbackActive = !!s.wobblerOn && Number(s.currentStepId) === 21;
+    // Show the instructional wobble overlay while the learner is actively
+    // adjusting Z. Detect this by checking wobblerOn AND that stage-z
+    // control is currently active (works for any step numbering).
+    var stageZActive = !!document.querySelector('.ctl[data-control="stage-z"].is-active');
+    var wobbleFeedbackActive = !!s.wobblerOn && stageZActive;
     if (wobbleFeedbackActive && contentEl) {
       var zError = Math.abs(Number(s.stageZ) || 0);
       var amp = zError <= 1 ? 0.5 : (zError <= 5 ? 1 + zError * 0.55 : 4 + (zError - 5) * 1.35);

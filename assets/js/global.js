@@ -47,13 +47,13 @@
    * topnav slot so we know which entry to highlight.
    */
   const MODULES = [
-    { key: 'column',      num: '01', label: 'The Column',     href: 'pages/column.html' },
-    { key: 'microscope',  num: '02', label: 'The Microscope', href: 'pages/microscope.html' },
-    { key: 'diffraction', num: '03', label: 'Diffraction Lab',href: 'pages/diffraction-lab.html' },
+    { key: 'column',         num: '01', label: 'The Column',          href: 'pages/column.html' },
+    { key: 'microscope',     num: '02', label: 'The Microscope',      href: 'pages/microscope.html' },
+    { key: 'microscope-iit', num: '03', label: 'Microscope – IIT SOP', href: 'pages/microscope-iit.html' },
   ];
 
   /**
-   * Build the persistent top navigation. Three module links are shown on
+   * Build the persistent top navigation. Available module links are shown on
    * every page; the active one is highlighted. The brand logo always
    * returns to the landing page.
    *

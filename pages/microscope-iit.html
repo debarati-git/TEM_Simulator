@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Guided Mode · TEM Simulator</title>
+  <title>IIT SOP · TEM Simulator</title>
   <link rel="stylesheet" href="../assets/css/global.css" />
   <link rel="stylesheet" href="../assets/css/guided.css" />
   <link rel="stylesheet" href="../assets/css/controls-panel.css" />
@@ -11,9 +11,9 @@
   <link rel="stylesheet" href="../assets/css/module2-tem-pc.css" />
   <link rel="stylesheet" href="../assets/css/module2-camera-pc.css" />
 </head>
-<body>
+<body class="iit-sop">
 
-  <div data-topnav data-module="microscope"></div>
+  <div data-topnav data-module="microscope-iit"></div>
 
   <main class="guided-page">
 
@@ -33,7 +33,7 @@
         </span>
       </div>
       <div class="guided-status__center">
-        <span class="guided-status__brand">TEM · GUIDED SESSION</span>
+        <span class="guided-status__brand">TEM · IIT SOP SESSION</span>
       </div>
       <div class="guided-status__right">
         <span>SAMPLE <strong id="ind-sample">—</strong></span>
@@ -146,6 +146,33 @@
             </div>
           </div>
 
+          <!-- SPOT SIZE & ALPHA SELECTOR (IIT SOP) -->
+          <div class="dz" data-zone="illumination">
+            <div class="dz__label">Illumination</div>
+            <div class="dz__body">
+              <div class="ctl ctl--stack" data-control="spot-size">
+                <div class="ctl__label">Spot Size</div>
+                <div class="pbtn-group" style="--cols:5;">
+                  <button class="pbtn" data-action="spot-size" data-value="1">1</button>
+                  <button class="pbtn" data-action="spot-size" data-value="2">2</button>
+                  <button class="pbtn" data-action="spot-size" data-value="3">3</button>
+                  <button class="pbtn" data-action="spot-size" data-value="4">4</button>
+                  <button class="pbtn" data-action="spot-size" data-value="5">5</button>
+                </div>
+              </div>
+              <div class="ctl ctl--stack" data-control="alpha-selector">
+                <div class="ctl__label">α Selector</div>
+                <div class="pbtn-group" style="--cols:5;">
+                  <button class="pbtn" data-action="alpha-selector" data-value="1">α1</button>
+                  <button class="pbtn" data-action="alpha-selector" data-value="2">α2</button>
+                  <button class="pbtn" data-action="alpha-selector" data-value="3">α3</button>
+                  <button class="pbtn" data-action="alpha-selector" data-value="4">α4</button>
+                  <button class="pbtn" data-action="alpha-selector" data-value="5">α5</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- DEF / STIG -->
           <div class="dz" data-zone="def-stig">
             <div class="dz__label">DEF / STIG</div>
@@ -169,44 +196,14 @@
                     </div>
                     <div class="defstig-axis-label">X</div>
                   </div>
-                  <div class="defstig-axis-control">
-                    <div class="knob" data-defstig-axis="y" data-min="-50" data-max="50" data-value="0" aria-label="Beam Shift Y control">
-                      <div class="knob__ring"></div>
-                      <div class="knob__arc"></div>
-                      <div class="knob__body"></div>
-                      <div class="knob__value">0</div>
-                    </div>
-                    <div class="defstig-axis-label">Y</div>
-                  </div>
                 </div>
-                <div class="ctl__label ctl__label--below" id="def-stig-label">Beam Shift X · Y</div>
+                <div class="ctl__label ctl__label--below" id="def-stig-label">Beam Shift X</div>
               </div>
               <div class="defstig-readout-bar">
                 <div class="defstig-readout-bar__cell">
                   <span class="defstig-readout-bar__key">X</span>
                   <span class="defstig-readout-bar__val" id="readout-def-x">0</span>
                 </div>
-                <div class="defstig-readout-bar__divider"></div>
-                <div class="defstig-readout-bar__cell">
-                  <span class="defstig-readout-bar__key">Y</span>
-                  <span class="defstig-readout-bar__val" id="readout-def-y">0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- BEAM CURRENT -->
-          <div class="dz" data-zone="beam-current">
-            <div class="dz__label">Beam Current</div>
-            <div class="dz__body">
-              <div class="ctl ctl--center" data-control="beam-current">
-                <div class="knob" data-knob="beam-current" data-min="0" data-max="100" data-value="50">
-                  <div class="knob__ring"></div>
-                  <div class="knob__arc"></div>
-                  <div class="knob__body"></div>
-                  <div class="knob__value">50</div>
-                </div>
-                <div class="ctl__label ctl__label--below">Beam Current</div>
               </div>
             </div>
           </div>
@@ -652,6 +649,33 @@
             </div>
           </div>
 
+          <!-- DEF/STIG Y (IIT SOP: Y knob on right panel, aligned with X on left) -->
+          <div class="dz" data-zone="def-stig-y">
+            <div class="dz__label">DEF / STIG Y</div>
+            <div class="dz__body">
+              <div class="ctl ctl--center defstig-knob-control" data-control="def-stig-pad">
+                <div class="defstig-knob-row">
+                  <div class="defstig-axis-control">
+                    <div class="knob" data-defstig-axis="y" data-min="-50" data-max="50" data-value="0" aria-label="Beam Shift Y control">
+                      <div class="knob__ring"></div>
+                      <div class="knob__arc"></div>
+                      <div class="knob__body"></div>
+                      <div class="knob__value">0</div>
+                    </div>
+                    <div class="defstig-axis-label">Y</div>
+                  </div>
+                </div>
+                <div class="ctl__label ctl__label--below" id="def-stig-label-y">Beam Shift Y</div>
+              </div>
+              <div class="defstig-readout-bar">
+                <div class="defstig-readout-bar__cell">
+                  <span class="defstig-readout-bar__key">Y</span>
+                  <span class="defstig-readout-bar__val" id="readout-def-y">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- SPECIMEN STAGE -->
           <div class="dz" data-zone="specimen-stage">
             <div class="dz__label">Specimen Stage</div>
@@ -717,29 +741,21 @@
             </div>
           </div>
 
-          <!-- SAMPLE (for guided insertion steps) -->
+          <!-- SAMPLE (IIT SOP — 3 specimen types) -->
           <div class="dz" data-zone="sample">
             <div class="dz__label">Sample</div>
             <div class="dz__body">
               <div class="ctl ctl--stack" data-control="sample">
-                <div class="ctl__label">Specimen</div>
-                <div class="pbtn-group pbtn-group--grid-2">
-                  <button class="pbtn" data-action="sample" data-value="nanoparticles">Nanoparticles</button>
-                  <button class="pbtn" data-action="sample" data-value="zebrafish" disabled>Zebrafish</button>
-                  <button class="pbtn" data-action="sample" data-value="metal" disabled>Metal</button>
-                  <button class="pbtn" data-action="sample" data-value="mineral" disabled>Mineral</button>
+                <div class="ctl__label">Specimen Type</div>
+                <div class="pbtn-group" style="--cols:1;">
+                  <button class="pbtn" data-action="sample" data-value="nanoparticles">Nanoparticles / Suspension</button>
+                  <button class="pbtn" data-action="sample" data-value="bulk-metallic">Bulk Metallic (Electropolished)</button>
+                  <button class="pbtn" data-action="sample" data-value="cross-section">Cross-section (FIB)</button>
                 </div>
               </div>
               <div class="ctl ctl--row-2" data-control="specimen-insert">
                 <div class="ctl__label">Holder</div>
                 <button class="pbtn" data-action="specimen-insert"><span class="pbtn__led"></span>Insert</button>
-              </div>
-              <div class="ctl ctl--stack" data-control="acc-voltage">
-                <div class="ctl__label">Acc. Voltage</div>
-                <div class="pbtn-group" style="--cols:2;">
-                  <button class="pbtn" data-action="acc-voltage" data-value="120">120 kV</button>
-                  <button class="pbtn" data-action="acc-voltage" data-value="200">200 kV</button>
-                </div>
               </div>
             </div>
           </div>
@@ -747,6 +763,82 @@
         </div>
       </aside>
 
+    </div>
+
+    <!-- ═══════════ PRE-FLIGHT CHECKLIST MODAL ═══════════ -->
+    <div class="preflight-modal" id="preflightModal" role="dialog" aria-modal="true" aria-labelledby="preflightTitle" hidden>
+      <div class="preflight-modal__bg" id="preflightBg"></div>
+      <div class="preflight-modal__panel">
+        <header class="preflight-modal__header">
+          <div class="preflight-modal__title-wrap">
+            <span class="tag tag--amber">PRE-FLIGHT</span>
+            <h3 class="preflight-modal__title" id="preflightTitle">Instrument Readiness Checklist</h3>
+          </div>
+        </header>
+        <div class="preflight-modal__body">
+          <p class="preflight-modal__intro">Verify each item before proceeding. Click each row to confirm.</p>
+
+          <div class="preflight-checklist">
+            <button type="button" class="preflight-item" data-action="preflight-vacuum" id="pf-vacuum">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Column Vacuum</div>
+                <div class="preflight-item__desc">Verify vacuum status shows READY</div>
+              </div>
+              <span class="preflight-item__status">READY</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <button type="button" class="preflight-item" data-action="preflight-sip" id="pf-sip">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">SIP Gauge LED</div>
+                <div class="preflight-item__desc">Sputter Ion Pump LED is green · ≤ 2.5×10⁻⁵ Pa</div>
+              </div>
+              <span class="preflight-item__status" style="color: var(--led-green, #3c6);">● GREEN</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <button type="button" class="preflight-item" data-action="preflight-hv" id="pf-hv">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">High Voltage Ramp</div>
+                <div class="preflight-item__desc">HV ramped from 80 kV → <strong id="hv-ramp-readout">200 kV</strong></div>
+              </div>
+              <span class="preflight-item__status">200 kV</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <button type="button" class="preflight-item" data-action="preflight-acd" id="pf-acd">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">ACD Liquid Nitrogen</div>
+                <div class="preflight-item__desc">Anti-Contamination Device LN₂ filled</div>
+              </div>
+              <span class="preflight-item__status">FILL</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+          </div>
+
+          <div class="preflight-modal__footer">
+            <div class="preflight-modal__progress">
+              <span id="preflight-count">0</span> / 4 verified
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ═══════════ THEORY MODAL ═══════════ -->
@@ -800,13 +892,14 @@
   </main>
 
   <script src="../assets/js/global.js"></script>
-  <script src="../data/guided-data.js"></script>
-  <script src="../assets/js/guided/state.js"></script>
+  <script src="../data/guided-data-iit.js"></script>
+  <script src="../assets/js/guided/state-iit.js"></script>
   <script src="../assets/js/guided/tolerance.js"></script>
   <script src="../assets/js/guided/feedback.js"></script>
   <script src="../assets/js/guided/audio.js"></script>
   <script src="../assets/js/guided/controls-ui.js"></script>
   <script src="../assets/js/guided/controls.js"></script>
+  <script src="../assets/js/guided/controls-iit.js"></script>
   <script src="../assets/js/guided/image-renderer.js"></script>
   <script src="../assets/js/guided/diagram.js"></script>
   <script src="../assets/js/guided/pc-drawer.js"></script>

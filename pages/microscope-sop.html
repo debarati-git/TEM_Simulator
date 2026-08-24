@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IIT SOP Workflow · TEM Simulator</title>
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/microscope-sop.css" />
+</head>
+<body>
+  <div data-topnav data-module="microscope-sop"></div>
+
+  <main class="sop-home">
+    <section class="sop-hero">
+      <div class="sop-hero__main">
+        <div class="sop-eyebrow">MODULE 03 · IIT SOP BEGINNER WORKFLOW</div>
+        <h1>Operate the JEM-2100 by laboratory workflow.</h1>
+        <p class="sop-hero__lead">
+          This guided version follows the IIT manuals as a beginner laboratory sequence: common setup first, Bright Field as the baseline condition, then separate Dark Field, SAED and HRTEM activities, followed by end-of-session procedures.
+        </p>
+        <div class="sop-hero__actions">
+          <a class="sop-btn sop-btn--primary" href="microscope-sop-guided.html?phase=setup">Start from common setup</a>
+          <a class="sop-btn" href="microscope.html">Open current Module 02</a>
+        </div>
+      </div>
+
+      <aside class="sop-hero__compare">
+        <div class="sop-kicker">Why this version is separate</div>
+        <div class="sop-compare-title">Designed for safe comparison with Module 02</div>
+        <ul class="sop-compare-list">
+          <li>Module 02 remains available unchanged for IIT comparison.</li>
+          <li>Module 03 uses JEM-2100 terminology and a strict beginner sequence.</li>
+          <li>Later sections remain locked until the required prerequisite is completed.</li>
+          <li>The simulator automatically moves between sections, microscope views and computer screens when the procedure requires it.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="sop-flow">
+      <div class="sop-flow__head">
+        <div>
+          <div class="sop-kicker">Recommended novice sequence</div>
+          <h2>One instrument — six clearly separated sections</h2>
+        </div>
+        <p>The learner starts only with Common Setup. Each later section unlocks after the previous section is completed, preventing accidental skipping of prerequisite operations.</p>
+      </div>
+
+      <div class="sop-flowline">
+        <a class="sop-flowcard" data-phase-card="setup" href="microscope-sop-guided.html?phase=setup">
+          <span class="sop-flowcard__num">01 · START HERE</span>
+          <h3>Common Setup & Alignment</h3>
+          <p>Safety, specimen holder, airlock vacuum, HT, filament, beam, basic illumination and readiness checks.</p>
+          <span class="sop-flowcard__pre">Prerequisite · none</span>
+          <span class="sop-flowcard__go">Open section →</span>
+        </a>
+        <a class="sop-flowcard" data-phase-card="bf" href="microscope-sop-guided.html?phase=bf">
+          <span class="sop-flowcard__num">02 · BASELINE MODE</span>
+          <h3>Bright Field</h3>
+          <p>Eucentric height, condenser aperture/stigmation, direct 000 beam, objective aperture, focus and capture.</p>
+          <span class="sop-flowcard__pre">Prerequisite · microscope ready</span>
+          <span class="sop-flowcard__go">Open section →</span>
+        </a>
+        <a class="sop-flowcard" data-phase-card="df" href="microscope-sop-guided.html?phase=df">
+          <span class="sop-flowcard__num">03 · IMAGING MODE</span>
+          <h3>Dark Field</h3>
+          <p>Start from stable BF, select a diffracted reflection, use dark-field tilt and form an image from that beam.</p>
+          <span class="sop-flowcard__pre">Prerequisite · stable BF</span>
+          <span class="sop-flowcard__go">Open section →</span>
+        </a>
+        <a class="sop-flowcard" data-phase-card="saed" href="microscope-sop-guided.html?phase=saed">
+          <span class="sop-flowcard__num">04 · DIFFRACTION</span>
+          <h3>SAED</h3>
+          <p>Define the selected area, switch to SA DIFF, use PLA and DIFF FOCUS, set camera length and record.</p>
+          <span class="sop-flowcard__pre">Prerequisite · focused BF</span>
+          <span class="sop-flowcard__go">Open section →</span>
+        </a>
+        <a class="sop-flowcard" data-phase-card="hrtem" href="microscope-sop-guided.html?phase=hrtem">
+          <span class="sop-flowcard__num">05 · ADVANCED</span>
+          <h3>HRTEM</h3>
+          <p>Thin region, objective aperture out, Kikuchi-guided zone-axis tilt, OBJ STIG, live FFT and fine focus.</p>
+          <span class="sop-flowcard__pre">Prerequisite · BF + diffraction familiarity</span>
+          <span class="sop-flowcard__go">Open section →</span>
+        </a>
+        <a class="sop-flowcard" data-phase-card="end" href="microscope-sop-guided.html?phase=end">
+          <span class="sop-flowcard__num">06 · END SESSION</span>
+          <h3>Shutdown & Unload</h3>
+          <p>Neutralise the stage, remove apertures, beam/filament/HT actions, reverse holder removal and log the session.</p>
+          <span class="sop-flowcard__pre">Prerequisite · acquisition complete</span>
+          <span class="sop-flowcard__go">Open section →</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="sop-principles">
+      <article class="sop-principle">
+        <div class="sop-kicker">Beginner rule 01</div>
+        <h3>Same console, different purpose</h3>
+        <p>The console remains visually consistent across modes. Only the controls needed for the current task are highlighted, so learners recognise the real instrument without being overwhelmed.</p>
+      </article>
+      <article class="sop-principle">
+        <div class="sop-kicker">Beginner rule 02</div>
+        <h3>Action + location + reason</h3>
+        <p>Each step names the physical control and explains the visible consequence: wobble reduces, beam becomes circular, spots sharpen, a selected reflection forms DF contrast, or FFT symmetry improves.</p>
+      </article>
+      <article class="sop-principle">
+        <div class="sop-kicker">Control fidelity</div>
+        <h3>Manual terminology first</h3>
+        <p>The comparison build introduces MAG1, LOW MAG, SA MAG, SA DIFF, PLA, COND STIG, OBJ STIG, DARK TILT, DIFF FOCUS, SA/OL apertures and specimen tilt terminology used in the supplied manuals.</p>
+      </article>
+    </section>
+
+
+  </main>
+
+  <script src="../assets/js/global.js"></script>
+  <script>
+    (function(){var order=['setup','bf','df','saed','hrtem','end'],key='temSopBeginnerProgressV2',done=[];try{done=JSON.parse(sessionStorage.getItem(key)||'[]');if(!Array.isArray(done))done=[];}catch(e){done=[];}var firstIncomplete=order.find(function(p){return done.indexOf(p)<0;})||'end';document.querySelectorAll('[data-phase-card]').forEach(function(card){var phase=card.dataset.phaseCard,unlocked=phase==='setup'||done.indexOf(phase)>=0||phase===firstIncomplete;card.classList.toggle('is-locked',!unlocked);card.classList.toggle('is-complete',done.indexOf(phase)>=0);if(!unlocked){card.removeAttribute('href');card.setAttribute('aria-disabled','true');}var go=card.querySelector('.sop-flowcard__go');if(go)go.textContent=unlocked?(done.indexOf(phase)>=0?'Review section →':'Open section →'):'Locked';});})();
+  </script>
+</body>
+</html>

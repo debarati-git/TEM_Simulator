@@ -278,3 +278,9 @@
   .page--landing { grid-template-columns: 1fr; height: auto; overflow: visible; }
   .lp-right { max-height: 40vh; }
 }
+
+/* v4.0 — 3 module cards need slightly tighter card layout */
+@media (max-width: 1200px) {
+  .lp-modules { flex-wrap: wrap; }
+  .lp-card { flex: 1 1 calc(50% - 8px); min-width: 220px; }
+}

@@ -1,12 +1,12 @@
 /* =========================================================================
    Guided Simulator — Control Wiring  (v2.0)
    Connects every UI control to the state store.
-   Key change: single DEF/STIG trackpad routed by defStigMode.
+   DEF/STIG X/Y knobs are routed by defStigMode.
    ========================================================================= */
 (function () {
   'use strict';
 
-  var defStigHandle = null;   // trackpad handle for the multi-mode pad
+  var defStigHandles = { x: null, y: null };
 
   function init() {
     bindSampleSelector();
@@ -14,7 +14,7 @@
     bindBeamOn();
     bindKnobs();
     bindDefStigMode();
-    bindDefStigPad();
+    bindDefStigKnobs();
     bindApertureControls();
     bindStageXY();
     bindStageZ();
@@ -106,7 +106,7 @@
 
   /* ---- Knobs ---- */
   function bindKnobs() {
-    document.querySelectorAll('.knob').forEach(function(knob) {
+    document.querySelectorAll('.knob[data-knob]').forEach(function(knob) {
       var key = knob.dataset.knob;
       var min = +(knob.dataset.min || 0);
       var max = +(knob.dataset.max || 100);
@@ -139,9 +139,9 @@
   /* ---- DEF/STIG mode buttons ---- */
   function bindDefStigMode() {
     bindSelectorGroup('def-stig-mode', 'defStigMode');
-    // When mode changes, sync trackpad to the new state values
+    // When mode changes, sync both knobs to the selected function.
     TEM.state.subscribeKey('defStigMode', function(mode) {
-      syncDefStigPad(mode);
+      syncDefStigKnobs(mode);
       updateDefStigLabel(mode);
     });
   }
@@ -150,36 +150,49 @@
     var el = document.getElementById('def-stig-label');
     if (!el) return;
     var labels = { shift: 'Beam Shift', condStig: 'Cond. Stigmator', objStig: 'Obj. Stigmator' };
-    el.textContent = labels[mode] || 'DEF / STIG X · Y';
+    var label = labels[mode] || 'DEF / STIG';
+    // If there's a separate Y label (IIT split layout), update both individually
+    var elY = document.getElementById('def-stig-label-y');
+    if (elY) {
+      el.textContent = label + ' X';
+      elY.textContent = label + ' Y';
+    } else {
+      el.textContent = label + ' X · Y';
+    }
+    document.querySelectorAll('[data-defstig-axis]').forEach(function(knob) {
+      knob.setAttribute('aria-label', label + ' ' + knob.dataset.defstigAxis.toUpperCase() + ' control');
+    });
   }
 
-  /* ---- DEF/STIG single multifunction trackpad ---- */
-  function bindDefStigPad() {
-    var pad = document.querySelector('[data-trackpad="def-stig"]');
-    if (!pad) return;
-    var range = (pad.dataset.range || '-50,50').split(',').map(Number);
-
+  /* ---- DEF/STIG multifunction X/Y knobs ---- */
+  function bindDefStigKnobs() {
     var mode = TEM.state.get('defStigMode') || 'shift';
     var initial = getDefStigValues(mode);
 
-    defStigHandle = TEM.controlsUI.bindTrackpad(pad, {
-      rangeX: [range[0], range[1]],
-      rangeY: [range[0], range[1]],
-      valueX: initial.x, valueY: initial.y,
-      onChange: function(pos) { writeDefStig(pos); }
+    document.querySelectorAll('[data-defstig-axis]').forEach(function(knob) {
+      var axis = knob.dataset.defstigAxis;
+      if (axis !== 'x' && axis !== 'y') return;
+      var min = +(knob.dataset.min || -50);
+      var max = +(knob.dataset.max || 50);
+
+      defStigHandles[axis] = TEM.controlsUI.bindKnob(knob, {
+        min: min,
+        max: max,
+        value: initial[axis],
+        onChange: function(value) { writeDefStigAxis(axis, value); }
+      });
     });
 
-    // Two-way sync: when state changes externally, update pad
+    // Two-way sync: external state updates refresh both physical knobs.
     ['beamShift', 'condStig', 'objStig'].forEach(function(key) {
       TEM.state.subscribeKey(key, function() {
         var curMode = TEM.state.get('defStigMode');
-        if (getDefStigKey(curMode) === key) {
-          syncDefStigPad(curMode);
-        }
+        if (getDefStigKey(curMode) === key) syncDefStigKnobs(curMode);
       });
     });
 
     updateDefStigLabel(mode);
+    syncDefStigKnobs(mode);
   }
 
   function getDefStigKey(mode) {
@@ -193,19 +206,21 @@
     return TEM.state.get(key) || { x: 0, y: 0 };
   }
 
-  function writeDefStig(pos) {
+  function writeDefStigAxis(axis, value) {
     var mode = TEM.state.get('defStigMode') || 'shift';
     var key = getDefStigKey(mode);
-    TEM.state.set(key, { x: pos.x, y: pos.y });
+    var current = getDefStigValues(mode);
+    var next = { x: current.x, y: current.y };
+    next[axis] = value;
+    TEM.state.set(key, next);
   }
 
-  function syncDefStigPad(mode) {
-    if (!defStigHandle) return;
+  function syncDefStigKnobs(mode) {
     var vals = getDefStigValues(mode);
-    var cur = defStigHandle.value;
-    if (cur.x !== vals.x || cur.y !== vals.y) {
-      defStigHandle.value = vals;
-    }
+    ['x', 'y'].forEach(function(axis) {
+      var handle = defStigHandles[axis];
+      if (handle && handle.value !== vals[axis]) handle.value = vals[axis];
+    });
   }
 
   /* ---- Aperture controls ---- */

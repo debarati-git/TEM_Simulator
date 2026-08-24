@@ -783,3 +783,318 @@
 .viewer__stage > .pc-drawer {
   --pc-drawer-peek: var(--pc-drawer-reserved-space);
 }
+
+/* =====================================================================
+   v4.0 IIT SOP — Pre-flight checks, Spot Size, Alpha Selector styles
+   ===================================================================== */
+
+/* Pre-flight fieldset styling */
+.temcon-group--preflight {
+  border-left: 3px solid var(--accent-amber, #d4a24e);
+  background: var(--preflight-bg, rgba(212, 162, 78, 0.06));
+}
+:root[data-theme="dark"] .temcon-group--preflight {
+  background: rgba(212, 162, 78, 0.08);
+}
+
+.temcon-preflight-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.temcon-preflight-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 3px 0;
+  color: var(--text-2, #666);
+}
+
+.temcon-preflight-readout {
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--text-1, #222);
+  font-size: 12px;
+}
+
+.temcon-preflight-target {
+  color: var(--accent-green, #3a7);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.temcon-preflight-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 2px 0;
+  color: var(--text-2, #666);
+}
+
+/* Confirmed state for preflight buttons */
+.pbtn.is-confirmed {
+  background: var(--led-green, #3c6) !important;
+  color: #fff !important;
+  border-color: var(--led-green, #3c6) !important;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.pbtn.is-confirmed .pbtn__led {
+  background: #fff;
+  box-shadow: 0 0 4px #fff;
+}
+
+/* HV Ramp animation */
+.pbtn.is-ramping {
+  animation: ramp-pulse 0.6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes ramp-pulse {
+  from { background: var(--btn-bg, #e8e4de); }
+  to   { background: var(--accent-amber, #d4a24e); color: #fff; }
+}
+
+/* Compact readout strip for beam current */
+.readout-strip--compact {
+  margin-top: 4px;
+  padding: 4px 6px;
+}
+.readout-strip--compact .readout-cell {
+  text-align: center;
+}
+.readout-strip--compact .readout-cell__val {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 700;
+}
+.readout-strip--compact .readout-cell__val.is-stabilized {
+  color: var(--led-green, #3c6);
+}
+
+/* Illumination zone (Spot Size + Alpha) */
+[data-zone="illumination"] .pbtn-group {
+  gap: 3px;
+}
+[data-zone="illumination"] .pbtn {
+  min-width: 0;
+  padding: 4px 2px;
+  font-size: 11px;
+}
+
+/* =====================================================================
+   v4.0 — Pre-flight Checklist Modal
+   ===================================================================== */
+.preflight-modal {
+  position: fixed; inset: 0; z-index: 9000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.preflight-modal.is-open {
+  opacity: 1; pointer-events: auto;
+}
+.preflight-modal__bg {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+}
+.preflight-modal__panel {
+  position: relative; z-index: 1;
+  background: var(--bg-panel, #f5f3ef);
+  border: 1px solid var(--border-subtle, #c8c4be);
+  border-radius: 10px;
+  width: min(480px, 92vw);
+  max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  transform: translateY(12px);
+  transition: transform 0.3s ease;
+}
+.preflight-modal.is-open .preflight-modal__panel {
+  transform: translateY(0);
+}
+:root[data-theme="dark"] .preflight-modal__panel {
+  background: var(--bg-panel, #1a1a1e);
+  border-color: #333;
+}
+.preflight-modal__header {
+  padding: 18px 22px 12px;
+  border-bottom: 1px solid var(--border-subtle, #ddd);
+}
+.preflight-modal__title-wrap {
+  display: flex; align-items: center; gap: 10px;
+}
+.preflight-modal__title {
+  font-size: 15px; font-weight: 700; margin: 0;
+  color: var(--text-1, #222);
+}
+.tag--amber {
+  display: inline-block; padding: 2px 8px; border-radius: 3px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  background: #d4a24e; color: #fff; text-transform: uppercase;
+}
+.preflight-modal__body {
+  padding: 16px 22px 20px;
+}
+.preflight-modal__intro {
+  font-size: 13px; color: var(--text-2, #666); margin: 0 0 14px;
+}
+.preflight-checklist {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.preflight-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 7px;
+  border: 1.5px solid var(--border-subtle, #d0cdc8);
+  background: var(--bg-surface, #fff);
+  cursor: pointer; transition: all 0.2s ease;
+  text-align: left; font-family: inherit;
+  color: var(--text-1, #222);
+}
+:root[data-theme="dark"] .preflight-item {
+  background: #222; border-color: #444;
+}
+.preflight-item:hover:not(.is-confirmed) {
+  border-color: var(--accent-amber, #d4a24e);
+  box-shadow: 0 0 0 2px rgba(212,162,78,0.2);
+}
+.preflight-item.is-confirmed {
+  border-color: var(--led-green, #3c6);
+  background: rgba(60,180,100,0.06);
+}
+:root[data-theme="dark"] .preflight-item.is-confirmed {
+  background: rgba(60,180,100,0.1);
+}
+.preflight-item__icon {
+  flex: 0 0 20px; position: relative;
+}
+.preflight-item__icon svg:first-child { opacity: 0.3; }
+.preflight-item__check {
+  position: absolute; top: 0; left: 0;
+  opacity: 0; transition: opacity 0.2s;
+}
+.preflight-item.is-confirmed .preflight-item__check { opacity: 1; }
+.preflight-item.is-confirmed .preflight-item__icon svg:first-child { opacity: 0; }
+.preflight-item__body { flex: 1; }
+.preflight-item__label {
+  font-size: 13px; font-weight: 600;
+}
+.preflight-item__desc {
+  font-size: 11px; color: var(--text-2, #888); margin-top: 2px;
+}
+.preflight-item__status {
+  font-size: 11px; font-weight: 700; font-family: 'Courier New', monospace;
+  color: var(--text-2, #888); white-space: nowrap;
+}
+.preflight-item.is-confirmed .preflight-item__status {
+  color: var(--led-green, #3c6);
+}
+.preflight-item.is-ramping {
+  animation: ramp-pulse 0.5s ease-in-out infinite alternate;
+}
+.preflight-modal__footer {
+  margin-top: 14px; text-align: center;
+}
+.preflight-modal__progress {
+  font-size: 12px; font-weight: 600;
+  color: var(--text-2, #888);
+}
+
+/* =====================================================================
+   v4.0 — Improved readout visibility (DEF/STIG & Stage X/Y/Z) — IIT only
+   ===================================================================== */
+
+/* Make readout cells brighter with better contrast */
+.iit-sop .readout-cell {
+  background: linear-gradient(180deg, #1a1f2a 0%, #0f1318 100%);
+  border-color: #3a3e48;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.08);
+}
+.iit-sop .readout-cell__key {
+  color: #8a9ab0;
+  font-size: 0.55rem;
+}
+.iit-sop .readout-cell__val {
+  color: #4ae68a;
+  text-shadow: 0 0 8px rgba(74, 230, 138, 0.4);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* DEF/STIG readout bar — same treatment */
+.iit-sop .defstig-readout-bar {
+  background: linear-gradient(180deg, #1a1f2a 0%, #0f1318 100%);
+  border-color: #3a3e48;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.08);
+}
+.iit-sop .defstig-readout-bar__key {
+  color: #8a9ab0;
+}
+.iit-sop .defstig-readout-bar__val {
+  color: #4ae68a;
+  text-shadow: 0 0 8px rgba(74, 230, 138, 0.4);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.iit-sop .defstig-readout-bar__divider {
+  background: #3a3e48;
+}
+
+/* =====================================================================
+   v4.0 — Center single knobs in DEF/STIG split layout (IIT SOP only)
+   ===================================================================== */
+
+/* When there's only one knob in the row (IIT split X/Y), center it */
+.iit-sop .defstig-knob-row {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+
+/* Center the entire knob control within its zone */
+.iit-sop .defstig-knob-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Center the readout bar under a single knob */
+.iit-sop .defstig-readout-bar {
+  max-width: 120px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* =====================================================================
+   v4.0 — DEF/STIG readout: 2-line vertical layout (label top, value below)
+   ===================================================================== */
+.iit-sop .defstig-readout-bar {
+  padding: 4px 8px;
+  border-radius: 5px;
+  min-width: 50px;
+  max-width: 70px;
+  text-align: center;
+}
+.iit-sop .defstig-readout-bar__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.iit-sop .defstig-readout-bar__key {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: #fff !important;
+}
+.iit-sop .defstig-readout-bar__val {
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+/* =====================================================================
+   v4.0 — White label text for all black-background readout boxes
+   ===================================================================== */
+.iit-sop .readout-cell__key {
+  color: #fff !important;
+}

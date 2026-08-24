@@ -1,0 +1,59 @@
+IIT JEM-2100 MANUALS — DISCUSSION / CONFIRMATION POINTS
+
+Purpose
+-------
+This file intentionally keeps manual mismatches and facility-specific confirmation points OUT of the learner-facing simulator. Discuss these orally with the IIT professor/facility team before the SOP workflow is treated as final.
+
+1. Point-resolution specification
+   Practical Approach manual: 0.19 nm point resolution at 200 kV; 0.14 nm lattice resolution.
+   Imaging-mode SOP: approximately 0.23 nm point resolution; approximately 0.14 nm lattice resolution.
+   Confirm the facility-approved value to display.
+
+2. HT / specimen loading order
+   Practical Approach manual ramps 80 kV to 200 kV and turns HT ON before the line that says to insert the holder.
+   Imaging-mode SOP says do not turn HT ON until the specimen is loaded and ready.
+   Module 03 currently follows the second, safer beginner sequence. Confirm with IIT.
+
+3. End-of-session HT state
+   Practical Approach manual describes ramping 200 kV to 80 kV and making HT/Filament OFF, but later notes that TEM high voltage is normally left on, with an ACD-specific note.
+   Imaging-mode SOP explicitly says HT OFF. Confirm the student handover condition.
+
+4. ACD / liquid-nitrogen end-of-session handling
+   Both manuals include ACD-related actions, but confirm whether these are student tasks or facility/staff tasks.
+
+5. Dark Field method preferred in the IIT lab
+   SOP allows beam-tilt DF or specimen-tilt DF. Practical Approach describes DARK TILT / BRIGHT TILT controls. Module 03 teaches beam-tilt DF using DARK TILT. Confirm.
+
+6. Bright Field objective-aperture alignment
+   SOP briefly switches to diffraction to center the objective aperture on the direct 000 beam. Confirm the exact control naming/sequence used in the IIT lab.
+
+7. SAED aperture size / click-stop
+   Confirm whether a specific SA aperture size should be represented for the beginner exercise.
+
+8. SAED camera length
+   SOP requires recording camera length but does not prescribe one universal setting. Module 03 uses 300 mm as a practice target. Confirm the preferred IIT practice value or whether multiple values should be accepted.
+
+9. HRTEM sequence emphasis
+   SOP emphasizes Kikuchi-band zone-axis alignment, objective aperture OUT, stage settling, objective astigmatism, near-Scherzer focus and live FFT.
+   Practical Approach emphasizes amorphous-region RTFFT, under/focus/over-focus positions and OBJ STIG correction using the FFT reference circle. Confirm whether one or both should be taught.
+
+10. Camera software fidelity
+    Practical Approach explicitly names iTEM. Confirm how closely the simulator should reproduce the actual IIT iTEM interface.
+
+11. Eucentric-height magnification
+    Imaging-mode SOP recommends about 40,000x (roughly 30,000-50,000x), with a higher-magnification recheck. Module 03 uses about 40,000x. Confirm.
+
+12. Chiller / room-temperature wording
+    Practical Approach: chiller <=18 C. Imaging-mode SOP: room around 20-22 C and chiller at set temperature. Module 03 presents these as separate checks. Confirm facility wording.
+
+13. SIP vacuum display
+    Practical Approach describes the physical SIP dial; SOP gives <=2.5 x 10^-5 Pa. Module 03 uses the direct threshold for beginner clarity. Confirm whether the dial-reading skill should also be simulated.
+
+14. Controls intentionally not active
+    EDS, NBD, CBD, HC aperture, MAG2, EXP TIME/PHOTO and some maintenance controls are not part of the present beginner path. Confirm whether any should be assessed.
+
+15. Sample / image set
+    Confirm whether BF/DF/SAED/HRTEM responses should mimic the exact IIT practice examples (including gold nanoparticles) or use a generic training specimen.
+
+16. Student-vs-staff responsibility boundary
+    Confirm which actions involving system power, chiller reset, emergency shutdown, ACD handling and maintenance screens should be interactive student tasks, read-only checks, instructor-only notes, or excluded.

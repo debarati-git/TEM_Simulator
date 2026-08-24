@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IIT SOP Beginner Workflow · TEM Simulator</title>
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/microscope-sop.css" />
+</head>
+<body>
+  <div data-topnav data-module="microscope-sop"></div>
+
+  <main class="sop-session">
+    <div class="sop-status">
+      <div class="sop-status__left">
+        <span><i class="sop-led" id="sop-led-vac"></i>VAC <strong id="sop-vac-status">VENTED</strong></span>
+        <span><i class="sop-led" id="sop-led-beam"></i>BEAM <strong id="sop-beam-status">OFF</strong></span>
+        <span>HT <strong id="sop-ht-status">80 kV READY</strong></span>
+      </div>
+      <div class="sop-status__center">IIT SOP · BEGINNER GUIDED WORKFLOW</div>
+      <div class="sop-status__right">
+        <span>MODE <strong id="sop-mode-status">SETUP</strong></span>
+        <span>MAG <strong id="sop-mag-status">—</strong></span>
+      </div>
+    </div>
+
+    <div class="sop-phasebar">
+      <a class="sop-back" href="microscope-sop.html">← Module 03 overview</a>
+      <div class="sop-phase-tabs" id="sop-phase-tabs">
+        <button class="sop-phase-tab" data-phase="setup"><span>01</span>Common Setup</button>
+        <button class="sop-phase-tab" data-phase="bf"><span>02</span>Bright Field</button>
+        <button class="sop-phase-tab" data-phase="df"><span>03</span>Dark Field</button>
+        <button class="sop-phase-tab" data-phase="saed"><span>04</span>SAED</button>
+        <button class="sop-phase-tab" data-phase="hrtem"><span>05</span>HRTEM</button>
+        <button class="sop-phase-tab" data-phase="end"><span>06</span>End Session</button>
+      </div>
+      <div class="sop-phase-summary">
+        <div class="sop-phase-summary__title" id="sop-phase-title">Common Setup & Alignment</div>
+        <div class="sop-phase-summary__pre" id="sop-phase-pre">Start here · later sections unlock automatically</div>
+      </div>
+    </div>
+
+    <div class="sop-workspace">
+      <aside class="sop-panel sop-panel--hardware sop-panel--l1">
+        <div class="sop-panel__head"><span>Control Panel L1</span><span class="sop-jeol-mark">JEOL</span></div>
+        <div class="sop-panel__scroll">
+          <section class="sop-zone sop-zone--beam">
+            <div class="sop-zone__label">Beam / Aperture Control</div>
+            <div class="sop-control" data-control="beam">
+              <button class="sop-button sop-button--square" id="btn-beam"><span class="sop-button-lamp"></span>BEAM</button>
+            </div>
+            <div class="sop-control" data-control="aperture-select">
+              <div class="sop-panel-caption">APERTURE CONTROL</div>
+              <div class="sop-grid5 sop-grid-aperture">
+                <button class="sop-button" data-aperture="cl">CL</button>
+                <button class="sop-button" disabled>EDS</button>
+                <button class="sop-button" data-aperture="ol">OL</button>
+                <button class="sop-button" disabled>HC</button>
+                <button class="sop-button" data-aperture="sa">SA</button>
+              </div>
+            </div>
+            <div class="sop-control" data-control="aperture-action">
+              <div class="sop-grid2"><button class="sop-button" id="btn-ap-insert">INSERT</button><button class="sop-button" id="btn-ap-remove">REMOVE</button></div>
+            </div>
+            <div class="sop-control" data-control="aperture-xy">
+              <div class="sop-arrow-pad" aria-label="Aperture X Y centering controls">
+                <button class="sop-button sop-arrow sop-arrow--up" data-apmove="y+">▲</button>
+                <button class="sop-button sop-arrow sop-arrow--left" data-apmove="x-">◀</button>
+                <div class="sop-arrow-center">X/Y</div>
+                <button class="sop-button sop-arrow sop-arrow--right" data-apmove="x+">▶</button>
+                <button class="sop-button sop-arrow sop-arrow--down" data-apmove="y-">▼</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="sop-zone">
+            <div class="sop-zone__label">Probe Control</div>
+            <div class="sop-probe-row">
+              <button class="sop-button is-selected" disabled>TEM</button><button class="sop-button" disabled>EDS</button><button class="sop-button" disabled>NBD</button><button class="sop-button" disabled>CBD</button>
+            </div>
+            <div class="sop-control" data-control="spot-alpha">
+              <div class="sop-grid2"><button class="sop-button" data-simple="spot1">SPOT 1</button><button class="sop-button" data-simple="alpha2">α 2</button></div>
+            </div>
+          </section>
+
+          <section class="sop-zone">
+            <div class="sop-zone__label">DEF / STIG</div>
+            <div class="sop-control" data-control="def-mode">
+              <div class="sop-def-grid" id="def-mode-buttons">
+                <button class="sop-button" data-defmode="shift">IMAGE SHIFT</button>
+                <button class="sop-button" data-defmode="pla">PLA</button>
+                <button class="sop-button" data-defmode="cond">COND STIG</button>
+                <button class="sop-button" data-defmode="obj">OBJ STIG</button>
+                <button class="sop-button" data-defmode="dark">DARK TILT</button>
+                <button class="sop-button" data-defmode="bright">BRIGHT TILT</button>
+              </div>
+            </div>
+            <div class="sop-control sop-control--rotary" data-control="def-xy">
+              <div class="sop-range-wrap"><label>DEF/STIG X</label><input class="sop-range" id="rng-def-x" type="range" min="-50" max="50" value="0"><output id="out-def-x">0</output></div>
+            </div>
+          </section>
+
+          <section class="sop-zone">
+            <div class="sop-zone__label">Illumination</div>
+            <div class="sop-control sop-control--rotary" data-control="brightness">
+              <div class="sop-range-wrap sop-range-wrap--large"><label>BRIGHTNESS</label><input class="sop-range" id="rng-brightness" type="range" min="0" max="100" value="55"><output id="out-brightness">55</output></div>
+            </div>
+          </section>
+        </div>
+      </aside>
+
+      <section class="sop-center">
+        <div class="sop-instruction">
+          <div class="sop-stepno" id="sop-stepno">Step 1 / 1</div>
+          <div class="sop-task" id="sop-task">Preparing section…</div>
+          <div class="sop-why" id="sop-why">Why: —</div>
+        </div>
+
+        <div class="sop-viewer-shell" id="sop-viewer-shell">
+          <div class="sop-view-tabs" role="tablist" aria-label="Microscope view">
+            <button class="sop-view-tab is-active" data-sop-view="column"><span class="sop-view-dot"></span>Column</button>
+            <button class="sop-view-tab" data-sop-view="screen"><span class="sop-view-dot"></span>Viewing Screen</button>
+            <div class="sop-view-caption" id="sop-view-caption">ELECTRON OPTICAL COLUMN</div>
+          </div>
+
+          <div class="sop-view-stack">
+            <div class="sop-view-panel is-active" data-sop-view-panel="column">
+              <div class="sop-column-view">
+                <img src="../assets/images/microscope/diagram/tem-guided-cutaway.png" alt="TEM electron optical column cutaway" class="sop-column-image" />
+                <div class="sop-column-beam" id="sop-column-beam" aria-hidden="true"></div>
+                <div class="sop-column-readout"><span>Column status</span><strong id="sop-column-status">SPECIMEN NOT LOADED</strong></div>
+              </div>
+            </div>
+
+            <div class="sop-view-panel" data-sop-view-panel="screen">
+              <div class="sop-viewer" id="sop-viewer">
+                <canvas id="sop-canvas" width="960" height="600" aria-label="TEM viewing screen"></canvas>
+                <div class="sop-viewer__badge"><span id="sop-screen-label">Fluorescent viewing screen</span><span>·</span><span id="sop-screen-mode">Setup</span></div>
+                <div class="sop-clickcue" id="sop-clickcue">CLICK THE HIGHLIGHTED FEATURE</div>
+                <div class="sop-fft" id="sop-fft"><div class="sop-fft__title">Live FFT · RTFFT</div><canvas id="sop-fft-canvas" width="310" height="192"></canvas></div>
+              </div>
+            </div>
+
+            <div class="sop-pc-drawer" id="sop-pc-drawer" aria-expanded="false">
+              <button class="sop-pc-handle" id="sop-pc-handle" type="button"><span id="sop-pc-handle-label">PC · TEM CONTROL</span><span class="sop-pc-chevron">⌃</span></button>
+              <div class="sop-pc-body">
+                <div class="sop-pc-tabs"><button class="sop-pc-tab is-active" data-pc-screen="tem">TEM CONTROL</button><button class="sop-pc-tab" data-pc-screen="camera">CAMERA / iTEM</button></div>
+
+                <section class="sop-pc-screen is-active" data-pc-panel="tem">
+                  <div class="sop-win-titlebar"><span>Operation — JEM-2100 TEM Controller</span><span>— □ ×</span></div>
+                  <div class="sop-temcon-status-grid">
+                    <div><span>Acc.</span><strong id="pc-acc-value">80 kV</strong></div><div><span>HT</span><strong id="pc-ht-value">READY</strong></div><div><span>Filament</span><strong id="pc-filament-value">OFF</strong></div><div><span>Beam</span><strong id="pc-beam-value">OFF</strong></div><div><span>Vacuum</span><strong id="pc-vac-value">VENTED</strong></div><div><span>Mode</span><strong id="pc-mode-value">MAG1</strong></div>
+                  </div>
+                  <div class="sop-temcon-body">
+                    <fieldset class="sop-pc-fieldset sop-control" data-control="voltage"><legend>High Voltage Control</legend><div class="sop-grid2"><button class="sop-button sop-button--pc" data-voltage="80">80 kV</button><button class="sop-button sop-button--pc" data-voltage="200">200 kV</button></div></fieldset>
+                    <fieldset class="sop-pc-fieldset sop-control" data-control="ht-filament"><legend>HT / Filament</legend><div class="sop-grid2"><button class="sop-button sop-button--pc" id="btn-ht">HT ON</button><button class="sop-button sop-button--pc" id="btn-filament">FILAMENT ON</button></div></fieldset>
+                    <fieldset class="sop-pc-fieldset sop-control" data-control="stage-neutral"><legend>Stage</legend><button class="sop-button sop-button--pc" id="btn-neutral">STAGE NEUTRAL</button><div class="sop-stage-readouts"><span>X 0.0</span><span>Y 0.0</span><span id="pc-stage-z">Z +18 µm</span></div></fieldset>
+                  </div>
+                </section>
+
+                <section class="sop-pc-screen" data-pc-panel="camera">
+                  <div class="sop-win-titlebar"><span>iTEM — TEM Image Acquisition</span><span>— □ ×</span></div>
+                  <div class="sop-camera-ui">
+                    <div class="sop-camera-preview"><canvas id="sop-camera-preview" width="520" height="260"></canvas><span>LIVE CAMERA PREVIEW</span></div>
+                    <div class="sop-camera-controls sop-control" data-control="camera"><div class="sop-camera-readout"><span>Exposure</span><strong>200 ms</strong></div><div class="sop-camera-readout"><span>Mode</span><strong id="pc-camera-mode">BF</strong></div><button class="sop-button sop-button--pc sop-button--acquire" id="btn-acquire">SNAPSHOT / ACQUIRE</button></div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sop-viewmeta"><div><span>Beam used</span><strong id="meta-beam">—</strong></div><div><span>Objective aperture</span><strong id="meta-ol">OUT</strong></div><div><span>Selected area aperture</span><strong id="meta-sa">OUT</strong></div><div><span>Camera length / mag</span><strong id="meta-caml">—</strong></div></div>
+          <div class="sop-actions"><div class="sop-actions__left"><button class="sop-button sop-button--utility" id="btn-prev">← Previous</button><button class="sop-button sop-button--utility" id="btn-restart-section">Restart section</button></div><span class="sop-next-hint" id="sop-next-hint">Use the highlighted control to continue.</span><span class="sop-actions__progress" id="sop-progress">0%</span></div>
+        </div>
+      </section>
+
+      <aside class="sop-panel sop-panel--hardware sop-panel--r1">
+        <div class="sop-panel__head"><span>Control Panel R1 + Stage</span><span class="sop-jeol-mark">JEOL</span></div>
+        <div class="sop-panel__scroll">
+          <section class="sop-zone sop-zone--utility"><div class="sop-zone__label">Pre-operation check</div><div class="sop-control" data-control="safety"><button class="sop-button" id="btn-safety">VERIFY CHILLER · ROOM · SIP</button><div class="sop-airlock-status"><div class="sop-mini-readout"><span>Chiller</span><strong>≤ 18 °C</strong></div><div class="sop-mini-readout"><span>SIP</span><strong>≤ 2.5×10⁻⁵ Pa</strong></div></div></div></section>
+
+          <section class="sop-zone"><div class="sop-zone__label">Function</div><div class="sop-control" data-control="function"><div class="sop-function-grid" id="function-buttons"><button class="sop-button" data-function="mag1">MAG1</button><button class="sop-button" disabled>MAG2</button><button class="sop-button" data-function="lowmag">LOW MAG</button><button class="sop-button" data-function="samag">SA MAG</button><button class="sop-button" data-function="sadiff">SA DIFF</button></div></div></section>
+
+          <section class="sop-zone"><div class="sop-zone__label">Z / Wobbler</div><div class="sop-control" data-control="stage-z"><div class="sop-grid2"><button class="sop-button" data-z="-1">Z ▼</button><button class="sop-button" data-z="1">Z ▲</button></div><div class="sop-mini-readout"><span>Z position</span><strong id="out-stage-z">+18 µm</strong></div></div><div class="sop-control" data-control="wobble"><button class="sop-button" id="btn-wobble">IMAGE WOBB X</button></div></section>
+
+          <section class="sop-zone"><div class="sop-zone__label">Magnification / Camera Length</div><div class="sop-control sop-control--rotary" data-control="magcam"><div class="sop-range-wrap sop-range-wrap--large"><label>MAG/CAM L</label><input class="sop-range" id="rng-magcam" type="range" min="0" max="100" value="20"><output id="out-magcam">5k×</output></div></div></section>
+
+          <section class="sop-zone"><div class="sop-zone__label">SHIFT / DEF-STIG Y</div><div class="sop-control sop-control--rotary" data-control="def-xy"><div class="sop-range-wrap"><label>DEF/STIG Y</label><input class="sop-range" id="rng-def-y" type="range" min="-50" max="50" value="0"><output id="out-def-y">0</output></div></div></section>
+
+          <section class="sop-zone"><div class="sop-zone__label">Focus</div><div class="sop-control" data-control="std-focus"><button class="sop-button" id="btn-std-focus">STD FOCUS</button></div><div class="sop-control sop-control--rotary" data-control="obj-focus"><div class="sop-range-wrap"><label>OBJ FINE</label><input class="sop-range" id="rng-focus-f" type="range" min="-50" max="50" value="8"><output id="out-focus-f">8</output></div><div class="sop-range-wrap"><label>OBJ COARSE</label><input class="sop-range" id="rng-focus-c" type="range" min="-50" max="50" value="18"><output id="out-focus-c">18</output></div></div><div class="sop-control sop-control--rotary" data-control="diff-focus"><div class="sop-range-wrap"><label>DIFF FOCUS</label><input class="sop-range" id="rng-diff-focus" type="range" min="-50" max="50" value="18"><output id="out-diff-focus">18</output></div></div></section>
+
+          <section class="sop-zone"><div class="sop-zone__label">Specimen Tilt</div><div class="sop-control sop-control--rotary" data-control="tilt"><div class="sop-range-wrap"><label>α TILT</label><input class="sop-range" id="rng-alpha" type="range" min="-15" max="15" value="8"><output id="out-alpha">8°</output></div><div class="sop-range-wrap"><label>β TILT</label><input class="sop-range" id="rng-beta" type="range" min="-15" max="15" value="-7"><output id="out-beta">-7°</output></div></div></section>
+
+          <section class="sop-zone sop-zone--airlock"><div class="sop-zone__label">Goniometer / Airlock</div><div class="sop-control" data-control="airlock"><div class="sop-grid2"><button class="sop-button" id="btn-green"><span class="sop-button-lamp sop-button-lamp--green"></span>GREEN READY</button><button class="sop-button" id="btn-holder-a">POSITION A</button><button class="sop-button" id="btn-pump">PUMP / AIR</button><button class="sop-button" id="btn-holder-c">POSITION C</button><button class="sop-button" id="btn-holder-b">POSITION B</button><button class="sop-button" id="btn-holder-out">REMOVE HOLDER</button></div><div class="sop-airlock-status"><div class="sop-mini-readout"><span>Airlock</span><strong id="out-airlock">VENTED</strong></div><div class="sop-mini-readout"><span>Holder</span><strong id="out-holder">OUT</strong></div></div></div></section>
+        </div>
+      </aside>
+    </div>
+
+    <div class="sop-transition-modal" id="sop-transition-modal" hidden><div class="sop-transition-card"><div class="sop-transition-kicker">SECTION COMPLETE</div><h2 id="sop-transition-title">Section complete</h2><p id="sop-transition-text">Moving automatically to the next section…</p><div class="sop-transition-bar"><span></span></div></div></div>
+  </main>
+
+  <script src="../assets/js/global.js"></script>
+  <script src="../assets/js/microscope-sop.js"></script>
+</body>
+</html>
