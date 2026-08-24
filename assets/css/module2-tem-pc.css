@@ -1098,3 +1098,123 @@
 .iit-sop .readout-cell__key {
   color: #fff !important;
 }
+
+/* =====================================================================
+   v4.1 — Specimen Loading Modal, goniometer lamp indicators
+   ===================================================================== */
+
+/* Specimen modal extends preflight-modal base styles */
+.specimen-modal .preflight-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.specimen-modal__lamps {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-right: 4px;
+}
+
+/* Goniometer lamp dots (shared between PC drawer read-only + modal header) */
+.temcon-lamp-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #333;
+  padding: 5px 0;
+}
+
+.temcon-lamp-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.25);
+  flex-shrink: 0;
+}
+
+.temcon-lamp-dot--green {
+  background: #444;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.35);
+}
+.temcon-lamp-dot--green.is-on {
+  background: #2ecc40;
+  box-shadow: 0 0 8px rgba(46,204,64,0.55), inset 0 1px 2px rgba(255,255,255,0.3);
+}
+
+.temcon-lamp-dot--amber {
+  background: #444;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.35);
+}
+.temcon-lamp-dot--amber.is-on {
+  background: #f39c12;
+  box-shadow: 0 0 8px rgba(243,156,18,0.55), inset 0 1px 2px rgba(255,255,255,0.3);
+  animation: gonio-amber-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes gonio-amber-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Specimen modal tag color */
+.tag--purple {
+  background: #8e44ad;
+  color: #fff;
+}
+
+/* Current-step highlighting in the specimen checklist */
+.specimen-item.is-current-step {
+  outline: 2px solid #3498db;
+  outline-offset: -2px;
+  background: rgba(52, 152, 219, 0.08) !important;
+}
+
+/* Confirmed items */
+.specimen-item.is-confirmed .preflight-item__status,
+.preflight-item.is-confirmed .preflight-item__status {
+  color: var(--led-green, #3c6) !important;
+}
+
+/* Amber wait evacuating animation */
+.specimen-item.is-evacuating {
+  background: rgba(243, 156, 18, 0.08) !important;
+}
+.specimen-item.is-evacuating .specimen-amber-status {
+  color: #f39c12 !important;
+  animation: gonio-amber-pulse 1.2s ease-in-out infinite;
+}
+
+/* Stage verify buttons inside the modal */
+.specimen-verify-btns {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.specimen-verify-btn {
+  min-width: 44px;
+  font-size: 11px !important;
+  padding: 5px 10px !important;
+}
+.specimen-verify-btn.is-confirmed {
+  background: #27ae60 !important;
+  color: #fff !important;
+  border-color: #1e8449 !important;
+}
+
+/* Goniometer group in PC drawer (read-only) */
+.temcon-group--goniometer {
+  border-color: #c0a060 !important;
+}
+.temcon-group--goniometer legend {
+  color: #8b6914;
+}
+.temcon-gonio-lamps {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 4px 0 6px;
+}

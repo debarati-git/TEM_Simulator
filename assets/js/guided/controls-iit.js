@@ -13,6 +13,8 @@
     bindPreflightModal();
     bindSpotSize();
     bindAlphaSelector();
+    bindGoniometerControls();
+    bindStageVerify();
     subscribeIITStatusStrip();
   }
 
@@ -137,6 +139,224 @@
     var indHT = document.getElementById('ind-ht');
     TEM.state.subscribeKey('preflightHV', function(v) {
       if (indHT && v) indHT.textContent = '200 kV';
+    });
+  }
+
+  /* ---- Specimen Loading Modal ---- */
+  function bindGoniometerControls() {
+    var modal = document.getElementById('specimenModal');
+    if (!modal) return;
+
+    // Map each checklist item to a state key
+    var items = [
+      { id: 'sm-oring',        key: 'oringInspected',     step: 'oring' },
+      { id: 'sm-green-lamp',   key: 'gonioGreenConfirmed', step: 'green-lamp' },
+      { id: 'sm-grid-load',    key: 'gridLoaded',          step: 'grid-load' },
+      { id: 'sm-pump-switch',  key: 'pumpSwitchSet',       step: 'pump-switch' },
+      { id: 'sm-amber-wait',   key: 'airlockPumped',       step: 'amber-wait' },
+      { id: 'sm-rotate-insert', key: 'holderFullyInserted', step: 'rotate-insert' },
+      { id: 'sm-stage-verify', key: null,                   step: 'stage-verify' }
+    ];
+
+    var countEl = document.getElementById('specimen-count');
+
+    function updateSpecimenCount() {
+      var done = 0;
+      items.forEach(function(item) {
+        if (item.key && TEM.state.get(item.key)) done++;
+        else if (item.step === 'stage-verify') {
+          if (TEM.state.get('stageVerifyX') && TEM.state.get('stageVerifyY') &&
+              TEM.state.get('stageVerifyZ') && TEM.state.get('stageVerifyTilt')) done++;
+        }
+      });
+      if (countEl) countEl.textContent = done;
+      // Auto-close when all 7 complete
+      if (done >= 7) {
+        setTimeout(function() { closeSpecimenModal(); }, 500);
+      }
+    }
+
+    // Bind click handlers for simple checklist items
+    items.forEach(function(item) {
+      if (item.step === 'amber-wait' || item.step === 'stage-verify') return;
+      var el = document.getElementById(item.id);
+      if (!el) return;
+      el.addEventListener('click', function() {
+        if (el.classList.contains('is-confirmed')) return;
+        el.classList.add('is-confirmed');
+        TEM.state.set(item.key, true);
+
+        // PUMP switch: update status text
+        if (item.step === 'pump-switch') {
+          var statusEl = el.querySelector('.preflight-item__status');
+          if (statusEl) statusEl.textContent = 'PUMP';
+        }
+
+        updateSpecimenCount();
+      });
+
+      // Subscribe to state for undo support
+      TEM.state.subscribeKey(item.key, function(val) {
+        if (el) el.classList.toggle('is-confirmed', !!val);
+        updateSpecimenCount();
+      });
+    });
+
+    // Amber wait: auto-confirmed by autoAirlockModal handler
+    var amberEl = document.getElementById('sm-amber-wait');
+    var amberStatus = amberEl ? amberEl.querySelector('.specimen-amber-status') : null;
+
+    window._setSpecimenAmberActive = function(active) {
+      if (amberEl) amberEl.classList.toggle('is-evacuating', active);
+      if (amberStatus) amberStatus.textContent = active ? '● AMBER' : '—';
+      // Update modal header lamps
+      var smGreen = document.getElementById('sm-lamp-green');
+      var smAmber = document.getElementById('sm-lamp-amber');
+      if (smGreen) smGreen.classList.toggle('is-on', !active);
+      if (smAmber) smAmber.classList.toggle('is-on', active);
+    };
+
+    TEM.state.subscribeKey('airlockPumped', function(val) {
+      if (amberEl) {
+        amberEl.classList.toggle('is-confirmed', !!val);
+        amberEl.classList.remove('is-evacuating');
+      }
+      if (amberStatus) amberStatus.textContent = val ? 'READY' : '—';
+      // Restore header lamps
+      var smGreen = document.getElementById('sm-lamp-green');
+      var smAmber = document.getElementById('sm-lamp-amber');
+      if (smGreen) smGreen.classList.toggle('is-on', !!val);
+      if (smAmber) smAmber.classList.remove('is-on');
+      updateSpecimenCount();
+    });
+
+    // Goniometer lamp management in PC drawer (read-only display)
+    var greenLamp = document.getElementById('gonio-lamp-green');
+    var amberLamp = document.getElementById('gonio-lamp-amber');
+
+    window._setGonioLamp = function(mode) {
+      if (greenLamp) greenLamp.classList.toggle('is-on', mode === 'green');
+      if (amberLamp) amberLamp.classList.toggle('is-on', mode === 'amber');
+      // Also update modal header lamps
+      var smGreen = document.getElementById('sm-lamp-green');
+      var smAmber = document.getElementById('sm-lamp-amber');
+      if (smGreen) smGreen.classList.toggle('is-on', mode === 'green');
+      if (smAmber) smAmber.classList.toggle('is-on', mode === 'amber');
+    };
+
+    // Default: green lamp on once preflight passes
+    TEM.state.subscribeKey('preflightACD', function(v) {
+      if (v) window._setGonioLamp('green');
+    });
+    TEM.state.subscribeKey('airlockPumped', function(v) {
+      if (v) window._setGonioLamp('green');
+    });
+
+    // Status readouts in PC drawer
+    TEM.state.subscribeKey('gridLoaded', function(v) {
+      var el = document.getElementById('pc-grid-status');
+      if (el) el.textContent = v ? 'LOADED' : 'NOT LOADED';
+    });
+    TEM.state.subscribeKey('holderFullyInserted', function(v) {
+      var holderStatus = document.getElementById('pc-holder-status');
+      if (holderStatus && v) holderStatus.textContent = 'INSERTED';
+      var specStatus = document.getElementById('pc-specimen-status');
+      if (specStatus && v) specStatus.textContent = 'IN COLUMN';
+    });
+    TEM.state.subscribeKey('pumpSwitchSet', function(v) {
+      var pumpReadout = document.getElementById('gonio-pump-state-readout');
+      if (pumpReadout) pumpReadout.textContent = v ? 'PUMP' : 'AIR';
+    });
+
+    // Open/close modal helpers
+    window._openSpecimenModal = function() {
+      modal.hidden = false;
+      void modal.offsetWidth;
+      modal.classList.add('is-open');
+
+      // Highlight the currently active item based on current step
+      var stepId = TEM.state.get('currentStepId');
+      highlightActiveSpecimenItem(stepId);
+    };
+
+    function closeSpecimenModal() {
+      modal.classList.remove('is-open');
+      setTimeout(function() { modal.hidden = true; }, 250);
+    }
+    window._closeSpecimenModal = closeSpecimenModal;
+
+    // Map step IDs to specimen items for highlighting
+    var stepToItem = { 7: 'oring', 8: 'green-lamp', 10: 'grid-load', 13: 'pump-switch', 14: 'amber-wait', 15: 'rotate-insert', 16: 'stage-verify' };
+
+    function highlightActiveSpecimenItem(stepId) {
+      document.querySelectorAll('.specimen-item').forEach(function(el) {
+        el.classList.remove('is-current-step');
+      });
+      var target = stepToItem[stepId];
+      if (target) {
+        var el = document.querySelector('[data-specimen-step="' + target + '"]');
+        if (el) {
+          el.classList.add('is-current-step');
+          // Scroll into view within the modal
+          setTimeout(function() {
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 100);
+        }
+      }
+    }
+
+    TEM.state.subscribeKey('currentStepId', function(stepId) {
+      highlightActiveSpecimenItem(stepId);
+      // Reopen if entering a specimen modal step
+      if (stepToItem[stepId] && modal.hidden) {
+        window._openSpecimenModal();
+      }
+    });
+  }
+
+  function bindSimpleAction(action, stateKey) {
+    document.querySelectorAll('.pbtn[data-action="' + action + '"]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        if (btn.disabled) return;
+        TEM.state.set(stateKey, true);
+        btn.classList.add('is-confirmed');
+      });
+    });
+  }
+
+  /* ---- Stage verification (X, Y, Z, Tilt) — inside specimen modal ---- */
+  function bindStageVerify() {
+    var axes = [
+      { action: 'stage-verify-x',    key: 'stageVerifyX' },
+      { action: 'stage-verify-y',    key: 'stageVerifyY' },
+      { action: 'stage-verify-z',    key: 'stageVerifyZ' },
+      { action: 'stage-verify-tilt', key: 'stageVerifyTilt' }
+    ];
+    var countEl = document.getElementById('sm-verify-count');
+    var parentItem = document.getElementById('sm-stage-verify');
+
+    function updateVerifyCount() {
+      var done = 0;
+      axes.forEach(function(a) { if (TEM.state.get(a.key)) done++; });
+      if (countEl) countEl.textContent = done;
+      if (parentItem && done >= 4) parentItem.classList.add('is-confirmed');
+    }
+
+    axes.forEach(function(axis) {
+      document.querySelectorAll('.pbtn[data-action="' + axis.action + '"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (btn.disabled) return;
+          TEM.state.set(axis.key, true);
+          btn.classList.add('is-confirmed');
+          updateVerifyCount();
+        });
+      });
+      TEM.state.subscribeKey(axis.key, function(val) {
+        document.querySelectorAll('.pbtn[data-action="' + axis.action + '"]').forEach(function(btn) {
+          btn.classList.toggle('is-confirmed', !!val);
+        });
+        updateVerifyCount();
+      });
     });
   }
 

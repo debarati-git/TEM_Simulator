@@ -422,7 +422,25 @@
                           </div>
                           <div class="temcon-info-grid temcon-info-grid--compact">
                             <span>Holder Status</span><strong id="pc-holder-status">NOT SELECTED</strong>
+                            <span>Grid</span><strong id="pc-grid-status">NOT LOADED</strong>
                             <span>Specimen</span><strong id="pc-specimen-status">OUTSIDE COLUMN</strong>
+                          </div>
+                        </fieldset>
+
+                        <fieldset class="temcon-group temcon-group--goniometer">
+                          <legend>Goniometer Status</legend>
+                          <div class="temcon-gonio-lamps">
+                            <div class="temcon-lamp-indicator">
+                              <span class="temcon-lamp-dot temcon-lamp-dot--green" id="gonio-lamp-green"></span>
+                              <span>Green — Ready</span>
+                            </div>
+                            <div class="temcon-lamp-indicator">
+                              <span class="temcon-lamp-dot temcon-lamp-dot--amber" id="gonio-lamp-amber"></span>
+                              <span>Amber — Evacuating</span>
+                            </div>
+                          </div>
+                          <div class="temcon-info-grid temcon-info-grid--compact">
+                            <span>PUMP / AIR</span><strong id="gonio-pump-state-readout">AIR</strong>
                           </div>
                         </fieldset>
 
@@ -835,6 +853,140 @@
           <div class="preflight-modal__footer">
             <div class="preflight-modal__progress">
               <span id="preflight-count">0</span> / 4 verified
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ SPECIMEN LOADING MODAL ═══════════ -->
+    <div class="preflight-modal specimen-modal" id="specimenModal" role="dialog" aria-modal="true" aria-labelledby="specimenTitle" hidden>
+      <div class="preflight-modal__bg" id="specimenBg"></div>
+      <div class="preflight-modal__panel">
+        <header class="preflight-modal__header">
+          <div class="preflight-modal__title-wrap">
+            <span class="tag tag--purple">SPECIMEN</span>
+            <h3 class="preflight-modal__title" id="specimenTitle">Specimen Loading &amp; Holder Insertion</h3>
+          </div>
+          <div class="specimen-modal__lamps">
+            <span class="temcon-lamp-dot temcon-lamp-dot--green" id="sm-lamp-green"></span>
+            <span class="temcon-lamp-dot temcon-lamp-dot--amber" id="sm-lamp-amber"></span>
+          </div>
+        </header>
+        <div class="preflight-modal__body">
+          <p class="preflight-modal__intro">Follow each step in sequence. Click the active row to confirm.</p>
+
+          <div class="preflight-checklist specimen-checklist">
+
+            <!-- Step 7: Inspect O-rings -->
+            <button type="button" class="preflight-item specimen-item" data-specimen-step="oring" id="sm-oring">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Inspect O-rings</div>
+                <div class="preflight-item__desc">Check for damage, dust, or old grease · clean &amp; re-grease lightly if needed</div>
+              </div>
+              <span class="preflight-item__status">CHECK</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <!-- Step 8: Confirm green lamp -->
+            <button type="button" class="preflight-item specimen-item" data-specimen-step="green-lamp" id="sm-green-lamp">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Goniometer Green Lamp</div>
+                <div class="preflight-item__desc">Confirm the green lamp is lit — goniometer ready for holder loading</div>
+              </div>
+              <span class="preflight-item__status" style="color: var(--led-green, #3c6);">● GREEN</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <!-- Step 10: Load grid -->
+            <button type="button" class="preflight-item specimen-item" data-specimen-step="grid-load" id="sm-grid-load">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Load TEM Grid</div>
+                <div class="preflight-item__desc">Open cartridge · place grid sample-side up with anti-static tweezers · close retaining clip</div>
+              </div>
+              <span class="preflight-item__status">LOAD</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <!-- Step 13: PUMP switch -->
+            <button type="button" class="preflight-item specimen-item" data-specimen-step="pump-switch" id="sm-pump-switch">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Set PUMP / AIR → PUMP</div>
+                <div class="preflight-item__desc">Pull switch out while turning to PUMP · begins roughing pump evacuation</div>
+              </div>
+              <span class="preflight-item__status">AIR</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <!-- Step 14: Wait for amber lamp (auto) -->
+            <div class="preflight-item specimen-item specimen-item--auto" data-specimen-step="amber-wait" id="sm-amber-wait">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Wait — Amber Lamp</div>
+                <div class="preflight-item__desc">Airlock evacuating · do not rotate or push the holder · wait for lamp to go out</div>
+              </div>
+              <span class="preflight-item__status specimen-amber-status">—</span>
+              <span class="preflight-item__indicator"></span>
+            </div>
+
+            <!-- Step 15: Rotate & insert -->
+            <button type="button" class="preflight-item specimen-item" data-specimen-step="rotate-insert" id="sm-rotate-insert">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Rotate &amp; Insert Fully</div>
+                <div class="preflight-item__desc">Rotate holder 150° CW then 750° CW · push fully until seated in goniometer stage</div>
+              </div>
+              <span class="preflight-item__status">INSERT</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <!-- Step 16: Stage verify -->
+            <div class="preflight-item specimen-item specimen-item--verify" data-specimen-step="stage-verify" id="sm-stage-verify">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Verify Stage Motion</div>
+                <div class="preflight-item__desc">Confirm each axis responds in the control software</div>
+                <div class="specimen-verify-btns">
+                  <button class="pbtn specimen-verify-btn" data-action="stage-verify-x">X</button>
+                  <button class="pbtn specimen-verify-btn" data-action="stage-verify-y">Y</button>
+                  <button class="pbtn specimen-verify-btn" data-action="stage-verify-z">Z</button>
+                  <button class="pbtn specimen-verify-btn" data-action="stage-verify-tilt">Tilt</button>
+                </div>
+              </div>
+              <span class="preflight-item__status"><span id="sm-verify-count">0</span>/4</span>
+              <span class="preflight-item__indicator"></span>
+            </div>
+
+          </div>
+
+          <div class="preflight-modal__footer">
+            <div class="preflight-modal__progress">
+              <span id="specimen-count">0</span> / 7 complete
             </div>
           </div>
         </div>

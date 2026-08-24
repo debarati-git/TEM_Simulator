@@ -18,9 +18,20 @@
     holderType: null,
     stageNeutralized: false,
     holderRemoved: false,
+    oringInspected: false,
+    gonioGreenConfirmed: false,
+    gridLoaded: false,
     specimenInsertedDiagram: false,
-    specimenInsertedPanel: false,
+    pumpSwitchSet: false,
     airlockPumped: false,
+    holderFullyInserted: false,
+    specimenInsertedPanel: false,
+
+    // Stage verification
+    stageVerifyX: false,
+    stageVerifyY: false,
+    stageVerifyZ: false,
+    stageVerifyTilt: false,
 
     // Beam
     accVoltage: 200,   // Pre-set via HV ramp in pre-flight

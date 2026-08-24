@@ -39,7 +39,10 @@
     [
       'airlockPumped', 'accVoltage', 'beamOn', 'beamCurrent', 'stageNeutralized',
       'stageX', 'stageY', 'stageZ', 'holderType',
-      'holderRemoved', 'specimenInsertedDiagram', 'specimenInsertedPanel',
+      'holderRemoved', 'oringInspected', 'gonioGreenConfirmed', 'gridLoaded',
+      'specimenInsertedDiagram', 'pumpSwitchSet', 'holderFullyInserted',
+      'specimenInsertedPanel',
+      'stageVerifyX', 'stageVerifyY', 'stageVerifyZ', 'stageVerifyTilt',
       'imagingMode', 'magnification', 'focusCoarse', 'focusFine',
       'defStigMode', 'wobblerOn', 'currentStepId',
       'cameraInserted', 'cameraLiveView', 'screenRaised'
@@ -140,7 +143,7 @@
 
   function selectRecommendedTEMTab(stepId) {
     // Guided setup actions live on the reconstructed Stage page.
-    if (stepId === 1 || stepId === 2 || stepId === 6) {
+    if (stepId >= 1 && stepId <= 2 || stepId >= 5 && stepId <= 16) {
       setTEMTab('stage');
     } else if (currentPanel === 'tem') {
       setTEMTab('standard');
@@ -282,8 +285,11 @@
   }
 
   function getSpecimenStatus(state) {
-    if (state.specimenInsertedPanel) return 'IN COLUMN';
-    if (state.specimenInsertedDiagram) return state.airlockPumped ? 'AIRLOCK READY' : 'IN AIRLOCK';
+    if (state.holderFullyInserted) return 'IN COLUMN';
+    if (state.airlockPumped) return 'AIRLOCK READY';
+    if (state.pumpSwitchSet) return 'EVACUATING';
+    if (state.specimenInsertedDiagram) return 'IN AIRLOCK';
+    if (state.gridLoaded) return 'GRID LOADED';
     if (state.holderRemoved) return 'HOLDER REMOVED';
     return 'OUTSIDE COLUMN';
   }
@@ -324,7 +330,7 @@
     setText('pc-holder-status', s.holderType ? s.holderType.replace('-', ' ').toUpperCase() : 'NOT SELECTED');
     setText('pc-specimen-status', getSpecimenStatus(s));
 
-    var vacuumBusy = s.currentStepId === 6 && !s.airlockPumped;
+    var vacuumBusy = s.currentStepId === 14 && !s.airlockPumped;
     setClass('pc-vac-ind', 'is-on', !!s.airlockPumped);
     setText('pc-vac-text', s.airlockPumped ? 'READY' : (vacuumBusy ? 'EVACUATING' : 'NOT READY'));
     setText('pc-column-vacuum', 'READY');
@@ -338,11 +344,21 @@
     }
 
     var message = 'TEM Connected';
-    if (vacuumBusy) message = 'Airlock evacuation in progress…';
-    else if (s.airlockPumped && s.currentStepId === 6) message = 'Airlock vacuum ready';
+    if (vacuumBusy) message = 'Airlock evacuation in progress — amber lamp lit…';
+    else if (s.holderFullyInserted) message = 'Holder fully inserted — specimen in column';
+    else if (s.airlockPumped) message = 'Airlock vacuum ready — rotate and insert holder';
+    else if (s.pumpSwitchSet) message = 'PUMP switch set — evacuating airlock…';
+    else if (s.specimenInsertedDiagram) message = 'Holder at first stop — set PUMP to evacuate';
+    else if (s.gridLoaded) message = 'Grid loaded on holder';
+    else if (s.gonioGreenConfirmed) message = 'Goniometer ready — green lamp confirmed';
+    else if (s.oringInspected) message = 'O-rings inspected — ready for loading';
     else if (s.stageNeutralized) message = 'Stage neutralized at safe position';
     else if (s.holderType) message = 'Holder selected: ' + s.holderType.replace('-', ' ');
     setText('pc-system-message', message);
+
+    // Update goniometer PUMP state readout
+    var pumpReadout = document.getElementById('gonio-pump-state-readout');
+    if (pumpReadout) pumpReadout.textContent = s.pumpSwitchSet ? 'PUMP' : 'AIR';
 
     setText('pc-screen-state', s.screenRaised ? 'UP' : 'DOWN');
     setText('pc-camera-state', s.cameraInserted ? 'INSERTED' : 'RETRACTED');

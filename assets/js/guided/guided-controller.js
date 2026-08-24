@@ -21,8 +21,13 @@
   var everUnlocked = new Set();
   var STATE_TO_CONTROL = {
     sample: 'sample', holderType: 'holder-type', stageNeutralized: 'stage-neutralize',
-    holderRemoved: 'holder-remove', specimenInsertedDiagram: 'specimen-insert-diagram',
+    holderRemoved: 'holder-remove', oringInspected: 'oring-inspect',
+    gonioGreenConfirmed: 'gonio-green-lamp', gridLoaded: 'grid-load',
+    specimenInsertedDiagram: 'specimen-insert-diagram',
+    pumpSwitchSet: 'pump-switch', holderFullyInserted: 'holder-rotate-insert',
     specimenInsertedPanel: 'specimen-insert', airlockPumped: 'airlock',
+    stageVerifyX: 'stage-verify', stageVerifyY: 'stage-verify',
+    stageVerifyZ: 'stage-verify', stageVerifyTilt: 'stage-verify',
     accVoltage: 'acc-voltage', beamOn: 'beam-on', brightness: 'brightness',
     defStigMode: 'def-stig-mode', beamShift: 'def-stig-pad', condStig: 'def-stig-pad', objStig: 'def-stig-pad',
     currentAperture: 'aperture-select', condenserInserted: 'condenser-insert', objectiveInserted: 'objective-insert',
@@ -382,13 +387,39 @@
     }
 
     // onEnter side-effects
-    if (step.onEnter === 'autoAirlock') {
+    if (step.onEnter === 'openSpecimenModal' && window._openSpecimenModal) {
+      window._openSpecimenModal();
+    }
+    if (step.onEnter === 'showAmberLamp' && window._setGonioLamp) {
+      window._setGonioLamp('amber');
+    }
+    if (step.onEnter === 'autoAirlockModal') {
+      if (window._openSpecimenModal) window._openSpecimenModal();
+      if (window._setGonioLamp) window._setGonioLamp('amber');
+      if (window._setSpecimenAmberActive) window._setSpecimenAmberActive(true);
       scheduleStepTimer(function() {
-        if (currentStepIndex === index) TEM.state.set('airlockPumped', true);
+        if (currentStepIndex === index) {
+          TEM.state.set('airlockPumped', true);
+          if (window._setGonioLamp) window._setGonioLamp('green');
+          if (window._setSpecimenAmberActive) window._setSpecimenAmberActive(false);
+        }
+      }, Math.max(200, (step.autoAdvance || 2000) / 2));
+    }
+    if (step.onEnter === 'autoAirlock') {
+      if (window._setGonioLamp) window._setGonioLamp('amber');
+      scheduleStepTimer(function() {
+        if (currentStepIndex === index) {
+          TEM.state.set('airlockPumped', true);
+          if (window._setGonioLamp) window._setGonioLamp('off');
+        }
       }, Math.max(200, (step.autoAdvance || 2000) / 2));
     }
     if (step.onEnter === 'openPreflightModal' && window._openPreflightModal) {
       window._openPreflightModal();
+    }
+    // Close specimen modal for steps that don't use it
+    if (step.onEnter !== 'openSpecimenModal' && step.onEnter !== 'autoAirlockModal' && window._closeSpecimenModal) {
+      window._closeSpecimenModal();
     }
 
     if (step.prelude) applyPrelude(step.prelude);
