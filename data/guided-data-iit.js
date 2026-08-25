@@ -258,7 +258,7 @@
         success: { type: 'valueInRange', key: 'brightness', spot: 'brightness_diverge' }
       },
 
-      // ===== PHASE 3: EUCENTRIC HEIGHT (27–31) =====
+      // ===== PHASE 3: EUCENTRIC HEIGHT (27–32) =====
       {
         id: 27,
         instruction: 'Set magnification to LOW to find the sample.',
@@ -268,20 +268,28 @@
       },
       {
         id: 28,
-        instruction: 'Press Standard Focus to reset the objective lens.',
+        instruction: 'Locate a distinct feature (e.g. a hole edge or contamination spot) and centre it using the Stage X/Y pad.',
+        hint: 'Drag the Stage X/Y pad toward the blue circle target.',
+        unlocks: ['stage-xy'],
+        roiTarget: { x: 35, y: 25 },
+        success: { type: 'valueInRange', key: 'stage', spot: 'stageXY_lowMag' }
+      },
+      {
+        id: 29,
+        instruction: 'Press Standard Focus to reset the objective lens to its nominal value.',
         hint: 'Press Std Focus on the left panel.',
         unlocks: ['std-focus'],
         success: { type: 'selectValue', key: 'stdFocusReset', value: true }
       },
       {
-        id: 29,
+        id: 30,
         instruction: 'Turn the Wobbler ON to find eucentric height.',
         hint: 'Press Wobble X on the left panel.',
         unlocks: ['wobbler'],
         success: { type: 'selectValue', key: 'wobblerOn', value: true }
       },
       {
-        id: 30,
+        id: 31,
         instruction: 'Adjust Z while observing the phosphor screen. The lateral image swing should shrink near eucentric height and grow when moving away.',
         hint: 'Use +Z / −Z and continue in the direction that reduces the displayed wobble amplitude.',
         unlocks: ['stage-z'],
@@ -289,30 +297,30 @@
         success: { type: 'valueInRange', key: 'stageZ', spot: 'stageZ_eucentric' }
       },
       {
-        id: 31,
+        id: 32,
         instruction: 'Eucentric height found. Turn the Wobbler OFF.',
         hint: 'Press Wobble X again.',
         unlocks: ['wobbler'],
         success: { type: 'selectValue', key: 'wobblerOn', value: false }
       },
 
-      // ===== PHASE 4: OBJECTIVE APERTURE ALIGNMENT (32–36) =====
+      // ===== PHASE 4: OBJECTIVE APERTURE ALIGNMENT (33–37) =====
       {
-        id: 32,
+        id: 33,
         instruction: 'Switch to DIFF mode on the right panel.',
         hint: 'Press DIFF under Imaging Mode.',
         unlocks: ['imaging-mode'],
         success: { type: 'selectValue', key: 'imagingMode', value: 'diff' }
       },
       {
-        id: 33,
+        id: 34,
         instruction: 'Select Objective as the aperture type.',
         hint: 'Under Apertures, press Obj.',
         unlocks: ['aperture-select'],
         success: { type: 'selectValue', key: 'currentAperture', value: 'objective' }
       },
       {
-        id: 34,
+        id: 35,
         instruction: 'Click INSERT on the objective aperture in the column diagram.',
         hint: 'The objective aperture hotspot is highlighted.',
         unlocks: [],
@@ -321,7 +329,7 @@
         success: { type: 'selectValue', key: 'objectiveInserted', value: true }
       },
       {
-        id: 35,
+        id: 36,
         instruction: 'Centre the objective aperture using the Aperture Alignment trackpad.',
         hint: 'Drag the alignment dot to the centre.',
         unlocks: ['aperture-align'],
@@ -330,22 +338,14 @@
         success: { type: 'valueInRange', key: 'apertureAlignment', spot: 'apertureAlign_obj' }
       },
       {
-        id: 36,
+        id: 37,
         instruction: 'Switch back to MAG1 imaging mode.',
         hint: 'Press MAG1 under Imaging Mode.',
         unlocks: ['imaging-mode'],
         success: { type: 'selectValue', key: 'imagingMode', value: 'mag1' }
       },
 
-      // ===== PHASE 5: IMAGE ACQUISITION (37–44) =====
-      {
-        id: 37,
-        instruction: 'Move the stage to the region of interest (blue circle).',
-        hint: 'Drag the Stage X/Y pad toward the target.',
-        unlocks: ['stage-xy'],
-        roiTarget: { x: 35, y: 25 },
-        success: { type: 'valueInRange', key: 'stage', spot: 'stageXY_lowMag' }
-      },
+      // ===== PHASE 5: IMAGE ACQUISITION (38–44) =====
       {
         id: 38,
         instruction: 'Increase magnification to MEDIUM.',
