@@ -28,14 +28,23 @@
   function pickVoice() {
     var voices = supported ? window.speechSynthesis.getVoices() : [];
     if (!voices || !voices.length) return null;
-    // Prefer an Indian-English voice (browser/OS dependent — common names
-    // include "Google हिन्दी" is Hindi, not this; look for en-IN lang tag
-    // or an explicit "India" in the voice name, e.g. "Microsoft Heera",
-    // "Microsoft Ravi", "Rishi", "Veena", "Google UK English India" variants).
-    return voices.find(function (v) { return /^en[-_]in\b/i.test(v.lang); })
-      || voices.find(function (v) { return /india/i.test(v.name); })
-      || voices.find(function (v) { return /^en/i.test(v.lang) && v.default; })
-      || voices.find(function (v) { return /^en/i.test(v.lang); })
+
+    // Prefer a male Indian-English voice when the browser/OS exposes one.
+    // SpeechSynthesis does not provide a standard gender property, so known
+    // Indian male voice names are used first, followed by any en-IN voice.
+    function isIndianEnglish(v) {
+      return /^en[-_]in\b/i.test(v.lang || '') || /india/i.test(v.name || '');
+    }
+    function looksMale(v) {
+      return /(ravi|rishi|prabhat|hemant|madhur|male)/i.test(v.name || '');
+    }
+
+    return voices.find(function (v) { return isIndianEnglish(v) && looksMale(v); })
+      || voices.find(function (v) { return /^en[-_]in\b/i.test(v.lang || ''); })
+      || voices.find(function (v) { return /india/i.test(v.name || ''); })
+      || voices.find(function (v) { return /^en/i.test(v.lang || '') && looksMale(v); })
+      || voices.find(function (v) { return /^en/i.test(v.lang || '') && v.default; })
+      || voices.find(function (v) { return /^en/i.test(v.lang || ''); })
       || voices[0];
   }
 
@@ -47,8 +56,8 @@
     window.speechSynthesis.cancel(); // never let utterances overlap/queue
 
     var utter = new SpeechSynthesisUtterance(clean);
-    utter.rate = 0.7;
-    utter.pitch = 1;
+    utter.rate = 0.72;
+    utter.pitch = 0.88;
     var voice = pickVoice();
     if (voice) utter.voice = voice;
 

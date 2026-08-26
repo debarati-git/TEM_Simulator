@@ -48,7 +48,7 @@
    */
   const MODULES = [
     { key: 'column',         num: '01', label: 'The Column',      href: 'pages/column.html' },
-    { key: 'microscope-iit', num: '02', label: 'The Microscope',  href: 'pages/microscope-iit.html' },
+    { key: 'microscope-iit', num: '02', label: 'The Microscope',  href: 'pages/microscope.html' },
   ];
 
   /**
