@@ -108,6 +108,11 @@
   function bindKnobs() {
     document.querySelectorAll('.knob[data-knob]').forEach(function(knob) {
       var key = knob.dataset.knob;
+      // Spot Size and Alpha Selector are discrete IIT-SOP controls. They are
+      // bound in controls-iit.js with step=1; do not double-bind them here as
+      // continuous knobs, otherwise the displayed integer can differ from the
+      // underlying state and Step 18 may never pass.
+      if (key === 'spot-size' || key === 'alpha-selector') return;
       var min = +(knob.dataset.min || 0);
       var max = +(knob.dataset.max || 100);
       var stateKey = camelize(key);

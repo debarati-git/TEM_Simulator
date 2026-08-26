@@ -4,9 +4,9 @@
    SpeechSynthesis API. No audio files — keeps the project file://-friendly
    and offline-capable.
 
-   Off by default on every page load. The learner opts in via the toggle
-   button in the instruction bar; the choice is NOT persisted across
-   reloads (always starts OFF), per project decision.
+   On by default on every page load. The learner may mute it via the
+   toggle button in the instruction bar; the choice is NOT persisted across
+   reloads (always starts ON).
 
    Usage:
      TEM.audio.init(toggleBtnEl)   — wire the toggle button, set initial icon
@@ -21,7 +21,7 @@
   'use strict';
 
   var supported = typeof window !== 'undefined' && 'speechSynthesis' in window;
-  var enabled = false;
+  var enabled = true;
   var toggleBtn = null;
   var getCurrentText = null; // fn returning the live instruction string
 
@@ -82,7 +82,7 @@
 
   var hintTimer = null;
 
-  /** Show the "psst, audio exists" callout every time the pre-start screen
+  /** Show the audio-status callout every time the pre-start screen
    *  appears (initial load and every Restart). */
   function showHint() {
     if (!supported) return;

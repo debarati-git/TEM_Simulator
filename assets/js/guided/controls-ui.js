@@ -32,12 +32,18 @@
   function bindKnob(el, opts = {}) {
     const min = opts.min ?? 0;
     const max = opts.max ?? 100;
+    const step = opts.step ?? 0;           // 0 = continuous
     const format = opts.format ?? ((v) => Math.round(v));
     let value = opts.value ?? min;
 
     const valueEl = el.querySelector('.knob__value');
     const bodyEl  = el.querySelector('.knob__body');
     const arcEl   = el.querySelector('.knob__arc');
+
+    function snap(v) {
+      if (step > 0) return Math.round((v - min) / step) * step + min;
+      return v;
+    }
 
     function render() {
       const t = (value - min) / (max - min);          // 0..1
@@ -68,7 +74,8 @@
     function setFromPointer(clientX, clientY) {
       const deg = angleFromPointer(clientX, clientY);
       const t = (deg + 135) / 270;                    // 0..1
-      const newVal = min + t * (max - min);
+      const raw = min + t * (max - min);
+      const newVal = snap(raw);
       if (newVal !== value) {
         value = newVal;
         render();
@@ -104,12 +111,12 @@
     el.setAttribute('aria-valuemin', String(min));
     el.setAttribute('aria-valuemax', String(max));
     el.addEventListener('keydown', (e) => {
-      const step = (e.shiftKey ? (max - min) / 10 : (max - min) / 100);
+      const kStep = step > 0 ? step : (e.shiftKey ? (max - min) / 10 : (max - min) / 100);
       let dv = 0;
-      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') dv = step;
-      if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') dv = -step;
+      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') dv = kStep;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') dv = -kStep;
       if (dv) {
-        value = Math.max(min, Math.min(max, value + dv));
+        value = snap(Math.max(min, Math.min(max, value + dv)));
         render();
         if (opts.onChange) opts.onChange(value);
         e.preventDefault();
@@ -120,7 +127,7 @@
 
     return {
       get value() { return value; },
-      set value(v) { value = Math.max(min, Math.min(max, v)); render(); },
+      set value(v) { value = snap(Math.max(min, Math.min(max, v))); render(); },
     };
   }
 

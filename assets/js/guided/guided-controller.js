@@ -37,7 +37,9 @@
     focusCoarse: 'focus-coarse', focusFine: 'focus-fine',
     focusCoarseAdjusted: 'focus-coarse', focusFineAdjusted: 'focus-fine', stdFocusReset: 'std-focus',
     cameraInserted: 'camera-insert', cameraLiveView: 'live-view', screenRaised: 'screen-raise',
-    imageAcquired: 'acquire'
+    imageAcquired: 'acquire',
+    htOff: 'ht-control', holderWithdrawn: 'shutdown-holder',
+    aperturesRemoved: 'shutdown-apertures', acdHeatOn: 'shutdown-acd'
   };
 
   /* ---- Boot ---- */
@@ -144,6 +146,9 @@
     }
     if (controlKey === 'def-stig-pad') {
       return target.querySelector('.defstig-knob-row') || target;
+    }
+    if (controlKey === 'ht-control') {
+      return target.querySelector('#ht-off-btn') || target;
     }
 
     // For compact row controls, a button is a more precise target than the
@@ -421,6 +426,13 @@
     if (step.onEnter !== 'openSpecimenModal' && step.onEnter !== 'autoAirlockModal' && window._closeSpecimenModal) {
       window._closeSpecimenModal();
     }
+    // Shutdown modal
+    if (step.onEnter === 'openShutdownModal' && window._openShutdownModal) {
+      window._openShutdownModal();
+    }
+    if (step.onEnter !== 'openShutdownModal' && window._closeShutdownModal) {
+      window._closeShutdownModal();
+    }
 
     if (step.prelude) applyPrelude(step.prelude);
 
@@ -576,7 +588,11 @@
       return cond.all.every(evalCondition);
     }
     if (cond.type === 'selectValue') {
-      return TEM.state.get(cond.key) === cond.value;
+      var selected = TEM.state.get(cond.key);
+      if (typeof cond.value === 'number' && selected != null && selected !== '') {
+        return Number(selected) === cond.value;
+      }
+      return selected === cond.value;
     }
     if (cond.type === 'selectOneOf') {
       var cur = TEM.state.get(cond.key);

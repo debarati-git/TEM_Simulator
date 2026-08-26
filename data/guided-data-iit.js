@@ -1,5 +1,5 @@
 /* =========================================================================
-   TEM Simulator — Guided steps data  (v4.1, 44 steps)
+   TEM Simulator — Guided steps data  (v4.2, 49 steps)
    IIT SOP flow per Adem Ahmed Aliy & Sakshi Nigavekar operating procedures
    and meeting notes from IIT Hyderabad.
    Specimen loading expanded to match JEOL JEM-2100 goniometer procedure.
@@ -10,7 +10,7 @@
 
   window.TEM.dataGuidedSteps = {
     sample: null,
-    totalSteps: 44,
+    totalSteps: 49,
     steps: [
       // ===== PHASE 0: PRE-FLIGHT CHECKS (1–4) — shown in modal overlay =====
       {
@@ -165,8 +165,8 @@
       },
       {
         id: 18,
-        instruction: 'Set Spot Size to 1 and α Selector to α3. These control beam convergence and illuminated area.',
-        hint: 'Use the Spot Size and Alpha Selector controls on the left panel.',
+        instruction: 'Set Spot Size to 1 and α Selector to α3. Both settings must be selected before the next step unlocks.',
+        hint: 'Use both illumination knobs on the left panel: set Spot Size to 1 and α Selector to α3.',
         unlocks: ['spot-size', 'alpha-selector'],
         switchViewer: 'screen',
         success: {
@@ -422,6 +422,48 @@
         unlocks: ['acquire'],
         pcDrawer: 'cam',
         success: { type: 'selectValue', key: 'imageAcquired', value: true }
+      },
+
+      // ===== PHASE 6: SHUTDOWN (45–49) =====
+      {
+        id: 45,
+        instruction: 'Turn off the electron beam. Press the BEAM button on the left panel — the green glow will go out.',
+        hint: 'Press the BEAM button to toggle beam off.',
+        unlocks: ['beam-on'],
+        success: { type: 'selectValue', key: 'beamOn', value: false }
+      },
+      {
+        id: 46,
+        instruction: 'Turn off the High Voltage. Press HT OFF in the High Voltage Control section of the PC drawer.',
+        hint: 'Press the OFF button in the HT control section.',
+        unlocks: ['ht-control'],
+        pcDrawer: 'tem',
+        pcTab: 'standard',
+        success: { type: 'selectValue', key: 'htOff', value: true }
+      },
+      {
+        id: 47,
+        instruction: 'Remove the specimen holder. Withdraw from column, set PUMP/AIR to AIR to vent, then remove holder fully. Click the checklist item to confirm.',
+        hint: 'Click the Remove Specimen Holder row in the shutdown checklist.',
+        unlocks: ['shutdown-holder'],
+        onEnter: 'openShutdownModal',
+        success: { type: 'selectValue', key: 'holderWithdrawn', value: true }
+      },
+      {
+        id: 48,
+        instruction: 'Remove all apertures from the beam path (condenser and objective). Click the checklist item to confirm.',
+        hint: 'Click the Remove All Apertures row in the shutdown checklist.',
+        unlocks: ['shutdown-apertures'],
+        onEnter: 'openShutdownModal',
+        success: { type: 'selectValue', key: 'aperturesRemoved', value: true }
+      },
+      {
+        id: 49,
+        instruction: 'Turn on ACD heat via the Maintenance tab, and log the session end time, specimen details, and any observations. Click the checklist item to confirm.',
+        hint: 'Click the ACD Heat & Log Session row in the shutdown checklist.',
+        unlocks: ['shutdown-acd'],
+        onEnter: 'openShutdownModal',
+        success: { type: 'selectValue', key: 'acdHeatOn', value: true }
       }
     ]
   };

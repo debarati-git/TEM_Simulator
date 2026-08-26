@@ -1,3 +1,23 @@
+## v4.2 — Spot/Alpha progression hotfix
+- Removed duplicate continuous binding of the stepped Spot Size and Alpha Selector knobs.
+- Spot Size and Alpha now write exact integer state values only.
+- Step 18 reliably advances when Spot Size = 1 and Alpha Selector = 3.
+
+
+## v4.2 — Illumination step visibility fix
+- Step 18 now explicitly instructs the learner to set **Spot Size = 1** and **α Selector = α3**.
+- Guided mode now starts at **Spot Size = 2** and **α Selector = α2**, preventing Step 18 from auto-completing on entry.
+- The next step advances only after both required values are selected.
+# Version 4.2 — 2026-08-26
+
+- Refined TEMCON PC drawer to visually match the supplied JEOL JEM-2100/HR controller photograph.
+- Added legacy-style application menu and function shortcut bars.
+- Added HT READY / Beam READY status blocks and synchronized top readouts.
+- Reworked High Voltage Control with HT ON/OFF switches, Down/Up controls, step selectors, filament and Auto HT rows.
+- Center-aligned the left-panel Beam button.
+- Kept Spot Size and α Selector as adjacent knobs, ordered Spot Size then α Selector.
+- Initialized Spot Size = 1 and α Selector = 3 so the required combination satisfies Step 18 and unlocks the next step.
+
 ## 2026-08-03 — Module visibility and beam-shift controls
 
 - Hidden Module 3 (Diffraction Lab) from the landing page and global navigation.

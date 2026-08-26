@@ -1,4 +1,12 @@
-# TEM Simulator — Version 1.18
+# TEM Simulator — Version 4.2
+
+## Version 4.2 update
+
+- TEMCON PC drawer visually refined from the supplied JEM-2100/HR controller close-up, including HT READY / Beam READY status presentation and a more faithful High Voltage Control ON/OFF layout.
+- Left control-panel Beam button centred.
+- Spot Size and α Selector knobs arranged side by side.
+- Spot Size 1 + α3 are now represented in simulator state, so the guided workflow unlocks/advances when that required combination is satisfied.
+
 
 A web-based Transmission Electron Microscope learning environment, built for
 IIT students to develop instrument intuition before working on real hardware.

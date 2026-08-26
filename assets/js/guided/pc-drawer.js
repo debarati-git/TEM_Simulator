@@ -298,17 +298,23 @@
     if (!window.TEM || !TEM.state) return;
     var s = TEM.state.getAll();
 
-    // Top data display area.
-    setClass('pc-ht-lamp', 'is-on', !!s.accVoltage);
+    // Top data display area — mimic the JEM-2100/HR TEMCON status strip.
+    var htReady = !!s.preflightHV && !s.htOff;
+    setClass('pc-ht-lamp', 'is-on', htReady);
     setClass('pc-beam-lamp', 'is-on', !!s.beamOn);
-    setText('pc-beam-lamp', s.beamOn ? 'Beam\nON' : 'Beam\nOFF');
 
-    // Restore the two-line status lamp after textContent replacement.
+    var htLamp = document.getElementById('pc-ht-lamp');
+    if (htLamp) htLamp.innerHTML = '<strong>HT</strong><span>' + (htReady ? 'READY' : 'OFF') + '</span>';
     var beamLamp = document.getElementById('pc-beam-lamp');
-    if (beamLamp) beamLamp.innerHTML = 'Beam<br><strong>' + (s.beamOn ? 'ON' : 'OFF') + '</strong>';
+    if (beamLamp) beamLamp.innerHTML = 'Beam<br><strong>' + (s.beamOn ? 'READY' : 'OFF') + '</strong>';
 
-    setText('pc-acc-value', s.accVoltage ? formatFixed(s.accVoltage, 2) + ' kV' : '— kV');
-    setText('pc-beam-current', Math.round(Number(s.beamCurrent) || 0) + ' µA');
+    setText('pc-acc-value', htReady ? formatFixed(s.accVoltage || 200, 2) + ' kV' : '— kV');
+    setText('pc-beam-current-top', s.beamOn ? '101.1 µA' : '0.0 µA');
+    setText('pc-beam-current-hv', s.beamOn ? '101.1 µA' : '0.0 µA');
+    setText('pc-spot-value-top', s.spotSize == null ? '—' : String(s.spotSize));
+    setText('pc-alpha-value-top', s.alphaSelector == null ? '—' : String(s.alphaSelector));
+    setText('pc-spot-value', s.spotSize == null ? '—' : String(s.spotSize));
+    setText('pc-alpha-value', s.alphaSelector == null ? '—' : String(s.alphaSelector));
     setText('pc-mag-value', getMagnificationLabel(s));
 
     var defocusNm = (Number(s.focusCoarse) || 0) + (Number(s.focusFine) || 0) / 10;

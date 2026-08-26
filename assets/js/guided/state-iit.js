@@ -1,5 +1,5 @@
 /* =========================================================================
-   Guided Simulator — State Store  (v4.0 IIT SOP)
+   Guided Simulator — State Store  (v4.2 IIT SOP)
    Flat key-value store with pub/sub.
    Extended with pre-flight, spot size, and alpha selector keys.
    ========================================================================= */
@@ -40,8 +40,8 @@
     brightness: 50,
 
     // Spot Size & Alpha Selector (IIT SOP)
-    spotSize: null,
-    alphaSelector: null,
+    spotSize: 2,
+    alphaSelector: 2,
 
     // DEF/STIG — paired X/Y knobs, multi-mode
     defStigMode: null,
@@ -76,6 +76,12 @@
     cameraLiveView: false,
     liveFFTOn: false,
     imageAcquired: false,
+
+    // Shutdown
+    htOff: false,
+    holderWithdrawn: false,
+    aperturesRemoved: false,
+    acdHeatOn: false,
 
     // Meta
     currentStepId: 1

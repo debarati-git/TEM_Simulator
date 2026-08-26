@@ -1,0 +1,10 @@
+TEM Simulator — Version 4.2
+Build date: 2026-08-26
+Baseline: c35dddbc-b101-45e5-a942-74a3dece201a.zip
+
+Version 4.2 changes:
+- TEMCON PC drawer updated from supplied JEM-2100/HR close-up reference.
+- HT READY / Beam READY status presentation and High Voltage Control ON/OFF layout added.
+- Beam button centered on the left control panel.
+- Spot Size and Alpha Selector knobs placed side by side.
+- Spot Size 1 + Alpha 3 state satisfies the guided step and unlocks the next stage.

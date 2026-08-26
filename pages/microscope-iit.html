@@ -40,7 +40,7 @@
         <span>MAG <strong id="ind-mag">—</strong></span>
         <span class="guided-audio-hint-anchor">
           <button type="button" class="guided-status__audio-toggle" id="btn-audio-toggle"
-                  aria-pressed="false" title="Turn on voice instructions">
+                  aria-pressed="true" title="Turn off voice instructions">
             <svg class="guided-status__audio-icon-on" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M2 6h2.6L8 3.3v9.4L4.6 10H2z" fill="currentColor" stroke="none"/>
               <path d="M10.2 5.2a4 4 0 0 1 0 5.6"/>
@@ -54,7 +54,7 @@
           </button>
           <div class="guided-audio-hint" id="audio-hint" role="status">
             <span class="guided-audio-hint__icon" aria-hidden="true">🔊</span>
-            <span class="guided-audio-hint__text">Voice narration available — tap <strong>Audio</strong> to turn it on</span>
+            <span class="guided-audio-hint__text">Voice narration is on by default — you can mute it if required</span>
             <button type="button" class="guided-audio-hint__close" id="audio-hint-close" aria-label="Dismiss">×</button>
           </div>
         </span>
@@ -130,9 +130,8 @@
           <div class="dz" data-zone="beam">
             <div class="dz__label">Beam</div>
             <div class="dz__body">
-              <div class="ctl ctl--row-2" data-control="beam-on">
-                <div class="ctl__label">Beam</div>
-                <button class="pbtn" data-action="beam-on"><span class="pbtn__led"></span>On</button>
+              <div class="ctl ctl--center ctl--beam-center" data-control="beam-on">
+                <button class="pbtn pbtn--beam" id="beam-toggle" data-action="beam-toggle"><span class="pbtn__led"></span>Beam</button>
               </div>
               <div class="ctl ctl--center" data-control="brightness">
                 <div class="knob" data-knob="brightness" data-min="0" data-max="100" data-value="50">
@@ -146,29 +145,41 @@
             </div>
           </div>
 
-          <!-- SPOT SIZE & ALPHA SELECTOR (IIT SOP) -->
+          <!-- SPOT SIZE & ALPHA SELECTOR (IIT SOP) — knobs matching real panel -->
           <div class="dz" data-zone="illumination">
             <div class="dz__label">Illumination</div>
-            <div class="dz__body">
-              <div class="ctl ctl--stack" data-control="spot-size">
-                <div class="ctl__label">Spot Size</div>
-                <div class="pbtn-group" style="--cols:5;">
-                  <button class="pbtn" data-action="spot-size" data-value="1">1</button>
-                  <button class="pbtn" data-action="spot-size" data-value="2">2</button>
-                  <button class="pbtn" data-action="spot-size" data-value="3">3</button>
-                  <button class="pbtn" data-action="spot-size" data-value="4">4</button>
-                  <button class="pbtn" data-action="spot-size" data-value="5">5</button>
+            <div class="dz__body dz__body--knob-pair">
+              <div class="ctl ctl--center" data-control="spot-size">
+                <div class="knob knob--stepped" data-knob="spot-size" data-min="1" data-max="5" data-step="1" data-value="2">
+                  <div class="knob__ring"></div>
+                  <div class="knob__arc"></div>
+                  <div class="knob__body"></div>
+                  <div class="knob__value">2</div>
+                  <div class="knob__ticks" aria-hidden="true">
+                    <span class="knob__tick" data-pos="1"></span>
+                    <span class="knob__tick" data-pos="2"></span>
+                    <span class="knob__tick" data-pos="3"></span>
+                    <span class="knob__tick" data-pos="4"></span>
+                    <span class="knob__tick" data-pos="5"></span>
+                  </div>
                 </div>
+                <div class="ctl__label ctl__label--below">Spot Size</div>
               </div>
-              <div class="ctl ctl--stack" data-control="alpha-selector">
-                <div class="ctl__label">α Selector</div>
-                <div class="pbtn-group" style="--cols:5;">
-                  <button class="pbtn" data-action="alpha-selector" data-value="1">α1</button>
-                  <button class="pbtn" data-action="alpha-selector" data-value="2">α2</button>
-                  <button class="pbtn" data-action="alpha-selector" data-value="3">α3</button>
-                  <button class="pbtn" data-action="alpha-selector" data-value="4">α4</button>
-                  <button class="pbtn" data-action="alpha-selector" data-value="5">α5</button>
+              <div class="ctl ctl--center" data-control="alpha-selector">
+                <div class="knob knob--stepped" data-knob="alpha-selector" data-min="1" data-max="5" data-step="1" data-value="2">
+                  <div class="knob__ring"></div>
+                  <div class="knob__arc"></div>
+                  <div class="knob__body"></div>
+                  <div class="knob__value">α2</div>
+                  <div class="knob__ticks" aria-hidden="true">
+                    <span class="knob__tick" data-pos="1"></span>
+                    <span class="knob__tick" data-pos="2"></span>
+                    <span class="knob__tick" data-pos="3"></span>
+                    <span class="knob__tick" data-pos="4"></span>
+                    <span class="knob__tick" data-pos="5"></span>
+                  </div>
                 </div>
+                <div class="ctl__label ctl__label--below">α Selector</div>
               </div>
             </div>
           </div>
@@ -272,31 +283,49 @@
                   <div class="temcon-titlebar">
                     <div class="temcon-titlebar__caption">
                       <span class="temcon-titlebar__icon" aria-hidden="true">✣</span>
-                      <span>Operation</span>
+                      <span>Controller for JEM-2100/HR</span>
                     </div>
                     <div class="temcon-titlebar__buttons" aria-hidden="true">
                       <span>—</span><span>□</span><span>×</span>
                     </div>
                   </div>
 
+                  <div class="temcon-menubar" aria-label="TEMCON menu bar">
+                    <span>File</span><span>Dialogue</span><span>Monitor</span><span>Property</span>
+                    <span>Option</span><span>Maintenance</span><span>Display</span><span>JEOLS</span><span>Help</span>
+                  </div>
+
+                  <div class="temcon-shortcuts" aria-label="TEMCON function shortcuts">
+                    <span class="temcon-shortcut temcon-shortcut--ht">HT</span>
+                    <span class="temcon-shortcut">SPC</span>
+                    <span class="temcon-shortcut">Status</span>
+                    <span class="temcon-shortcut">VAC</span>
+                    <span class="temcon-shortcut"><b>F1:</b> Screen</span>
+                    <span class="temcon-shortcut"><b>F2:</b> Off-Axis</span>
+                    <span class="temcon-shortcut"><b>F3:</b> SPOT</span>
+                    <span class="temcon-shortcut"><b>F4:</b> GUN/A</span>
+                    <span class="temcon-shortcut"><b>F5:</b> IL Stig</span>
+                    <span class="temcon-shortcut"><b>F6:</b> GIF</span>
+                  </div>
+
                   <div class="temcon-status" aria-label="TEM main data display area">
                     <div class="temcon-status__lamps">
-                      <div class="temcon-lamp" id="pc-ht-lamp">HT</div>
+                      <div class="temcon-lamp temcon-lamp--ht" id="pc-ht-lamp"><strong>HT</strong><span>OFF</span></div>
                       <div class="temcon-lamp temcon-lamp--beam" id="pc-beam-lamp">Beam<br><strong>OFF</strong></div>
                     </div>
                     <div class="temcon-status__cell temcon-status__cell--illumination">
-                      <div><span>Acc.</span> <strong id="pc-acc-value">— kV</strong></div>
-                      <div><span>Beam Current</span> <strong id="pc-beam-current">50 µA</strong></div>
-                      <div class="temcon-status__inline"><strong>TEM</strong><strong>Spot 1</strong></div>
-                      <div class="temcon-status__inline"><span></span><strong>Alpha 3</strong></div>
+                      <div class="temcon-status__primary"><span>Acc.</span><strong id="pc-acc-value">— kV</strong><strong>TEM</strong></div>
+                      <div class="temcon-status__primary"><span>Beam Current</span><strong id="pc-beam-current-top">50 µA</strong></div>
+                      <div class="temcon-status__inline"><span></span><strong>Spot <span id="pc-spot-value-top">2</span></strong></div>
+                      <div class="temcon-status__inline"><span></span><strong>Alpha <span id="pc-alpha-value-top">2</span></strong></div>
                     </div>
                     <div class="temcon-status__cell">
-                      <div class="temcon-status__pair"><span>MAG :</span><strong id="pc-mag-value">X20k</strong></div>
-                      <div class="temcon-status__pair"><span>Defocus:</span><strong id="pc-defocus-value">0.0 nm</strong></div>
+                      <div class="temcon-status__pair"><span>SAMAG :</span><strong id="pc-mag-value">X8000</strong></div>
+                      <div class="temcon-status__pair"><span>Defocus:</span><strong id="pc-defocus-value">0.00 nm</strong></div>
                     </div>
                     <div class="temcon-status__cell">
-                      <div class="temcon-status__pair"><span>Cur. Dens.</span><strong id="pc-current-density">0.8 pA/cm²</strong></div>
-                      <div class="temcon-status__pair"><span>Exp. Time</span><strong>1 sec M</strong></div>
+                      <div class="temcon-status__pair"><span>Cur. Dens.</span><strong id="pc-current-density">0.0 pA/cm²</strong></div>
+                      <div class="temcon-status__pair"><span>Exp. Time</span><strong>*** sec B</strong></div>
                     </div>
                     <div class="temcon-status__cell temcon-status__cell--stage">
                       <div><span>X=</span> <strong id="pc-stg-x">0.0</strong></div>
@@ -304,7 +333,7 @@
                       <div><span>Z=</span> <strong id="pc-stg-z">0.0</strong></div>
                       <div><span>TX=</span> <strong id="pc-stg-tx">0.0</strong></div>
                       <div><span>TY=</span> <strong id="pc-stg-ty">0.0</strong></div>
-                      <div class="temcon-status__stage-mode">Super Fine</div>
+                      <div class="temcon-status__stage-mode">Stage Neutral</div>
                     </div>
                   </div>
 
@@ -315,6 +344,65 @@
                     </div>
 
                     <section class="temcon-page is-selected" role="tabpanel" data-temcon-page="standard">
+                      <fieldset class="temcon-group temcon-group--hv">
+                        <legend>High Voltage Control</legend>
+                        <div class="temcon-hv-summary">
+                          <div class="temcon-hv-summary__line">
+                            <span>HT status:</span><strong id="pc-ht-status">OFF</strong>
+                            <span>HT:</span><strong id="pc-ht-value">0.00 kV</strong>
+                          </div>
+                          <div class="temcon-hv-summary__line">
+                            <span>Filament status:</span><strong id="pc-fil-status">OFF</strong>
+                            <span>Beam current:</span><strong id="pc-beam-current-hv">0.0 µA</strong>
+                          </div>
+                        </div>
+
+                        <div class="temcon-hv-controls">
+                          <div class="ctl temcon-hv-control-line" data-control="ht-control">
+                            <span class="temcon-hv-label">HT</span>
+                            <div class="temcon-switch-pair" aria-label="High voltage ON OFF switches">
+                              <button type="button" class="temcon-btn temcon-btn--ht" data-action="ht-on" id="ht-on-btn">ON</button>
+                              <button type="button" class="temcon-btn temcon-btn--ht" data-action="ht-off" id="ht-off-btn">OFF</button>
+                            </div>
+                            <span class="temcon-hv-downup">Down / Up:</span>
+                            <button type="button" class="temcon-btn temcon-btn--arrow temcon-btn--small" disabled aria-label="HT down">▼</button>
+                            <button type="button" class="temcon-btn temcon-btn--arrow temcon-btn--small" disabled aria-label="HT up">▲</button>
+                            <span class="temcon-hv-step-label">Step:</span>
+                            <output class="temcon-select-box temcon-select-box--compact">1 <span>▼</span></output>
+                            <span class="temcon-hv-unit">kV</span>
+                          </div>
+
+                          <div class="temcon-hv-control-line temcon-hv-control-line--static">
+                            <span class="temcon-hv-label">Filament</span>
+                            <div class="temcon-switch-pair">
+                              <button type="button" class="temcon-btn temcon-btn--ht" disabled>ON</button>
+                              <button type="button" class="temcon-btn temcon-btn--ht" disabled>OFF</button>
+                            </div>
+                            <span class="temcon-hv-downup">Down / Up:</span>
+                            <button type="button" class="temcon-btn temcon-btn--arrow temcon-btn--small" disabled>▼</button>
+                            <button type="button" class="temcon-btn temcon-btn--arrow temcon-btn--small" disabled>▲</button>
+                            <output class="temcon-select-box temcon-select-box--compact">1 <span>▼</span></output>
+                            <strong class="temcon-filament-percent">65.6%</strong>
+                          </div>
+
+                          <div class="temcon-hv-control-line temcon-hv-control-line--compact temcon-hv-control-line--static">
+                            <span class="temcon-hv-label">Conditioning</span>
+                            <button type="button" class="temcon-btn" disabled>ON</button>
+                            <label class="temcon-check"><input type="checkbox" disabled><span>Hold</span></label>
+                          </div>
+
+                          <div class="temcon-autoht temcon-hv-control-line--static">
+                            <span class="temcon-hv-label">Auto HT</span>
+                            <button type="button" class="temcon-btn" disabled>Start</button>
+                            <button type="button" class="temcon-btn" disabled>Stop</button>
+                            <span class="temcon-autoht__finish">Time to finish 0.0 min.</span>
+                            <span>Target:</span><output class="temcon-select-box temcon-select-box--wide">200.00 kV <span>▼</span></output>
+                            <span>Step:</span><output class="temcon-select-box temcon-select-box--compact">0.1 <span>▼</span></output><span>kV</span>
+                            <span>Time/Step:</span><output class="temcon-select-box temcon-select-box--compact">1 <span>▼</span></output><span>sec</span>
+                          </div>
+                        </div>
+                      </fieldset>
+
                       <fieldset class="temcon-group temcon-group--illumination">
                         <legend>Illumination</legend>
                         <div class="temcon-mode-row">
@@ -328,13 +416,13 @@
                           <div class="temcon-stepper">
                             <span class="temcon-field-label">Spot Size:</span>
                             <button type="button" class="temcon-btn temcon-btn--arrow" disabled aria-label="Decrease spot size">◀</button>
-                            <output class="temcon-value-box">1</output>
+                            <output class="temcon-value-box" id="pc-spot-value">2</output>
                             <button type="button" class="temcon-btn temcon-btn--arrow" disabled aria-label="Increase spot size">▶</button>
                           </div>
                           <div class="temcon-stepper">
                             <span class="temcon-field-label">Alpha:</span>
                             <button type="button" class="temcon-btn temcon-btn--arrow" disabled aria-label="Decrease alpha">◀</button>
-                            <output class="temcon-value-box">3</output>
+                            <output class="temcon-value-box" id="pc-alpha-value">2</output>
                             <button type="button" class="temcon-btn temcon-btn--arrow" disabled aria-label="Increase alpha">▶</button>
                           </div>
                           <div class="temcon-bright-dark">
@@ -869,6 +957,7 @@
             <h3 class="preflight-modal__title" id="specimenTitle">Specimen Loading &amp; Holder Insertion</h3>
           </div>
           <div class="specimen-modal__lamps">
+            <img src="../assets/images/microscope/goniometer-reference.png" alt="Goniometer: 1=green lamp, 2=amber lamp, 3=PUMP/AIR" class="specimen-modal__ref-thumb" title="Real goniometer: ①Green ②Amber ③PUMP/AIR" />
             <span class="temcon-lamp-dot temcon-lamp-dot--green" id="sm-lamp-green"></span>
             <span class="temcon-lamp-dot temcon-lamp-dot--amber" id="sm-lamp-amber"></span>
           </div>
@@ -987,6 +1076,74 @@
           <div class="preflight-modal__footer">
             <div class="preflight-modal__progress">
               <span id="specimen-count">0</span> / 7 complete
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ SHUTDOWN MODAL ═══════════ -->
+    <div class="preflight-modal shutdown-modal" id="shutdownModal" role="dialog" aria-modal="true" aria-labelledby="shutdownTitle" hidden>
+      <div class="preflight-modal__bg" id="shutdownBg"></div>
+      <div class="preflight-modal__panel">
+        <header class="preflight-modal__header">
+          <div class="preflight-modal__title-wrap">
+            <span class="tag tag--red">SHUTDOWN</span>
+            <h3 class="preflight-modal__title" id="shutdownTitle">Shutdown Procedure</h3>
+          </div>
+        </header>
+        <div class="preflight-modal__body">
+          <p class="preflight-modal__intro">Follow each step in sequence to safely shut down the microscope.</p>
+
+          <div class="preflight-checklist shutdown-checklist">
+
+            <!-- Step 47: Remove specimen holder -->
+            <button type="button" class="preflight-item shutdown-item" data-shutdown-step="holder-remove" id="sd-holder-remove">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Remove Specimen Holder</div>
+                <div class="preflight-item__desc">Withdraw holder from column · set PUMP/AIR → AIR to vent · withdraw holder fully</div>
+              </div>
+              <span class="preflight-item__status">REMOVE</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <!-- Step 48: Remove apertures -->
+            <button type="button" class="preflight-item shutdown-item" data-shutdown-step="apertures-remove" id="sd-apertures-remove">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">Remove All Apertures</div>
+                <div class="preflight-item__desc">Remove condenser and objective apertures from the beam path</div>
+              </div>
+              <span class="preflight-item__status">REMOVE</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+            <!-- Step 49: ACD heat + Log session -->
+            <button type="button" class="preflight-item shutdown-item" data-shutdown-step="acd-heat" id="sd-acd-heat">
+              <span class="preflight-item__icon">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/></svg>
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="var(--led-green, #3c6)" stroke-width="2" class="preflight-item__check"><path d="M6 10l3 3 5-5"/></svg>
+              </span>
+              <div class="preflight-item__body">
+                <div class="preflight-item__label">ACD Heat &amp; Log Session</div>
+                <div class="preflight-item__desc">Turn on ACD heat via Maintenance tab · log session end time, specimen details, and observations</div>
+              </div>
+              <span class="preflight-item__status">CONFIRM</span>
+              <span class="preflight-item__indicator"></span>
+            </button>
+
+          </div>
+
+          <div class="preflight-modal__footer">
+            <div class="preflight-modal__progress">
+              <span id="shutdown-count">0</span> / 3 complete
             </div>
           </div>
         </div>
