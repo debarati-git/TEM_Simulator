@@ -1,3 +1,15 @@
+
+## Sectioned SOP prototype — Sections 1 & 2 (2026-09-24)
+
+- Reworked the IIT guided-operation page into seven sequential SOP sections.
+- Implemented Safety Check and Instrument Startup (7 steps).
+- Implemented Specimen Loading and Holder Insertion (8 steps).
+- Added contextual zoom interactions instead of persistent left/right control panels for these sections.
+- Added replaceable dummy images for chiller, room AC, and SIP vacuum checks.
+- Added TEMCON HT READY / HT OFF verification with confirmation.
+- Added three-click holder insertion audio, continuous pump audio, amber-lamp evacuation timing, 15° then 75° holder rotation, and mouse-driven SPEC CONTROL trackball verification.
+- Added locked placeholders for Sections 3–7; Section 3 unlocks only after Section 2.
+
 ## v4.2 — Spot/Alpha progression hotfix
 - Removed duplicate continuous binding of the stepped Spot Size and Alpha Selector knobs.
 - Spot Size and Alpha now write exact integer state values only.

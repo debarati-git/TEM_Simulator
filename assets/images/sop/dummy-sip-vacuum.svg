@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560">
+  <rect width="960" height="560" rx="32" fill="#edf3fb"/>
+  <rect x="215" y="82" width="530" height="390" rx="28" fill="#1d2b3a" stroke="#61788a" stroke-width="7"/>
+  <text x="480" y="145" text-anchor="middle" fill="#bed3e6" font-family="Arial" font-size="28" font-weight="700">SIP VACUUM MONITOR</text>
+  <rect x="295" y="185" width="370" height="125" rx="14" fill="#07120e" stroke="#4d6b5d" stroke-width="4"/>
+  <text x="480" y="263" text-anchor="middle" fill="#7cff9d" font-family="monospace" font-size="42" font-weight="700">2.1 × 10⁻⁵ Pa</text>
+  <circle cx="355" cy="375" r="25" fill="#38c77a"/><text x="405" y="385" fill="#dce9f2" font-family="Arial" font-size="28">Vacuum within limit</text>
+  <text x="480" y="525" text-anchor="middle" fill="#61788a" font-family="Arial" font-size="22">DUMMY IMAGE — replace with SIP unit / gauge photograph</text>
+</svg>

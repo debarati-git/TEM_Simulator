@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560">
+  <rect width="960" height="560" rx="32" fill="#eef6f8"/>
+  <rect x="175" y="105" width="610" height="205" rx="28" fill="#fff" stroke="#94aeb7" stroke-width="6"/>
+  <rect x="225" y="155" width="510" height="40" rx="20" fill="#d7e4e9"/>
+  <path d="M285 245c45 48 45 88 0 125M480 245c45 48 45 88 0 125M675 245c45 48 45 88 0 125" fill="none" stroke="#72a9c3" stroke-width="13" stroke-linecap="round"/>
+  <rect x="350" y="355" width="260" height="95" rx="18" fill="#183b4d"/>
+  <text x="480" y="417" text-anchor="middle" fill="#fff" font-family="Arial" font-size="46" font-weight="700">21 °C</text>
+  <text x="480" y="525" text-anchor="middle" fill="#61788a" font-family="Arial" font-size="22">DUMMY IMAGE — replace with TEM room / AC photograph</text>
+</svg>

@@ -1312,7 +1312,22 @@
 .temcon-btn--ht {
   min-width: 42px;
   font-size: 11px;
+  background:#c8c8c8;
+  color:#111111 !important;
+  border-top:2px solid #ffffff;
+  border-left:2px solid #ffffff;
+  border-right:2px solid #505050;
+  border-bottom:2px solid #505050;
 }
+#ht-on-btn,#ht-off-btn{
+  background:#c8c8c8;
+  color:#111111 !important;
+  border-top:2px solid #ffffff;
+  border-left:2px solid #ffffff;
+  border-right:2px solid #505050;
+  border-bottom:2px solid #505050;
+}
+#ht-on-btn:disabled,#ht-off-btn:disabled{opacity:1;color:#303030 !important}
 .temcon-btn--ht.is-selected {
   background: #2c3e50 !important;
   color: #3498db !important;
@@ -1650,4 +1665,20 @@
   .temcon-menubar { gap: 10px; }
   .temcon-hv-control-line { grid-template-columns: 64px 96px 72px 32px 32px 34px 66px 22px; }
   .temcon-autoht { grid-template-columns: 64px 52px 52px minmax(105px,1fr) 38px 95px 30px 55px 22px 54px 54px 20px; }
+}
+
+/* v4.8: HT ON/OFF visually identical to Filament ON/OFF base switches. */
+#ht-on-btn,#ht-off-btn,#pc-filament-on,#pc-filament-off{
+  background:#c8c8c8!important;
+  color:#111!important;
+  border-top:2px solid #fff!important;
+  border-left:2px solid #fff!important;
+  border-right:2px solid #505050!important;
+  border-bottom:2px solid #505050!important;
+  opacity:1!important;
+  filter:none!important;
+}
+#ht-on-btn.sop-ht-next{background:#c8c8c8!important;color:#111!important;box-shadow:0 0 0 3px rgba(245,158,11,.30),0 0 16px rgba(245,158,11,.36)!important}
+#ht-on-btn.sop-ht-confirmed,#ht-on-btn.is-selected,#ht-off-btn.is-selected,#pc-filament-on.is-selected,#pc-filament-off.is-selected{
+  background:#b8b2af!important;color:#111!important;border-top-color:#67615e!important;border-left-color:#67615e!important;border-right-color:#fff!important;border-bottom-color:#fff!important;box-shadow:inset 1px 1px 2px rgba(0,0,0,.28)!important
 }

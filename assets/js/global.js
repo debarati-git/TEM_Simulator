@@ -47,8 +47,9 @@
    * topnav slot so we know which entry to highlight.
    */
   const MODULES = [
-    { key: 'column',         num: '01', label: 'The Column',      href: 'pages/column.html' },
-    { key: 'microscope-iit', num: '02', label: 'The Microscope',  href: 'pages/microscope.html' },
+    { key: 'column',         num: '01', label: 'The Column',       href: 'pages/column.html' },
+    { key: 'microscope-iit', num: '02', label: 'The Microscope',   href: 'pages/microscope.html' },
+    { key: 'microscope-new', num: '03', label: 'Microscope New',   href: 'pages/microscope-new.html' },
   ];
 
   /**
