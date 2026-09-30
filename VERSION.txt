@@ -1,2 +1,1 @@
-TEM Simulator v4.8.8
-Viewing Screen no longer uses the static fluorescent reference image. Section 3 uses a live CSS-generated phosphor-green field with continuously responsive specimen, beam, wobble, focus, shift and astigmatism effects, similar to the old microscope-tab behavior.
+4.8.11

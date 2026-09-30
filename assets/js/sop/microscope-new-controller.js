@@ -401,39 +401,19 @@
     ensureBfScene();
     if(!bfScene) return;
     bfScene.classList.remove('is-fluorescent');
-    if(bfSpecimen) bfSpecimen.src='../assets/images/sop/section3-dummy-bf.png';
+    if(bfSpecimen) bfSpecimen.src='../assets/images/sop/bf-midmag-survey.png';
     if(bfDummyBadge) bfDummyBadge.style.display='';
   }
   function runS3BeamScreenSequence(done){
-    closeModal(true); closePcDrawer(); hideSection1Tour();
-    showViewportScene({
-      baseSrc:'../assets/images/sop/section3-screen-overview.png',
-      focusSrc:'../assets/images/sop/section3-screen-dark-closeup.png',
-      sceneClass:'is-s3-screen-sequence'
-    });
-    setViewer('column');
-    if(viewportStep4Img1)viewportStep4Img1.src='../assets/images/sop/section3-screen-illuminated.png';
-    if(viewportStep4Img2)viewportStep4Img2.src='../assets/images/sop/section3-screen-illuminated.png';
-    if(viewportStep4Img3)viewportStep4Img3.src='../assets/images/sop/section3-screen-illuminated.png';
-    if(viewportScene)viewportScene.setAttribute('data-s3-screen-phase','zoom');
-    sceneTimers.push(setTimeout(function(){
-      if(state.currentSection!==3) return;
-      if(viewportScene) viewportScene.setAttribute('data-s3-screen-phase','dark');
-    }, 5200));
-    sceneTimers.push(setTimeout(function(){
-      if(state.currentSection!==3) return;
-      if(viewportScene) viewportScene.setAttribute('data-s3-screen-phase','green');
-    }, 9100));
-    sceneTimers.push(setTimeout(function(){
-      if(state.currentSection!==3) return;
-      hideViewportScene();
-      showBfScene();
-      setBfFluorescentMode(false);
-      bfState.beamOn=true;
-      bfState.coverOpen=true;
-      bfRender();
-      if(typeof done==='function') done();
-    }, 13200));
+    // v4.8.10: BEAM ON goes directly to the live grayscale specimen view.
+    // The former dark/green fluorescent-screen transition is intentionally removed.
+    closeModal(true); closePcDrawer(); hideSection1Tour(); hideViewportScene();
+    bfState.beamOn=true;
+    bfState.coverOpen=true;
+    showBfScene();
+    setBfFluorescentMode(false);
+    bfRender();
+    if(typeof done==='function') done();
   }
   function showSection2Step2(){
     closeModal(true); closePcDrawer();
@@ -734,7 +714,8 @@
     if(state.currentStep<s.steps.length-1){
       state.currentStep++;setInstruction();renderNav();
       // Reading gap: keep the new instruction visible before opening its modal.
-      nextModalTimer=setTimeout(function(){nextModalTimer=null;showCurrentStep();},state.currentSection===3?650:STEP_MODAL_READING_DELAY_MS);
+      var nextDelay=(state.currentSection===3?(state.currentStep===40?180:650):STEP_MODAL_READING_DELAY_MS);
+      nextModalTimer=setTimeout(function(){nextModalTimer=null;showCurrentStep();},nextDelay);
     }else{
       state.sectionComplete[s.id]=true;state.unlockedThrough=Math.max(state.unlockedThrough,Math.min(7,s.id+1));renderNav();setInstruction();
       nextModalTimer=setTimeout(function(){nextModalTimer=null;showSectionComplete(s);},1200);
@@ -1184,7 +1165,7 @@
     if(bfScene||!viewScreen)return;
     var w=document.createElement('div');w.id='sopBfScene';w.className='sop-bf-scene sop-bf-scene--screen';w.hidden=true;
     w.innerHTML='<div class="sop-bf-screen" id="sopBfScreen">'
-      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/section3-dummy-bf.png" alt="Bright field specimen view">'
+      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/bf-midmag-survey.png" alt="Bright field specimen view">'
       +'<div class="sop-bf-feature" id="sopBfFeature"><span></span></div>'
       +'<div class="sop-bf-beam" id="sopBfBeam"></div>'
       +'<div class="sop-bf-direct" id="sopBfDirect"></div>'
@@ -1196,7 +1177,7 @@
     viewScreen.appendChild(w);bfScene=w;bfScreen=document.getElementById('sopBfScreen');bfSpecimen=document.getElementById('sopBfSpecimen');bfBeam=document.getElementById('sopBfBeam');bfFeature=document.getElementById('sopBfFeature');bfDirect=document.getElementById('sopBfDirect');bfApertureRing=document.getElementById('sopBfApertureRing');bfFringe=document.getElementById('sopBfFringe');bfStatus=document.getElementById('sopBfStatus');bfControlCard=null;bfActions=null;
   }
   function hideBfScene(){ensureBfScene();clearBfTimers();clearPhysicalFocus();s3LockControls();if(!bfScene)return;bfScene.hidden=true;bfScene.className='sop-bf-scene sop-bf-scene--screen';if(viewEmpty)viewEmpty.style.display='';if(bfScreen)bfScreen.onclick=null;}
-  function showBfScene(){closeModal(true);closePcDrawer();hideViewportScene();hideSection1Tour();ensureBfScene();clearBfTimers();if(!bfScene)return;bfScene.hidden=false;bfScene.className='sop-bf-scene sop-bf-scene--screen'+((state.currentSection===3&&state.currentStep>=9)?' is-phosphor':'');bfScene.classList.remove('is-fluorescent');if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');if(bfSpecimen)bfSpecimen.src='../assets/images/sop/section3-dummy-bf.png';bfRender();syncPcLiveStatus();}
+  function showBfScene(){closeModal(true);closePcDrawer();hideViewportScene();hideSection1Tour();ensureBfScene();clearBfTimers();if(!bfScene)return;bfScene.hidden=false;bfScene.className='sop-bf-scene sop-bf-scene--screen';bfScene.classList.remove('is-fluorescent');if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');bfSetSpecimenImage(bfResolveImageKey());bfRender();syncPcLiveStatus();}
   function bfSetStatus(text){if(bfStatus){bfStatus.textContent='';bfStatus.style.display='none';}}
   function updateBfDummyCue(){
     if(!bfDummyBadge && !bfStepIndicator) return;
@@ -1315,7 +1296,7 @@
     function astigCheck(){if(Math.abs(bfState.condX)<=1&&Math.abs(bfState.condY)<=1){bfState.finalAstigChecked=true;bfSetStatus('Final magnification, focus and astigmatism verified.');s3AutoComplete(700);}}
     s3SetHandlers({'action:magnification':function(btn){if(btn.dataset.value!=='very-high'&&btn.dataset.value!=='high')return;s3SelectButton(btn);bfState.mag=btn.dataset.value==='very-high'?150000:100000;bfRender();bfSetStatus('Final magnification selected · re-check Fine Focus.');s3Activate(['focus-fine']);s3SetHandlers({'knob:focus-fine':function(v){bfState.focusFine=v;bfRender();if(Math.abs(v)<=.5){bfState.finalFocusChecked=true;bfSetStatus('Focus re-checked · select O.Stig mode.');s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(mb){if(mb.dataset.value!=='objStig')return;s3SelectButton(mb);bfSetStatus('O.Stig selected · center X/Y for final astigmatism check.');s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(x){bfState.condX=x;bfRender();astigCheck();},'defstig:y':function(y){bfState.condY=y;bfRender();astigCheck();}});}});}}});}});
   }
-  function drawCapturedBf(){var cv=document.getElementById('pc-cam-canvas');if(!cv)return;var ctx=cv.getContext('2d'),img=new Image();img.onload=function(){ctx.clearRect(0,0,cv.width,cv.height);ctx.filter='grayscale(1) contrast(1.18)';ctx.drawImage(img,0,0,cv.width,cv.height);ctx.filter='none';ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='16px sans-serif';ctx.fillText('BF · '+Number(bfState.mag).toLocaleString()+'×',16,28);};img.src='../assets/images/sop/section3-dummy-bf.png';}
+  function drawCapturedBf(){var cv=document.getElementById('pc-cam-canvas');if(!cv)return;var ctx=cv.getContext('2d'),img=new Image();img.onload=function(){ctx.clearRect(0,0,cv.width,cv.height);ctx.filter='grayscale(1) contrast(1.18)';ctx.drawImage(img,0,0,cv.width,cv.height);ctx.filter='none';ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='16px sans-serif';ctx.fillText('BF · '+Number(bfState.mag).toLocaleString()+'×',16,28);};img.src=BF_SPECIMEN_IMAGES.acquire;}
   function installItemPanel(){
     var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return;var old=document.getElementById('sopItemPanel');if(old)old.remove();var p=document.createElement('div');p.id='sopItemPanel';p.className='sop-item-panel';p.innerHTML='<div class="sop-bf-card-title">iTEM acquisition</div><button id="s3ObjFocusCheck">OBJ FOCUS check (optional)</button><button id="s3Video">Video</button><button id="s3Snapshot" disabled>Snapshot</button><button id="s3F1Down" disabled>F1 · Return fluorescent screen</button>';host.appendChild(p);
     var objCheck=document.getElementById('s3ObjFocusCheck'),video=document.getElementById('s3Video'),snap=document.getElementById('s3Snapshot'),f1=document.getElementById('s3F1Down');if(objCheck)objCheck.onclick=function(){ensureAudio();objCheck.classList.add('is-done');objCheck.textContent='OBJ FOCUS checked';};video.onclick=function(){ensureAudio();video.classList.add('is-done');video.textContent='Video · LIVE';snap.disabled=false;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running';};snap.onclick=function(){ensureAudio();snap.classList.add('is-done');snap.disabled=true;drawCapturedBf();bfState.captured=true;var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Snapshot captured';f1.disabled=false;};f1.onclick=function(){ensureAudio();f1.classList.add('is-done');f1.disabled=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';bfSetStatus('Bright Field image recorded · fluorescent screen returned.');s3AutoComplete(900,function(){clearS3PcPanel();closePcDrawer();});};
@@ -1332,6 +1313,52 @@
      Routine steps auto-advance when the required control state is reached.
      ===================================================================== */
   var BF_MAG_VALUES=[1000,3000,5000,8000,20000,40000,80000,100000];
+  /* v4.8.9 — magnification-dependent specimen image map */
+  var BF_SPECIMEN_IMAGES={
+    lowmag:  '../assets/images/sop/bf-lowmag-grid.png',
+    midmag:  '../assets/images/sop/bf-midmag-survey.png',
+    eucentric:'../assets/images/sop/bf-eucentric.png',
+    aperture:'../assets/images/sop/bf-aperture.png',
+    align:   '../assets/images/sop/bf-alignment.png',
+    highmag: '../assets/images/sop/bf-highmag.png',
+    acquire: '../assets/images/sop/bf-acquisition.png',
+    fallback:'../assets/images/sop/bf-midmag-survey.png'
+  };
+  var bfCurrentImgKey='';
+  function bfSetSpecimenImage(key){
+    if(!bfSpecimen||bfCurrentImgKey===key)return;
+    var src=BF_SPECIMEN_IMAGES[key]||BF_SPECIMEN_IMAGES.fallback;
+    bfCurrentImgKey=key;
+    bfSpecimen.style.opacity='0';
+    setTimeout(function(){bfSpecimen.src=src;bfSpecimen.onload=function(){bfSpecimen.style.opacity='';};},120);
+  }
+  /* Resolve which image key to use for current step context */
+  function bfResolveImageKey(){
+    var n=state.currentStep+1;
+    /* Steps 1-9: PC drawer, no specimen visible */
+    if(n<=9) return 'midmag';
+    /* Step 10: screen cover removal — low-mag initial beam */
+    if(n===10) return 'lowmag';
+    /* Steps 11-15: LOW MAG survey, grid overview */
+    if(n>=11&&n<=15) return 'lowmag';
+    /* Steps 16-21: Spot/Alpha, MAG 1 at 40k — mid-mag survey */
+    if(n>=16&&n<=21) return 'midmag';
+    /* Steps 22-28: Eucentric height — feature centering + wobble */
+    if(n>=22&&n<=28) return 'eucentric';
+    /* Steps 29-32: Condenser aperture — beam disk pattern */
+    if(n>=29&&n<=32) return 'aperture';
+    /* Steps 33-38: Beam shift/center — alignment pattern */
+    if(n>=33&&n<=38) return 'align';
+    /* Steps 39-45: Cond stig — back to mid-mag specimen view */
+    if(n>=39&&n<=45) return 'midmag';
+    /* Steps 46-48: Final imaging — high-mag */
+    if(n>=46&&n<=48) return 'highmag';
+    /* Steps 49-50: AUTO + F1 — still high-mag on screen */
+    if(n>=49&&n<=50) return 'highmag';
+    /* Steps 51-55: Camera/iTEM acquisition — CCD view */
+    if(n>=51) return 'acquire';
+    return 'midmag';
+  }
   var bfCover=null,bfScreenAction=null,bfDummyBadge=null,bfStepIndicator=null;
 
   function resetBfState(){
@@ -1355,7 +1382,7 @@
     if(bfScene||!viewScreen)return;
     var w=document.createElement('div');w.id='sopBfScene';w.className='sop-bf-scene sop-bf-scene--screen';w.hidden=true;
     w.innerHTML='<div class="sop-bf-screen" id="sopBfScreen">'
-      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/section3-dummy-bf.png" alt="Dummy Bright Field specimen view">'
+      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/bf-midmag-survey.png" alt="Bright field specimen view">'
       +'<div class="sop-bf-step-indicator" id="sopBfStepIndicator"></div>'+'<div class="sop-dummy-badge" id="sopBfDummyBadge">DUMMY SAMPLE IMAGE</div>'
       +'<div class="sop-bf-feature" id="sopBfFeature"><span></span></div>'
       +'<div class="sop-bf-beam" id="sopBfBeam"></div>'
@@ -1375,7 +1402,7 @@
     if(!bfScene)return;
     var focus=Math.abs((bfState.focusCoarse||0)+(bfState.focusFine||0));
     var zDefocus=Math.abs(Number(bfState.z||0));
-    var phosphor=(state.currentSection===3&&state.currentStep>=9);
+    var phosphor=false; /* v4.8.10: grayscale specimen view; no phosphor overlay */
     var magScale=1+Math.max(0,Math.log10(Math.max(1000,bfState.mag)/1000))*.16;
     var stageTx=Math.max(-18,Math.min(18,Number(bfState.stageX||0)*-.12));
     var stageTy=Math.max(-18,Math.min(18,Number(bfState.stageY||0)*.12));
@@ -1388,9 +1415,16 @@
       bfSpecimen.style.transform='translate('+stageTx.toFixed(2)+'%,'+stageTy.toFixed(2)+'%) scale('+magScale.toFixed(3)+')';
       var blur=Math.min(5.5,focus*.30+zDefocus*.12);
       var contrast=1.15+(bfState.autoUsed?.26:0)+Math.max(0,3-zDefocus)*.035;
-      var bright=phosphor?.18:1;
-      bfSpecimen.style.filter='grayscale(1) brightness('+bright+') contrast('+contrast.toFixed(2)+') blur('+blur.toFixed(2)+'px)';
-      bfSpecimen.style.opacity=(bfState.beamOn&&bfState.coverOpen)?(phosphor?'0.78':'0.92'):'0.10';
+      var isCamera=(state.currentStep>=50);
+      var bright=phosphor?(isCamera?.92:.14):1;
+      var specOpacity=(bfState.beamOn&&bfState.coverOpen)?(phosphor?(isCamera?.90:.62):'0.92'):'0.08';
+      bfSpecimen.style.filter='grayscale(1) brightness('+bright.toFixed(2)+') contrast('+contrast.toFixed(2)+') blur('+blur.toFixed(2)+'px)';
+      bfSpecimen.style.opacity=specOpacity;
+      /* v4.8.9 — swap specimen image on magnification/step change */
+      var wantKey=bfResolveImageKey();
+      if(wantKey!==bfCurrentImgKey)bfSetSpecimenImage(wantKey);
+      /* Toggle camera class for acquisition steps */
+      if(bfScene)bfScene.classList.toggle('is-camera',isCamera&&phosphor);
     }
     if(bfCover){bfCover.classList.toggle('is-open',!!bfState.coverOpen);}
     if(bfFeature){
@@ -1427,16 +1461,13 @@
   function showBfScene(){
     closeModal(true);closePcDrawer();hideViewportScene();hideSection1Tour();ensureBfScene();clearBfTimers();
     if(!bfScene)return;bfScene.hidden=false;if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');
-    var phosphor=(state.currentSection===3&&state.currentStep>=9);
-    bfScene.classList.toggle('is-phosphor',phosphor);
-    if(phosphor){
-      /* The photographic illuminated-screen intro is only for the BEAM transition.
-         Interactive alignment steps must expose the live dummy layers. */
-      bfScene.classList.remove('is-fluorescent');
-      bfState.coverOpen=true;
-      if(bfSpecimen)bfSpecimen.src='../assets/images/sop/section3-dummy-bf.png';
-      if(bfDummyBadge)bfDummyBadge.style.display='none';
-    }
+    var phosphor=false; /* v4.8.10: grayscale specimen view; no phosphor overlay */
+    bfScene.classList.remove('is-phosphor','is-fluorescent');
+    bfState.coverOpen=true;
+    var imgKey=bfResolveImageKey();
+    bfSetSpecimenImage(imgKey);
+    bfScene.classList.toggle('is-camera',state.currentStep>=50);
+    if(bfDummyBadge)bfDummyBadge.style.display='none';
     bfRender();syncPcLiveStatus();
   }
 
@@ -1530,7 +1561,8 @@
 
   function showSection3(){
     var n=state.currentStep+1;s3StepCompleting=false;hideViewportScene();hideSection1Tour();clearS3PcPanel();s3LockControls();
-    if(n<29||n>32)hideS3ApertureOverlay();
+    /* v4.8.11: dummy condenser-aperture hardware is used only through displayed Step 30. */
+    if(n<28||n>30)hideS3ApertureOverlay();
     switch(n){
       case 1:return runBFAtomic01();case 2:return runBFAtomic02();case 3:return runBFAtomic03();case 4:return runBFAtomic04();case 5:return runBFAtomic05();
       case 6:return runBFAtomic06();case 7:return runBFAtomic07();case 8:return runBFAtomic08();case 9:return runBFAtomic09();case 10:return runBFAtomic11();
@@ -1587,7 +1619,10 @@
     s3PreparePcStandard();var fil=document.getElementById('pc-fil-status'),top=document.getElementById('pc-beam-current-top'),hv=document.getElementById('pc-beam-current-hv'),finish=document.getElementById('pc-autoht-finish');if(fil)fil.textContent='ON · RISING';var prog=ensureS3InlineProgress('filament','FILAMENT STABILIZATION · Beam Current → ≈103 µA');if(prog&&prog.box)prog.box.classList.add('is-running');var t0=Date.now(),dur=4800,t=setInterval(function(){var p=Math.min(1,(Date.now()-t0)/dur),ua=103*p,pct=Math.round(p*100);bfState.beamCurrent=ua;if(top)top.textContent=ua.toFixed(0)+' µA';if(hv)hv.textContent=ua.toFixed(1)+' µA';if(finish)finish.textContent='Beam Current '+ua.toFixed(0)+' µA';if(prog){prog.bar.style.width=pct+'%';prog.pct.textContent=pct+'% · '+ua.toFixed(0)+' µA';}if(p>=1){clearInterval(t);bfState.beamCurrent=103;if(fil)fil.textContent='ON';if(top)top.textContent='≈103 µA';if(hv)hv.textContent='≈103 µA';if(finish)finish.textContent='Beam Current stabilized ≈103 µA';if(prog&&prog.box){prog.box.classList.remove('is-running');prog.box.classList.add('is-complete');prog.pct.textContent='100% · ≈103 µA';}s3Complete(650);}},100);bfTimers.push(t);
   }
   function runBFAtomic08(){
-    s3PreparePcStandard();var host=document.querySelector('[data-temcon-page="standard"]');addS3PcPanel(host,'Valve Status','<div class="sop-valve-grid"><span>V1</span><strong class="is-open">OPEN</strong><span>V2</span><strong id="s3V2State" class="'+(bfState.v2Open?'is-open':'is-closed')+'">'+(bfState.v2Open?'OPEN':'CLOSED')+'</strong></div><div class="sop-s3-pc-buttons"><button id="s3V2Open">OPEN V2</button></div><div class="sop-s3-pc-note">Dummy Valve Status window until the actual TEMCON image is supplied.</div>');var b=document.getElementById('s3V2Open'),st=document.getElementById('s3V2State');if(!b)return;b.onclick=function(){ensureAudio();bfState.v2Open=true;b.disabled=true;if(st){st.textContent='OPEN';st.className='is-open';}s3Complete(350);};
+    s3PreparePcStandard();var host=document.querySelector('[data-temcon-page="standard"]');addS3PcPanel(host,'Valve Status','<div class="sop-valve-grid"><span>V1</span><strong class="is-open">OPEN</strong><span>V2</span><strong id="s3V2State" class="'+(bfState.v2Open?'is-open':'is-closed')+'">'+(bfState.v2Open?'OPEN':'CLOSED')+'</strong></div><div class="sop-s3-pc-buttons"><button id="s3V2Open">OPEN V2</button></div><div class="sop-s3-pc-note">Dummy Valve Status window until the actual TEMCON image is supplied.</div>');var b=document.getElementById('s3V2Open'),st=document.getElementById('s3V2State');if(!b)return;b.onclick=function(){ensureAudio();bfState.v2Open=true;b.disabled=true;if(st){st.textContent='OPEN';st.className='is-open';}
+      /* v4.8.9: close PC drawer before advancing to step 9 */
+      setTimeout(function(){closePcDrawer();s3Complete(400);},600);
+    };
   }
   function runBFAtomic09(){
     hideBfScene();hideS3ApertureOverlay();
@@ -1595,8 +1630,16 @@
     s3Activate(['beam-on']);
     s3SetHandlers({'action:beam-toggle':function(btn){
       s3SelectButton(btn);
-      bfState.beamOn=true;syncPcLiveStatus();
-      runS3BeamScreenSequence(function(){s3Complete(300);});
+      bfState.beamOn=true;
+      /* v4.8.9: stay on PC drawer briefly to show beam value update */
+      syncPcLiveStatus();
+      s3PreparePcStandard();
+      setTimeout(function(){
+        closePcDrawer();
+        setTimeout(function(){
+          runS3BeamScreenSequence(function(){s3Complete(300);});
+        },400);
+      },1400);
     }});
   }
   function runBFAtomic10(){showBfScene();setBfFluorescentMode(true);bfState.beamOn=true;bfState.coverOpen=false;bfRender();bfSetStatus('Remove the screen cover.');s3Activate([]);s3SetScreenAction('Remove screen cover',function(){bfState.coverOpen=true;bfRender();s3Complete(350);});}
@@ -1621,8 +1664,8 @@
   function runBFAtomic28(){showBfScene();bfState.wobble=true;bfRender();bfSetStatus('Press the same MAG WOB control again to switch wobble OFF.');s3Activate(['wobbler']);s3SetHandlers({'action:mag-wob':function(btn){var ax=btn.dataset.axis||'x';if(bfState.wobbleAxis&&ax!==bfState.wobbleAxis)return;bfState.wobble=false;btn.classList.remove('is-selected');bfRender();s3Complete(350);}});}
   function runBFAtomic29(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('select');s3ApKnob1Pos=0;var b=document.getElementById('s3ApKnob1'),r=document.getElementById('s3ApKnob1Read');if(!b)return;r.textContent='OPEN';b.onclick=function(){ensureAudio();s3ApKnob1Pos=(s3ApKnob1Pos+1)%3;r.textContent=s3ApKnob1Pos===0?'OPEN':(s3ApKnob1Pos===1?'SURVEY':'ROUTINE BF/DF');b.style.setProperty('--ap-rot',(s3ApKnob1Pos*60)+'deg');if(s3ApKnob1Pos===2){bfState.apertureSelected=true;b.onclick=null;s3Complete(450);}};}
   function runBFAtomic30(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('x');bfState.beamX=0;bfState.beamY=0;bfState.caX=6;bfState.caY=-6;s3SetApKnob('x',6);s3SetApKnob('y',-6);bfRender();bfSetStatus('Adjust CA X until the beam is horizontally centered.');s3SetHandlers({'ap:ca-x':function(v){bfState.caX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
-  function runBFAtomic31(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('y');bfRender();bfSetStatus('Adjust CA Y until the beam is vertically centered.');s3SetHandlers({'ap:ca-y':function(v){bfState.caY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
-  function runBFAtomic32(){showBfScene();showS3ApertureOverlay('verify');bfState.caX=0;bfState.caY=0;bfState.c2=55;s3SetKnob('brightness',55);bfRender();var low=false,high=false;bfSetStatus('Vary BRIGHTNESS through contraction and expansion to verify symmetric centering.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450,function(){hideS3ApertureOverlay();});}});}
+  function runBFAtomic31(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('y');bfRender();bfSetStatus('Adjust CA Y until the beam is vertically centered.');s3SetHandlers({'ap:ca-y':function(v){bfState.caY=v;bfRender();if(Math.abs(v)<=1)s3Complete(250,function(){hideS3ApertureOverlay();});}});}
+  function runBFAtomic32(){hideS3ApertureOverlay();showBfScene();bfState.caX=0;bfState.caY=0;bfState.c2=55;s3SetKnob('brightness',55);bfRender();var low=false,high=false;bfSetStatus('Vary BRIGHTNESS through contraction and expansion to verify symmetric centering.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}
   function runBFAtomic33(){showBfScene();hideS3ApertureOverlay();bfState.c2=55;s3SetKnob('brightness',55);bfRender();bfSetStatus('Adjust BRIGHTNESS back to crossover.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v<=22)s3Complete(400);}});}
   function runBFAtomic34(){showBfScene();bfState.beamX=6;bfState.beamY=-5;s3SetKnob('shift-x',6);s3SetKnob('shift-y',-5);bfRender();bfSetStatus('Use SHIFT X to centre the crossover horizontally.');s3Activate(['shift-x']);s3SetHandlers({'knob:shift-x':function(v){bfState.beamX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runBFAtomic35(){showBfScene();bfSetStatus('Use SHIFT Y to centre the crossover vertically.');s3Activate(['shift-y']);s3SetHandlers({'knob:shift-y':function(v){bfState.beamY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
@@ -1631,7 +1674,9 @@
   function runBFAtomic38(){showBfScene();s3SetKnob('shift-y',-3);bfRender();bfSetStatus('Fine-correct vertical drift with SHIFT Y.');s3Activate(['shift-y']);s3SetHandlers({'knob:shift-y':function(v){bfState.beamY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runBFAtomic39(){showBfScene();s3SetKnob('spot-size',2);bfState.spot=2;bfSetStatus('Set SPOT SIZE to 1.');s3Activate(['spot-size']);s3SetHandlers({'knob:spot-size':function(v){bfState.spot=Math.round(v);if(bfState.spot===1)s3Complete(400);}});}
   function runBFAtomic40(){showBfScene();bfState.condStigOn=false;bfSetStatus('Press COND STIG on L1.');s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='condStig')return;s3SelectButton(btn);bfState.condStigOn=true;s3Complete(350);}});}
-  function runBFAtomic41(){showBfScene();bfState.condX=5;bfState.condY=-4;bfState.c2=55;s3SetKnob('brightness',55);s3SetKnob('defstig-x',5);s3SetKnob('defstig-y',-4);bfRender();var low=false,high=false;bfSetStatus('Rotate BRIGHTNESS clockwise and anticlockwise through crossover to inspect beam shape.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}
+  function runBFAtomic41(){showBfScene();bfState.condX=5;bfState.condY=-4;bfState.c2=55;s3SetKnob('brightness',55);s3SetKnob('defstig-x',5);s3SetKnob('defstig-y',-4);bfRender();var low=false,high=false;bfSetStatus('Rotate BRIGHTNESS clockwise and anticlockwise through crossover to inspect beam shape.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=35)low=true;if(v>=65)high=true;bfRender();if(low&&high){
+    /* v4.8.9: auto-correct beam — make ellipse circular on completion */
+    bfState.condX=0;bfState.condY=0;s3SetKnob('defstig-x',0);s3SetKnob('defstig-y',0);bfRender();s3Complete(100);}}});}
   function runBFAtomic42(){showBfScene();bfSetStatus('Adjust DEF/STIG X to reduce ellipticity.');s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(v){bfState.condX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runBFAtomic43(){showBfScene();bfSetStatus('Adjust DEF/STIG Y to make the beam circular.');s3Activate(['def-stig-y']);s3SetHandlers({'defstig:y':function(v){bfState.condY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runBFAtomic44(){showBfScene();bfState.condX=0;bfState.condY=0;bfState.c2=55;s3SetKnob('brightness',55);bfRender();var low=false,high=false;bfSetStatus('Verify the circular beam by moving BRIGHTNESS back and forth.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}

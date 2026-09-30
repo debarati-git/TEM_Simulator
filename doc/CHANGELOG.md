@@ -1,3 +1,8 @@
+## v4.8.11
+- Section 3 dummy condenser-aperture hardware closes after displayed Step 30 and is not shown from Step 31 onward.
+- Viewing Screen is visual-only: no instruction, dummy label, status, or screen-action text overlays the grayscale specimen.
+- Step 40 to Step 41 transition shortened for faster progression after the brightness-range check completes.
+
 
 ## Sectioned SOP prototype — Sections 1 & 2 (2026-09-24)
 
@@ -510,3 +515,10 @@
 - PC-targeted steps now select and highlight the correct software drawer without forcing it open.
 - Repositioned specimen, condenser-aperture and objective-aperture INSERT/REMOVE buttons below their diagram labels.
 - Removed the old baked-in specimen REMOVE text from the column image.
+
+## 2026-09-30 — v4.8.10 Grayscale Viewing Screen
+
+- Removed the v4.8.9 green phosphor overlay from Section 3.
+- BEAM ON now opens the live grayscale specimen view directly; the former dark/green fluorescent-screen transition is removed.
+- Confirmed the old Remove screen cover atomic action is not dispatched in the current 54-step workflow.
+- Preserved stage X/Y movement, magnification-driven specimen images, Z/wobble, focus, beam and alignment responses.

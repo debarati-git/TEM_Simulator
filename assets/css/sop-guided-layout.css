@@ -1263,6 +1263,15 @@ body.iit-sop .guided-context__instr-text.is-marquee{
   white-space:nowrap!important;
 }
 
+/* v4.8.9 — instruction text in bold red for clear visibility */
+body.iit-sop .guided-context__instr-text{
+  color:#d32f2f!important;
+  font-weight:700!important;
+}
+:root[data-theme="dark"] body.iit-sop .guided-context__instr-text{
+  color:#ff5252!important;
+}
+
 
 /* =====================================================================
    Version 4.8.3 — R1 specimen-stage dock + clearer Section 3 dummy cues
@@ -1418,51 +1427,183 @@ body.iit-sop #panel-r1 .sop-stage-trackball{pointer-events:auto!important;touch-
 
 
 /* =====================================================================
-   Version 4.8.7 — live optical-response cues for Section 3
+   Version 4.8.9 — realistic phosphor viewing screen for Section 3
+   Full optical-response cues: grain, vignette, screen geometry, soft beam,
+   magnification-dependent specimen swap, afterglow transitions.
    ===================================================================== */
-/* The green phosphor screen remains the base, while dummy optical layers
-   visibly respond to the active L1/R1 controls. */
+
+/* ---------- phosphor screen base ---------- */
 body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-screen{
-  box-shadow:inset 0 0 100px rgba(0,35,0,.68),inset 0 0 30px rgba(173,255,122,var(--bf-screen-glow,.22)),0 0 20px rgba(71,244,70,.16)!important;
+  background:
+    radial-gradient(circle at 48% 46%,
+      rgba(145,245,100,.40) 0%,
+      rgba(90,215,65,.30) 30%,
+      rgba(55,180,50,.24) 55%,
+      rgba(20,100,22,.38) 80%,
+      rgba(3,40,6,.62) 100%),
+    #4dd840!important;
+  box-shadow:
+    inset 0 0 110px rgba(0,30,0,.72),
+    inset 0 0 35px rgba(160,255,110,var(--bf-screen-glow,.20)),
+    0 0 22px rgba(60,230,55,.14)!important;
 }
+
+/* ---------- phosphor grain texture (SVG noise) ---------- */
+body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-screen::before{
+  content:"";
+  position:absolute;inset:0;z-index:15;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+  background-repeat:repeat;
+  mix-blend-mode:overlay;
+  opacity:.55;
+}
+
+/* ---------- vignette overlay — stronger edge falloff matching real screen ---------- */
+body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-screen::after{
+  content:"";position:absolute;inset:0;z-index:14;pointer-events:none;
+  background:radial-gradient(ellipse 72% 68% at 48% 46%,
+    transparent 0%,
+    transparent 45%,
+    rgba(0,18,0,.12) 60%,
+    rgba(0,12,0,.35) 75%,
+    rgba(0,5,0,.65) 88%,
+    rgba(0,0,0,.85) 100%)!important;
+}
+
+/* ---------- specimen image blending onto phosphor ---------- */
 body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-specimen{
-  filter:none; /* inline live filter controls focus/contrast */
+  filter:none; /* JS controls inline filter for focus/contrast */
   transform-origin:center center;
   mix-blend-mode:multiply!important;
-  transition:transform .32s ease,filter .22s ease,opacity .22s ease;
+  opacity:var(--bf-specimen-opacity,.60)!important;
+  transition:transform .30s ease,filter .22s ease,opacity .25s ease!important;
 }
 body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-specimen.is-wobbling{
   animation:sopSpecimenWobble .46s ease-in-out infinite alternate;
 }
 @keyframes sopSpecimenWobble{
-  from{margin-left:calc(var(--bf-wobble,8px)*-1)}
-  to{margin-left:var(--bf-wobble,8px)}
+  from{translate:calc(var(--bf-wobble,8px)*-1) 0}
+  to{translate:var(--bf-wobble,8px) 0}
 }
+
+/* ---------- beam rendering — soft Gaussian edge, no hard border ---------- */
 body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-beam{
   display:block!important;
   border-radius:var(--beam-roundness,50%);
-  background:radial-gradient(ellipse at center,rgba(220,255,190,.06) 0 45%,rgba(155,255,115,.16) 58%,rgba(220,255,175,.34) 75%,rgba(235,255,205,.48) 100%);
-  border:2px solid rgba(210,255,175,.58);
-  box-shadow:0 0 22px rgba(150,255,95,.34),inset 0 0 20px rgba(195,255,160,.16);
-  transition:width .16s ease,height .16s ease,left .16s ease,top .16s ease,transform .16s ease,border-radius .16s ease,opacity .16s ease;
-}
-body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-fringe{
-  display:block!important;
-  border-color:rgba(5,28,5,.66)!important;
-  box-shadow:0 0 0 2px rgba(180,255,145,.12);
-}
-body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-feature{display:block!important}
-body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-crosshair{display:block!important}
-
-/* v4.8.8 — live phosphor viewing screen: no static fluorescent reference mode. */
-body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-specimen{
-  transition:transform .30s ease,filter .22s ease,opacity .22s ease!important;
-}
-body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-beam{
-  display:block!important;
+  border:none!important;
+  background:radial-gradient(ellipse at center,
+    rgba(200,255,170,.05) 0%,
+    rgba(170,255,130,.10) 40%,
+    rgba(140,245,105,.18) 60%,
+    rgba(120,230,90,.30) 78%,
+    rgba(100,215,75,.44) 92%,
+    rgba(80,200,60,.55) 100%);
+  box-shadow:0 0 40px rgba(120,255,80,.22),inset 0 0 25px rgba(170,255,135,.10);
   mix-blend-mode:screen;
   transition:width .22s ease,height .22s ease,left .22s ease,top .22s ease,transform .22s ease,opacity .18s ease!important;
 }
-body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-feature,
-body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-fringe,
+
+/* ---------- Fresnel fringe (focus indicator) ---------- */
+body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-fringe{
+  display:block!important;
+  border-color:rgba(0,20,0,.55)!important;
+  box-shadow:0 0 0 3px rgba(140,255,110,.10),0 0 12px rgba(0,0,0,.3);
+}
+
+/* ---------- feature marker — dark on phosphor ---------- */
+body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-feature{
+  display:block!important;
+  border-color:rgba(200,255,160,.55);
+  box-shadow:0 0 0 4px rgba(100,255,80,.10),0 0 14px rgba(0,0,0,.30);
+}
+body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-feature span{
+  background:rgba(30,80,20,.45);
+}
 body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-crosshair{display:block!important}
+body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-crosshair i,
+body.iit-sop .sop-bf-scene.is-phosphor .sop-bf-crosshair b{
+  background:rgba(180,255,150,.18);
+}
+
+/* ---------- screen surround — dark microscope chamber ---------- */
+body.iit-sop .sop-bf-scene.is-phosphor{
+  background:radial-gradient(circle at 50% 50%,#080c06 0%,#040804 60%,#020402 100%);
+}
+
+/* ---------- diffraction mode overrides on phosphor ---------- */
+body.iit-sop .sop-bf-scene.is-phosphor.is-diff .sop-bf-specimen{
+  opacity:.08!important;filter:blur(3px) brightness(.08)!important;
+}
+body.iit-sop .sop-bf-scene.is-phosphor.is-diff .sop-bf-direct{
+  background:rgba(180,255,140,.92);
+  box-shadow:0 0 18px rgba(150,255,100,.7),0 0 40px rgba(100,230,70,.3);
+}
+
+/* ---------- camera/acquisition mode — no phosphor tint ---------- */
+body.iit-sop .sop-bf-scene.is-camera .sop-bf-screen{
+  background:#0a0a0a!important;
+  box-shadow:inset 0 0 50px rgba(0,0,0,.8)!important;
+}
+body.iit-sop .sop-bf-scene.is-camera .sop-bf-screen::before{display:none}
+body.iit-sop .sop-bf-scene.is-camera .sop-bf-screen::after{
+  background:radial-gradient(circle,transparent 55%,rgba(0,0,0,.25) 85%,rgba(0,0,0,.55) 100%)!important;
+}
+body.iit-sop .sop-bf-scene.is-camera .sop-bf-specimen{
+  mix-blend-mode:normal!important;
+  opacity:.92!important;
+  filter:grayscale(1) contrast(1.2)!important;
+}
+body.iit-sop .sop-bf-scene.is-camera .sop-bf-beam,
+body.iit-sop .sop-bf-scene.is-camera .sop-bf-feature,
+body.iit-sop .sop-bf-scene.is-camera .sop-bf-crosshair,
+body.iit-sop .sop-bf-scene.is-camera .sop-bf-fringe{display:none!important}
+
+/* =====================================================================
+   Version 4.8.10 — persistent grayscale Bright Field viewing screen
+   User-approved behavior: no green phosphor overlay during Section 3.
+   The grayscale specimen micrograph stays visible while controls act on it.
+   ===================================================================== */
+body.iit-sop .sop-bf-scene--screen .sop-bf-screen{
+  background:#050709!important;
+  box-shadow:inset 0 0 55px rgba(0,0,0,.82)!important;
+}
+body.iit-sop .sop-bf-scene--screen .sop-bf-screen::before{
+  display:none!important;
+  content:none!important;
+}
+body.iit-sop .sop-bf-scene--screen .sop-bf-screen::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:14!important;
+  pointer-events:none!important;
+  background:radial-gradient(circle at center,transparent 0 55%,rgba(0,0,0,.18) 78%,rgba(0,0,0,.66) 100%)!important;
+}
+body.iit-sop .sop-bf-scene--screen .sop-bf-specimen{
+  mix-blend-mode:normal!important;
+  opacity:.92!important;
+}
+body.iit-sop .sop-bf-scene--screen .sop-bf-beam{
+  background:radial-gradient(ellipse at center,
+    rgba(255,255,255,.02) 0%,
+    rgba(255,255,255,.04) 55%,
+    rgba(235,235,235,.10) 78%,
+    rgba(220,220,220,.16) 100%)!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 0 24px rgba(255,255,255,.08)!important;
+  mix-blend-mode:screen!important;
+}
+
+
+/* =====================================================================
+   Version 4.8.11 — clean grayscale Viewing Screen
+   No instruction, dummy label, status text, or action text is rendered
+   over the specimen image at any Section 3 step.
+   ===================================================================== */
+body.iit-sop .sop-bf-scene--screen .sop-bf-step-indicator,
+body.iit-sop .sop-bf-scene--screen .sop-dummy-badge,
+body.iit-sop .sop-bf-scene--screen .sop-bf-status,
+body.iit-sop .sop-bf-scene--screen .sop-bf-screen-action{
+  display:none!important;
+}
