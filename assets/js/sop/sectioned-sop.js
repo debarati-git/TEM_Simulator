@@ -24,7 +24,7 @@
     { id:3, title:'Bright Field Imaging', implemented:false, steps:[] },
     { id:4, title:'Dark Field Imaging', implemented:false, steps:[] },
     { id:5, title:'Selected Area Electron Diffraction (SAED) Mode', implemented:false, steps:[] },
-    { id:6, title:'High-Resolution TEM (HRTEM) Imaging Mode', implemented:false, steps:[] },
+    { id:6, title:'High-Resolution TEM (HRTEM) Imaging Mode', implemented:false, hidden:true, steps:[] },
     { id:7, title:'Instrument Shutdown', implemented:false, steps:[] }
   ];
 
@@ -63,6 +63,7 @@
 
   function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];}); }
   function currentSection(){ return sections[state.currentSection-1]; }
+  function nextVisibleSectionId(id){ for(var i=id;i<sections.length;i++){ if(!sections[i].hidden) return sections[i].id; } return null; }
   function currentStep(){ var s=currentSection(); return s.steps[state.currentStep] || null; }
   function stepKey(sectionId,index){ return sectionId+'-'+(index+1); }
 
@@ -106,7 +107,7 @@
   }
 
   function renderNav(){
-    navEl.innerHTML = sections.map(function(sec){
+    navEl.innerHTML = sections.filter(function(sec){ return !sec.hidden; }).map(function(sec){
       var unlocked = sec.id <= state.unlockedThrough;
       var active = sec.id===state.currentSection;
       var done = !!state.sectionComplete[sec.id];
@@ -116,7 +117,7 @@
     }).join('');
     navEl.querySelectorAll('[data-section]').forEach(function(btn){
       btn.addEventListener('click',function(){
-        var id=Number(btn.dataset.section); if(id>state.unlockedThrough) return;
+        var id=Number(btn.dataset.section); if(id>state.unlockedThrough || !sections[id-1] || sections[id-1].hidden) return;
         state.currentSection=id;
         state.currentStep=0;
         stopPumpSound();
@@ -168,7 +169,7 @@
   function completeStep(){
     var sec=currentSection(); state.completedSteps[stepKey(sec.id,state.currentStep)]=true;
     if(state.currentStep < sec.steps.length-1){ state.currentStep++; render(); }
-    else { state.sectionComplete[sec.id]=true; state.unlockedThrough=Math.max(state.unlockedThrough,Math.min(7,sec.id+1)); render(); }
+    else { state.sectionComplete[sec.id]=true; var nextId=nextVisibleSectionId(sec.id); if(nextId!==null) state.unlockedThrough=Math.max(state.unlockedThrough,nextId); render(); }
   }
 
   function renderComplete(sec){
@@ -177,7 +178,7 @@
     visualEl.innerHTML='<div class="section-complete"><div class="section-complete__icon">✓</div><h3>'+esc(sec.title)+' complete</h3><p>All required checks and interactions in this section have been completed. '+(next?'The next section is now unlocked.':'')+'</p></div>'+overviewInset();
     var nextText=next ? 'Open Section '+next.id : 'Session complete';
     actionEl.innerHTML='<div class="sop-action__kicker">SECTION COMPLETE</div><h2>Progress saved for this session</h2><p class="sop-action__instruction">The SOP remains sequential. Earlier completed sections may be reviewed from the section tabs.</p><div class="sop-action__spacer"></div>'+(next?'<button class="sop-btn" id="open-next">'+nextText+'</button>':'');
-    var b=document.getElementById('open-next'); if(b)b.addEventListener('click',function(){state.currentSection=sec.id+1;state.currentStep=0;render();});
+    var b=document.getElementById('open-next'); if(b)b.addEventListener('click',function(){var nextId=nextVisibleSectionId(sec.id);if(nextId!==null){state.currentSection=nextId;state.currentStep=0;render();}});
   }
 
   function renderFuture(sec){

@@ -1,3 +1,24 @@
+## RS3 — Section 3 instruction-bar achievement feedback
+- Removed the Section 3 `STEP ACHIEVED` acknowledgement modal from every Bright Field step.
+- When a Section 3 step reaches its required output, a concise step-specific achievement message appears in the existing instruction/status bar.
+- The achieved visual state and completion message remain visible for 2.5 seconds before automatic progression, allowing the learner to consolidate the result.
+- The same 2.5-second consolidation hold applies to completed steps in the other implemented sections; they show a generic completion message in the instruction/status bar before advancing.
+- Deferred cleanup remains in place so the achieved output is not cleared until the consolidation hold finishes.
+
+
+## RS2 — Real viewport + completion observation / achievement flow
+- Main Microscope New Column viewport replaced with the supplied real TEM-room image.
+- Section 1 Step 1 camera turn now uses the supplied chiller-room-door photograph.
+- Every implemented step holds the achieved output for 1.5 seconds before progression.
+- Section 3 shows a per-step STEP ACHIEVED modal after the hold; OK is required before the next Bright Field step.
+- Section 3/4 cleanup is deferred so achieved visual states remain visible during the hold.
+## v4.9.1-RS1 — Section 3 real-sample Bright Field integration
+- Added the 12 supplied Tv1–Tv12 TEM images as the real Bright Field specimen bank.
+- Stage search now progresses through real empty/edge/thin-region frames.
+- WOBBLER oscillates the real specimen image with Z-dependent amplitude.
+- Focus, stage, AUTO contrast, final X60k acquisition, iTEM live Video, and Snapshot use the real sample.
+- Section 4 remains a simulated Dark Field workflow; uploaded images are not presented as real DF acquisitions.
+
 ## v4.8.11
 - Section 3 dummy condenser-aperture hardware closes after displayed Step 30 and is not shown from Step 31 onward.
 - Viewing Screen is visual-only: no instruction, dummy label, status, or screen-action text overlays the grayscale specimen.

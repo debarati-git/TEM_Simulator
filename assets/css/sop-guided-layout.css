@@ -1607,3 +1607,59 @@ body.iit-sop .sop-bf-scene--screen .sop-bf-status,
 body.iit-sop .sop-bf-scene--screen .sop-bf-screen-action{
   display:none!important;
 }
+
+
+/* =====================================================================
+   Section 4 — Dark Field Imaging (v4.9.1)
+   Viewing Screen remains visual-only: no instructional text overlays.
+   ===================================================================== */
+body.iit-sop .sop-df-scene{position:absolute;inset:0;z-index:15;padding:10px;background:#020406}
+body.iit-sop .sop-df-scene[hidden]{display:none!important}
+body.iit-sop .sop-df-screen{position:relative;width:100%;height:100%;min-height:300px;overflow:hidden;border-radius:16px;background:#060708;border:1px solid #354450;box-shadow:inset 0 0 62px rgba(0,0,0,.88)}
+body.iit-sop .sop-df-specimen{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;transition:filter .25s ease,opacity .25s ease,transform .25s ease;transform-origin:center}
+body.iit-sop .sop-df-pattern{position:absolute;inset:0;display:none;background:radial-gradient(circle at 50% 50%,rgba(35,42,50,.42),rgba(2,4,6,.98) 72%);z-index:4}
+body.iit-sop .sop-df-scene.is-diff .sop-df-pattern{display:block}
+body.iit-sop .sop-df-scene.is-diff .sop-df-specimen{opacity:0!important}
+body.iit-sop .sop-df-spot{position:absolute;transform:translate(-50%,-50%);border:0;border-radius:50%;padding:0;background:#f7fbff;box-shadow:0 0 7px rgba(255,255,255,.95),0 0 16px rgba(190,220,255,.65);z-index:6;transition:left .16s linear,top .16s linear,box-shadow .2s,transform .2s;pointer-events:none}
+body.iit-sop .sop-df-spot.is-direct{background:#fff;box-shadow:0 0 9px #fff,0 0 24px rgba(255,255,255,.85)}
+body.iit-sop .sop-df-spot.is-target{outline:1px solid rgba(245,158,11,.35)}
+body.iit-sop .sop-df-spot.is-pickable{pointer-events:auto;cursor:pointer;animation:sopDfTargetPulse 1.05s ease-in-out infinite;outline:2px solid rgba(245,158,11,.9);outline-offset:6px}
+body.iit-sop .sop-df-spot.is-selected{box-shadow:0 0 8px #fff,0 0 18px rgba(245,158,11,.95);outline:2px solid rgba(245,158,11,.82);outline-offset:5px}
+body.iit-sop .sop-df-spot.is-on-axis{box-shadow:0 0 10px #fff,0 0 26px rgba(125,211,252,.95)}
+@keyframes sopDfTargetPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.38)}}
+body.iit-sop .sop-df-crosshair{position:absolute;left:50%;top:50%;width:32px;height:32px;transform:translate(-50%,-50%);z-index:8;pointer-events:none;opacity:.7}
+body.iit-sop .sop-df-crosshair i,body.iit-sop .sop-df-crosshair b{position:absolute;background:rgba(190,225,245,.8);box-shadow:0 0 5px rgba(120,205,255,.45)}
+body.iit-sop .sop-df-crosshair i{left:0;right:0;top:15px;height:1px}body.iit-sop .sop-df-crosshair b{top:0;bottom:0;left:15px;width:1px}
+body.iit-sop .sop-df-scene:not(.is-diff) .sop-df-crosshair{opacity:.25}
+body.iit-sop .sop-df-scene.is-dark-field .sop-df-screen{background:#010203}
+body.iit-sop .sop-df-scene.is-dark-field .sop-df-specimen{mix-blend-mode:screen}
+body.iit-sop .sop-df-aperture-shade{position:absolute;inset:-18%;z-index:5;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 0 34%,rgba(0,0,0,.46) 58%,rgba(0,0,0,.92) 100%);opacity:0;transition:opacity .2s,transform .2s}
+body.iit-sop .sop-df-fringe{position:absolute;z-index:7;left:16%;right:16%;top:17%;bottom:17%;border-radius:50%;border:5px double rgba(255,255,255,.78);opacity:0;pointer-events:none;transition:opacity .2s,border-width .2s}
+body.iit-sop .sop-df-record{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;padding:10px;border:1px solid rgba(148,163,184,.28);border-radius:10px;background:rgba(15,23,42,.45)}
+body.iit-sop .sop-df-record strong{font:800 .95rem var(--font-mono);letter-spacing:.08em}.sop-df-record button{grid-column:1/-1}
+
+
+/* =====================================================================
+   v4.9.1-RS1 — real specimen response for Section 3
+   The supplied BF micrograph itself follows stage, focus, AUTO contrast,
+   and eucentric-wobble feedback. No uploaded image is labelled as real DF.
+   ===================================================================== */
+body.iit-sop .sop-bf-scene--screen .sop-bf-specimen[data-real-sample]{
+  transform-origin:center center;
+  will-change:transform,filter,margin-left,margin-top;
+}
+body.iit-sop .sop-bf-scene--screen .sop-bf-specimen[data-real-sample].is-wobbling.is-wobble-x{
+  animation:sopRealSpecimenWobbleX .48s ease-in-out infinite alternate;
+}
+body.iit-sop .sop-bf-scene--screen .sop-bf-specimen[data-real-sample].is-wobbling.is-wobble-y{
+  animation:sopRealSpecimenWobbleY .48s ease-in-out infinite alternate;
+}
+@keyframes sopRealSpecimenWobbleX{
+  from{margin-left:calc(var(--bf-wobble,0px) * -1)}
+  to{margin-left:var(--bf-wobble,0px)}
+}
+@keyframes sopRealSpecimenWobbleY{
+  from{margin-top:calc(var(--bf-wobble,0px) * -1)}
+  to{margin-top:var(--bf-wobble,0px)}
+}
+

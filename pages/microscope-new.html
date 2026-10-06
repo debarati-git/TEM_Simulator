@@ -203,8 +203,12 @@
 <div class="dz__label">DEF / STIG</div>
 <div class="dz__body">
 <div class="ctl ctl--stack" data-control="def-stig-mode">
-<div class="ctl__label">Condenser Stigmator</div>
+<div class="ctl__label">DEF / STIG Function</div>
+<div class="pbtn-group" style="--cols:1;">
 <button class="pbtn pbtn--full" data-action="def-stig-mode" data-value="condStig"><span class="pbtn__led"></span>COND STIG</button>
+<button class="pbtn pbtn--full" data-action="def-stig-mode" data-value="objStig"><span class="pbtn__led"></span>OBJ STIG</button>
+<button class="pbtn pbtn--full" data-action="def-stig-mode" data-value="darkTilt"><span class="pbtn__led"></span>DARK/BRIGHT TILT</button>
+</div>
 </div>
 <div class="ctl ctl--center" data-control="shift-x">
 <div class="knob" data-knob="shift-x" data-max="20" data-min="-20" data-value="6">
@@ -259,7 +263,7 @@
 <div class="viewer__stage" id="viewer-stage">
 <!-- Column view -->
 <div class="viewer__panel is-active" data-view-panel="column">
-<img alt="Actual TEM instrument room view" class="viewer__column-image" src="../assets/images/microscope/diagram/tem-guided-actual-room.jpg"/>
+<img alt="Actual TEM instrument room view" class="viewer__column-image" src="../assets/images/sop/column-viewport-real.png"/>
 <div class="viewer__column-hotspots" id="diagram-hotspots"></div>
 </div>
 <!-- Screen view -->
@@ -715,13 +719,14 @@
 <div class="dz__label">Imaging / Magnification Mode</div>
 <div class="dz__body">
 <div class="ctl ctl--stack" data-control="mag-mode">
-<div class="pbtn-group" style="--cols:2;">
+<div class="pbtn-group" style="--cols:3;">
 <button class="pbtn" data-action="mag-mode" data-value="mag1">MAG 1</button>
 <button class="pbtn" data-action="mag-mode" data-value="lowmag">LOW MAG</button>
+<button class="pbtn" data-action="mag-mode" data-value="diff">DIFF</button>
 </div>
 </div>
 <div class="ctl ctl--center" data-control="mag-caml">
-<div class="knob knob--stepped" data-knob="mag-caml" data-min="0" data-max="7" data-step="1" data-value="2">
+<div class="knob knob--stepped" data-knob="mag-caml" data-min="0" data-max="8" data-step="1" data-value="3">
 <div class="knob__ring"></div><div class="knob__arc"></div><div class="knob__body"></div><div class="knob__value">X8k</div>
 </div>
 <div class="ctl__label ctl__label--below">MAG/CAM L</div>
@@ -759,6 +764,21 @@
 <button class="pbtn" data-action="mag-wob" data-axis="x"><span class="pbtn__led"></span>MAG WOB X</button>
 <button class="pbtn" data-action="mag-wob" data-axis="y"><span class="pbtn__led"></span>MAG WOB Y</button>
 </div>
+</div>
+</div>
+</div>
+<div class="dz" data-zone="objective-aperture">
+<div class="dz__label">Objective Aperture</div>
+<div class="dz__body">
+<div class="ctl ctl--stack" data-control="aperture-select">
+<div class="pbtn-group" style="--cols:2;">
+<button class="pbtn" data-action="aperture-select" data-value="objective"><span class="pbtn__led"></span>OBJ</button>
+<button class="pbtn" data-action="aperture-select" data-value="out">OUT</button>
+</div>
+</div>
+<div class="ctl ctl--center" data-control="aperture-align">
+<div class="trackpad" data-trackpad="aperture-align" data-range="-50,50"><div class="trackpad__dot"></div></div>
+<div class="ctl__label ctl__label--below">Aperture Align X / Y</div>
 </div>
 </div>
 </div>

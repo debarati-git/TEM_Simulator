@@ -34,7 +34,7 @@
       {title:'Imaging Mode · TEM',instruction:'Select TEM imaging mode on control panel L1.',hint:'Only the TEM control is active for this step.'},
       {title:'Magnification · LOW MAG',instruction:'Select LOW MAG on control panel R1.',hint:'Use LOW MAG for locating the region of interest.'},
       {title:'Magnification · Survey range',instruction:'Rotate MAG/CAM L until the magnification is within approximately 1,000–5,000×.',hint:'Any value in the manual-specified survey range is accepted.'},
-      {title:'Specimen · Locate thin region',instruction:'Use the specimen-stage trackball to move to a hole or thin region of the specimen.',hint:'Center the highlighted dummy feature for training.'},
+      {title:'Specimen · Locate thin region',instruction:'Use the specimen-stage trackball to move to a hole or thin region of the specimen.',hint:'Center a distinct feature in the real specimen image.'},
       {title:'Focus · STD FOCUS',instruction:'Press STD FOCUS on control panel R1.',hint:'STD FOCUS resets objective focus to its standard reference.'},
       {title:'Illumination · SPOT SIZE',instruction:'Set the desired SPOT SIZE using the L1 rotary control.',hint:'The manual does not prescribe a fixed value here; make a deliberate selection.'},
       {title:'Illumination · α SELECTOR',instruction:'Set the desired α SELECTOR using the L1 rotary control.',hint:'The manual does not prescribe a fixed value here; make a deliberate selection.'},
@@ -47,7 +47,7 @@
       {title:'Z Correction · Coarse Z',instruction:'Use Z UP / Z DOWN to bring the feature toward focus or minimum contrast.',hint:'Approach the eucentric-height region.'},
       {title:'Z Correction · Sensitivity',instruction:'If required, adjust the Z-control sensitivity using the arrows next to Z in TEMCON.',hint:'This is optional; the workflow continues automatically if no change is needed.'},
       {title:'Z Correction · Wobbler ON',instruction:'Press MAG WOB X or MAG WOB Y on R1 to start the wobble.',hint:'Use either axis as specified in the manual.'},
-      {title:'Z Correction · Minimize wobble',instruction:'While the wobbler is ON, use Z UP / Z DOWN until lateral motion is minimized.',hint:'The dummy feature wobble reduces as Z approaches the correct height.'},
+      {title:'Z Correction · Minimize wobble',instruction:'While the wobbler is ON, use Z UP / Z DOWN until lateral motion is minimized.',hint:'The real specimen image wobble reduces as Z approaches the correct height.'},
       {title:'Z Correction · Wobbler OFF',instruction:'Press the same MAG WOB X or MAG WOB Y control again to switch the wobble OFF.',hint:'The corrected Z height is retained.'},
       {title:'Condenser Aperture · Select',instruction:'Select an appropriate condenser aperture using the Knob 1 click-stops on the condenser-aperture assembly.',hint:'A temporary dummy column-hardware control is used until the actual reference image is supplied.'},
       {title:'Condenser Aperture · Centre X',instruction:'Adjust the condenser-aperture CA X centering control.',hint:'Center the beam horizontally.'},
@@ -61,35 +61,118 @@
       {title:'Condenser Lens · Re-centre Y',instruction:'If the expanding beam drifts, use SHIFT Y to correct the vertical position.',hint:'Keep the expanded beam centered.'},
       {title:'CL Astigmatism · Spot Size 1',instruction:'Set SPOT SIZE to 1.',hint:'Spot Size 1 is required before condenser-lens astigmatism correction.'},
       {title:'CL Astigmatism · COND STIG ON',instruction:'Press COND STIG on L1 to enter condenser-stigmator adjustment.',hint:'DEF/STIG X and Y now adjust condenser stigmation.'},
-      {title:'CL Astigmatism · Inspect shape',instruction:'Rotate BRIGHTNESS clockwise and anticlockwise through crossover to inspect the beam shape.',hint:'The dummy beam is intentionally elliptical before correction.'},
+      {title:'CL Astigmatism · Inspect shape',instruction:'Rotate BRIGHTNESS clockwise and anticlockwise through crossover to inspect the beam shape.',hint:'The simulated illumination outline is intentionally elliptical before correction while the real specimen remains visible.'},
       {title:'CL Astigmatism · DEF/STIG X',instruction:'Adjust DEF/STIG X on L1 to reduce the X component of beam ellipticity.',hint:'Move the beam shape toward circular.'},
       {title:'CL Astigmatism · DEF/STIG Y',instruction:'Adjust DEF/STIG Y on R1 to reduce the Y component of beam ellipticity.',hint:'Complete the circularization.'},
       {title:'CL Astigmatism · Verify',instruction:'Rotate BRIGHTNESS back and forth through crossover and verify the beam remains approximately circular.',hint:'Check the correction on both sides of crossover.'},
       {title:'CL Astigmatism · COND STIG OFF',instruction:'Press COND STIG again to exit condenser-stigmator adjustment.',hint:'The corrected setting is retained.'},
-      {title:'Acquisition · Select ROI',instruction:'Use the stage trackball to select and centre the final area of interest.',hint:'The dummy specimen image will later be replaced with the actual sample images.'},
-      {title:'Acquisition · Final magnification',instruction:'With MAG 1 retained, use MAG/CAM L to set the required final imaging magnification.',hint:'No fixed final magnification is specified in the manual; make a deliberate selection.'},
+      {title:'Acquisition · Select ROI',instruction:'Use the stage trackball to select and centre the final area of interest.',hint:'Centre the required area using the real specimen image.'},
+      {title:'Acquisition · Final magnification',instruction:'With MAG 1 retained, rotate MAG/CAM L to X60k for this real-sample exercise.',hint:'The supplied final Bright Field image sequence was recorded at 60,000×, so use X60k for the acquisition sequence.'},
       {title:'Acquisition · Spread beam',instruction:'Use BRIGHTNESS to spread the beam appropriately for image recording.',hint:'Set uniform illumination over the final field of view.'},
       {title:'Acquisition · AUTO contrast',instruction:'Press AUTO if automatic image-contrast adjustment is desired.',hint:'AUTO is optional and does not block progression.'},
       {title:'Acquisition · F1 screen UP',instruction:'Press F1 on R1 to lift the fluorescent screen and expose the transmitted beam to the camera.',hint:'The camera exposure path becomes active.'},
       {title:'Acquisition · Open iTEM',instruction:'Open iTEM software in the camera workstation.',hint:'A dummy iTEM interface is used until the actual screenshot is supplied.'},
       {title:'Acquisition · OBJ FOCUS',instruction:'Adjust OBJ FOCUS COARSE / FINE if needed while viewing the camera image.',hint:'This focus touch-up is optional.'},
       {title:'Acquisition · Video',instruction:'Click the Video icon in iTEM to start the live camera feed.',hint:'Live acquisition begins.'},
-      {title:'Acquisition · Snapshot',instruction:'Click Snapshot in iTEM to capture the Bright Field image.',hint:'A dummy BF image is captured.'},
+      {title:'Acquisition · Snapshot',instruction:'Click Snapshot in iTEM to capture the Bright Field image.',hint:'The real-sample Bright Field image is captured.'},
       {title:'Acquisition · F1 screen DOWN',instruction:'After acquiring the image, press F1 again to return the fluorescent screen.',hint:'Bright Field acquisition is complete; limit real camera exposure as required by the operating procedure.'}
     ]},
-    {id:4,title:'Dark Field Imaging',short:'Dark Field',implemented:false,steps:[]},
+    {id:4,title:'Dark Field Imaging',short:'Dark Field',implemented:true,steps:[
+      {title:'Diffraction · Switch to DIFF',instruction:'With the specimen in the stable focused Bright Field condition inherited from Section 3, switch the microscope to diffraction mode.',hint:'Use DIFF on the R1 Imaging / Magnification Mode control.'},
+      {title:'Diffraction · Select reflection',instruction:'Select the diffracted spot of interest that will be used to form the Dark Field image.',hint:'Click the highlighted diffracted reflection on the SAED pattern.'},
+      {title:'Beam Tilt · Activate DARK/BRIGHT TILT',instruction:'Activate DARK/BRIGHT TILT so the DEF/STIG X and Y controls adjust beam tilt for Dark Field alignment.',hint:'Use the DARK/BRIGHT TILT function on L1.'},
+      {title:'Beam Tilt · Align X',instruction:'Adjust beam-tilt X until the selected diffracted spot is horizontally aligned with the optical axis.',hint:'Move the selected reflection toward the central crosshair.'},
+      {title:'Beam Tilt · Align Y',instruction:'Adjust beam-tilt Y until the selected diffracted spot reaches the optical axis.',hint:'The selected reflection should finish at the screen centre.'},
+      {title:'Dark Field · Return to image mode',instruction:'Switch back to MAG 1 image mode. The image should now be formed primarily from the selected diffracted beam.',hint:'The specimen view changes from the diffraction pattern to a Dark Field image.'},
+      {title:'Objective Aperture · Insert',instruction:'Insert/select the objective aperture for Dark Field imaging to exclude the direct beam.',hint:'Select OBJ under Objective Aperture.'},
+      {title:'Objective Aperture · Centre X',instruction:'Adjust objective-aperture X to improve Dark Field illumination from the selected diffracted beam.',hint:'Use Aperture Align and centre the X position.'},
+      {title:'Objective Aperture · Centre Y',instruction:'Adjust objective-aperture Y to complete centering around the selected diffracted beam.',hint:'Correct centering produces the strongest, cleanest Dark Field image.'},
+      {title:'Focus · Coarse',instruction:'Use OBJ FOCUS COARSE to bring the Dark Field image close to focus.',hint:'Reduce blur and Fresnel-fringe strength.'},
+      {title:'Focus · Fine',instruction:'Use OBJ FOCUS FINE to minimize Fresnel-fringe contrast and reach the final focus condition.',hint:'Fine focus should leave the selected features sharp.'},
+      {title:'Astigmatism · OBJ STIG ON',instruction:'Activate OBJ STIG to check and, if required, correct objective astigmatism.',hint:'The simulator introduces a small residual astigmatism for training.'},
+      {title:'Astigmatism · DEF/STIG X',instruction:'Adjust DEF/STIG X to reduce the X component of objective astigmatism.',hint:'Move the Dark Field image toward symmetric sharpness.'},
+      {title:'Astigmatism · DEF/STIG Y',instruction:'Adjust DEF/STIG Y to reduce the Y component of objective astigmatism.',hint:'Complete the astigmatism correction.'},
+      {title:'Astigmatism · OBJ STIG OFF',instruction:'Press OBJ STIG again to exit stigmator adjustment and retain the corrected setting.',hint:'The final Dark Field image should remain sharp and stable.'},
+      {title:'Acquisition · F1 screen UP',instruction:'Press F1 to lift the fluorescent screen and expose the Dark Field image to the camera.',hint:'The camera path becomes active.'},
+      {title:'Acquisition · Open iTEM',instruction:'Open iTEM in the camera workstation for Dark Field acquisition.',hint:'A simulator iTEM panel is used until an actual screenshot is supplied.'},
+      {title:'Acquisition · Video',instruction:'Start Video in iTEM to confirm the live Dark Field image.',hint:'The live camera view uses the corrected Dark Field condition.'},
+      {title:'Acquisition · Snapshot',instruction:'Capture the Dark Field image using Snapshot.',hint:'The captured image is associated with the selected diffraction reflection.'},
+      {title:'Acquisition · Record reflection',instruction:'Record the selected diffraction-spot identifier with the Dark Field image for correlation with the SAED pattern.',hint:'Save the simulator reflection ID g1 with the captured DF image.'},
+      {title:'Acquisition · F1 screen DOWN',instruction:'Press F1 again to return the fluorescent screen after acquisition.',hint:'Dark Field imaging is complete.'}
+    ]},
     {id:5,title:'Selected Area Electron Diffraction (SAED) Mode',short:'SAED',implemented:false,steps:[]},
-    {id:6,title:'High-Resolution TEM (HRTEM) Imaging Mode',short:'HRTEM',implemented:false,steps:[]},
+    {id:6,title:'High-Resolution TEM (HRTEM) Imaging Mode',short:'HRTEM',implemented:false,hidden:true,steps:[]},
     {id:7,title:'Instrument Shutdown',short:'Shutdown',implemented:false,steps:[]}
   ];
 
   var state={sample:null,currentSection:0,currentStep:0,unlockedThrough:0,sectionComplete:{},completed:{},gridStage:0,insertionDone:false,pumpStarted:false,evacuationDone:false,rotation15:false,rotation75:false,holderSeated:false,trackballMoved:false,pumpTimer:null};
   var bfState={mag:3000,mode:'image',featureX:35,featureY:65,z:-8,wobble:false,wobbleSeen:false,aperture:'',caX:5,caY:-4,c2:45,c2Moves:0,condX:4,condY:-3,condTest:false,beamX:5,beamY:-4,objX:4,objY:-3,focusCoarse:8,focusFine:2,finalFocusChecked:false,finalAstigChecked:false,captured:false};
+  var dfState={mode:'image',selectedReflection:false,tiltMode:false,tiltX:0,tiltY:0,darkField:false,objInserted:false,objX:25,objY:-20,focusCoarse:12,focusFine:6,objStigOn:false,astigX:9,astigY:-8,screenRaised:false,itemOpen:false,videoOn:false,captured:false,recorded:false};
   var SECTION1_STEP1_START_DELAY_MS=2000;
   var STEP_MODAL_READING_DELAY_MS=2000;
+  /* RS3: preserve each achieved output and its completion message long enough for consolidation. */
+  var STEP_RESULT_HOLD_MS=2500;
+  var SECTION3_NEXT_STEP_DELAY_MS=450;
   var STEP4_PC_OBSERVE_DELAY_MS=7000;
   var FULLSCREEN_REMINDER_MS=4200;
   var audioCtx=null,pumpNodes=null,modalLocked=false,nextModalTimer=null;
+  var stepTransitionPending=false,pendingStepCleanup=null;
+  var SECTION3_ACHIEVEMENTS=[
+    'Auto HT target is set to 200 kV.',
+    'Auto HT voltage increment is set to 0.5 kV.',
+    'Auto HT interval is set to 10 s per step.',
+    'Accelerating voltage has reached 200 kV and stabilized.',
+    'High tension is ON at 200 kV.',
+    'The electron-source filament is ON.',
+    'Beam current has stabilized at approximately 103 µA.',
+    'V2 is open for image observation.',
+    'The electron beam is ON and available for imaging.',
+    'TEM imaging mode is selected.',
+    'LOW MAG mode is selected for specimen survey.',
+    'A suitable low-magnification survey range has been reached.',
+    'A useful thin specimen region has been located with the stage.',
+    'Objective focus has been reset to STD FOCUS.',
+    'The selected SPOT SIZE is established.',
+    'The selected α setting is established.',
+    'MAG 1 mode is selected for higher-magnification alignment.',
+    'The specimen is set to approximately X40k.',
+    'The illumination has been focused to crossover.',
+    'The beam has been spread to illuminate the viewing area.',
+    'The reference specimen feature is centered for Z correction.',
+    'STD FOCUS has been restored before eucentric-height adjustment.',
+    'Specimen Z is close to the eucentric-height region.',
+    'Z-control sensitivity is ready for fine height adjustment.',
+    'The magnification wobbler is ON and specimen motion is visible.',
+    'Wobble motion has been minimized by correcting specimen Z.',
+    'The wobbler is OFF with the corrected Z height retained.',
+    'A suitable condenser aperture is selected.',
+    'Condenser-aperture X centering is corrected.',
+    'Condenser-aperture Y centering is corrected.',
+    'The condenser aperture is verified by symmetric beam expansion and contraction.',
+    'The condenser beam is returned to crossover.',
+    'The crossover is centered horizontally with SHIFT X.',
+    'The crossover is centered vertically with SHIFT Y.',
+    'The beam is spread over the viewing screen.',
+    'Horizontal beam drift during expansion is corrected.',
+    'Vertical beam drift during expansion is corrected.',
+    'SPOT SIZE 1 is set for condenser-astigmatism correction.',
+    'COND STIG adjustment mode is active.',
+    'Beam shape has been inspected through crossover.',
+    'The X component of condenser astigmatism is corrected.',
+    'The Y component of condenser astigmatism is corrected.',
+    'The beam remains approximately circular through crossover.',
+    'COND STIG adjustment is complete and the correction is retained.',
+    'The final real-sample region of interest is centered.',
+    'Final acquisition magnification is set to X60k.',
+    'The beam is spread appropriately for image recording.',
+    'Image contrast is ready for acquisition; AUTO adjustment was handled as selected.',
+    'The fluorescent screen is raised and the camera path is exposed.',
+    'iTEM is open with the real Bright Field specimen available.',
+    'Camera-view objective focus has been checked or fine-adjusted.',
+    'The live iTEM video feed is running on the real specimen.',
+    'A real Bright Field snapshot has been captured.',
+    'The fluorescent screen is returned after acquisition; Bright Field imaging is complete.'
+  ];
   var nav=document.getElementById('sop-section-nav');
   var modal=document.getElementById('sopFlowModal');
   var modalTag=document.getElementById('sopFlowTag');
@@ -137,8 +220,8 @@
     wrap.hidden=true;
     wrap.innerHTML=''+
       '<div class="sop-tour__frame">'+
-        '<img class="sop-tour__room sop-tour__room--a" id="sopTourRoomA" src="../assets/images/microscope/diagram/tem-guided-actual-room.jpg" alt="TEM room">'+
-        '<img class="sop-tour__room sop-tour__room--b" id="sopTourRoomB" src="../assets/images/sop/section1-lab-door.png" alt="Opposite side of TEM laboratory showing chiller-room door">'+
+        '<img class="sop-tour__room sop-tour__room--a" id="sopTourRoomA" src="../assets/images/sop/column-viewport-real.png" alt="TEM room">'+
+        '<img class="sop-tour__room sop-tour__room--b" id="sopTourRoomB" src="../assets/images/sop/section1-chiller-room-door-real.png" alt="Electron microscope laboratory view showing the chiller-room door">'+
         '<div class="sop-tour__veil" id="sopTourVeil"></div>'+
         '<img class="sop-tour__chiller" id="sopTourChiller" src="../assets/images/sop/section1-chiller-static.png" alt="Chiller temperature display">'+
         '<img class="sop-tour__detail" id="sopTourDetail" src="" alt="Detailed instrument check">'+
@@ -199,8 +282,7 @@
     tourTimers.push(setTimeout(function(){setTourPhase('return-turn');},3200));
     tourTimers.push(setTimeout(function(){setTourPhase('return-home');},8000));
     tourTimers.push(setTimeout(function(){
-      hideSection1Tour();
-      completeStep();
+      completeStep(function(){hideSection1Tour();});
     },10200));
   }
 
@@ -230,8 +312,7 @@
     setTourPhase('sip-return-full');
     tourTimers.push(setTimeout(function(){setTourPhase('sip-return-room');},2600));
     tourTimers.push(setTimeout(function(){
-      hideSection1Tour();
-      completeStep();
+      completeStep(function(){hideSection1Tour();});
     },6200));
   }
 
@@ -260,8 +341,7 @@
     setTourPhase('ln2-return-zoom');
     tourTimers.push(setTimeout(function(){setTourPhase('ln2-return-room');},1700));
     tourTimers.push(setTimeout(function(){
-      hideSection1Tour();
-      completeStep();
+      completeStep(function(){hideSection1Tour();});
     },5900));
   }
 
@@ -474,8 +554,7 @@
       if(viewportScene)viewportScene.setAttribute('data-step4-phase','return');
       sceneTimers.push(setTimeout(function(){
         if(state.currentSection!==2||state.currentStep!==3)return;
-        hideViewportScene();
-        completeStep();
+        completeStep(function(){hideViewportScene();});
       },3800));
     });
   }
@@ -559,11 +638,12 @@
   function totalCompleted(){return Object.keys(state.completed).filter(function(k){return state.completed[k];}).length;}
   function updateProgress(){var total=sections.reduce(function(n,s){return n+(s.implemented?s.steps.length:0);},0);progress.style.width=Math.min(100,totalCompleted()/Math.max(1,total)*100)+'%';}
   function currentSection(){return state.currentSection?sections[state.currentSection-1]:null;}
+  function nextVisibleSectionId(id){for(var i=id;i<sections.length;i++){if(!sections[i].hidden)return sections[i].id;}return null;}
   function currentStep(){var s=currentSection();return s&&s.steps[state.currentStep];}
   function key(){return state.currentSection+'-'+(state.currentStep+1);}
 
   function renderNav(){
-    nav.innerHTML=sections.map(function(s){var unlocked=state.sample&&s.id<=state.unlockedThrough;var active=s.id===state.currentSection;var done=!!state.sectionComplete[s.id];return '<button class="sop-mini-tab'+(active?' is-active':'')+(done?' is-complete':'')+'" data-section="'+s.id+'" title="'+s.title.replace(/"/g,'&quot;')+'" '+(!unlocked?'disabled':'')+'><span class="sop-mini-tab__n">Section '+s.id+'</span><span class="sop-mini-tab__t">'+s.short+'</span><span class="sop-mini-tab__state">'+(done?'✓':(!unlocked?'🔒':(s.implemented?'':'…')))+'</span></button>';}).join('');
+    nav.innerHTML=sections.filter(function(s){return !s.hidden;}).map(function(s){var unlocked=state.sample&&s.id<=state.unlockedThrough;var active=s.id===state.currentSection;var done=!!state.sectionComplete[s.id];return '<button class="sop-mini-tab'+(active?' is-active':'')+(done?' is-complete':'')+'" data-section="'+s.id+'" title="'+s.title.replace(/"/g,'&quot;')+'" '+(!unlocked?'disabled':'')+'><span class="sop-mini-tab__n">Section '+s.id+'</span><span class="sop-mini-tab__t">'+s.short+'</span><span class="sop-mini-tab__state">'+(done?'✓':(!unlocked?'🔒':(s.implemented?'':'…')))+'</span></button>';}).join('');
     [].slice.call(nav.querySelectorAll('[data-section]')).forEach(function(b){b.addEventListener('click',function(){var id=Number(b.dataset.section);if(!state.sample||id>state.unlockedThrough)return;openSection(id);});});
   }
 
@@ -633,9 +713,10 @@
     if(chillerSwapTimer){clearTimeout(chillerSwapTimer);chillerSwapTimer=null;}
     modalLocked=opts.locked!==false;
     resetModalPosition();
+    if(modalCloseBtn)modalCloseBtn.style.display=opts.dismissible===false?'none':'';
     modalTag.textContent=opts.tag||'SOP CHECK';modalTitle.textContent=opts.title||'';modalStep.textContent=opts.step||'';modalBody.innerHTML=opts.body||'';modalFooter.innerHTML=opts.footer||'';modal.classList.add('is-open');
   }
-  function closeModal(force){if(modalLocked&&!force)return;if(chillerSwapTimer){clearTimeout(chillerSwapTimer);chillerSwapTimer=null;}modal.classList.remove('is-open');modalBody.innerHTML='';modalFooter.innerHTML='';modalLocked=false;resetModalPosition();}
+  function closeModal(force){if(modalLocked&&!force)return;if(chillerSwapTimer){clearTimeout(chillerSwapTimer);chillerSwapTimer=null;}modal.classList.remove('is-open');modalBody.innerHTML='';modalFooter.innerHTML='';modalLocked=false;if(modalCloseBtn)modalCloseBtn.style.display='';resetModalPosition();}
   function playChillerOnceThenFreeze(){
     var img=document.getElementById('sopChillerLoopOnce');
     if(!img)return;
@@ -705,30 +786,59 @@
     [].slice.call(modal.querySelectorAll('[data-sample]')).forEach(function(b){b.addEventListener('click',function(){ensureAudio();state.sample=b.dataset.sample;sampleInd.textContent=({nanoparticles:'NANOPARTICLES', 'bulk-metallic':'BULK METALLIC', 'cross-section':'CROSS-SECTION'}[state.sample]||'SELECTED');state.unlockedThrough=1;state.currentSection=1;state.currentStep=0;closeModal(true);setSessionControls(true);renderNav();setInstruction();setTimeout(showCurrentStep,SECTION1_STEP1_START_DELAY_MS);});});
   }
 
-  function openSection(id){clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();closePcDrawer();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}if(id===2){state.gridStage=0;state.insertionDone=false;state.pumpStarted=false;state.evacuationDone=false;state.rotation15=false;state.rotation75=false;state.holderSeated=false;state.trackballMoved=false;}if(id===3){resetBfState();}state.currentSection=id;state.currentStep=0;renderNav();setInstruction();if(state.sectionComplete[id])return;if(!sections[id-1].implemented)return;setTimeout(showCurrentStep,STEP_MODAL_READING_DELAY_MS);}
+  function openSection(id){if(!sections[id-1]||sections[id-1].hidden)return;if(stepTransitionPending){delete state.completed[key()];updateProgress();}clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();closePcDrawer();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}if(id===2){state.gridStage=0;state.insertionDone=false;state.pumpStarted=false;state.evacuationDone=false;state.rotation15=false;state.rotation75=false;state.holderSeated=false;state.trackballMoved=false;}if(id===3){resetBfState();}if(id===4){resetDfState();}state.currentSection=id;state.currentStep=0;renderNav();setInstruction();if(state.sectionComplete[id])return;if(!sections[id-1].implemented)return;setTimeout(showCurrentStep,STEP_MODAL_READING_DELAY_MS);}
 
-  function completeStep(){
-    state.completed[key()]=true;updateProgress();
+  function clearPendingStepTransition(){
+    stepTransitionPending=false;pendingStepCleanup=null;
     if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}
+    if(modalCloseBtn)modalCloseBtn.style.display='';
+  }
+
+  function advanceCompletedStep(){
+    if(!stepTransitionPending)return;
     var s=currentSection();
+    var cleanup=pendingStepCleanup;pendingStepCleanup=null;
+    if(cleanup){try{cleanup();}catch(e){}}
+    stepTransitionPending=false;
+    if(!s)return;
     if(state.currentStep<s.steps.length-1){
       state.currentStep++;setInstruction();renderNav();
-      // Reading gap: keep the new instruction visible before opening its modal.
-      var nextDelay=(state.currentSection===3?(state.currentStep===40?180:650):STEP_MODAL_READING_DELAY_MS);
+      // Keep a short reading gap after the result hold before the next step interface appears.
+      var nextDelay=(state.currentSection===3?SECTION3_NEXT_STEP_DELAY_MS:(state.currentSection===4?520:STEP_MODAL_READING_DELAY_MS));
       nextModalTimer=setTimeout(function(){nextModalTimer=null;showCurrentStep();},nextDelay);
     }else{
-      state.sectionComplete[s.id]=true;state.unlockedThrough=Math.max(state.unlockedThrough,Math.min(7,s.id+1));renderNav();setInstruction();
-      nextModalTimer=setTimeout(function(){nextModalTimer=null;showSectionComplete(s);},1200);
+      state.sectionComplete[s.id]=true;var nextId=nextVisibleSectionId(s.id);if(nextId!==null)state.unlockedThrough=Math.max(state.unlockedThrough,nextId);renderNav();setInstruction();
+      nextModalTimer=setTimeout(function(){nextModalTimer=null;showSectionComplete(s);},650);
     }
   }
 
-  function showSectionComplete(s){openModal({locked:true,tag:'SECTION COMPLETE',title:'Section '+s.id+' completed',step:s.title,body:'<p class="sop-flow-modal__copy">All required steps in <strong>'+s.title+'</strong> have been completed. Section '+Math.min(7,s.id+1)+' is now unlocked.</p>',footer:s.id<7?'<button class="sop-flow-btn sop-flow-btn--success" id="sopNextSection">Proceed to Section '+(s.id+1)+'</button>':'<button class="sop-flow-btn sop-flow-btn--success" id="sopFinish">Finish</button>'});var n=document.getElementById('sopNextSection');if(n)n.addEventListener('click',function(){closeModal(true);openSection(s.id+1);});var f=document.getElementById('sopFinish');if(f)f.addEventListener('click',function(){closeModal(true);});}
+  function completeStep(afterHoldCleanup){
+    if(stepTransitionPending)return;
+    stepTransitionPending=true;pendingStepCleanup=typeof afterHoldCleanup==='function'?afterHoldCleanup:null;
+    if(state.currentSection===3||state.currentSection===4)s3LockControls();
+    state.completed[key()]=true;updateProgress();
+    if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}
+    // Keep the completed visual/output on screen while the learner reads the result in the instruction bar.
+    if(state.currentSection===3){
+      var achievedMsg=SECTION3_ACHIEVEMENTS[state.currentStep]||'The required Bright Field output has been achieved.';
+      setInstructionText('Section 3 · Step '+(state.currentStep+1)+' complete — '+achievedMsg+'  Observe the result before the next step.');
+    }else{
+      setInstructionText('Section '+state.currentSection+' · Step '+(state.currentStep+1)+' complete — output achieved. Observe the result before the next step.');
+    }
+    nextModalTimer=setTimeout(function(){
+      nextModalTimer=null;
+      if(!stepTransitionPending)return;
+      advanceCompletedStep();
+    },STEP_RESULT_HOLD_MS);
+  }
+
+  function showSectionComplete(s){var nextId=nextVisibleSectionId(s.id);openModal({locked:true,tag:'SECTION COMPLETE',title:'Section '+s.id+' completed',step:s.title,body:'<p class="sop-flow-modal__copy">All required steps in <strong>'+s.title+'</strong> have been completed.'+(nextId!==null?' Section '+nextId+' is now unlocked.':'')+'</p>',footer:nextId!==null?'<button class="sop-flow-btn sop-flow-btn--success" id="sopNextSection">Proceed to Section '+nextId+'</button>':'<button class="sop-flow-btn sop-flow-btn--success" id="sopFinish">Finish</button>'});var n=document.getElementById('sopNextSection');if(n)n.addEventListener('click',function(){closeModal(true);openSection(nextId);});var f=document.getElementById('sopFinish');if(f)f.addEventListener('click',function(){closeModal(true);});}
 
   function confirmFooter(label){return '<button class="sop-flow-btn sop-flow-btn--success" id="sopConfirmStep">'+label+'</button>';}
-  function bindConfirm(){var b=document.getElementById('sopConfirmStep');if(b)b.addEventListener('click',function(){ensureAudio();closeModal(true);completeStep();});}
+  function bindConfirm(){var b=document.getElementById('sopConfirmStep');if(b)b.addEventListener('click',function(){ensureAudio();b.disabled=true;completeStep(function(){closeModal(true);});});}
 
   function showCurrentStep(){
-    var s=currentSection();if(!s||state.sectionComplete[s.id]||!s.implemented)return;setInstruction();renderNav();if(s.id===1)showSection1();else if(s.id===2)showSection2();else if(s.id===3)showSection3();
+    var s=currentSection();if(!s||state.sectionComplete[s.id]||!s.implemented)return;setInstruction();renderNav();if(s.id===1)showSection1();else if(s.id===2)showSection2();else if(s.id===3)showSection3();else if(s.id===4)showSection4();
   }
 
   function clearHtRampTimers(){
@@ -849,7 +959,7 @@
               if(status)status.textContent='READY';if(fil)fil.textContent='Ready';if(finish)finish.textContent='HT READY · 200.00 kV';
               setHtRampGuide('HT ramp complete. TEMCON shows 200 kV and READY.');
               setHtRampProgress(100,'READY · 200.00 kV');
-              var c=document.getElementById('sopHtRampContinue');if(c){c.hidden=false;c.disabled=false;c.onclick=function(){ensureAudio();cleanupHtRampUi();closePcDrawer();completeStep();};}
+              var c=document.getElementById('sopHtRampContinue');if(c){c.hidden=false;c.disabled=false;c.onclick=function(){ensureAudio();c.disabled=true;completeStep(function(){cleanupHtRampUi();closePcDrawer();});};}
             }
           },120);
         }
@@ -867,7 +977,7 @@
     setTimeout(function(){
       if(state.currentSection!==1||state.currentStep!==3)return;
       openModal({locked:true,tag:'SECTION 1 · TEMCON READINESS',title:'Verify TEMCON readiness',step:'Step 4 of 7',body:'<p class="sop-flow-modal__copy">Verify the TEMCON screen shows <strong>HT READY</strong>, <strong>EVAC READY</strong>, and an accelerating voltage of <strong>80 kV</strong>.</p><p class="sop-flow-modal__copy" style="margin-top:10px">No HT voltage ramp is performed in this step.</p>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopConfirmHtRampPlaceholder">Confirm TEMCON readiness</button>'});
-      var b=document.getElementById('sopConfirmHtRampPlaceholder');if(b)b.addEventListener('click',function(){ensureAudio();if(hg)hg.classList.remove('sop-ht-focus');if(vg)vg.classList.remove('sop-evc-focus');closeModal(true);closePcDrawer();completeStep();});
+      var b=document.getElementById('sopConfirmHtRampPlaceholder');if(b)b.addEventListener('click',function(){ensureAudio();b.disabled=true;completeStep(function(){if(hg)hg.classList.remove('sop-ht-focus');if(vg)vg.classList.remove('sop-evc-focus');closeModal(true);closePcDrawer();});});
     },1800);
   }
 
@@ -883,9 +993,9 @@
       openModal({locked:true,tag:'SECTION 1 · STARTUP',title:st.title,step:'Step 6 of 7',body:'<p class="sop-flow-modal__copy">'+st.instruction+'</p><div class="sop-stabilize"><div class="sop-stabilize__bar"><span id="sopStabilizeBar"></span></div><div class="sop-stabilize__read" id="sopStabilizeRead">Stabilizing · 0%</div></div>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopStabilizeContinue" disabled>Stabilizing…</button>'});
       var bar=document.getElementById('sopStabilizeBar'),read=document.getElementById('sopStabilizeRead'),btn=document.getElementById('sopStabilizeContinue'),t0=Date.now(),dur=8000;
       var timer=setInterval(function(){if(!document.body.contains(bar)){clearInterval(timer);return;}var pct=Math.min(100,(Date.now()-t0)/dur*100);bar.style.width=pct+'%';read.textContent='Stabilizing · '+Math.round(pct)+'%';if(pct>=100){clearInterval(timer);read.textContent='Stabilization period complete';btn.disabled=false;btn.textContent='Confirm stabilization';}},120);
-      btn.addEventListener('click',function(){if(btn.disabled)return;closeModal(true);completeStep();});
+      btn.addEventListener('click',function(){if(btn.disabled)return;btn.disabled=true;completeStep(function(){closeModal(true);});});
     }
-    else if(n===7){var d=new Date();var date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');var time=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');openModal({locked:true,tag:'SECTION 1 · LOGBOOK',title:st.title,step:'Step 7 of 7',body:'<p class="sop-flow-modal__copy">'+st.instruction+'</p><div class="sop-log-grid"><div class="sop-log-field"><label>Date</label><input id="sopLogDate" type="date" value="'+date+'"></div><div class="sop-log-field"><label>Time</label><input id="sopLogTime" type="time" value="'+time+'"></div><div class="sop-log-field sop-log-field--wide"><label>Operator name</label><input id="sopLogName" type="text" placeholder="Enter operator name"></div></div>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopSaveLog" disabled>Save startup log</button>'});var name=document.getElementById('sopLogName'),save=document.getElementById('sopSaveLog');function valid(){save.disabled=!name.value.trim();}name.addEventListener('input',valid);save.addEventListener('click',function(){if(!name.value.trim())return;closeModal(true);completeStep();});}
+    else if(n===7){var d=new Date();var date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');var time=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');openModal({locked:true,tag:'SECTION 1 · LOGBOOK',title:st.title,step:'Step 7 of 7',body:'<p class="sop-flow-modal__copy">'+st.instruction+'</p><div class="sop-log-grid"><div class="sop-log-field"><label>Date</label><input id="sopLogDate" type="date" value="'+date+'"></div><div class="sop-log-field"><label>Time</label><input id="sopLogTime" type="time" value="'+time+'"></div><div class="sop-log-field sop-log-field--wide"><label>Operator name</label><input id="sopLogName" type="text" placeholder="Enter operator name"></div></div>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopSaveLog" disabled>Save startup log</button>'});var name=document.getElementById('sopLogName'),save=document.getElementById('sopSaveLog');function valid(){save.disabled=!name.value.trim();}name.addEventListener('input',valid);save.addEventListener('click',function(){if(!name.value.trim())return;save.disabled=true;completeStep(function(){closeModal(true);});});}
   }
 
   function openPcDrawer(){if(!drawer)return;var dt=document.getElementById('pc-drawer-title');if(dt)dt.textContent='PC · TEM CONTROL';drawer.classList.add('is-open');if(drawerHandle){drawerHandle.setAttribute('aria-expanded','true');drawerHandle.title='Collapse PC drawer';}if(pcTem){pcTem.hidden=false;pcTem.classList.add('is-active');pcTem.setAttribute('aria-hidden','false');}if(pcCam){pcCam.hidden=true;pcCam.classList.remove('is-active');}if(viewerStage)viewerStage.classList.add('has-drawer');var tabs=[].slice.call(document.querySelectorAll('[data-temcon-tab]'));tabs.forEach(function(b){var on=b.dataset.temconTab==='standard';b.classList.toggle('is-selected',on);b.setAttribute('aria-selected',on?'true':'false');});[].slice.call(document.querySelectorAll('[data-temcon-page]')).forEach(function(p){var on=p.dataset.temconPage==='standard';p.hidden=!on;p.classList.toggle('is-selected',on);});}
@@ -925,7 +1035,7 @@
     setTimeout(function(){
       if(state.currentSection!==2||state.currentStep!==5)return;
       openModal({locked:true,tag:'SECTION 2 · TEMCON',title:'Confirm EVC READY',step:'Step 6 of 8',body:'<p class="sop-flow-modal__copy">Verify the highlighted <strong>Specimen Exchange / Vacuum</strong> area in TEMCON. Confirm that <strong>EVC Status</strong> shows <strong>READY</strong> before rotating and fully inserting the holder.</p>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopConfirmEvc">Confirm EVC READY</button>'});
-      var b=document.getElementById('sopConfirmEvc');if(b)b.addEventListener('click',function(){if(vac)vac.classList.remove('sop-evc-focus');closeModal(true);closePcDrawer();completeStep();});
+      var b=document.getElementById('sopConfirmEvc');if(b)b.addEventListener('click',function(){b.disabled=true;completeStep(function(){if(vac)vac.classList.remove('sop-evc-focus');closeModal(true);closePcDrawer();});});
     },3600);
   }
 
@@ -974,7 +1084,7 @@
     if(next)next.addEventListener('click',function(){
       if(!(state.rotation75&&state.holderSeated))return;ensureAudio();clearSceneTimers();next.disabled=true;
       if(viewportScene)viewportScene.setAttribute('data-step8-phase','return');
-      sceneTimers.push(setTimeout(function(){if(state.currentSection!==2||state.currentStep!==6)return;hideViewportScene();completeStep();},3900));
+      sceneTimers.push(setTimeout(function(){if(state.currentSection!==2||state.currentStep!==6)return;completeStep(function(){hideViewportScene();});},3900));
     });
   }
 
@@ -986,7 +1096,7 @@
     setTimeout(function(){
       if(state.currentSection!==2||state.currentStep!==7)return;
       openModal({locked:true,tag:'SECTION 2 · TEMCON FILAMENT',title:'Turn filament ON',step:'Step 8 of 9',body:'<p class="sop-flow-modal__copy">This TEMCON filament interaction is temporarily represented by a confirmation step. The detailed PC-window interaction will be added when the reference image is supplied.</p><p class="sop-flow-modal__copy" style="margin-top:10px">On <strong>High Voltage Control</strong>, press <strong>Filament: ON</strong>. The filament current should increase gradually to its set value, and the <strong>Beam Current</strong> indicator should settle at approximately <strong>103 µA</strong>.</p>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopConfirmFilamentPlaceholder">Confirm Filament ON / ≈103 µA</button>'});
-      var b=document.getElementById('sopConfirmFilamentPlaceholder');if(b)b.addEventListener('click',function(){ensureAudio();if(hg)hg.classList.remove('sop-ht-focus');closeModal(true);closePcDrawer();completeStep();});
+      var b=document.getElementById('sopConfirmFilamentPlaceholder');if(b)b.addEventListener('click',function(){ensureAudio();b.disabled=true;completeStep(function(){if(hg)hg.classList.remove('sop-ht-focus');closeModal(true);closePcDrawer();});});
     },1800);
   }
 
@@ -1018,11 +1128,12 @@
     if(confirm)confirm.onclick=function(){
       if(!select||select.value!=='single-tilt')return;
       ensureAudio();confirm.disabled=true;
-      if(stagePage)stagePage.classList.remove('sop-holder-model-step');
-      if(menu)menu.hidden=true;
-      oldButtons.forEach(function(b){b.disabled=false;b.removeAttribute('aria-disabled');});
-      closePcDrawer();
-      completeStep();
+      completeStep(function(){
+        if(stagePage)stagePage.classList.remove('sop-holder-model-step');
+        if(menu)menu.hidden=true;
+        oldButtons.forEach(function(b){b.disabled=false;b.removeAttribute('aria-disabled');});
+        closePcDrawer();
+      });
     };
   }
 
@@ -1109,7 +1220,7 @@
   }
   function ensureS3ActiveVisible(behavior){
     var el=s3ActivePrimary;
-    if(!el||!document.body.contains(el)||state.currentSection!==3)return;
+    if(!el||!document.body.contains(el)||(state.currentSection!==3&&state.currentSection!==4))return;
     if(el.closest('#sop-stage-dock')){
       revealStageControl(behavior||'smooth');
       return;
@@ -1152,20 +1263,20 @@
   function s3SetPad(name,x,y){var h=s3PadHandles[name];if(h)h.value={x:x,y:y};}
   function s3AutoComplete(delay,before){
     if(s3StepCompleting)return;s3StepCompleting=true;var sec=state.currentSection,step=state.currentStep;
-    var t=setTimeout(function(){if(state.currentSection!==sec||state.currentStep!==step){s3StepCompleting=false;return;}if(before)before();completeStep();},delay||650);bfTimers.push(t);
+    var t=setTimeout(function(){if(state.currentSection!==sec||state.currentStep!==step){s3StepCompleting=false;return;}completeStep(before);},delay||650);bfTimers.push(t);
   }
   function initS3PanelInteractions(){
     if(s3PanelInit)return;s3PanelInit=true;if(!(window.TEM&&TEM.controlsUI))return;
-    [].slice.call(document.querySelectorAll('[data-action]')).forEach(function(btn){btn.addEventListener('click',function(){if(state.currentSection!==3)return;var ctl=btn.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['action:'+btn.dataset.action];if(fn)fn(btn);});});
-    ['brightness','focus-coarse','focus-fine'].forEach(function(name){var el=document.querySelector('[data-knob="'+name+'"]');if(!el)return;var min=Number(el.dataset.min||0),max=Number(el.dataset.max||100),value=Number(el.dataset.value||0);s3KnobHandles[name]=TEM.controlsUI.bindKnob(el,{min:min,max:max,value:value,onChange:function(v){if(state.currentSection!==3)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['knob:'+name];if(fn)fn(v);}});});
-    [].slice.call(document.querySelectorAll('[data-defstig-axis]')).forEach(function(el){var axis=el.dataset.defstigAxis;var min=Number(el.dataset.min||-50),max=Number(el.dataset.max||50);s3KnobHandles['defstig-'+axis]=TEM.controlsUI.bindKnob(el,{min:min,max:max,value:0,onChange:function(v){if(state.currentSection!==3)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['defstig:'+axis];if(fn)fn(v);}});});
-    ['stage-xy','aperture-align'].forEach(function(name){var el=document.querySelector('[data-trackpad="'+name+'"]');if(!el)return;var rr=(el.dataset.range||'-50,50').split(',').map(Number);s3PadHandles[name]=TEM.controlsUI.bindTrackpad(el,{rangeX:[rr[0],rr[1]],rangeY:[rr[0],rr[1]],valueX:0,valueY:0,onChange:function(pos){if(state.currentSection!==3)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['pad:'+name];if(fn)fn(pos);}});});
+    [].slice.call(document.querySelectorAll('[data-action]')).forEach(function(btn){btn.addEventListener('click',function(){if(state.currentSection!==3&&state.currentSection!==4)return;var ctl=btn.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['action:'+btn.dataset.action];if(fn)fn(btn);});});
+    ['brightness','focus-coarse','focus-fine'].forEach(function(name){var el=document.querySelector('[data-knob="'+name+'"]');if(!el)return;var min=Number(el.dataset.min||0),max=Number(el.dataset.max||100),value=Number(el.dataset.value||0);s3KnobHandles[name]=TEM.controlsUI.bindKnob(el,{min:min,max:max,value:value,onChange:function(v){if(state.currentSection!==3&&state.currentSection!==4)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['knob:'+name];if(fn)fn(v);}});});
+    [].slice.call(document.querySelectorAll('[data-defstig-axis]')).forEach(function(el){var axis=el.dataset.defstigAxis;var min=Number(el.dataset.min||-50),max=Number(el.dataset.max||50);s3KnobHandles['defstig-'+axis]=TEM.controlsUI.bindKnob(el,{min:min,max:max,value:0,onChange:function(v){if(state.currentSection!==3&&state.currentSection!==4)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['defstig:'+axis];if(fn)fn(v);}});});
+    ['stage-xy','aperture-align'].forEach(function(name){var el=document.querySelector('[data-trackpad="'+name+'"]');if(!el)return;var rr=(el.dataset.range||'-50,50').split(',').map(Number);s3PadHandles[name]=TEM.controlsUI.bindTrackpad(el,{rangeX:[rr[0],rr[1]],rangeY:[rr[0],rr[1]],valueX:0,valueY:0,onChange:function(pos){if(state.currentSection!==3&&state.currentSection!==4)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['pad:'+name];if(fn)fn(pos);}});});
   }
   function ensureBfScene(){
     if(bfScene||!viewScreen)return;
     var w=document.createElement('div');w.id='sopBfScene';w.className='sop-bf-scene sop-bf-scene--screen';w.hidden=true;
     w.innerHTML='<div class="sop-bf-screen" id="sopBfScreen">'
-      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/bf-midmag-survey.png" alt="Bright field specimen view">'
+      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/real-sample/Tv5.jpg" alt="Real Bright Field specimen view">'
       +'<div class="sop-bf-feature" id="sopBfFeature"><span></span></div>'
       +'<div class="sop-bf-beam" id="sopBfBeam"></div>'
       +'<div class="sop-bf-direct" id="sopBfDirect"></div>'
@@ -1182,7 +1293,7 @@
   function updateBfDummyCue(){
     if(!bfDummyBadge && !bfStepIndicator) return;
     var n=(state.currentSection===3)?(state.currentStep+1):0;
-    var label='DUMMY SAMPLE IMAGE', title='', sub='';
+    var label='REAL SAMPLE IMAGE', title='', sub='';
     if(n>=10){
       if(n===10){label='DUMMY · CA CENTERING'; title='Condenser Aperture Centering'; sub='Move CA X/Y so the beam expansion stays concentric about the optical axis.';}
       else if(n===11){label='DUMMY · C.STIG CHECK'; title='Condenser Astigmatism'; sub='The beam is intentionally elliptical first; DEF/STIG X and Y should make it circular.';}
@@ -1296,7 +1407,33 @@
     function astigCheck(){if(Math.abs(bfState.condX)<=1&&Math.abs(bfState.condY)<=1){bfState.finalAstigChecked=true;bfSetStatus('Final magnification, focus and astigmatism verified.');s3AutoComplete(700);}}
     s3SetHandlers({'action:magnification':function(btn){if(btn.dataset.value!=='very-high'&&btn.dataset.value!=='high')return;s3SelectButton(btn);bfState.mag=btn.dataset.value==='very-high'?150000:100000;bfRender();bfSetStatus('Final magnification selected · re-check Fine Focus.');s3Activate(['focus-fine']);s3SetHandlers({'knob:focus-fine':function(v){bfState.focusFine=v;bfRender();if(Math.abs(v)<=.5){bfState.finalFocusChecked=true;bfSetStatus('Focus re-checked · select O.Stig mode.');s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(mb){if(mb.dataset.value!=='objStig')return;s3SelectButton(mb);bfSetStatus('O.Stig selected · center X/Y for final astigmatism check.');s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(x){bfState.condX=x;bfRender();astigCheck();},'defstig:y':function(y){bfState.condY=y;bfRender();astigCheck();}});}});}}});}});
   }
-  function drawCapturedBf(){var cv=document.getElementById('pc-cam-canvas');if(!cv)return;var ctx=cv.getContext('2d'),img=new Image();img.onload=function(){ctx.clearRect(0,0,cv.width,cv.height);ctx.filter='grayscale(1) contrast(1.18)';ctx.drawImage(img,0,0,cv.width,cv.height);ctx.filter='none';ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='16px sans-serif';ctx.fillText('BF · '+Number(bfState.mag).toLocaleString()+'×',16,28);};img.src=BF_SPECIMEN_IMAGES.acquire;}
+  function drawBfCameraFrame(key,extraBlur,label){
+    var cv=document.getElementById('pc-cam-canvas');if(!cv)return;
+    var ctx=cv.getContext('2d'),img=new Image();
+    img.onload=function(){
+      var cw=cv.width,ch=cv.height,scale=Math.min(cw/img.width,ch/img.height),dw=img.width*scale,dh=img.height*scale,dx=(cw-dw)/2,dy=(ch-dh)/2;
+      ctx.save();ctx.clearRect(0,0,cw,ch);ctx.fillStyle='#050505';ctx.fillRect(0,0,cw,ch);
+      var blur=Math.max(0,Number(extraBlur||0));ctx.filter='grayscale(1) contrast('+(bfState.autoUsed?'1.34':'1.18')+')'+(blur>0?' blur('+blur.toFixed(2)+'px)':'');
+      ctx.drawImage(img,dx,dy,dw,dh);ctx.filter='none';
+      ctx.fillStyle='rgba(255,255,255,.86)';ctx.font='15px sans-serif';ctx.fillText(label||('BF · '+Number(bfState.mag||60000).toLocaleString()+'×'),14,24);ctx.restore();
+    };
+    img.src=BF_SPECIMEN_IMAGES[key]||BF_SPECIMEN_IMAGES.acquire;
+    var ph=document.getElementById('pc-cam-placeholder');if(ph)ph.style.display='none';
+    var fn=document.getElementById('pc-cam-file-name');if(fn)fn.textContent='Live View — Real TEM sample';
+    var ov=document.getElementById('pc-cam-overlay-mag');if(ov)ov.textContent='MAG '+s3FormatMag(bfState.mag||60000);
+  }
+  function drawBfCameraFocusPreview(){
+    var err=Math.abs(Number(bfState.focusCoarse||0))+Math.abs(Number(bfState.focusFine||0));
+    var key=err>12?'cameraLiveB':(err>4?'cameraLiveA':'cameraLiveC');
+    drawBfCameraFrame(key,Math.min(2.4,err*.08),'LIVE BF · focus touch-up');
+  }
+  function startBfCameraLive(){
+    var frames=['cameraLiveA','cameraLiveB','cameraLiveC','finalSharp'],i=0;
+    drawBfCameraFrame(frames[0],.18,'LIVE BF · real sample');
+    var t=setInterval(function(){i=(i+1)%frames.length;drawBfCameraFrame(frames[i],.10,'LIVE BF · real sample');},620);
+    bfTimers.push(t);return t;
+  }
+  function drawCapturedBf(){drawBfCameraFrame('finalSharp',0,'BF SNAPSHOT · real sample');}
   function installItemPanel(){
     var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return;var old=document.getElementById('sopItemPanel');if(old)old.remove();var p=document.createElement('div');p.id='sopItemPanel';p.className='sop-item-panel';p.innerHTML='<div class="sop-bf-card-title">iTEM acquisition</div><button id="s3ObjFocusCheck">OBJ FOCUS check (optional)</button><button id="s3Video">Video</button><button id="s3Snapshot" disabled>Snapshot</button><button id="s3F1Down" disabled>F1 · Return fluorescent screen</button>';host.appendChild(p);
     var objCheck=document.getElementById('s3ObjFocusCheck'),video=document.getElementById('s3Video'),snap=document.getElementById('s3Snapshot'),f1=document.getElementById('s3F1Down');if(objCheck)objCheck.onclick=function(){ensureAudio();objCheck.classList.add('is-done');objCheck.textContent='OBJ FOCUS checked';};video.onclick=function(){ensureAudio();video.classList.add('is-done');video.textContent='Video · LIVE';snap.disabled=false;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running';};snap.onclick=function(){ensureAudio();snap.classList.add('is-done');snap.disabled=true;drawCapturedBf();bfState.captured=true;var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Snapshot captured';f1.disabled=false;};f1.onclick=function(){ensureAudio();f1.classList.add('is-done');f1.disabled=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';bfSetStatus('Bright Field image recorded · fluorescent screen returned.');s3AutoComplete(900,function(){clearS3PcPanel();closePcDrawer();});};
@@ -1312,52 +1449,67 @@
      Uses the existing simulator-style L1/R1 panels with actual control names.
      Routine steps auto-advance when the required control state is reached.
      ===================================================================== */
-  var BF_MAG_VALUES=[1000,3000,5000,8000,20000,40000,80000,100000];
-  /* v4.8.9 — magnification-dependent specimen image map */
+  var BF_MAG_VALUES=[1000,3000,5000,8000,20000,40000,60000,80000,100000];
+  /* v4.9.1-RS1 — real Bright Field specimen image bank supplied by the user.
+     The uploaded images are treated as Bright Field source material only. */
   var BF_SPECIMEN_IMAGES={
-    lowmag:  '../assets/images/sop/bf-lowmag-grid.png',
-    midmag:  '../assets/images/sop/bf-midmag-survey.png',
-    eucentric:'../assets/images/sop/bf-eucentric.png',
-    aperture:'../assets/images/sop/bf-aperture.png',
-    align:   '../assets/images/sop/bf-alignment.png',
-    highmag: '../assets/images/sop/bf-highmag.png',
-    acquire: '../assets/images/sop/bf-acquisition.png',
-    fallback:'../assets/images/sop/bf-midmag-survey.png'
+    grid200:       '../assets/images/sop/real-sample/Tv2.jpg',
+    grid500:       '../assets/images/sop/real-sample/Tv1.jpg',
+    surveyEmpty:   '../assets/images/sop/real-sample/Tv3.jpg',
+    surveyEdge:    '../assets/images/sop/real-sample/Tv4.jpg',
+    surveyThin:    '../assets/images/sop/real-sample/Tv5.jpg',
+    mag50Edge:     '../assets/images/sop/real-sample/Tv6.jpg',
+    mag50Region:   '../assets/images/sop/real-sample/Tv7.jpg',
+    finalSharp:    '../assets/images/sop/real-sample/Tv8.jpg',
+    cameraLiveA:   '../assets/images/sop/real-sample/Tv9.jpg',
+    cameraLiveB:   '../assets/images/sop/real-sample/Tv10.jpg',
+    autoContrast:  '../assets/images/sop/real-sample/Tv11.jpg',
+    cameraLiveC:   '../assets/images/sop/real-sample/Tv12.jpg',
+    acquire:       '../assets/images/sop/real-sample/Tv8.jpg',
+    fallback:      '../assets/images/sop/real-sample/Tv5.jpg'
   };
   var bfCurrentImgKey='';
+  var bfRealPreloaded=false;
+  function bfPreloadRealImages(){
+    if(bfRealPreloaded)return;bfRealPreloaded=true;
+    Object.keys(BF_SPECIMEN_IMAGES).forEach(function(k){var im=new Image();im.src=BF_SPECIMEN_IMAGES[k];});
+  }
   function bfSetSpecimenImage(key){
     if(!bfSpecimen||bfCurrentImgKey===key)return;
     var src=BF_SPECIMEN_IMAGES[key]||BF_SPECIMEN_IMAGES.fallback;
     bfCurrentImgKey=key;
-    bfSpecimen.style.opacity='0';
-    setTimeout(function(){bfSpecimen.src=src;bfSpecimen.onload=function(){bfSpecimen.style.opacity='';};},120);
+    bfSpecimen.src=src;
+    bfSpecimen.dataset.realSample=key;
   }
-  /* Resolve which image key to use for current step context */
+  /* Resolve the most appropriate real image for the current BF action.
+     Stage-search steps intentionally move through empty -> edge -> thin-region
+     fields so the trackball feels like navigation through the same specimen. */
   function bfResolveImageKey(){
     var n=state.currentStep+1;
-    /* Steps 1-9: PC drawer, no specimen visible */
-    if(n<=9) return 'midmag';
-    /* Step 10: screen cover removal — low-mag initial beam */
-    if(n===10) return 'lowmag';
-    /* Steps 11-15: LOW MAG survey, grid overview */
-    if(n>=11&&n<=15) return 'lowmag';
-    /* Steps 16-21: Spot/Alpha, MAG 1 at 40k — mid-mag survey */
-    if(n>=16&&n<=21) return 'midmag';
-    /* Steps 22-28: Eucentric height — feature centering + wobble */
-    if(n>=22&&n<=28) return 'eucentric';
-    /* Steps 29-32: Condenser aperture — beam disk pattern */
-    if(n>=29&&n<=32) return 'aperture';
-    /* Steps 33-38: Beam shift/center — alignment pattern */
-    if(n>=33&&n<=38) return 'align';
-    /* Steps 39-45: Cond stig — back to mid-mag specimen view */
-    if(n>=39&&n<=45) return 'midmag';
-    /* Steps 46-48: Final imaging — high-mag */
-    if(n>=46&&n<=48) return 'highmag';
-    /* Steps 49-50: AUTO + F1 — still high-mag on screen */
-    if(n>=49&&n<=50) return 'highmag';
-    /* Steps 51-55: Camera/iTEM acquisition — CCD view */
-    if(n>=51) return 'acquire';
-    return 'midmag';
+    var dist=Math.hypot(Number(bfState.stageX||0),Number(bfState.stageY||0));
+    if(n<=9) return 'grid200';
+    if(n===10||n===11) return 'grid200';
+    if(n===12) return 'grid500';
+    if(n===13){
+      if(dist>72)return 'surveyEmpty';
+      if(dist>28)return 'surveyEdge';
+      return 'surveyThin';
+    }
+    if(n>=14&&n<=17) return 'surveyThin';
+    if(n===18) return Number(bfState.mag||0)>=20000?'mag50Edge':'surveyThin';
+    if(n>=19&&n<=20) return 'mag50Edge';
+    if(n===21){
+      if(dist>28)return 'mag50Edge';
+      return 'mag50Region';
+    }
+    if(n>=22&&n<=44) return 'mag50Region';
+    if(n===45) return dist>28?'mag50Edge':'mag50Region';
+    if(n===46) return Number(bfState.mag||0)>=60000?'finalSharp':'mag50Region';
+    if(n===47) return 'finalSharp';
+    if(n===48) return bfState.autoUsed?'autoContrast':'finalSharp';
+    if(n===49) return bfState.autoUsed?'autoContrast':'finalSharp';
+    if(n>=50) return 'finalSharp';
+    return 'surveyThin';
   }
   var bfCover=null,bfScreenAction=null,bfDummyBadge=null,bfStepIndicator=null;
 
@@ -1382,8 +1534,8 @@
     if(bfScene||!viewScreen)return;
     var w=document.createElement('div');w.id='sopBfScene';w.className='sop-bf-scene sop-bf-scene--screen';w.hidden=true;
     w.innerHTML='<div class="sop-bf-screen" id="sopBfScreen">'
-      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/bf-midmag-survey.png" alt="Bright field specimen view">'
-      +'<div class="sop-bf-step-indicator" id="sopBfStepIndicator"></div>'+'<div class="sop-dummy-badge" id="sopBfDummyBadge">DUMMY SAMPLE IMAGE</div>'
+      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/real-sample/Tv5.jpg" alt="Real Bright Field specimen view">'
+      +'<div class="sop-bf-step-indicator" id="sopBfStepIndicator"></div>'+'<div class="sop-dummy-badge" id="sopBfDummyBadge">REAL SAMPLE IMAGE</div>'
       +'<div class="sop-bf-feature" id="sopBfFeature"><span></span></div>'
       +'<div class="sop-bf-beam" id="sopBfBeam"></div>'
       +'<div class="sop-bf-fringe" id="sopBfFringe"></div>'
@@ -1412,6 +1564,8 @@
       bfSpecimen.style.setProperty('--bf-stage-y',stageTy.toFixed(2)+'%');
       bfSpecimen.style.setProperty('--bf-wobble',Math.min(16,zDefocus*1.8).toFixed(1)+'px');
       bfSpecimen.classList.toggle('is-wobbling',!!bfState.wobble);
+      bfSpecimen.classList.toggle('is-wobble-x',!!bfState.wobble&&String(bfState.wobbleAxis||'x').toLowerCase()==='x');
+      bfSpecimen.classList.toggle('is-wobble-y',!!bfState.wobble&&String(bfState.wobbleAxis||'x').toLowerCase()==='y');
       bfSpecimen.style.transform='translate('+stageTx.toFixed(2)+'%,'+stageTy.toFixed(2)+'%) scale('+magScale.toFixed(3)+')';
       var blur=Math.min(5.5,focus*.30+zDefocus*.12);
       var contrast=1.15+(bfState.autoUsed?.26:0)+Math.max(0,3-zDefocus)*.035;
@@ -1488,7 +1642,7 @@
     if(s3PanelInit)return;s3PanelInit=true;if(!(window.TEM&&TEM.controlsUI))return;
     [].slice.call(document.querySelectorAll('[data-action]')).forEach(function(btn){
       btn.addEventListener('click',function(){
-        if(state.currentSection!==3)return;var ctl=btn.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;
+        if(state.currentSection!==3&&state.currentSection!==4)return;var ctl=btn.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;
         var fn=s3Handlers['action:'+btn.dataset.action];if(fn)fn(btn);
       });
     });
@@ -1500,17 +1654,17 @@
       if(name==='alpha-selector')fmt=function(v){return 'α'+Math.round(v);};
       if(name==='mag-caml')fmt=function(v){return s3FormatMag(BF_MAG_VALUES[Math.round(v)]||8000);};
       s3KnobHandles[name]=TEM.controlsUI.bindKnob(el,{min:min,max:max,step:step,value:value,format:fmt||undefined,onChange:function(v){
-        if(state.currentSection!==3)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;
+        if(state.currentSection!==3&&state.currentSection!==4)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;
         var fn=s3Handlers['knob:'+name];if(fn)fn(v);
       }});
     });
     [].slice.call(document.querySelectorAll('[data-defstig-axis]')).forEach(function(el){
       var axis=el.dataset.defstigAxis,min=Number(el.dataset.min||-50),max=Number(el.dataset.max||50);
       s3KnobHandles['defstig-'+axis]=TEM.controlsUI.bindKnob(el,{min:min,max:max,value:0,onChange:function(v){
-        if(state.currentSection!==3)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['defstig:'+axis];if(fn)fn(v);
+        if(state.currentSection!==3&&state.currentSection!==4)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['defstig:'+axis];if(fn)fn(v);
       }});
     });
-    ['stage-xy','aperture-align'].forEach(function(name){var el=document.querySelector('[data-trackpad="'+name+'"]');if(!el)return;var rr=(el.dataset.range||'-50,50').split(',').map(Number);s3PadHandles[name]=TEM.controlsUI.bindTrackpad(el,{rangeX:[rr[0],rr[1]],rangeY:[rr[0],rr[1]],valueX:0,valueY:0,onChange:function(pos){if(state.currentSection!==3)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['pad:'+name];if(fn)fn(pos);}});});
+    ['stage-xy','aperture-align'].forEach(function(name){var el=document.querySelector('[data-trackpad="'+name+'"]');if(!el)return;var rr=(el.dataset.range||'-50,50').split(',').map(Number);s3PadHandles[name]=TEM.controlsUI.bindTrackpad(el,{rangeX:[rr[0],rr[1]],rangeY:[rr[0],rr[1]],valueX:0,valueY:0,onChange:function(pos){if(state.currentSection!==3&&state.currentSection!==4)return;var ctl=el.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['pad:'+name];if(fn)fn(pos);}});});
   }
 
   function s3ResetPcControls(){
@@ -1560,7 +1714,7 @@
   function s3Complete(delay,before){syncPcLiveStatus();s3AutoComplete(delay||450,before);}
 
   function showSection3(){
-    var n=state.currentStep+1;s3StepCompleting=false;hideViewportScene();hideSection1Tour();clearS3PcPanel();s3LockControls();
+    var n=state.currentStep+1;s3StepCompleting=false;hideViewportScene();hideSection1Tour();clearS3PcPanel();s3LockControls();bfPreloadRealImages();
     /* v4.8.11: dummy condenser-aperture hardware is used only through displayed Step 30. */
     if(n<28||n>30)hideS3ApertureOverlay();
     switch(n){
@@ -1647,7 +1801,7 @@
   function runBFAtomic12(){showBfScene();bfSetStatus('Select TEM imaging mode on L1.');s3Activate(['probe-tem']);s3SetHandlers({'action:probe-mode':function(btn){if(btn.dataset.value!=='tem')return;s3SelectButton(btn);bfState.temMode=true;s3Complete(350);}});}
   function runBFAtomic12(){showBfScene();bfSetStatus('Select LOW MAG on R1.');s3Activate(['mag-mode']);s3SetHandlers({'action:mag-mode':function(btn){if(btn.dataset.value!=='lowmag')return;s3SelectButton(btn);bfState.magMode='LOW MAG';bfRender();s3Complete(350);}});}
   function runBFAtomic13(){showBfScene();if(!bfState.magMode)bfState.magMode='LOW MAG';s3SetMagIndex(3);bfSetStatus('Rotate MAG/CAM L into the 1,000–5,000× survey range.');s3Activate(['mag-caml']);s3SetHandlers({'knob:mag-caml':function(v){var i=Math.round(v);bfState.magIndex=i;bfState.mag=BF_MAG_VALUES[i]||8000;bfRender();if(bfState.mag>=1000&&bfState.mag<=5000)s3Complete(450);}});}
-  function runBFAtomic14(){showBfScene();bfState.featureX=72;bfState.featureY=68;s3SetPad('stage-xy',70,-60);bfRender();bfSetStatus('Use the stage trackball to centre a hole or thin region.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.30;bfState.featureY=50-pos.y*.30;bfRender();if(Math.abs(pos.x)<=10&&Math.abs(pos.y)<=10)s3Complete(450);}});}
+  function runBFAtomic14(){showBfScene();bfState.featureX=72;bfState.featureY=68;bfState.stageX=70;bfState.stageY=-60;s3SetPad('stage-xy',70,-60);bfRender();bfSetStatus('Use the stage trackball to centre a hole or thin region.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.30;bfState.featureY=50-pos.y*.30;bfRender();if(Math.abs(pos.x)<=10&&Math.abs(pos.y)<=10)s3Complete(450);}});}
   function runBFAtomic15(){showBfScene();bfSetStatus('Press STD FOCUS on R1.');s3Activate(['std-focus']);s3SetHandlers({'action:std-focus':function(btn){s3SelectButton(btn);bfState.focusCoarse=0;bfState.focusFine=0;bfRender();s3Complete(350);}});}
   function runBFAtomic16(){showBfScene();var start=Number((s3KnobHandles['spot-size']&&s3KnobHandles['spot-size'].value)||2);bfSetStatus('Set the desired SPOT SIZE.');s3Activate(['spot-size']);s3SetHandlers({'knob:spot-size':function(v){bfState.spot=Math.round(v);syncPcLiveStatus();if(Math.round(v)!==Math.round(start))s3Complete(400);}});}
   function runBFAtomic17(){showBfScene();var start=Number((s3KnobHandles['alpha-selector']&&s3KnobHandles['alpha-selector'].value)||2);bfSetStatus('Set the desired α SELECTOR.');s3Activate(['alpha-selector']);s3SetHandlers({'knob:alpha-selector':function(v){bfState.alpha=Math.round(v);syncPcLiveStatus();if(Math.round(v)!==Math.round(start))s3Complete(400);}});}
@@ -1655,7 +1809,7 @@
   function runBFAtomic19(){showBfScene();bfSetStatus('Rotate MAG/CAM L to X40k.');s3Activate(['mag-caml']);s3SetHandlers({'knob:mag-caml':function(v){var i=Math.round(v);bfState.magIndex=i;bfState.mag=BF_MAG_VALUES[i]||8000;bfRender();if(bfState.mag===40000)s3Complete(450);}});}
   function runBFAtomic20(){showBfScene();bfState.c2=55;s3SetKnob('brightness',55);bfRender();bfSetStatus('Rotate BRIGHTNESS to the smallest crossover.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v<=22)s3Complete(450);}});}
   function runBFAtomic21(){showBfScene();bfSetStatus('Turn BRIGHTNESS clockwise to spread illumination over the screen.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v>=72)s3Complete(450);}});}
-  function runBFAtomic22(){showBfScene();bfState.featureX=67;bfState.featureY=62;s3SetPad('stage-xy',55,-40);bfRender();bfSetStatus('At MAG 1, centre a thin feature with the trackball.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.28;bfState.featureY=50-pos.y*.28;bfRender();if(Math.abs(pos.x)<=9&&Math.abs(pos.y)<=9)s3Complete(400);}});}
+  function runBFAtomic22(){showBfScene();bfState.featureX=67;bfState.featureY=62;bfState.stageX=55;bfState.stageY=-40;s3SetPad('stage-xy',55,-40);bfRender();bfSetStatus('At MAG 1, centre a thin feature with the trackball.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.28;bfState.featureY=50-pos.y*.28;bfRender();if(Math.abs(pos.x)<=9&&Math.abs(pos.y)<=9)s3Complete(400);}});}
   function runBFAtomic23(){showBfScene();bfSetStatus('Press STD FOCUS before Z correction.');s3Activate(['std-focus']);s3SetHandlers({'action:std-focus':function(btn){s3SelectButton(btn);bfState.focusCoarse=0;bfState.focusFine=0;s3Complete(350);}});}
   function runBFAtomic24(){showBfScene();bfState.z=-6;bfState.zSensitivity=1;bfRender();bfSetStatus('Use Z UP / Z DOWN to approach minimum contrast.');s3Activate(['stage-z']);s3SetHandlers({'action:stage-z':function(btn){bfState.z=Math.max(-12,Math.min(12,bfState.z+Number(btn.dataset.dir)*(bfState.zSensitivity||1)));bfRender();if(Math.abs(bfState.z)<=3)s3Complete(350);}});}
   function runBFAtomic25(){s3PreparePcStage();var host=document.querySelector('[data-temcon-page="stage"]');addS3PcPanel(host,'Z Control Sensitivity','<div class="sop-s3-pc-note">Optional: adjust sensitivity only if needed.</div><div class="sop-s3-pc-buttons"><button id="s3ZSensDown">◀ Finer</button><strong id="s3ZSensRead">Normal</strong><button id="s3ZSensUp">Coarser ▶</button></div>');var d=document.getElementById('s3ZSensDown'),u=document.getElementById('s3ZSensUp'),r=document.getElementById('s3ZSensRead');var timer=setTimeout(function(){s3Complete(100);},2400);bfTimers.push(timer);function set(v,label){bfState.zSensitivity=v;if(r)r.textContent=label;clearTimeout(timer);s3Complete(250);}if(d)d.onclick=function(){set(.5,'Fine');};if(u)u.onclick=function(){set(2,'Coarse');};}
@@ -1663,11 +1817,11 @@
   function runBFAtomic27(){showBfScene();bfState.wobble=true;bfRender();bfSetStatus('Use Z UP / Z DOWN until lateral wobble is minimized.');s3Activate(['stage-z']);s3SetHandlers({'action:stage-z':function(btn){bfState.z=Math.max(-8,Math.min(8,bfState.z+Number(btn.dataset.dir)*(bfState.zSensitivity||1)));bfRender();if(Math.abs(bfState.z)<=1)s3Complete(350);}});}
   function runBFAtomic28(){showBfScene();bfState.wobble=true;bfRender();bfSetStatus('Press the same MAG WOB control again to switch wobble OFF.');s3Activate(['wobbler']);s3SetHandlers({'action:mag-wob':function(btn){var ax=btn.dataset.axis||'x';if(bfState.wobbleAxis&&ax!==bfState.wobbleAxis)return;bfState.wobble=false;btn.classList.remove('is-selected');bfRender();s3Complete(350);}});}
   function runBFAtomic29(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('select');s3ApKnob1Pos=0;var b=document.getElementById('s3ApKnob1'),r=document.getElementById('s3ApKnob1Read');if(!b)return;r.textContent='OPEN';b.onclick=function(){ensureAudio();s3ApKnob1Pos=(s3ApKnob1Pos+1)%3;r.textContent=s3ApKnob1Pos===0?'OPEN':(s3ApKnob1Pos===1?'SURVEY':'ROUTINE BF/DF');b.style.setProperty('--ap-rot',(s3ApKnob1Pos*60)+'deg');if(s3ApKnob1Pos===2){bfState.apertureSelected=true;b.onclick=null;s3Complete(450);}};}
-  function runBFAtomic30(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('x');bfState.beamX=0;bfState.beamY=0;bfState.caX=6;bfState.caY=-6;s3SetApKnob('x',6);s3SetApKnob('y',-6);bfRender();bfSetStatus('Adjust CA X until the beam is horizontally centered.');s3SetHandlers({'ap:ca-x':function(v){bfState.caX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
+  function runBFAtomic30(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('x');bfState.beamX=0;bfState.beamY=0;bfState.caX=6;bfState.caY=-6;s3SetApKnob('x',6);s3SetApKnob('y',-6);bfRender();bfSetStatus('Adjust CA X until the beam is horizontally centered.');s3SetHandlers({'ap:ca-x':function(v){bfState.caX=v;bfRender();if(Math.abs(v)<=1){dfState.astigX=0;s3SetKnob('defstig-x',0);dfRender();s3Complete(400);}}});}
   function runBFAtomic31(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('y');bfRender();bfSetStatus('Adjust CA Y until the beam is vertically centered.');s3SetHandlers({'ap:ca-y':function(v){bfState.caY=v;bfRender();if(Math.abs(v)<=1)s3Complete(250,function(){hideS3ApertureOverlay();});}});}
   function runBFAtomic32(){hideS3ApertureOverlay();showBfScene();bfState.caX=0;bfState.caY=0;bfState.c2=55;s3SetKnob('brightness',55);bfRender();var low=false,high=false;bfSetStatus('Vary BRIGHTNESS through contraction and expansion to verify symmetric centering.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}
   function runBFAtomic33(){showBfScene();hideS3ApertureOverlay();bfState.c2=55;s3SetKnob('brightness',55);bfRender();bfSetStatus('Adjust BRIGHTNESS back to crossover.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v<=22)s3Complete(400);}});}
-  function runBFAtomic34(){showBfScene();bfState.beamX=6;bfState.beamY=-5;s3SetKnob('shift-x',6);s3SetKnob('shift-y',-5);bfRender();bfSetStatus('Use SHIFT X to centre the crossover horizontally.');s3Activate(['shift-x']);s3SetHandlers({'knob:shift-x':function(v){bfState.beamX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
+  function runBFAtomic34(){showBfScene();bfState.beamX=6;bfState.beamY=-5;s3SetKnob('shift-x',6);s3SetKnob('shift-y',-5);bfRender();bfSetStatus('Use SHIFT X to centre the crossover horizontally.');s3Activate(['shift-x']);s3SetHandlers({'knob:shift-x':function(v){bfState.beamX=v;bfRender();if(Math.abs(v)<=1){dfState.astigY=0;s3SetKnob('defstig-y',0);dfRender();s3Complete(400);}}});}
   function runBFAtomic35(){showBfScene();bfSetStatus('Use SHIFT Y to centre the crossover vertically.');s3Activate(['shift-y']);s3SetHandlers({'knob:shift-y':function(v){bfState.beamY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runBFAtomic36(){showBfScene();bfState.beamX=0;bfState.beamY=0;bfSetStatus('Spread the beam with BRIGHTNESS.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v>=72)s3Complete(400,function(){bfState.beamX=3;bfState.beamY=-3;});}});}
   function runBFAtomic37(){showBfScene();s3SetKnob('shift-x',3);bfRender();bfSetStatus('Fine-correct horizontal drift with SHIFT X.');s3Activate(['shift-x']);s3SetHandlers({'knob:shift-x':function(v){bfState.beamX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
@@ -1681,8 +1835,8 @@
   function runBFAtomic43(){showBfScene();bfSetStatus('Adjust DEF/STIG Y to make the beam circular.');s3Activate(['def-stig-y']);s3SetHandlers({'defstig:y':function(v){bfState.condY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runBFAtomic44(){showBfScene();bfState.condX=0;bfState.condY=0;bfState.c2=55;s3SetKnob('brightness',55);bfRender();var low=false,high=false;bfSetStatus('Verify the circular beam by moving BRIGHTNESS back and forth.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}
   function runBFAtomic45(){showBfScene();bfSetStatus('Press COND STIG again to exit adjustment.');s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='condStig')return;bfState.condStigOn=false;btn.classList.remove('is-selected');s3Complete(350);}});}
-  function runBFAtomic46(){showBfScene();bfState.featureX=66;bfState.featureY=63;s3SetPad('stage-xy',54,-43);bfRender();bfSetStatus('Use the stage trackball to centre the final area of interest.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.28;bfState.featureY=50-pos.y*.28;bfRender();if(Math.abs(pos.x)<=9&&Math.abs(pos.y)<=9)s3Complete(400);}});}
-  function runBFAtomic47(){showBfScene();var start=bfState.magIndex;bfState.finalMagTouched=false;bfSetStatus('With MAG 1 retained, set the required final magnification using MAG/CAM L.');s3Activate(['mag-caml']);s3SetHandlers({'knob:mag-caml':function(v){var i=Math.round(v);bfState.magIndex=i;bfState.mag=BF_MAG_VALUES[i]||8000;bfRender();if(i!==start){bfState.finalMagTouched=true;s3Complete(450);}}});}
+  function runBFAtomic46(){showBfScene();bfState.featureX=66;bfState.featureY=63;bfState.stageX=54;bfState.stageY=-43;s3SetPad('stage-xy',54,-43);bfRender();bfSetStatus('Use the stage trackball to centre the final area of interest.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.28;bfState.featureY=50-pos.y*.28;bfRender();if(Math.abs(pos.x)<=9&&Math.abs(pos.y)<=9)s3Complete(400);}});}
+  function runBFAtomic47(){showBfScene();bfState.finalMagTouched=false;bfSetStatus('With MAG 1 retained, set MAG/CAM L to X60k for the supplied real-sample sequence.');s3Activate(['mag-caml']);s3SetHandlers({'knob:mag-caml':function(v){var i=Math.round(v);bfState.magIndex=i;bfState.mag=BF_MAG_VALUES[i]||8000;bfRender();if(bfState.mag===60000){bfState.finalMagTouched=true;s3Complete(450);}}});}
   function runBFAtomic48(){showBfScene();bfState.c2=50;s3SetKnob('brightness',50);bfRender();bfSetStatus('Spread the beam appropriately for image recording.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v>=70)s3Complete(400);}});}
   function runBFAtomic49(){showBfScene();bfSetStatus('AUTO contrast is optional. Press AUTO now if desired.');s3Activate(['auto-contrast']);var timer=setTimeout(function(){s3Complete(100);},2300);bfTimers.push(timer);s3SetHandlers({'action:auto-contrast':function(btn){clearTimeout(timer);s3SelectButton(btn);bfState.autoUsed=true;bfRender();s3Complete(300);}});}
   function runBFAtomic50(){showBfScene();bfState.screenRaised=false;bfSetStatus('Press F1 to lift the fluorescent screen and expose the camera.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);bfState.screenRaised=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
@@ -1696,11 +1850,141 @@
     if(mode==='done')html+='<div class="sop-s3-pc-note">Snapshot captured · press F1 on R1 to return the fluorescent screen.</div>';
     p.innerHTML=html;host.appendChild(p);var ph=document.getElementById('pc-cam-placeholder');if(ph&&bfState.itemOpen)ph.style.display='none';return p;
   }
-  function runBFAtomic51(){hideBfScene();hideS3ApertureOverlay();var p=ensureAtomicItemPanel('open'),b=document.getElementById('s3ItemOpen');if(!b)return;b.onclick=function(){ensureAudio();bfState.itemOpen=true;b.disabled=true;var ph=document.getElementById('pc-cam-placeholder');if(ph)ph.style.display='none';s3Complete(350);};}
-  function runBFAtomic52(){hideBfScene();hideS3ApertureOverlay();ensureAtomicItemPanel('focus');s3Activate(['focus-coarse','focus-fine']);var timer=setTimeout(function(){s3Complete(100);},2800);bfTimers.push(timer);function touched(){clearTimeout(timer);s3Complete(350);}s3SetHandlers({'knob:focus-coarse':function(v){bfState.focusCoarse=v;touched();},'knob:focus-fine':function(v){bfState.focusFine=v;touched();}});}
-  function runBFAtomic53(){hideBfScene();var p=ensureAtomicItemPanel('video'),b=document.getElementById('s3ItemVideo');if(!b)return;b.onclick=function(){ensureAudio();bfState.videoOn=true;b.disabled=true;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running';drawCapturedBf();s3Complete(350);};}
-  function runBFAtomic54(){hideBfScene();var p=ensureAtomicItemPanel('snapshot'),b=document.getElementById('s3ItemSnapshot');if(!b)return;b.onclick=function(){ensureAudio();bfState.captured=true;b.disabled=true;drawCapturedBf();var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Snapshot captured';s3Complete(350);};}
-  function runBFAtomic55(){hideBfScene();ensureAtomicItemPanel('done');bfSetStatus('Press F1 to return the fluorescent screen.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!bfState.captured)return;s3SelectButton(btn);bfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideS3ApertureOverlay();});}});}
+  function runBFAtomic51(){hideBfScene();hideS3ApertureOverlay();var p=ensureAtomicItemPanel('open'),b=document.getElementById('s3ItemOpen');if(!b)return;b.onclick=function(){ensureAudio();bfState.itemOpen=true;b.disabled=true;var ph=document.getElementById('pc-cam-placeholder');if(ph)ph.style.display='none';drawBfCameraFrame('cameraLiveC',.20,'iTEM · real BF specimen');s3Complete(650);};}
+  function runBFAtomic52(){hideBfScene();hideS3ApertureOverlay();ensureAtomicItemPanel('focus');drawBfCameraFrame('cameraLiveA',.65,'LIVE BF · focus touch-up');s3Activate(['focus-coarse','focus-fine']);var timer=setTimeout(function(){s3Complete(100);},2800);bfTimers.push(timer);function touched(){drawBfCameraFocusPreview();clearTimeout(timer);s3Complete(450);}s3SetHandlers({'knob:focus-coarse':function(v){bfState.focusCoarse=v;touched();},'knob:focus-fine':function(v){bfState.focusFine=v;touched();}});}
+  function runBFAtomic53(){hideBfScene();var p=ensureAtomicItemPanel('video'),b=document.getElementById('s3ItemVideo');if(!b)return;b.onclick=function(){ensureAudio();bfState.videoOn=true;b.disabled=true;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running';startBfCameraLive();s3Complete(1500);};}
+  function runBFAtomic54(){hideBfScene();var p=ensureAtomicItemPanel('snapshot'),b=document.getElementById('s3ItemSnapshot');if(!b)return;drawBfCameraFrame('cameraLiveC',.08,'LIVE BF · ready for snapshot');b.onclick=function(){ensureAudio();bfState.captured=true;b.disabled=true;drawCapturedBf();var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Real BF snapshot captured';s3Complete(800);};}
+  function runBFAtomic55(){hideBfScene();ensureAtomicItemPanel('done');if(bfState.captured)drawCapturedBf();bfSetStatus('Press F1 to return the fluorescent screen.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!bfState.captured)return;s3SelectButton(btn);bfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideS3ApertureOverlay();});}});}
+
+
+  /* =====================================================================
+     SECTION 4 — DARK FIELD IMAGING (Version 4.9.1)
+     Manual-driven beam-tilt Dark Field path built on the completed BF state.
+     ===================================================================== */
+  var dfScene=null,dfScreen=null,dfSpecimen=null,dfPattern=null,dfApertureShade=null,dfFringe=null;
+  var DF_SPOTS=[
+    {id:'000',x:50,y:50,r:9,direct:true},{id:'g1',x:70,y:36,r:6,target:true},{id:'g2',x:30,y:64,r:5},
+    {id:'g3',x:67,y:66,r:4},{id:'g4',x:33,y:34,r:4},{id:'g5',x:82,y:51,r:3},{id:'g6',x:18,y:49,r:3},
+    {id:'g7',x:55,y:22,r:3},{id:'g8',x:45,y:78,r:3}
+  ];
+
+  function resetDfState(){
+    dfState={mode:'image',selectedReflection:false,tiltMode:false,tiltX:0,tiltY:0,darkField:false,objInserted:false,objX:25,objY:-20,focusCoarse:12,focusFine:6,objStigOn:false,astigX:9,astigY:-8,screenRaised:false,itemOpen:false,videoOn:false,captured:false,recorded:false};
+    /* Enter DF from the stable BF condition established in Section 3. */
+    bfState.beamOn=true;bfState.coverOpen=true;bfState.wobble=false;bfState.screenRaised=false;
+    if(!bfState.mag||bfState.mag<8000){bfState.mag=40000;bfState.magIndex=5;}
+  }
+
+  function ensureDfScene(){
+    if(dfScene||!viewScreen)return;
+    var w=document.createElement('div');w.id='sopDfScene';w.className='sop-df-scene';w.hidden=true;
+    w.innerHTML='<div class="sop-df-screen" id="sopDfScreen">'
+      +'<img class="sop-df-specimen" id="sopDfSpecimen" src="../assets/images/sop/bf-highmag.png" alt="Dark field specimen simulation">'
+      +'<div class="sop-df-pattern" id="sopDfPattern"></div>'
+      +'<div class="sop-df-aperture-shade" id="sopDfApertureShade"></div>'
+      +'<div class="sop-df-fringe" id="sopDfFringe"></div>'
+      +'<div class="sop-df-crosshair"><i></i><b></b></div>'
+      +'</div>';
+    viewScreen.appendChild(w);dfScene=w;dfScreen=document.getElementById('sopDfScreen');dfSpecimen=document.getElementById('sopDfSpecimen');dfPattern=document.getElementById('sopDfPattern');dfApertureShade=document.getElementById('sopDfApertureShade');dfFringe=document.getElementById('sopDfFringe');
+    dfPattern.innerHTML=DF_SPOTS.map(function(s){return '<button type="button" class="sop-df-spot'+(s.direct?' is-direct':'')+(s.target?' is-target':'')+'" data-df-spot="'+s.id+'" aria-label="Diffraction spot '+s.id+'"><span></span></button>';}).join('');
+  }
+
+  function dfRender(){
+    ensureDfScene();if(!dfScene)return;
+    var isDiff=dfState.mode==='diff';
+    dfScene.classList.toggle('is-diff',isDiff);dfScene.classList.toggle('is-dark-field',!!dfState.darkField&&!isDiff);dfScene.classList.toggle('is-aperture-in',!!dfState.objInserted);
+    if(dfPattern){
+      [].slice.call(dfPattern.querySelectorAll('[data-df-spot]')).forEach(function(el){
+        var id=el.dataset.dfSpot,s=DF_SPOTS.filter(function(p){return p.id===id;})[0];if(!s)return;
+        el.style.left=(s.x+Number(dfState.tiltX||0))+'%';el.style.top=(s.y+Number(dfState.tiltY||0))+'%';el.style.width=(s.r*2)+'px';el.style.height=(s.r*2)+'px';
+        el.classList.toggle('is-selected',id==='g1'&&dfState.selectedReflection);
+        el.classList.toggle('is-on-axis',id==='g1'&&Math.abs((s.x+dfState.tiltX)-50)<=3&&Math.abs((s.y+dfState.tiltY)-50)<=3);
+      });
+    }
+    if(dfSpecimen){
+      var focusErr=Math.abs(Number(dfState.focusCoarse||0))+Math.abs(Number(dfState.focusFine||0));
+      var astig=Math.abs(Number(dfState.astigX||0))+Math.abs(Number(dfState.astigY||0));
+      var apErr=Math.hypot(Number(dfState.objX||0),Number(dfState.objY||0));
+      var apertureQuality=dfState.objInserted?Math.max(.35,1-Math.min(1,apErr/45)*.65):.28;
+      var blur=Math.min(5.5,focusErr*.20+astig*.055);
+      var sx=1+Math.abs(Number(dfState.astigX||0))*.006,sy=1+Math.abs(Number(dfState.astigY||0))*.006;
+      dfSpecimen.style.transform='scale('+sx.toFixed(3)+','+sy.toFixed(3)+')';
+      if(dfState.darkField){
+        dfSpecimen.style.opacity=String((.78*apertureQuality).toFixed(2));
+        dfSpecimen.style.filter='grayscale(1) invert(1) brightness('+(0.48+apertureQuality*.32).toFixed(2)+') contrast(2.35) blur('+blur.toFixed(2)+'px)';
+      }else{
+        dfSpecimen.style.opacity='0.92';dfSpecimen.style.filter='grayscale(1) brightness(1.0) contrast(1.18) blur('+Math.min(3,focusErr*.12).toFixed(2)+'px)';
+      }
+    }
+    if(dfApertureShade){
+      var err=Math.hypot(Number(dfState.objX||0),Number(dfState.objY||0));
+      dfApertureShade.style.opacity=dfState.darkField&&dfState.objInserted?Math.min(.58,err/55).toFixed(2):'0';
+      dfApertureShade.style.transform='translate('+(Number(dfState.objX||0)*.20).toFixed(1)+'%,'+(Number(dfState.objY||0)*-.20).toFixed(1)+'%)';
+    }
+    if(dfFringe){
+      var ferr=Math.abs(Number(dfState.focusCoarse||0))+Math.abs(Number(dfState.focusFine||0));
+      dfFringe.style.opacity=dfState.darkField?Math.min(.85,ferr/16).toFixed(2):'0';
+      dfFringe.style.borderWidth=(2+Math.min(8,ferr*.35))+'px';
+    }
+  }
+
+  function showDfScene(){
+    closeModal(true);closePcDrawer();hideBfScene();hideViewportScene();hideSection1Tour();ensureDfScene();clearBfTimers();
+    if(!dfScene)return;dfScene.hidden=false;if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');dfRender();
+  }
+  function hideDfScene(){
+    if(!dfScene)return;dfScene.hidden=true;if(viewEmpty)viewEmpty.style.display='';if(dfPattern)[].slice.call(dfPattern.querySelectorAll('[data-df-spot]')).forEach(function(b){b.onclick=null;});
+  }
+
+  function setDefStigLabels(x,y){
+    var lx=document.getElementById('def-stig-label'),ly=document.getElementById('def-stig-label-y');if(lx)lx.textContent=x||'DEF/STIG X';if(ly)ly.textContent=y||'DEF/STIG Y';
+  }
+
+  function showSection4(){
+    var n=state.currentStep+1;s3StepCompleting=false;hideViewportScene();hideSection1Tour();clearS3PcPanel();s3LockControls();hideS3ApertureOverlay();setDefStigLabels('DEF/STIG X','DEF/STIG Y');
+    switch(n){
+      case 1:return runDF01();case 2:return runDF02();case 3:return runDF03();case 4:return runDF04();case 5:return runDF05();
+      case 6:return runDF06();case 7:return runDF07();case 8:return runDF08();case 9:return runDF09();case 10:return runDF10();
+      case 11:return runDF11();case 12:return runDF12();case 13:return runDF13();case 14:return runDF14();case 15:return runDF15();
+      case 16:return runDF16();case 17:return runDF17();case 18:return runDF18();case 19:return runDF19();case 20:return runDF20();case 21:return runDF21();
+    }
+  }
+
+  function runDF01(){showDfScene();dfState.mode='image';dfState.darkField=false;dfRender();s3Activate(['mag-mode']);s3SetHandlers({'action:mag-mode':function(btn){if(btn.dataset.value!=='diff')return;s3SelectButton(btn);dfState.mode='diff';dfRender();s3Complete(420);}});}
+  function runDF02(){showDfScene();dfState.mode='diff';dfRender();var g1=dfPattern&&dfPattern.querySelector('[data-df-spot="g1"]');if(!g1)return;g1.classList.add('is-pickable');g1.onclick=function(){ensureAudio();dfState.selectedReflection=true;g1.classList.remove('is-pickable');g1.onclick=null;dfRender();s3Complete(380);};}
+  function runDF03(){showDfScene();dfState.mode='diff';dfRender();s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='darkTilt')return;s3SelectButton(btn);dfState.tiltMode=true;setDefStigLabels('BEAM TILT X','BEAM TILT Y');s3Complete(350);}});}
+  function runDF04(){showDfScene();dfState.mode='diff';setDefStigLabels('BEAM TILT X','BEAM TILT Y');s3SetKnob('defstig-x',0);dfState.tiltX=0;dfRender();s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(v){dfState.tiltX=v;dfRender();if(v>=-22&&v<=-18){dfState.tiltX=-20;s3SetKnob('defstig-x',-20);dfRender();s3Complete(400);}}});}
+  function runDF05(){showDfScene();dfState.mode='diff';setDefStigLabels('BEAM TILT X','BEAM TILT Y');s3SetKnob('defstig-y',0);dfState.tiltY=0;dfRender();s3Activate(['def-stig-y']);s3SetHandlers({'defstig:y':function(v){dfState.tiltY=v;dfRender();if(v>=12&&v<=16){dfState.tiltY=14;s3SetKnob('defstig-y',14);dfRender();s3Complete(420);}}});}
+  function runDF06(){showDfScene();dfState.mode='diff';dfRender();s3Activate(['mag-mode']);s3SetHandlers({'action:mag-mode':function(btn){if(btn.dataset.value!=='mag1')return;s3SelectButton(btn);dfState.mode='image';dfState.darkField=true;dfRender();s3Complete(480);}});}
+  function runDF07(){showDfScene();dfState.darkField=true;dfRender();s3Activate(['aperture-select']);s3SetHandlers({'action:aperture-select':function(btn){if(btn.dataset.value!=='objective')return;s3SelectButton(btn);dfState.objInserted=true;dfState.objX=25;dfState.objY=-20;s3SetPad('aperture-align',25,-20);dfRender();s3Complete(380);}});}
+  function runDF08(){showDfScene();dfState.objInserted=true;s3SetPad('aperture-align',dfState.objX,dfState.objY);dfRender();s3Activate(['aperture-align']);s3SetHandlers({'pad:aperture-align':function(pos){dfState.objX=pos.x;dfState.objY=pos.y;dfRender();if(Math.abs(pos.x)<=4)s3Complete(400);}});}
+  function runDF09(){showDfScene();dfState.objInserted=true;s3SetPad('aperture-align',dfState.objX,dfState.objY);dfRender();s3Activate(['aperture-align']);s3SetHandlers({'pad:aperture-align':function(pos){dfState.objX=pos.x;dfState.objY=pos.y;dfRender();if(Math.abs(pos.x)<=5&&Math.abs(pos.y)<=4)s3Complete(420);}});}
+  function runDF10(){showDfScene();dfState.focusCoarse=12;s3SetKnob('focus-coarse',12);dfRender();s3Activate(['focus-coarse']);s3SetHandlers({'knob:focus-coarse':function(v){dfState.focusCoarse=v;dfRender();if(Math.abs(v)<=4){dfState.focusCoarse=0;s3SetKnob('focus-coarse',0);dfRender();s3Complete(400);}}});}
+  function runDF11(){showDfScene();dfState.focusFine=6;s3SetKnob('focus-fine',6);dfRender();s3Activate(['focus-fine']);s3SetHandlers({'knob:focus-fine':function(v){dfState.focusFine=v;dfRender();if(Math.abs(v)<=1.5){dfState.focusFine=0;s3SetKnob('focus-fine',0);dfRender();s3Complete(420);}}});}
+  function runDF12(){showDfScene();dfState.astigX=9;dfState.astigY=-8;dfRender();s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='objStig')return;s3SelectButton(btn);dfState.objStigOn=true;setDefStigLabels('OBJ STIG X','OBJ STIG Y');s3Complete(350);}});}
+  function runDF13(){showDfScene();setDefStigLabels('OBJ STIG X','OBJ STIG Y');s3SetKnob('defstig-x',9);dfState.astigX=9;dfRender();s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(v){dfState.astigX=v;dfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
+  function runDF14(){showDfScene();setDefStigLabels('OBJ STIG X','OBJ STIG Y');s3SetKnob('defstig-y',-8);dfState.astigY=-8;dfRender();s3Activate(['def-stig-y']);s3SetHandlers({'defstig:y':function(v){dfState.astigY=v;dfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
+  function runDF15(){showDfScene();setDefStigLabels('OBJ STIG X','OBJ STIG Y');dfRender();s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='objStig')return;btn.classList.remove('is-selected');dfState.objStigOn=false;setDefStigLabels('DEF/STIG X','DEF/STIG Y');s3Complete(350);}});}
+  function runDF16(){showDfScene();dfState.screenRaised=false;s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);dfState.screenRaised=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
+
+  function ensureDfItemPanel(mode){
+    hideDfScene();openCameraDrawer();var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return null;var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='none';var old=document.getElementById('sopItemPanel');if(old)old.remove();
+    var p=document.createElement('div');p.id='sopItemPanel';p.className='sop-item-panel';var html='<div class="sop-bf-card-title">iTEM · Dark Field acquisition</div>';
+    if(mode==='open')html+='<button id="s4ItemOpen">Open iTEM</button><div class="sop-s3-pc-note">Dark Field acquisition workspace.</div>';
+    if(mode==='video')html+='<button id="s4ItemVideo">Video</button><div class="sop-s3-pc-note">Start the live Dark Field camera feed.</div>';
+    if(mode==='snapshot')html+='<button id="s4ItemSnapshot">Snapshot</button><div class="sop-s3-pc-note">Capture the Dark Field image.</div>';
+    if(mode==='record')html+='<div class="sop-df-record"><span>Selected reflection</span><strong>g1</strong><button id="s4RecordReflection">Record DF + g1</button></div>';
+    if(mode==='done')html+='<div class="sop-s3-pc-note">Dark Field image and reflection g1 recorded. Press F1 on R1 to return the fluorescent screen.</div>';
+    p.innerHTML=html;host.appendChild(p);var ph=document.getElementById('pc-cam-placeholder');if(ph&&dfState.itemOpen)ph.style.display='none';return p;
+  }
+  function drawCapturedDf(){
+    var cv=document.getElementById('pc-cam-canvas');if(!cv)return;var ctx=cv.getContext('2d'),img=new Image();img.onload=function(){ctx.clearRect(0,0,cv.width,cv.height);ctx.fillStyle='#050505';ctx.fillRect(0,0,cv.width,cv.height);ctx.filter='grayscale(1) invert(1) brightness(.72) contrast(2.2)';ctx.drawImage(img,0,0,cv.width,cv.height);ctx.filter='none';ctx.fillStyle='rgba(255,255,255,.86)';ctx.font='15px sans-serif';ctx.fillText('DF · selected reflection g1',14,25);};img.src='../assets/images/sop/bf-acquisition.png';
+  }
+  function runDF17(){var p=ensureDfItemPanel('open'),b=document.getElementById('s4ItemOpen');if(!b)return;b.onclick=function(){ensureAudio();dfState.itemOpen=true;b.disabled=true;var ph=document.getElementById('pc-cam-placeholder');if(ph)ph.style.display='none';s3Complete(350);};}
+  function runDF18(){var p=ensureDfItemPanel('video'),b=document.getElementById('s4ItemVideo');if(!b)return;b.onclick=function(){ensureAudio();dfState.videoOn=true;b.disabled=true;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running · DF';drawCapturedDf();s3Complete(350);};}
+  function runDF19(){var p=ensureDfItemPanel('snapshot'),b=document.getElementById('s4ItemSnapshot');if(!b)return;b.onclick=function(){ensureAudio();dfState.captured=true;b.disabled=true;drawCapturedDf();var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Dark Field snapshot captured';s3Complete(350);};}
+  function runDF20(){var p=ensureDfItemPanel('record'),b=document.getElementById('s4RecordReflection');if(!b)return;b.onclick=function(){ensureAudio();if(!dfState.captured)return;dfState.recorded=true;b.disabled=true;b.textContent='Recorded · DF + g1';s3Complete(380);};}
+  function runDF21(){ensureDfItemPanel('done');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!dfState.recorded)return;s3SelectButton(btn);dfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideDfScene();setDefStigLabels('DEF/STIG X','DEF/STIG Y');});}});}
 
   function bindGrid(){
     var a=document.getElementById('gridOpen'),b=document.getElementById('gridPlace'),c=document.getElementById('gridClose'),next=document.getElementById('gridContinue');
@@ -1709,18 +1993,18 @@
     if(a)a.addEventListener('change',function(){if(!a.checked)return;ensureAudio();state.gridStage=1;lock(a);enable(b);});
     if(b)b.addEventListener('change',function(){if(!b.checked||state.gridStage<1){b.checked=false;return;}ensureAudio();state.gridStage=2;lock(b);enable(c);});
     if(c)c.addEventListener('change',function(){if(!c.checked||state.gridStage<2){c.checked=false;return;}ensureAudio();state.gridStage=3;lock(c);if(next)next.disabled=false;});
-    if(next)next.addEventListener('click',function(){if(state.gridStage<3)return;closeModal(true);completeStep();});
+    if(next)next.addEventListener('click',function(){if(state.gridStage<3)return;next.disabled=true;completeStep(function(){closeModal(true);});});
   }
 
-  function bindHolderDrag(){var h=document.getElementById('holderDrag'),track=document.getElementById('holderTrack'),port=document.getElementById('holderPort'),btn=document.getElementById('holderContinue');var dragging=false,startX=0,startL=24;function maxL(){return Math.max(24,port.offsetLeft-h.offsetWidth+32);}h.addEventListener('pointerdown',function(e){ensureAudio();dragging=true;startX=e.clientX;startL=parseFloat(h.style.left)||24;h.setPointerCapture(e.pointerId);h.classList.add('is-dragging');});h.addEventListener('pointermove',function(e){if(!dragging)return;var x=Math.max(24,Math.min(maxL(),startL+e.clientX-startX));h.style.left=x+'px';});h.addEventListener('pointerup',function(){if(!dragging)return;dragging=false;h.classList.remove('is-dragging');var x=parseFloat(h.style.left)||24;if(x>=maxL()-7&&!state.insertionDone){state.insertionDone=true;h.style.left=maxL()+'px';threeClicks();setTimeout(function(){btn.disabled=false;},1250);}});btn.addEventListener('click',function(){if(!state.insertionDone)return;closeModal(true);completeStep();});}
+  function bindHolderDrag(){var h=document.getElementById('holderDrag'),track=document.getElementById('holderTrack'),port=document.getElementById('holderPort'),btn=document.getElementById('holderContinue');var dragging=false,startX=0,startL=24;function maxL(){return Math.max(24,port.offsetLeft-h.offsetWidth+32);}h.addEventListener('pointerdown',function(e){ensureAudio();dragging=true;startX=e.clientX;startL=parseFloat(h.style.left)||24;h.setPointerCapture(e.pointerId);h.classList.add('is-dragging');});h.addEventListener('pointermove',function(e){if(!dragging)return;var x=Math.max(24,Math.min(maxL(),startL+e.clientX-startX));h.style.left=x+'px';});h.addEventListener('pointerup',function(){if(!dragging)return;dragging=false;h.classList.remove('is-dragging');var x=parseFloat(h.style.left)||24;if(x>=maxL()-7&&!state.insertionDone){state.insertionDone=true;h.style.left=maxL()+'px';threeClicks();setTimeout(function(){btn.disabled=false;},1250);}});btn.addEventListener('click',function(){if(!state.insertionDone)return;btn.disabled=true;completeStep(function(){closeModal(true);});});}
 
-  function startEvacuation(){if(state.evacuationDone){stopPump();return;}var bar=document.getElementById('vacBar'),txt=document.getElementById('vacText'),lamp=document.getElementById('amberLamp'),btn=document.getElementById('vacContinue'),t0=Date.now(),dur=6500;state.pumpTimer=setInterval(function(){var p=Math.min(100,(Date.now()-t0)/dur*100);bar.style.width=p+'%';txt.textContent='EVACUATING · '+Math.round(p)+'%';if(p>=100){clearInterval(state.pumpTimer);state.pumpTimer=null;state.evacuationDone=true;stopPump();lamp.classList.remove('is-on');txt.textContent='VACUUM READY · AMBER LAMP OFF';btn.disabled=false;btn.textContent='Continue';}},140);btn.addEventListener('click',function(){if(!state.evacuationDone)return;closeModal(true);completeStep();});}
+  function startEvacuation(){if(state.evacuationDone){stopPump();return;}var bar=document.getElementById('vacBar'),txt=document.getElementById('vacText'),lamp=document.getElementById('amberLamp'),btn=document.getElementById('vacContinue'),t0=Date.now(),dur=6500;state.pumpTimer=setInterval(function(){var p=Math.min(100,(Date.now()-t0)/dur*100);bar.style.width=p+'%';txt.textContent='EVACUATING · '+Math.round(p)+'%';if(p>=100){clearInterval(state.pumpTimer);state.pumpTimer=null;state.evacuationDone=true;stopPump();lamp.classList.remove('is-on');txt.textContent='VACUUM READY · AMBER LAMP OFF';btn.disabled=false;btn.textContent='Continue';}},140);btn.addEventListener('click',function(){if(!state.evacuationDone)return;btn.disabled=true;completeStep(function(){closeModal(true);});});}
 
-  function bindRotation(){var r=document.getElementById('rotRange'),read=document.getElementById('rotRead'),a=document.getElementById('rot15'),b=document.getElementById('rot75'),c=document.getElementById('rotSeat'),seat=document.getElementById('seatHolder'),next=document.getElementById('rotContinue');r.addEventListener('input',function(){ensureAudio();var v=Number(r.value);read.textContent=v+'°';if(!state.rotation15&&v>=14&&v<=18){state.rotation15=true;a.classList.add('done');}if(state.rotation15&&v>=74){state.rotation75=true;b.classList.add('done');seat.disabled=false;}});seat.addEventListener('click',function(){if(!state.rotation75)return;clickSound(0);state.holderSeated=true;c.classList.add('done');seat.disabled=true;next.disabled=false;});next.addEventListener('click',function(){if(!state.holderSeated)return;closeModal(true);completeStep();});}
+  function bindRotation(){var r=document.getElementById('rotRange'),read=document.getElementById('rotRead'),a=document.getElementById('rot15'),b=document.getElementById('rot75'),c=document.getElementById('rotSeat'),seat=document.getElementById('seatHolder'),next=document.getElementById('rotContinue');r.addEventListener('input',function(){ensureAudio();var v=Number(r.value);read.textContent=v+'°';if(!state.rotation15&&v>=14&&v<=18){state.rotation15=true;a.classList.add('done');}if(state.rotation15&&v>=74){state.rotation75=true;b.classList.add('done');seat.disabled=false;}});seat.addEventListener('click',function(){if(!state.rotation75)return;clickSound(0);state.holderSeated=true;c.classList.add('done');seat.disabled=true;next.disabled=false;});next.addEventListener('click',function(){if(!state.holderSeated)return;next.disabled=true;completeStep(function(){closeModal(true);});});}
 
-  function bindTrackball(){var ball=document.getElementById('specTrackball'),dot=document.getElementById('stageDot'),btn=document.getElementById('trackConfirm');var drag=false,lx=0,ly=0,total=0,x=50,y=50;ball.addEventListener('pointerdown',function(e){ensureAudio();drag=true;lx=e.clientX;ly=e.clientY;ball.setPointerCapture(e.pointerId);ball.classList.add('is-dragging');});ball.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;total+=Math.abs(dx)+Math.abs(dy);x=Math.max(12,Math.min(88,x+dx*.18));y=Math.max(12,Math.min(88,y+dy*.18));dot.style.left=x+'%';dot.style.top=y+'%';if(total>42&&!state.trackballMoved){state.trackballMoved=true;btn.disabled=false;}});ball.addEventListener('pointerup',function(){drag=false;ball.classList.remove('is-dragging');});btn.addEventListener('click',function(){if(!state.trackballMoved)return;closeModal(true);completeStep();});}
+  function bindTrackball(){var ball=document.getElementById('specTrackball'),dot=document.getElementById('stageDot'),btn=document.getElementById('trackConfirm');var drag=false,lx=0,ly=0,total=0,x=50,y=50;ball.addEventListener('pointerdown',function(e){ensureAudio();drag=true;lx=e.clientX;ly=e.clientY;ball.setPointerCapture(e.pointerId);ball.classList.add('is-dragging');});ball.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;total+=Math.abs(dx)+Math.abs(dy);x=Math.max(12,Math.min(88,x+dx*.18));y=Math.max(12,Math.min(88,y+dy*.18));dot.style.left=x+'%';dot.style.top=y+'%';if(total>42&&!state.trackballMoved){state.trackballMoved=true;btn.disabled=false;}});ball.addEventListener('pointerup',function(){drag=false;ball.classList.remove('is-dragging');});btn.addEventListener('click',function(){if(!state.trackballMoved)return;btn.disabled=true;completeStep(function(){closeModal(true);});});}
 
-  function resetSession(){clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();resetBfState();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer)clearInterval(state.pumpTimer);state={sample:null,currentSection:0,currentStep:0,unlockedThrough:0,sectionComplete:{},completed:{},gridStage:0,insertionDone:false,pumpStarted:false,evacuationDone:false,rotation15:false,rotation75:false,holderSeated:false,trackballMoved:false,pumpTimer:null};sampleInd.textContent='SELECT SAMPLE';closePcDrawer();closeModal(true);setSessionControls(false);renderNav();setInstruction();updateProgress();}
+  function resetSession(){clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();resetBfState();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer)clearInterval(state.pumpTimer);state={sample:null,currentSection:0,currentStep:0,unlockedThrough:0,sectionComplete:{},completed:{},gridStage:0,insertionDone:false,pumpStarted:false,evacuationDone:false,rotation15:false,rotation75:false,holderSeated:false,trackballMoved:false,pumpTimer:null};sampleInd.textContent='SELECT SAMPLE';closePcDrawer();closeModal(true);setSessionControls(false);renderNav();setInstruction();updateProgress();}
 
   var restart=document.getElementById('btn-restart');if(restart)restart.addEventListener('click',function(){
     if(!state.sample){showSampleModal();return;}
@@ -1728,15 +2012,19 @@
   });
   var undo=document.getElementById('btn-undo-step');if(undo)undo.addEventListener('click',function(){
     if(!state.sample||!state.currentSection)return;
+    var wasPending=stepTransitionPending;
+    if(wasPending)delete state.completed[key()];
+    clearPendingStepTransition();
     if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}
-    clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();hideBfScene();closeModal(true);closePcDrawer();hideSection1Tour();stopPump();if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}
-    if(state.currentStep>0){state.currentStep--;delete state.completed[key()];}
+    clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();closeModal(true);closePcDrawer();hideSection1Tour();stopPump();if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}
+    if(!wasPending&&state.currentStep>0){state.currentStep--;delete state.completed[key()];}
     if(state.currentSection===2 && state.currentStep>=4){state.pumpStarted=false;state.evacuationDone=false;}
     setInstruction();renderNav();updateProgress();setTimeout(showCurrentStep,650);
   });
   var showStep=document.getElementById('btn-show-step');if(showStep)showStep.addEventListener('click',function(){
-    if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}
-    clearBfTimers();clearS3PcPanel();hideBfScene();closeModal(true);hideSection1Tour();
+    if(stepTransitionPending){delete state.completed[key()];updateProgress();}
+    clearPendingStepTransition();
+    clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();closeModal(true);hideSection1Tour();
     if(!state.sample){showSampleModal();return;}
     var s=currentSection();if(!s||state.sectionComplete[s.id]||!s.implemented)return;
     if(state.currentSection===2 && state.currentStep===4){state.pumpStarted=false;state.evacuationDone=false;stopPump();if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}}
@@ -1757,7 +2045,7 @@
   var r1Scroll=document.querySelector('#panel-r1 .ctl-panel__scroll'), stageDockHost=document.getElementById('sop-stage-dock');
   if(r1Scroll&&stageDockHost&&stageDockHost.parentNode!==r1Scroll){r1Scroll.appendChild(stageDockHost);}
   [].slice.call(document.querySelectorAll('#panel-l1 .ctl-panel__scroll,#panel-r1 .ctl-panel__scroll')).forEach(function(sc){
-    var tid=null;sc.addEventListener('scroll',function(){if(state.currentSection!==3||!s3ActivePrimary)return;clearTimeout(tid);tid=setTimeout(function(){ensureS3ActiveVisible('smooth');},160);},{passive:true});
+    var tid=null;sc.addEventListener('scroll',function(){if((state.currentSection!==3&&state.currentSection!==4)||!s3ActivePrimary)return;clearTimeout(tid);tid=setTimeout(function(){ensureS3ActiveVisible('smooth');},160);},{passive:true});
   });
   wireS3ViewerTabs();initS3PanelInteractions();wireFullscreen();showFullscreenReminder();
   var stageDock=document.getElementById('sop-stage-dock'),stageToggle=document.getElementById('sop-stage-dock-toggle'),stageLocator=document.getElementById('sop-stage-dock-locator');
