@@ -282,6 +282,33 @@
                     </div>
                   </div>
 
+                  <div class="temcon-menubar" aria-label="TEMCON menu bar">
+                    <span>File</span><span>Dialogue</span><span>Monitor</span><span>Property</span>
+                    <span>Option</span><span>Maintenance</span><span>Display</span><span>JEOLS</span><span>Help</span>
+                  </div>
+                  <div class="temcon-shortcuts" aria-label="TEMCON function shortcuts">
+                    <span class="temcon-shortcut temcon-shortcut--ht" role="button" tabindex="0">HT</span>
+                    <span class="temcon-shortcut">SPC</span>
+                    <span class="temcon-shortcut">Status</span>
+                    <span class="temcon-shortcut">VAC</span>
+                    <span class="temcon-shortcut"><b>F1:</b> Screen</span>
+                    <span class="temcon-shortcut"><b>F2:</b> Off-Axis</span>
+                    <span class="temcon-shortcut"><b>F3:</b> SPOT</span>
+                    <span class="temcon-shortcut"><b>F4:</b> GUN/A</span>
+                    <span class="temcon-shortcut"><b>F5:</b> IL Stig</span>
+                    <span class="temcon-shortcut"><b>F6:</b> GIF</span>
+                    <div class="temcon-holder-model temcon-holder-model--global">
+                      <label>Holder</label>
+                      <select aria-label="Holder model">
+<option value="single-tilt">EM-21010/21020 : Single Tilt Holder</option>
+<option value="single-tilt-beryllium" selected>EM-21010/21150 : Single Tilt Beryllium Holder</option>
+<option value="high-tilt">EM-21010/21311HTR : High Tilt Holder</option>
+<option value="specimen-tilting-beryllium">EM-31640 : Specimen Tilting Beryllium Holder</option>
+<option value="quick-change">EM-11210SQCH : Specimen quick change holder</option>
+                    </select>
+                    </div>
+                  </div>
+
                   <div class="temcon-status" aria-label="TEM main data display area">
                     <div class="temcon-status__lamps">
                       <div class="temcon-lamp" id="pc-ht-lamp">HT</div>
@@ -312,10 +339,7 @@
                   </div>
 
                   <div class="temcon-client">
-                    <div class="temcon-main-tabs" role="tablist" aria-label="Operation pages">
-                      <button type="button" class="temcon-tab is-selected" role="tab" aria-selected="true" data-temcon-tab="standard">Standard</button>
-                      <button type="button" class="temcon-tab" role="tab" aria-selected="false" data-temcon-tab="stage">Stage</button>
-                    </div>
+                    <div class="temcon-connection-bar"><span class="temcon-connected-indicator">● Connected</span></div>
 
                     <section class="temcon-page is-selected" role="tabpanel" data-temcon-page="standard">
                       <fieldset class="temcon-group temcon-group--illumination">

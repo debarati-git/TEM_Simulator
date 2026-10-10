@@ -1,2 +1,3 @@
-4.9.1-RS3
-RS4: Section 6 (HRTEM) removed from visible simulator navigation.
+4.9.27 — Real Au nanoparticle specimen images (new TIF set from IIT Hyderabad, cropped info bars, lossless PNG). Full Section 3 image mapping: Tv2 (200×) for BEAM ON first light, Tv1 (500×) for LOW MAG survey, Tv3→Tv4→Tv5 (8,000×) trackball search cycling, Tv6/Tv7 (50,000×) for MAG 1 alignment/Z correction/aperture/astigmatism with CSS overlays, Tv8–Tv12 (60,000×) distinct images for each acquisition step (ROI→final mag→focus→video→snapshot). Based on v4.9.26.
+
+4.9.29 — Section 3 Steps 49–50: iTEM workspace opens automatically in camera PC drawer; redesigned Olympus iTEM-inspired acquisition window; real TEM specimen canvas visible and mirrored to Viewing Screen; through-focus exercise requires dwell at underfocus, in-focus, and overfocus, then manual confirmation near focus; prior workflow preserved.

@@ -308,6 +308,17 @@
                     <span class="temcon-shortcut"><b>F6:</b> GIF</span>
                   </div>
 
+                  <div class="temcon-holder-model temcon-holder-model--global">
+                    <label>Holder</label>
+                    <select aria-label="Holder model">
+<option value="single-tilt">EM-21010/21020 : Single Tilt Holder</option>
+<option value="single-tilt-beryllium" selected>EM-21010/21150 : Single Tilt Beryllium Holder</option>
+<option value="high-tilt">EM-21010/21311HTR : High Tilt Holder</option>
+<option value="specimen-tilting-beryllium">EM-31640 : Specimen Tilting Beryllium Holder</option>
+<option value="quick-change">EM-11210SQCH : Specimen quick change holder</option>
+                    </select>
+                  </div>
+
                   <div class="temcon-status" aria-label="TEM main data display area">
                     <div class="temcon-status__lamps">
                       <div class="temcon-lamp temcon-lamp--ht" id="pc-ht-lamp"><strong>HT</strong><span>OFF</span></div>
@@ -338,10 +349,7 @@
                   </div>
 
                   <div class="temcon-client">
-                    <div class="temcon-main-tabs" role="tablist" aria-label="Operation pages">
-                      <button type="button" class="temcon-tab is-selected" role="tab" aria-selected="true" data-temcon-tab="standard">Standard</button>
-                      <button type="button" class="temcon-tab" role="tab" aria-selected="false" data-temcon-tab="stage">Stage</button>
-                    </div>
+                    <div class="temcon-connection-bar"><span class="temcon-connected-indicator">● Connected</span></div>
 
                     <section class="temcon-page is-selected" role="tabpanel" data-temcon-page="standard">
                       <fieldset class="temcon-group temcon-group--hv">

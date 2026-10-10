@@ -265,6 +265,23 @@
 <div class="viewer__panel is-active" data-view-panel="column">
 <img alt="Actual TEM instrument room view" class="viewer__column-image" src="../assets/images/sop/column-viewport-real.png"/>
 <div class="viewer__column-hotspots" id="diagram-hotspots"></div>
+<!-- Pre-start-only exploration: independent of guided SOP imagery / controls. -->
+<div class="sop-prestart-explore" id="sopPrestartExplore" hidden aria-label="Explore the microscope before starting">
+  <div class="sop-prestart-explore__surface" id="sopPrestartZoomSurface" aria-label="Microscope image: wheel to zoom, drag to pan">
+    <div class="sop-prestart-explore__transform" id="sopPrestartZoomTransform">
+      <img class="sop-prestart-explore__photo" src="../assets/images/sop/column-viewport-real.png" alt="Actual JEOL TEM instrument and left and right control panels" draggable="false"/>
+      <button class="sop-prestart-explore__hotspot sop-prestart-explore__hotspot--l1" type="button" data-explore-panel="l1" title="View actual L1 control panel layout" aria-label="View actual L1 left control panel layout"><span class="sop-prestart-explore__dot" aria-hidden="true"></span><strong>L1</strong></button>
+      <button class="sop-prestart-explore__hotspot sop-prestart-explore__hotspot--r1" type="button" data-explore-panel="r1" title="View actual R1 control panel layout" aria-label="View actual R1 right control panel layout"><span class="sop-prestart-explore__dot" aria-hidden="true"></span><strong>R1</strong></button>
+    </div>
+  </div>
+  <div class="sop-prestart-explore__toolbar" role="group" aria-label="Microscope image zoom controls">
+    <button type="button" id="sopPrestartZoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+    <output id="sopPrestartZoomRead" aria-live="off">100%</output>
+    <button type="button" id="sopPrestartZoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+    <button type="button" id="sopPrestartZoomReset" title="Reset zoom and position">Reset</button>
+  </div>
+  <div class="sop-prestart-explore__hint">Select L1 or R1 to view the actual panel • Scroll to zoom • Drag to pan</div>
+</div>
 </div>
 <!-- Screen view -->
 <div class="viewer__panel" data-view-panel="screen">
@@ -306,6 +323,18 @@
 <span class="temcon-shortcut"><b>F4:</b> GUN/A</span>
 <span class="temcon-shortcut"><b>F5:</b> IL Stig</span>
 <span class="temcon-shortcut"><b>F6:</b> GIF</span>
+<div class="temcon-holder-model temcon-holder-model--global" id="pc-holder-model-pulldown">
+<label for="pc-holder-model-select">Holder</label>
+<select id="pc-holder-model-select" aria-label="Select holder model">
+<option value="single-tilt">EM-21010/21020 : Single Tilt Holder</option>
+<option value="single-tilt-beryllium" selected>EM-21010/21150 : Single Tilt Beryllium Holder</option>
+<option value="high-tilt">EM-21010/21311HTR : High Tilt Holder</option>
+<option value="specimen-tilting-beryllium">EM-31640 : Specimen Tilting Beryllium Holder</option>
+<option value="quick-change">EM-11210SQCH : Specimen quick change holder</option>
+</select>
+<button class="temcon-holder-model__confirm" id="pc-holder-model-confirm" type="button" hidden disabled>Confirm holder model</button>
+<div class="temcon-holder-model__feedback" id="pc-holder-model-feedback" hidden>The current holder selection is displayed here.</div>
+</div>
 </div>
 <div aria-label="TEM main data display area" class="temcon-status">
 <div class="temcon-status__lamps">
@@ -332,14 +361,11 @@
 <div><span>Z=</span> <strong id="pc-stg-z">0.0</strong></div>
 <div><span>TX=</span> <strong id="pc-stg-tx">0.0</strong></div>
 <div><span>TY=</span> <strong id="pc-stg-ty">0.0</strong></div>
-<div class="temcon-status__stage-mode">Stage Neutral</div>
+<div class="temcon-status__stage-mode sop-stage-neutral-visible"><button type="button" class="sop-stage-neutral-trigger" id="sopStageNeutralVisible" title="Neutralize stage">Neutralize</button><span class="sop-stage-info sop-stage-info--visible" tabindex="0" role="note" aria-label="When to use Stage Neutral" data-tip="User should click it if X, Y, Z values are not zero initially.">ⓘ</span></div>
 </div>
 </div>
 <div class="temcon-client">
-<div aria-label="Operation pages" class="temcon-main-tabs" role="tablist">
-<button aria-selected="true" class="temcon-tab is-selected" data-temcon-tab="standard" role="tab" type="button">Standard</button>
-<button aria-selected="false" class="temcon-tab" data-temcon-tab="stage" role="tab" type="button">Stage</button>
-</div>
+<div class="temcon-connection-bar"><span class="temcon-connected-indicator">● Connected</span></div>
 <section class="temcon-page is-selected" data-temcon-page="standard" role="tabpanel">
 <fieldset class="temcon-group temcon-group--hv">
 <legend>High Voltage Control</legend>
@@ -509,16 +535,6 @@
 </div>
 </section>
 <section class="temcon-page" data-temcon-page="stage" hidden="" role="tabpanel">
-<div class="temcon-holder-model" id="pc-holder-model-pulldown" hidden>
-<label for="pc-holder-model-select">Holder Model</label>
-<select id="pc-holder-model-select" aria-label="Select holder model">
-<option value="">Select holder model…</option>
-<option value="single-tilt">Single Tilt</option>
-<option value="double-tilt">Double Tilt</option>
-</select>
-<button class="temcon-holder-model__confirm" id="pc-holder-model-confirm" type="button" disabled>Confirm holder model</button>
-<div class="temcon-holder-model__feedback" id="pc-holder-model-feedback">Select the holder model used for this specimen holder.</div>
-</div>
 <div class="temcon-stage-layout">
 <fieldset class="temcon-group">
 <legend>Specimen Holder</legend>
@@ -562,7 +578,7 @@
 </div>
 <div class="ctl ctl--row-2 temcon-guided-control" data-control="stage-neutralize">
 <div class="temcon-field-label">Stage</div>
-<button class="pbtn" data-action="stage-neutralize"><span class="pbtn__led"></span>Neutralize</button>
+<button class="pbtn" data-action="stage-neutralize"><span class="pbtn__led"></span>Neutralize</button><span class="sop-stage-info" tabindex="0" role="note" aria-label="Stage Neutral information" data-tip="User should click it if X, Y, Z values are not zero initially.">ⓘ</span>
 </div>
 <div class="temcon-z-sensitivity" id="pc-z-sensitivity">
 <span class="temcon-field-label">Z sensitivity</span>
@@ -585,7 +601,7 @@
 </div>
 <div class="temcon-info-grid temcon-info-grid--compact">
 <span>Column Vacuum</span><strong id="pc-column-vacuum">READY</strong>
-<span>EVC Status</span><strong id="pc-evc-status">READY</strong>
+<span>EVAC Status</span><strong id="pc-evc-status">READY</strong>
 <span>Airlock Valve</span><strong id="pc-airlock-valve">CLOSED</strong>
 <span>Pressure</span><strong id="pc-vac-pressure">— Pa</strong>
 </div>
@@ -606,23 +622,25 @@
 <div aria-label="TEM camera acquisition software" class="camera-workstation">
 <div class="camera-titlebar">
 <div class="camera-titlebar__caption">
-<span aria-hidden="true" class="camera-titlebar__icon">DM</span>
-<span>DigitalMicrograph — Camera View</span>
+<span aria-hidden="true" class="camera-titlebar__icon">iT</span>
+<span>OLYMPUS iTEM — TEM Image Analysis</span>
 </div>
 <div aria-hidden="true" class="camera-titlebar__buttons">
 <span>—</span><span>□</span><span>×</span>
 </div>
 </div>
 <div aria-label="Application menu" class="camera-menubar">
-<span>File</span><span>Edit</span><span>Camera</span><span>Acquire</span><span>Process</span><span>Display</span><span>Window</span><span>Help</span>
+<span>File</span><span>Edit</span><span>View</span><span>Image</span><span>Acquire</span><span>Process</span><span>Measure</span><span>Window</span><span>Help</span>
 </div>
 <div aria-hidden="true" class="camera-toolbar">
 <button tabindex="-1" type="button">New</button>
 <button tabindex="-1" type="button">Open</button>
 <button tabindex="-1" type="button">Save</button>
 <span class="camera-toolbar__sep"></span>
-<button tabindex="-1" type="button">1:1</button>
 <button tabindex="-1" type="button">Fit</button>
+<button tabindex="-1" type="button">1:1</button>
+<button tabindex="-1" type="button">Zoom</button>
+<button tabindex="-1" type="button">Line</button>
 <button tabindex="-1" type="button">ROI</button>
 <span class="camera-toolbar__sep"></span>
 <div class="camera-toolbar__status"><span id="pc-cam-comm-led"></span>Camera communication OK</div>
@@ -654,7 +672,7 @@
 </section>
 <aside class="camera-side-column">
 <section class="camera-palette camera-palette--acquisition">
-<div class="camera-palette__title">Camera Acquisition</div>
+<div class="camera-palette__title">iTEM · Camera Control</div>
 <div class="camera-palette__body">
 <div class="camera-status-grid">
 <span>Camera</span><strong id="pc-cam-camera-state">Retracted</strong>
@@ -681,14 +699,14 @@
 </div>
 </section>
 <section class="camera-palette camera-palette--fft" id="pc-cam-fft">
-<div class="camera-palette__title">Live FFT</div>
+<div class="camera-palette__title">Image Analysis · FFT</div>
 <canvas class="pc-cam-fft__canvas" height="180" id="pc-fft-canvas" width="220"></canvas>
 <div class="camera-fft-status"><span>Rings:</span><strong id="pc-cam-fft-state">No signal</strong></div>
 </section>
 </aside>
 </div>
 <div class="camera-statusbar">
-<span id="pc-cam-message">Camera workstation ready</span>
+<span id="pc-cam-message">OLYMPUS iTEM acquisition workstation ready</span>
 <span>CCD Temperature: −25.0 °C</span>
 <span id="pc-cam-ready-state">READY</span>
 </div>

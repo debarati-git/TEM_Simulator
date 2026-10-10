@@ -1,12 +1,19 @@
 (function(){
   'use strict';
+  // Always-visible Stage Neutral control delegates to the existing instrument action.
+  document.addEventListener('click',function(event){
+    if(!event.target.closest('#sopStageNeutralVisible'))return;
+    var original=document.querySelector('[data-temcon-page="stage"] [data-action="stage-neutralize"]');
+    if(original&&!original.disabled)original.click();
+  });
+
 
   var sections=[
     {id:1,title:'Safety Check and Instrument Startup',short:'Safety & Startup',implemented:true,steps:[
       {title:'Check chiller status',instruction:'Check if the chiller is ON in chiller room.',hint:'Verify the chiller image and displayed temperature before confirming.'},
       {title:'Confirm room conditions',instruction:'Confirm the room air conditioning is ON and the room temperature is approximately 20–22°C.',hint:''},
       {title:'Verify SIP vacuum',instruction:'Confirm the Sputter Ion Pump (SIP) unit vacuum is ≤ 2.5×10⁻⁵ Pa.',hint:'Read the SIP vacuum indication and confirm before continuing.'},
-      {title:'Verify TEMCON readiness',instruction:'Verify the TEMCON screen shows HT READY, EVAC READY, and an accelerating voltage of 80 kV before proceeding.',hint:'The PC drawer opens automatically. Confirm HT READY, EVAC READY, and 80 kV only; no voltage ramp is performed here.'},
+      {title:'Turn HT ON in TEMCON',instruction:'In the TEMCON High Voltage Control window, press HT ON and wait for the HT indicator to turn green. Verify the Valve Status evacuation indicators.',hint:'Use the existing HT ON button; wait for the accelerating-voltage popup to close.'},
       {title:'Check anti-contamination trap',instruction:'Check and, if required, refill the liquid nitrogen in the anti-contamination trap.',hint:'Confirm the anti-contamination trap check before continuing.'},
       {title:'Allow system stabilization',instruction:'Allow the filament and system to stabilize for the recommended warm-up period according to the operating guidelines.',hint:''},
       {title:'Record startup in logbook',instruction:'Record instrument startup in the logbook, including date, time, and operator name.',hint:'Complete all startup logbook fields before saving.'}
@@ -15,22 +22,21 @@
       {title:'Inspect holder O-rings',instruction:'Inspect the holder O-rings for damage, dust, or old grease; clean with a lint-free wipe and re-grease lightly if required before use.',hint:'Inspect the O-ring area in the close-up modal and confirm.'},
       {title:'Confirm goniometer green lamp',instruction:'Confirm the goniometer green lamp is lit, indicating it is ready for holder loading. If it is not lit, do not attempt to insert the holder.',hint:'Verify the green ready lamp before continuing.'},
       {title:'Load TEM grid',instruction:'Open the holder cartridge, place the TEM grid sample-side up using fine anti-static tweezers, and close the retaining clip securely so the grid cannot shift in transit.',hint:'Complete the three actions in order.'},
+      {title:'Confirm EVAC Ready in TEMCON',instruction:'In the TEMCON Valve Status window, verify that Specimen / PIG4 reads EVAC Ready before proceeding with specimen-holder insertion.',hint:'The TEMCON drawer opens automatically. Verify Specimen / PIG4 shows EVAC Ready before continuing.'},
       {title:'Insert holder to first stop',instruction:'Insert the specimen holder straight into the goniometer port following the guide key until the first mechanical stop. Do not force it. Support the holder until you hear 3 clicks.',hint:'Drag the holder toward the port. Three spaced click sounds play at the first stop.'},
       {title:'Set PUMP and complete evacuation',instruction:'Set the goniometer PUMP/AIR switch to PUMP to begin evacuation, then wait until the amber lamp goes OFF before continuing. Do not rotate or push the holder further while evacuation is in progress.',hint:'The roughing-pump rumble continues throughout evacuation. Continue only after the amber lamp goes OFF.'},
-      {title:'Confirm EVC ready in TEMCON',instruction:'Confirm the EVC status shows READY in the TEMCON software before rotating and fully inserting the specimen holder.',hint:'The TEMCON drawer opens automatically. Verify EVC status is READY before continuing.'},
       {title:'Rotate and fully insert holder',instruction:'Rotate the specimen holder by 15° clockwise and then by 75° clockwise to complete insertion into the goniometer.',hint:'Use the highlighted rotation buttons in sequence. The holder images update as each rotation is completed.'},
-      {title:'Select holder model in TEMCON',instruction:'Select the appropriate holder model in TEMCON using the pull-down menu on the upper right.',hint:'Open the highlighted Holder Model pull-down and select Single Tilt.'}
+      {title:'Select holder model in TEMCON',instruction:'In the upper-right TEMCON holder dropdown, select EM-21010/21020 : Single Tilt Holder. Then confirm the selection in the popup.',hint:'Change the existing selection from Single Tilt Beryllium Holder to Single Tilt Holder to open the confirmation modal.'}
     ]},
     {id:3,title:'Bright Field Imaging',short:'Bright Field',implemented:true,steps:[
       {title:'High Voltage · Set target',instruction:'Set the Auto HT target voltage to 200 kV.',hint:'Select 200 kV in TEMCON High Voltage Control.'},
       {title:'High Voltage · Set step size',instruction:'Set the Auto HT voltage step size to 0.5 kV.',hint:'Select 0.5 kV.'},
       {title:'High Voltage · Set interval',instruction:'Set the Auto HT Time/Step to 10 s.',hint:'Select 10 s.'},
       {title:'High Voltage · Start ramp',instruction:'Press Start under Auto HT and allow the accelerating voltage to rise from 80 kV to 200 kV.',hint:'The real ramp duration is compressed in the simulator.'},
-      {title:'High Voltage · HT ON',instruction:'After the target reaches 200 kV, press HT: ON and verify the HT status is ON.',hint:'HT ON is unlocked only after the ramp reaches 200 kV.'},
-      {title:'Electron Source · Filament ON',instruction:'On High Voltage Control, press Filament: ON.',hint:'Filament current will begin rising after this action.'},
-      {title:'Electron Source · Beam current',instruction:'Wait for the Beam Current indicator to stabilize at approximately 103 µA.',hint:'This observation step advances automatically when the simulated current reaches approximately 103 µA.'},
-      {title:'Vacuum · Verify V2',instruction:'Make sure the image observation chamber isolation valve V2 is OPEN in the Valve Status window.',hint:'Open V2 before generating the electron beam.'},
-      {title:'Beam · Turn BEAM ON',instruction:'Press BEAM on control panel L1 to turn on the electron beam.',hint:'The beam then reaches the fluorescent-screen path.'},
+      {title:'Vacuum · Verify V2',instruction:'In the TEMCON Valve Status window beside High Voltage Control, verify that valve V2 is OPEN and the chamber vacuum is ready.',hint:'Observe the V2 green indicator before confirming.'},
+      {title:'Electron Source · Filament ON',instruction:'Press Filament ON in High Voltage Control. Observe the Setting the Filament popup and wait for its progress bar to finish; Beam Current will reach 103 µA.',hint:'A filament-setting progress bar appears over the Valve Status window. Wait until it reaches 100%.'},
+      {title:'Electron Source · Beam current',instruction:'Verify that the Beam Current has stabilized at 103 µA after filament setting.',hint:'The reading holds at 103 µA and the observation step completes automatically.'},
+      {title:'Beam · Turn BEAM ON',instruction:'Press BEAM on control panel L1. Observe the TEMCON Beam indicator turn green, then watch the fluorescent screen illuminate as the viewport zooms in and switches to Viewing Screen automatically.',hint:'Wait for both green-illumination views to fade in and for the automatic Viewing Screen transition.'},
       {title:'Imaging Mode · TEM',instruction:'Select TEM imaging mode on control panel L1.',hint:'Only the TEM control is active for this step.'},
       {title:'Magnification · LOW MAG',instruction:'Select LOW MAG on control panel R1.',hint:'Use LOW MAG for locating the region of interest.'},
       {title:'Magnification · Survey range',instruction:'Rotate MAG/CAM L until the magnification is within approximately 1,000–5,000×.',hint:'Any value in the manual-specified survey range is accepted.'},
@@ -45,7 +51,6 @@
       {title:'Z Correction · Center feature',instruction:'At MAG 1, use the stage trackball to position a thin feature at the screen centre.',hint:'Center the highlighted feature.'},
       {title:'Z Correction · STD FOCUS',instruction:'Press STD FOCUS before adjusting specimen height.',hint:'Reset objective focus before Z correction.'},
       {title:'Z Correction · Coarse Z',instruction:'Use Z UP / Z DOWN to bring the feature toward focus or minimum contrast.',hint:'Approach the eucentric-height region.'},
-      {title:'Z Correction · Sensitivity',instruction:'If required, adjust the Z-control sensitivity using the arrows next to Z in TEMCON.',hint:'This is optional; the workflow continues automatically if no change is needed.'},
       {title:'Z Correction · Wobbler ON',instruction:'Press MAG WOB X or MAG WOB Y on R1 to start the wobble.',hint:'Use either axis as specified in the manual.'},
       {title:'Z Correction · Minimize wobble',instruction:'While the wobbler is ON, use Z UP / Z DOWN until lateral motion is minimized.',hint:'The real specimen image wobble reduces as Z approaches the correct height.'},
       {title:'Z Correction · Wobbler OFF',instruction:'Press the same MAG WOB X or MAG WOB Y control again to switch the wobble OFF.',hint:'The corrected Z height is retained.'},
@@ -71,13 +76,13 @@
       {title:'Acquisition · Spread beam',instruction:'Use BRIGHTNESS to spread the beam appropriately for image recording.',hint:'Set uniform illumination over the final field of view.'},
       {title:'Acquisition · AUTO contrast',instruction:'Press AUTO if automatic image-contrast adjustment is desired.',hint:'AUTO is optional and does not block progression.'},
       {title:'Acquisition · F1 screen UP',instruction:'Press F1 on R1 to lift the fluorescent screen and expose the transmitted beam to the camera.',hint:'The camera exposure path becomes active.'},
-      {title:'Acquisition · Open iTEM',instruction:'Open iTEM software in the camera workstation.',hint:'A dummy iTEM interface is used until the actual screenshot is supplied.'},
-      {title:'Acquisition · OBJ FOCUS',instruction:'Adjust OBJ FOCUS COARSE / FINE if needed while viewing the camera image.',hint:'This focus touch-up is optional.'},
+      {title:'Acquisition · iTEM workspace',instruction:'The Olympus iTEM acquisition workspace opens automatically in the PC drawer. Observe the specimen preview and camera tools before proceeding.',hint:'No Open iTEM button is needed. The workspace opens and the real specimen image appears automatically.'},
+      {title:'Acquisition · Three focus conditions',instruction:'Inspect the specimen only in the Olympus iTEM camera window. Turn OBJ FOCUS counter-clockwise for underfocus (bright outer fringes), bring the image to in-focus (smooth background and minimum contrast), then turn clockwise for overfocus (dark outer fringes). Observe each condition, return near focus, and confirm in iTEM.',hint:'Underfocus / Scherzer: bright white fringe outside nanoparticle edges and textured carbon background. In-focus: flat, smooth background and no edge fringe. Overfocus: dark shadow fringe outside particle edges; avoid for final size measurement.'},
       {title:'Acquisition · Video',instruction:'Click the Video icon in iTEM to start the live camera feed.',hint:'Live acquisition begins.'},
       {title:'Acquisition · Snapshot',instruction:'Click Snapshot in iTEM to capture the Bright Field image.',hint:'The real-sample Bright Field image is captured.'},
       {title:'Acquisition · F1 screen DOWN',instruction:'After acquiring the image, press F1 again to return the fluorescent screen.',hint:'Bright Field acquisition is complete; limit real camera exposure as required by the operating procedure.'}
     ]},
-    {id:4,title:'Dark Field Imaging',short:'Dark Field',implemented:true,steps:[
+    {id:4,title:'Dark Field Imaging',short:'Dark Field',implemented:true,upcoming:true,steps:[
       {title:'Diffraction · Switch to DIFF',instruction:'With the specimen in the stable focused Bright Field condition inherited from Section 3, switch the microscope to diffraction mode.',hint:'Use DIFF on the R1 Imaging / Magnification Mode control.'},
       {title:'Diffraction · Select reflection',instruction:'Select the diffracted spot of interest that will be used to form the Dark Field image.',hint:'Click the highlighted diffracted reflection on the SAED pattern.'},
       {title:'Beam Tilt · Activate DARK/BRIGHT TILT',instruction:'Activate DARK/BRIGHT TILT so the DEF/STIG X and Y controls adjust beam tilt for Dark Field alignment.',hint:'Use the DARK/BRIGHT TILT function on L1.'},
@@ -100,9 +105,8 @@
       {title:'Acquisition · Record reflection',instruction:'Record the selected diffraction-spot identifier with the Dark Field image for correlation with the SAED pattern.',hint:'Save the simulator reflection ID g1 with the captured DF image.'},
       {title:'Acquisition · F1 screen DOWN',instruction:'Press F1 again to return the fluorescent screen after acquisition.',hint:'Dark Field imaging is complete.'}
     ]},
-    {id:5,title:'Selected Area Electron Diffraction (SAED) Mode',short:'SAED',implemented:false,steps:[]},
-    {id:6,title:'High-Resolution TEM (HRTEM) Imaging Mode',short:'HRTEM',implemented:false,hidden:true,steps:[]},
-    {id:7,title:'Instrument Shutdown',short:'Shutdown',implemented:false,steps:[]}
+    {id:5,title:'Selected Area Electron Diffraction (SAED) Mode',short:'SAED',implemented:false,upcoming:true,steps:[]},
+    {id:6,title:'Instrument Shutdown',short:'Shutdown',implemented:false,steps:[]}
   ];
 
   var state={sample:null,currentSection:0,currentStep:0,unlockedThrough:0,sectionComplete:{},completed:{},gridStage:0,insertionDone:false,pumpStarted:false,evacuationDone:false,rotation15:false,rotation75:false,holderSeated:false,trackballMoved:false,pumpTimer:null};
@@ -122,7 +126,6 @@
     'Auto HT voltage increment is set to 0.5 kV.',
     'Auto HT interval is set to 10 s per step.',
     'Accelerating voltage has reached 200 kV and stabilized.',
-    'High tension is ON at 200 kV.',
     'The electron-source filament is ON.',
     'Beam current has stabilized at approximately 103 µA.',
     'V2 is open for image observation.',
@@ -141,7 +144,6 @@
     'The reference specimen feature is centered for Z correction.',
     'STD FOCUS has been restored before eucentric-height adjustment.',
     'Specimen Z is close to the eucentric-height region.',
-    'Z-control sensitivity is ready for fine height adjustment.',
     'The magnification wobbler is ON and specimen motion is visible.',
     'Wobble motion has been minimized by correcting specimen Z.',
     'The wobbler is OFF with the corrected Z height retained.',
@@ -168,7 +170,7 @@
     'Image contrast is ready for acquisition; AUTO adjustment was handled as selected.',
     'The fluorescent screen is raised and the camera path is exposed.',
     'iTEM is open with the real Bright Field specimen available.',
-    'Camera-view objective focus has been checked or fine-adjusted.',
+    'Through-focus observed: underfocus (bright fringes), in-focus (sharp), overfocus (dark fringes). Focus is set for BF acquisition.',
     'The live iTEM video feed is running on the real specimen.',
     'A real Bright Field snapshot has been captured.',
     'The fluorescent screen is returned after acquisition; Bright Field imaging is complete.'
@@ -196,6 +198,126 @@
   var screenPanel=document.querySelector('.viewer__panel[data-view-panel="screen"]');
   var viewScreen=document.getElementById('view-screen');
   var viewEmpty=document.getElementById('view-empty');
+  var prestartExplore=document.getElementById('sopPrestartExplore');
+  var prestartSurface=document.getElementById('sopPrestartZoomSurface');
+  var prestartTransform=document.getElementById('sopPrestartZoomTransform');
+  var prestartRead=document.getElementById('sopPrestartZoomRead');
+  var prestartZoom={scale:1,x:0,y:0,dragging:false,pointerId:null,startX:0,startY:0,downX:0,downY:0};
+  var prestartReturnFocus=null;
+  function clampPrestartZoom(){
+    if(!prestartSurface)return;
+    var w=prestartSurface.clientWidth,h=prestartSurface.clientHeight;
+    var mx=w*(prestartZoom.scale-1)/2,my=h*(prestartZoom.scale-1)/2;
+    prestartZoom.x=Math.max(-mx,Math.min(mx,prestartZoom.x));
+    prestartZoom.y=Math.max(-my,Math.min(my,prestartZoom.y));
+  }
+  function renderPrestartZoom(){
+    if(!prestartTransform)return;
+    clampPrestartZoom();
+    prestartTransform.style.transform='translate('+prestartZoom.x+'px,'+prestartZoom.y+'px) scale('+prestartZoom.scale+')';
+    if(prestartRead)prestartRead.textContent=Math.round(prestartZoom.scale*100)+'%';
+    var out=document.getElementById('sopPrestartZoomOut'),inBtn=document.getElementById('sopPrestartZoomIn');
+    if(out)out.disabled=prestartZoom.scale<=1.001;
+    if(inBtn)inBtn.disabled=prestartZoom.scale>=2.999;
+  }
+  function resetPrestartZoom(){
+    prestartZoom.scale=1;prestartZoom.x=0;prestartZoom.y=0;
+    prestartZoom.dragging=false;prestartZoom.pointerId=null;
+    if(prestartSurface)prestartSurface.classList.remove('is-panning');
+    renderPrestartZoom();
+  }
+  function changePrestartZoom(factor,clientX,clientY){
+    if(!prestartSurface||!prestartExplore||prestartExplore.hidden)return;
+    var old=prestartZoom.scale,now=Math.max(1,Math.min(3,old*factor));
+    if(Math.abs(now-old)<.001)return;
+    var r=prestartSurface.getBoundingClientRect();
+    var px=(clientX===undefined?r.left+r.width/2:clientX)-(r.left+r.width/2);
+    var py=(clientY===undefined?r.top+r.height/2:clientY)-(r.top+r.height/2);
+    prestartZoom.x=px-(px-prestartZoom.x)*(now/old);
+    prestartZoom.y=py-(py-prestartZoom.y)*(now/old);
+    prestartZoom.scale=now;
+    renderPrestartZoom();
+  }
+  function openPrestartActualPanel(which,button){
+    if(state.sample||!prestartExplore||prestartExplore.hidden)return;
+    var modal=document.getElementById('sopControlLocator'),img=document.getElementById('sopLocatorImage');
+    var title=document.getElementById('sopLocatorTitle'),note=document.getElementById('sopLocatorNote');
+    var hl=document.getElementById('sopLocatorHighlight');
+    if(!modal||!img)return;
+    prestartReturnFocus=button||null;
+    img.src=which==='l1'?'../assets/images/sop/section3-l1-modal-reference.png':'../assets/images/sop/section3-r1-modal-reference.png';
+    img.alt=which==='l1'?'Actual photographic layout of the JEOL L1 left control panel':'Actual photographic layout of the JEOL R1 right control panel';
+    if(title)title.textContent=which==='l1'?'L1 · Actual Left Control Panel':'R1 · Actual Right Control Panel';
+    if(note)note.textContent='Actual JEOL control-panel layout for orientation. Close this view and press Start when ready.';
+    if(hl)hl.style.display='none';
+    modal.classList.add('sop-prestart-reference','is-open');modal.setAttribute('aria-hidden','false');
+    var close=document.getElementById('sopLocatorClose');if(close)close.focus();
+  }
+  function startPrestartExplore(){
+    if(!prestartExplore)return;
+    if(state.sample)return;
+    prestartExplore.hidden=false;
+    document.body.classList.add('sop-prestart-active');
+    resetPrestartZoom();
+  }
+  function stopPrestartExplore(){
+    if(prestartExplore)prestartExplore.hidden=true;
+    document.body.classList.remove('sop-prestart-active');
+    resetPrestartZoom();
+    var locator=document.getElementById('sopControlLocator');
+    if(locator&&locator.classList.contains('sop-prestart-reference')){
+      locator.classList.remove('sop-prestart-reference','is-open');locator.setAttribute('aria-hidden','true');
+    }
+    var hl=document.getElementById('sopLocatorHighlight');if(hl)hl.style.display='';
+  }
+  function wirePrestartExplore(){
+    if(!prestartSurface)return;
+    prestartSurface.addEventListener('wheel',function(e){
+      if(prestartExplore.hidden||state.sample)return;
+      e.preventDefault();
+      changePrestartZoom(e.deltaY<0?1.15:(1/1.15),e.clientX,e.clientY);
+    },{passive:false});
+    prestartSurface.addEventListener('pointerdown',function(e){
+      if(prestartExplore.hidden||state.sample||e.button!==0||e.target.closest('button'))return;
+      prestartZoom.dragging=true;prestartZoom.pointerId=e.pointerId;
+      prestartZoom.downX=e.clientX;prestartZoom.downY=e.clientY;
+      prestartZoom.startX=prestartZoom.x;prestartZoom.startY=prestartZoom.y;
+      prestartSurface.setPointerCapture(e.pointerId);
+      prestartSurface.classList.add('is-panning');
+      e.preventDefault();
+    });
+    prestartSurface.addEventListener('pointermove',function(e){
+      if(!prestartZoom.dragging||e.pointerId!==prestartZoom.pointerId)return;
+      prestartZoom.x=prestartZoom.startX+e.clientX-prestartZoom.downX;
+      prestartZoom.y=prestartZoom.startY+e.clientY-prestartZoom.downY;
+      renderPrestartZoom();
+    });
+    function endPan(e){if(e.pointerId!==prestartZoom.pointerId)return;
+      prestartZoom.dragging=false;prestartZoom.pointerId=null;prestartSurface.classList.remove('is-panning');
+      if(prestartSurface.hasPointerCapture(e.pointerId))prestartSurface.releasePointerCapture(e.pointerId);
+    }
+    prestartSurface.addEventListener('pointerup',endPan);
+    prestartSurface.addEventListener('pointercancel',endPan);
+    prestartSurface.addEventListener('dblclick',function(e){
+      if(e.target.closest('button'))return;resetPrestartZoom();
+    });
+    [].slice.call(prestartExplore.querySelectorAll('[data-explore-panel]')).forEach(function(b){
+      b.addEventListener('click',function(e){e.stopPropagation();openPrestartActualPanel(b.dataset.explorePanel,b);});
+    });
+    var plus=document.getElementById('sopPrestartZoomIn'),minus=document.getElementById('sopPrestartZoomOut'),reset=document.getElementById('sopPrestartZoomReset');
+    if(plus)plus.addEventListener('click',function(){changePrestartZoom(1.25);});
+    if(minus)minus.addEventListener('click',function(){changePrestartZoom(1/1.25);});
+    if(reset)reset.addEventListener('click',resetPrestartZoom);
+    document.addEventListener('keydown',function(e){
+      var loc=document.getElementById('sopControlLocator');
+      if(e.key==='Escape'&&loc&&loc.classList.contains('sop-prestart-reference')){
+        loc.classList.remove('sop-prestart-reference','is-open');loc.setAttribute('aria-hidden','true');
+        var hl=document.getElementById('sopLocatorHighlight');if(hl)hl.style.display='';
+        if(prestartReturnFocus)prestartReturnFocus.focus();
+      }
+    });
+    window.addEventListener('resize',function(){if(!prestartExplore.hidden)renderPrestartZoom();});
+  }
   var viewportScene=null,viewportBg=null,viewportStatus=null,viewportControls=null,viewportGreenLamp=null,viewportAmberLamp=null,viewportSwitch=null,viewportHolder=null,viewportClicks=null,viewportProgress=null,viewportProgressBar=null,viewportFocus=null,viewportStep4Img1=null,viewportStep4Img2=null,viewportStep4Img3=null,viewportStep8Final=null;
   var bfScene=null,bfScreen=null,bfSpecimen=null,bfBeam=null,bfFeature=null,bfDirect=null,bfApertureRing=null,bfFringe=null,bfControlCard=null,bfActions=null,bfStatus=null,bfTimers=[];
   var s3Handlers={},s3KnobHandles={},s3PadHandles={},s3PanelInit=false,s3StepCompleting=false,s3LastBrightness=null;
@@ -346,28 +468,83 @@
   }
 
   function ensureAudio(){try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}}
+  // A holder-lock catch has both a short metal strike and a lower latching thud.
+  // Layered Web Audio synthesis keeps the sound functional even when offline.
   function clickSound(delay){
     ensureAudio();if(!audioCtx)return;
     var t=audioCtx.currentTime+(delay||0);
-    var master=audioCtx.createGain();master.gain.setValueAtTime(.0001,t);master.gain.exponentialRampToValueAtTime(.42,t+.006);master.gain.exponentialRampToValueAtTime(.0001,t+.14);master.connect(audioCtx.destination);
-    var low=audioCtx.createOscillator(),lowGain=audioCtx.createGain();low.type='square';low.frequency.setValueAtTime(210,t);low.frequency.exponentialRampToValueAtTime(72,t+.09);lowGain.gain.value=.72;low.connect(lowGain).connect(master);low.start(t);low.stop(t+.15);
-    var snap=audioCtx.createOscillator(),snapGain=audioCtx.createGain();snap.type='triangle';snap.frequency.setValueAtTime(1150,t);snap.frequency.exponentialRampToValueAtTime(420,t+.045);snapGain.gain.value=.28;snap.connect(snapGain).connect(master);snap.start(t);snap.stop(t+.055);
+    var bus=audioCtx.createGain(),limiter=audioCtx.createDynamicsCompressor();
+    limiter.threshold.value=-13;limiter.knee.value=5;limiter.ratio.value=9;
+    limiter.attack.value=.001;limiter.release.value=.09;
+    bus.gain.setValueAtTime(.0001,t);
+    bus.gain.exponentialRampToValueAtTime(.78,t+.003);
+    bus.gain.exponentialRampToValueAtTime(.0001,t+.19);
+    bus.connect(limiter);limiter.connect(audioCtx.destination);
+    function hit(type,high,low,peak,duration,offset){
+      var o=audioCtx.createOscillator(),g=audioCtx.createGain(),at=t+offset;
+      o.type=type;o.frequency.setValueAtTime(high,at);
+      o.frequency.exponentialRampToValueAtTime(low,at+duration*.85);
+      g.gain.setValueAtTime(peak,at);
+      g.gain.exponentialRampToValueAtTime(.0001,at+duration);
+      o.connect(g);g.connect(bus);o.start(at);o.stop(at+duration+.005);
+    }
+    hit('square',290,77,.78,.112,0);          // solid catch, rather than a soft tick
+    hit('triangle',1740,460,.63,.054,.002);   // sharp metal-on-metal click
+    hit('square',610,155,.29,.080,.033);      // small follow-through latch
+    var n=audioCtx.createBuffer(1,Math.round(audioCtx.sampleRate*.095),audioCtx.sampleRate),
+        d=n.getChannelData(0);
+    for(var i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
+    var src=audioCtx.createBufferSource(),hp=audioCtx.createBiquadFilter(),ng=audioCtx.createGain();
+    src.buffer=n;hp.type='highpass';hp.frequency.value=900;
+    ng.gain.setValueAtTime(.65,t);ng.gain.exponentialRampToValueAtTime(.0001,t+.085);
+    src.connect(hp);hp.connect(ng);ng.connect(bus);src.start(t);src.stop(t+.095);
   }
   function threeClicks(sel){var q=sel?(sel+' span'):'.sop-clicks span, .sop-vscene__clicks span';var dots=[].slice.call(document.querySelectorAll(q));dots.forEach(function(x){x.classList.remove('is-hit');});[0,1,2].forEach(function(d,i){clickSound(d);setTimeout(function(){if(dots[i])dots[i].classList.add('is-hit');},d*1000);});}
   function startPump(){
     ensureAudio();if(!audioCtx||pumpNodes)return;
-    var master=audioCtx.createGain();master.gain.value=.105;
-    var compressor=audioCtx.createDynamicsCompressor();compressor.threshold.value=-24;compressor.knee.value=18;compressor.ratio.value=5;compressor.attack.value=.01;compressor.release.value=.18;
-    master.connect(compressor).connect(audioCtx.destination);
-    var o1=audioCtx.createOscillator(),o2=audioCtx.createOscillator(),g1=audioCtx.createGain(),g2=audioCtx.createGain();
-    o1.type='sawtooth';o1.frequency.value=48;g1.gain.value=.52;o1.connect(g1).connect(master);
-    o2.type='triangle';o2.frequency.value=96;g2.gain.value=.24;o2.connect(g2).connect(master);
-    var buffer=audioCtx.createBuffer(1,audioCtx.sampleRate*2,audioCtx.sampleRate),data=buffer.getChannelData(0);for(var i=0;i<data.length;i++){data[i]=(Math.random()*2-1)*.55;}
-    var noise=audioCtx.createBufferSource(),filter=audioCtx.createBiquadFilter(),ng=audioCtx.createGain();noise.buffer=buffer;noise.loop=true;filter.type='lowpass';filter.frequency.value=260;filter.Q.value=.8;ng.gain.value=.13;noise.connect(filter).connect(ng).connect(master);
-    var lfo=audioCtx.createOscillator(),lfoGain=audioCtx.createGain();lfo.type='sine';lfo.frequency.value=5.2;lfoGain.gain.value=.025;lfo.connect(lfoGain).connect(master.gain);
-    o1.start();o2.start();noise.start();lfo.start();pumpNodes={master:master,o1:o1,o2:o2,noise:noise,lfo:lfo};
+    var now=audioCtx.currentTime;
+    var master=audioCtx.createGain(),compressor=audioCtx.createDynamicsCompressor();
+    master.gain.setValueAtTime(.0001,now);
+    master.gain.exponentialRampToValueAtTime(.48,now+.32); // stronger roughing-pump motor, compressor safeguards peaks
+    compressor.threshold.value=-20;compressor.knee.value=16;
+    compressor.ratio.value=4;compressor.attack.value=.008;compressor.release.value=.17;
+    master.connect(compressor);compressor.connect(audioCtx.destination);
+    var motor=audioCtx.createOscillator(),motorGain=audioCtx.createGain(),motorLP=audioCtx.createBiquadFilter();
+    motor.type='sawtooth';motor.frequency.value=55;motorGain.gain.value=.53;
+    motorLP.type='lowpass';motorLP.frequency.value=350;
+    motor.connect(motorLP);motorLP.connect(motorGain);motorGain.connect(master);
+    var harmonic=audioCtx.createOscillator(),harmonicGain=audioCtx.createGain();
+    harmonic.type='triangle';harmonic.frequency.value=110;harmonicGain.gain.value=.21;
+    harmonic.connect(harmonicGain);harmonicGain.connect(master);
+    // Filtered air-flow/rotor noise makes it sound like roughing equipment,
+    // not just a continuous electronic note.
+    var buf=audioCtx.createBuffer(1,audioCtx.sampleRate*2,audioCtx.sampleRate),arr=buf.getChannelData(0);
+    for(var i=0;i<arr.length;i++)arr[i]=Math.random()*2-1;
+    var air=audioCtx.createBufferSource(),airFilter=audioCtx.createBiquadFilter(),airGain=audioCtx.createGain();
+    air.buffer=buf;air.loop=true;airFilter.type='bandpass';airFilter.frequency.value=390;airFilter.Q.value=.52;
+    airGain.gain.value=.28;air.connect(airFilter);airFilter.connect(airGain);airGain.connect(master);
+    var pulse=audioCtx.createOscillator(),pulseDepth=audioCtx.createGain(),pulseBase=audioCtx.createConstantSource();
+    pulse.type='sine';pulse.frequency.value=7.8;pulseDepth.gain.value=.12;
+    pulseBase.offset.value=.86;
+    var chuff=audioCtx.createGain();chuff.gain.value=0;
+    // Keep periodic suction pulses positive: .86 + .12 * sin(t).
+    pulseBase.connect(chuff.gain);pulse.connect(pulseDepth);pulseDepth.connect(chuff.gain);
+    // Re-route air noise through the cyclic chuff envelope.
+    airGain.disconnect();airGain.connect(chuff);chuff.connect(master);
+    motor.start(now);harmonic.start(now);air.start(now);pulse.start(now);pulseBase.start(now);
+    pumpNodes={master:master,o1:motor,o2:harmonic,noise:air,lfo:pulse,base:pulseBase};
   }
-  function stopPump(){if(!pumpNodes)return;try{pumpNodes.master.gain.cancelScheduledValues(audioCtx.currentTime);pumpNodes.master.gain.setValueAtTime(Math.max(.0001,pumpNodes.master.gain.value||.08),audioCtx.currentTime);pumpNodes.master.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.32);pumpNodes.o1.stop(audioCtx.currentTime+.36);pumpNodes.o2.stop(audioCtx.currentTime+.36);pumpNodes.noise.stop(audioCtx.currentTime+.36);pumpNodes.lfo.stop(audioCtx.currentTime+.36);}catch(e){}pumpNodes=null;}
+  function stopPump(){
+    if(!pumpNodes||!audioCtx)return;
+    var n=pumpNodes,p=audioCtx.currentTime;
+    try{
+      n.master.gain.cancelScheduledValues(p);
+      n.master.gain.setValueAtTime(Math.max(.0001,n.master.gain.value||.1),p);
+      n.master.gain.exponentialRampToValueAtTime(.0001,p+.38);
+      [n.o1,n.o2,n.noise,n.lfo,n.base].forEach(function(node){if(node)node.stop(p+.40);});
+    }catch(e){}
+    pumpNodes=null;
+  }
 
 
   function clearSceneTimers(){
@@ -524,21 +701,21 @@
 
     // Full viewport -> slow zoom to goniometer -> three real insertion photographs with gentle crossfades.
     sceneTimers.push(setTimeout(function(){
-      if(state.currentSection!==2||state.currentStep!==3)return;
+      if(state.currentSection!==2||state.currentStep!==4)return;
       if(viewportScene)viewportScene.setAttribute('data-step4-phase','photo1');
     },5200));
     sceneTimers.push(setTimeout(function(){
-      if(state.currentSection!==2||state.currentStep!==3)return;
+      if(state.currentSection!==2||state.currentStep!==4)return;
       if(viewportScene)viewportScene.setAttribute('data-step4-phase','photo2');
     },7850));
     sceneTimers.push(setTimeout(function(){
-      if(state.currentSection!==2||state.currentStep!==3)return;
+      if(state.currentSection!==2||state.currentStep!==4)return;
       if(viewportScene)viewportScene.setAttribute('data-step4-phase','photo3');
     },10650));
 
     // Only after the final image is fully settled: play the three mechanical clicks.
     sceneTimers.push(setTimeout(function(){
-      if(state.currentSection!==2||state.currentStep!==3)return;
+      if(state.currentSection!==2||state.currentStep!==4)return;
       state.insertionDone=true;
       if(viewportClicks)viewportClicks.className='sop-vscene__clicks is-visible';
       threeClicks('.sop-vscene__clicks');
@@ -553,7 +730,7 @@
       if(viewportClicks)viewportClicks.className='sop-vscene__clicks';
       if(viewportScene)viewportScene.setAttribute('data-step4-phase','return');
       sceneTimers.push(setTimeout(function(){
-        if(state.currentSection!==2||state.currentStep!==3)return;
+        if(state.currentSection!==2||state.currentStep!==4)return;
         completeStep(function(){hideViewportScene();});
       },3800));
     });
@@ -572,12 +749,12 @@
       progress:true
     });
     if(viewportProgressBar)viewportProgressBar.style.width='0%';
-    setViewportControls('<div class="sop-pump-control-row"><button type="button" class="sop-pump-horizontal" id="sopViewportPumpToggle" aria-pressed="false"><span class="sop-pump-horizontal__label">AIR</span><span class="sop-pump-horizontal__track"><span class="sop-pump-horizontal__knob"></span></span><span class="sop-pump-horizontal__label">PUMP</span></button><button class="sop-flow-btn sop-flow-btn--success" id="sopViewportContinuePump" disabled>Set PUMP to begin</button></div>');
+    setViewportControls('<div class="sop-pump-control-row"><button type="button" class="sop-pump-vertical" id="sopViewportPumpToggle" aria-pressed="false" aria-label="PUMP / AIR switch: AIR selected. Click to set PUMP"><span class="sop-pump-vertical__label sop-pump-vertical__label--pump">PUMP</span><span class="sop-pump-vertical__track"><span class="sop-pump-vertical__knob"></span></span><span class="sop-pump-vertical__label sop-pump-vertical__label--air">AIR</span></button><button class="sop-flow-btn sop-flow-btn--success" id="sopViewportContinuePump" disabled>Set PUMP to begin</button></div>');
     var sw=document.getElementById('sopViewportPumpToggle'),cont=document.getElementById('sopViewportContinuePump');
     if(sw)sw.onclick=function(){
       if(state.pumpStarted)return;
       ensureAudio();state.pumpStarted=true;startPump();
-      sw.classList.add('is-pump');sw.setAttribute('aria-pressed','true');sw.disabled=true;
+      sw.classList.add('is-pump');sw.setAttribute('aria-pressed','true');sw.setAttribute('aria-label','PUMP / AIR switch: PUMP selected');sw.disabled=true;
       smoothSwapViewportFocus('../assets/images/sop/section2-step5-amber-only.png',60);
       if(cont){cont.textContent='Evacuating · wait for amber lamp OFF';cont.disabled=true;}
       var t0=Date.now(),dur=10000;
@@ -636,15 +813,75 @@
   }
 
   function totalCompleted(){return Object.keys(state.completed).filter(function(k){return state.completed[k];}).length;}
-  function updateProgress(){var total=sections.reduce(function(n,s){return n+(s.implemented?s.steps.length:0);},0);progress.style.width=Math.min(100,totalCompleted()/Math.max(1,total)*100)+'%';}
+  function updateProgress(){var total=sections.reduce(function(n,s){return n+(s.implemented&&!s.upcoming?s.steps.length:0);},0);progress.style.width=Math.min(100,totalCompleted()/Math.max(1,total)*100)+'%';}
   function currentSection(){return state.currentSection?sections[state.currentSection-1]:null;}
-  function nextVisibleSectionId(id){for(var i=id;i<sections.length;i++){if(!sections[i].hidden)return sections[i].id;}return null;}
+  function nextVisibleSectionId(id){for(var i=id;i<sections.length;i++){if(!sections[i].hidden&&!sections[i].upcoming)return sections[i].id;}return null;}
   function currentStep(){var s=currentSection();return s&&s.steps[state.currentStep];}
   function key(){return state.currentSection+'-'+(state.currentStep+1);}
 
+  function showSectionSkipModal(id){
+    var overlay=document.getElementById('sopSectionSkipModal');
+    if(!overlay){
+      overlay=document.createElement('div');
+      overlay.id='sopSectionSkipModal';
+      overlay.className='sop-skip-modal-overlay';
+      overlay.setAttribute('role','presentation');
+      overlay.innerHTML='<div class="sop-skip-modal" role="dialog" aria-modal="true" aria-labelledby="sopSkipTitle" aria-describedby="sopSkipDescription" tabindex="-1">'+
+        '<div class="sop-skip-modal__icon" aria-hidden="true">⚠</div>'+
+        '<h2 id="sopSkipTitle">Recommended learning sequence</h2>'+
+        '<p id="sopSkipDescription"></p>'+
+        '<div class="sop-skip-modal__actions"><button type="button" data-skip-cancel>Cancel</button><button type="button" data-skip-continue>Continue to section</button></div></div>';
+      document.body.appendChild(overlay);
+    }
+    var previouslyFocused=document.activeElement;
+    var description=overlay.querySelector('#sopSkipDescription');
+    var cancel=overlay.querySelector('[data-skip-cancel]');
+    var proceed=overlay.querySelector('[data-skip-continue]');
+    var modal=overlay.querySelector('[role="dialog"]');
+    description.textContent='For the best learning experience, start with Section 1 and complete the preceding sections in order. Do you want to open Section '+id+' anyway?';
+    proceed.textContent='Continue to Section '+id;
+    overlay.classList.add('is-visible');
+    function cleanup(){
+      overlay.classList.remove('is-visible');
+      overlay.removeEventListener('click',onBackdrop);
+      document.removeEventListener('keydown',onKeydown,true);
+      cancel.removeEventListener('click',onCancel);
+      proceed.removeEventListener('click',onProceed);
+      if(previouslyFocused&&previouslyFocused.focus)previouslyFocused.focus();
+    }
+    function onCancel(){cleanup();}
+    function onProceed(){cleanup();openSection(id);}
+    function onBackdrop(e){if(e.target===overlay)onCancel();}
+    function onKeydown(e){
+      if(e.key==='Escape'){e.preventDefault();onCancel();}
+      if(e.key==='Tab'){
+        var options=[cancel,proceed],i=options.indexOf(document.activeElement);
+        if(e.shiftKey&&i<=0){e.preventDefault();proceed.focus();}
+        else if(!e.shiftKey&&i>=1){e.preventDefault();cancel.focus();}
+      }
+    }
+    overlay.addEventListener('click',onBackdrop);
+    document.addEventListener('keydown',onKeydown,true);
+    cancel.addEventListener('click',onCancel);
+    proceed.addEventListener('click',onProceed);
+    cancel.focus();
+  }
+
   function renderNav(){
-    nav.innerHTML=sections.filter(function(s){return !s.hidden;}).map(function(s){var unlocked=state.sample&&s.id<=state.unlockedThrough;var active=s.id===state.currentSection;var done=!!state.sectionComplete[s.id];return '<button class="sop-mini-tab'+(active?' is-active':'')+(done?' is-complete':'')+'" data-section="'+s.id+'" title="'+s.title.replace(/"/g,'&quot;')+'" '+(!unlocked?'disabled':'')+'><span class="sop-mini-tab__n">Section '+s.id+'</span><span class="sop-mini-tab__t">'+s.short+'</span><span class="sop-mini-tab__state">'+(done?'✓':(!unlocked?'🔒':(s.implemented?'':'…')))+'</span></button>';}).join('');
-    [].slice.call(nav.querySelectorAll('[data-section]')).forEach(function(b){b.addEventListener('click',function(){var id=Number(b.dataset.section);if(!state.sample||id>state.unlockedThrough)return;openSection(id);});});
+    nav.innerHTML=sections.filter(function(s){return !s.hidden;}).map(function(s){
+      var upcoming=!!s.upcoming, unlocked=!!state.sample&&!upcoming;
+      var active=s.id===state.currentSection,done=!!state.sectionComplete[s.id];
+      return '<button class="sop-mini-tab'+(active?' is-active':'')+(done?' is-complete':'')+'" data-section="'+s.id+'" title="'+(upcoming?'Upcoming — ': '')+s.title.replace(/"/g,'&quot;')+'" '+(!unlocked?'disabled':'')+'><span class="sop-mini-tab__n">Section '+s.id+'</span><span class="sop-mini-tab__t">'+s.short+'</span><span class="sop-mini-tab__state">'+(upcoming?'◷ Upcoming':(done?'✓':(!unlocked?'🔒':'')))+'</span></button>';
+    }).join('');
+    [].slice.call(nav.querySelectorAll('[data-section]')).forEach(function(b){b.addEventListener('click',function(){
+      var id=Number(b.dataset.section),target=sections[id-1];
+      if(!state.sample||!target||target.upcoming||target.hidden)return;
+      if(id===state.currentSection)return;
+      // A learner may enter a later section, but is advised to follow the SOP in order.
+      var skipped=id>1&&sections.some(function(s){return s.id<id&&!s.upcoming&&!s.hidden&&s.implemented&&!state.sectionComplete[s.id];});
+      if(skipped){showSectionSkipModal(id);return;}
+      openSection(id);
+    });});
   }
 
   function refreshInstructionMarquee(){
@@ -695,9 +932,9 @@
   function setInstruction(){
     if(!state.sample){setInstructionText('Review the microscope interface and control locations. Press START when you are ready to begin.');hint.textContent='';hint.style.display='none';return;}
     var s=currentSection();
-    if(!s){setInstructionText('Select an unlocked section.');hint.textContent='';hint.style.display='none';return;}
+    if(!s){setInstructionText('Select a section.');hint.textContent='';hint.style.display='none';return;}
     if(state.sectionComplete[s.id]){setInstructionText('Section '+s.id+' complete: '+s.title+'.');hint.textContent='';hint.style.display='none';return;}
-    if(!s.implemented){setInstructionText(s.title+' — workflow content is awaiting the detailed operating procedure.');hint.textContent='';hint.style.display='none';return;}
+    if(!s.implemented){setInstructionText(s.title+' — this section is accessible; guided shutdown steps are not yet available.');hint.textContent='';hint.style.display='none';return;}
     var st=currentStep();
     setInstructionText('Section '+s.id+' · Step '+(state.currentStep+1)+': '+st.instruction);
     // v4.8.2: hints are intentionally not shown in the instruction bar.
@@ -713,6 +950,8 @@
     if(chillerSwapTimer){clearTimeout(chillerSwapTimer);chillerSwapTimer=null;}
     modalLocked=opts.locked!==false;
     resetModalPosition();
+    // Only the grid-loading step needs a compact body and a permanently visible footer.
+    if(modalPanel)modalPanel.classList.toggle('sop-grid-step3',opts.compactGrid===true);
     if(modalCloseBtn)modalCloseBtn.style.display=opts.dismissible===false?'none':'';
     modalTag.textContent=opts.tag||'SOP CHECK';modalTitle.textContent=opts.title||'';modalStep.textContent=opts.step||'';modalBody.innerHTML=opts.body||'';modalFooter.innerHTML=opts.footer||'';modal.classList.add('is-open');
   }
@@ -727,8 +966,8 @@
     // Dismissal never completes the active step. The instruction bar remains on that step.
     if(state.currentSection===2){
       if(state.currentStep===2)state.gridStage=0;
-      if(state.currentStep===3)state.insertionDone=false;
-      if(state.currentStep===4){if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}state.pumpStarted=false;state.evacuationDone=false;stopPump();}
+      if(state.currentStep===4)state.insertionDone=false;
+      if(state.currentStep===5){if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}state.pumpStarted=false;state.evacuationDone=false;stopPump();}
       if(state.currentStep===6){state.rotation15=false;state.rotation75=false;state.holderSeated=false;}
 
     }
@@ -782,11 +1021,11 @@
   }
 
   function showSampleModal(){
-    openModal({locked:true,tag:'SELECT SAMPLE',title:'Choose specimen type',step:'Required before Section 1',body:'<p class="sop-flow-modal__copy">Select the specimen type for this guided operating session. Section 1 remains locked until a sample is selected.</p><div class="sop-sample-grid"><button class="sop-sample-card" data-sample="nanoparticles"><div class="sop-sample-icon">●</div><strong>Nanoparticles / Suspension</strong><span>Routine nanoparticle imaging specimen.</span></button><button class="sop-sample-card" data-sample="bulk-metallic"><div class="sop-sample-icon">▦</div><strong>Bulk Metallic</strong><span>Electropolished metallic specimen.</span></button><button class="sop-sample-card" data-sample="cross-section"><div class="sop-sample-icon">◫</div><strong>Cross-section</strong><span>Focused Ion Beam (FIB) prepared cross-section.</span></button></div>',footer:''});
-    [].slice.call(modal.querySelectorAll('[data-sample]')).forEach(function(b){b.addEventListener('click',function(){ensureAudio();state.sample=b.dataset.sample;sampleInd.textContent=({nanoparticles:'NANOPARTICLES', 'bulk-metallic':'BULK METALLIC', 'cross-section':'CROSS-SECTION'}[state.sample]||'SELECTED');state.unlockedThrough=1;state.currentSection=1;state.currentStep=0;closeModal(true);setSessionControls(true);renderNav();setInstruction();setTimeout(showCurrentStep,SECTION1_STEP1_START_DELAY_MS);});});
+    openModal({locked:true,tag:'SELECT SAMPLE',title:'Choose specimen type',step:'Required before Section 1',body:'<p class="sop-flow-modal__copy">Select the specimen type for this guided operating session. Section 1 remains locked until a sample is selected.</p><div class="sop-sample-grid"><button class="sop-sample-card" data-sample="nanoparticles"><div class="sop-sample-icon">●</div><strong>Nanoparticles / Suspension</strong><span>Routine nanoparticle imaging specimen.</span></button><button class="sop-sample-card" data-sample="bulk-metallic" disabled title="Coming soon"><div class="sop-sample-icon">▦</div><strong>Bulk Metallic 🔒</strong><span>Coming soon · Electropolished metallic specimen.</span></button><button class="sop-sample-card" data-sample="cross-section" disabled title="Coming soon"><div class="sop-sample-icon">◫</div><strong>Cross-section 🔒</strong><span>Coming soon · Focused Ion Beam (FIB) prepared cross-section.</span></button></div>',footer:''});
+    [].slice.call(modal.querySelectorAll('[data-sample]')).forEach(function(b){b.addEventListener('click',function(){if(b.dataset.sample!=='nanoparticles')return;ensureAudio();state.sample=b.dataset.sample;sampleInd.textContent=({nanoparticles:'NANOPARTICLES', 'bulk-metallic':'BULK METALLIC', 'cross-section':'CROSS-SECTION'}[state.sample]||'SELECTED');state.unlockedThrough=1;state.currentSection=1;state.currentStep=0;closeModal(true);setSessionControls(true);renderNav();setInstruction();setTimeout(showCurrentStep,SECTION1_STEP1_START_DELAY_MS);});});
   }
 
-  function openSection(id){if(!sections[id-1]||sections[id-1].hidden)return;if(stepTransitionPending){delete state.completed[key()];updateProgress();}clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();closePcDrawer();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}if(id===2){state.gridStage=0;state.insertionDone=false;state.pumpStarted=false;state.evacuationDone=false;state.rotation15=false;state.rotation75=false;state.holderSeated=false;state.trackballMoved=false;}if(id===3){resetBfState();}if(id===4){resetDfState();}state.currentSection=id;state.currentStep=0;renderNav();setInstruction();if(state.sectionComplete[id])return;if(!sections[id-1].implemented)return;setTimeout(showCurrentStep,STEP_MODAL_READING_DELAY_MS);}
+  function openSection(id){if(!sections[id-1]||sections[id-1].hidden||sections[id-1].upcoming)return;hideS3BeamScreenStill();if(stepTransitionPending){delete state.completed[key()];updateProgress();}clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();releaseS3HtPhoto();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();closePcDrawer();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}if(id===2){state.gridStage=0;state.insertionDone=false;state.pumpStarted=false;state.evacuationDone=false;state.rotation15=false;state.rotation75=false;state.holderSeated=false;state.trackballMoved=false;}if(id===3){resetBfState();}if(id===4){resetDfState();}state.currentSection=id;state.currentStep=0;renderNav();setInstruction();if(state.sectionComplete[id])return;if(!sections[id-1].implemented)return;setTimeout(showCurrentStep,STEP_MODAL_READING_DELAY_MS);}
 
   function clearPendingStepTransition(){
     stepTransitionPending=false;pendingStepCleanup=null;
@@ -832,7 +1071,7 @@
     },STEP_RESULT_HOLD_MS);
   }
 
-  function showSectionComplete(s){var nextId=nextVisibleSectionId(s.id);openModal({locked:true,tag:'SECTION COMPLETE',title:'Section '+s.id+' completed',step:s.title,body:'<p class="sop-flow-modal__copy">All required steps in <strong>'+s.title+'</strong> have been completed.'+(nextId!==null?' Section '+nextId+' is now unlocked.':'')+'</p>',footer:nextId!==null?'<button class="sop-flow-btn sop-flow-btn--success" id="sopNextSection">Proceed to Section '+nextId+'</button>':'<button class="sop-flow-btn sop-flow-btn--success" id="sopFinish">Finish</button>'});var n=document.getElementById('sopNextSection');if(n)n.addEventListener('click',function(){closeModal(true);openSection(nextId);});var f=document.getElementById('sopFinish');if(f)f.addEventListener('click',function(){closeModal(true);});}
+  function showSectionComplete(s){var nextId=nextVisibleSectionId(s.id);openModal({locked:true,tag:'SECTION COMPLETE',title:'Section '+s.id+' completed',step:s.title,body:'<p class="sop-flow-modal__copy">All required steps in <strong>'+s.title+'</strong> have been completed.'+(nextId!==null?' You may proceed to Section '+nextId+'.':'')+'</p>',footer:nextId!==null?'<button class="sop-flow-btn sop-flow-btn--success" id="sopNextSection">Proceed to Section '+nextId+'</button>':'<button class="sop-flow-btn sop-flow-btn--success" id="sopFinish">Finish</button>'});var n=document.getElementById('sopNextSection');if(n)n.addEventListener('click',function(){closeModal(true);openSection(nextId);});var f=document.getElementById('sopFinish');if(f)f.addEventListener('click',function(){closeModal(true);});}
 
   function confirmFooter(label){return '<button class="sop-flow-btn sop-flow-btn--success" id="sopConfirmStep">'+label+'</button>';}
   function bindConfirm(){var b=document.getElementById('sopConfirmStep');if(b)b.addEventListener('click',function(){ensureAudio();b.disabled=true;completeStep(function(){closeModal(true);});});}
@@ -967,18 +1206,160 @@
     };
   }
 
-  function showSection1Step4Placeholder(){
-    cleanupHtRampUi();closeModal(true);hideSection1Tour();hideViewportScene();openPcDrawer();
-    var hg=document.querySelector('.temcon-group--hv'),vg=document.querySelector('.temcon-group--vacuum');
-    var status=document.getElementById('pc-ht-status'),val=document.getElementById('pc-ht-value'),acc=document.getElementById('pc-acc-value');
-    var evc=document.getElementById('pc-evc-status'),vac=document.getElementById('pc-vac-text');
-    if(hg)hg.classList.add('sop-ht-focus');if(vg)vg.classList.add('sop-evc-focus');
-    if(status)status.textContent='READY';if(val)val.textContent='80.00 kV';if(acc)acc.textContent='80 kV';if(evc)evc.textContent='READY';if(vac)vac.textContent='READY';
-    setTimeout(function(){
-      if(state.currentSection!==1||state.currentStep!==3)return;
-      openModal({locked:true,tag:'SECTION 1 · TEMCON READINESS',title:'Verify TEMCON readiness',step:'Step 4 of 7',body:'<p class="sop-flow-modal__copy">Verify the TEMCON screen shows <strong>HT READY</strong>, <strong>EVAC READY</strong>, and an accelerating voltage of <strong>80 kV</strong>.</p><p class="sop-flow-modal__copy" style="margin-top:10px">No HT voltage ramp is performed in this step.</p>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopConfirmHtRampPlaceholder">Confirm TEMCON readiness</button>'});
-      var b=document.getElementById('sopConfirmHtRampPlaceholder');if(b)b.addEventListener('click',function(){ensureAudio();b.disabled=true;completeStep(function(){if(hg)hg.classList.remove('sop-ht-focus');if(vg)vg.classList.remove('sop-evc-focus');closeModal(true);closePcDrawer();});});
-    },1800);
+  function ensureStep4HvReplica(){
+    var page=document.querySelector('[data-temcon-page="standard"]');
+    var hv=page&&page.querySelector('.temcon-group--hv');
+    if(!hv)return null;
+    var replica=document.getElementById('sopStep4HvReplica');
+    if(!replica){
+      replica=document.createElement('div');
+      replica.id='sopStep4HvReplica';
+      replica.className='sop-step4-hv-replica';
+      replica.innerHTML='<div class="sop-step4-window-image-wrap">'
+        +'<img class="sop-step4-window-image" src="../assets/images/sop/section1-step4-high-voltage-control.png" alt="High Voltage Control window">'
+        +'<button type="button" id="sopStep4HtOnHotspot" class="sop-step4-hotspot" aria-label="Press HT ON"></button>'
+        +'</div>';
+      hv.appendChild(replica);
+    }
+    return replica;
+  }
+
+  function ensureStep4Valve(){
+    var page=document.querySelector('[data-temcon-page="standard"]');
+    var hv=page&&page.querySelector('.temcon-group--hv');
+    if(!hv)return null;
+    var valve=document.getElementById('sopStep4Valve');
+    if(valve){
+      var existingImage=valve.querySelector('img.sop-step4-window-image--valve');
+      if(existingImage){existingImage.src='../assets/images/sop/section1-step4-valve-status.png';existingImage.alt='Valve Status window';}
+      valve.hidden=false;
+    }
+    if(!valve){
+      valve=document.createElement('fieldset');
+      valve.className='temcon-group sop-step4-valve-inline';
+      valve.id='sopStep4Valve';
+      valve.innerHTML='<div class="sop-step4-window-image-wrap sop-step4-window-image-wrap--valve">'
+        +'<img class="sop-step4-window-image sop-step4-window-image--valve" src="../assets/images/sop/section1-step4-valve-status.png" alt="Valve Status window">'
+        +'</div>';
+      hv.insertAdjacentElement('afterend',valve);
+    }
+    var alert=document.getElementById('sopStep4Alert');
+    if(!alert){
+      alert=document.createElement('div');
+      alert.id='sopStep4Alert';
+      alert.className='sop-step4-alert';
+      alert.innerHTML='<div class="sop-step4-alert__title">Accelerating Voltage</div><div class="sop-step4-alert__body">Setting the accelerating voltage.</div><div class="sop-step4-alert__actions"><button type="button" id="sopStep4AlertCancel">Cancel</button></div>';
+      page.appendChild(alert);
+    }
+    alert.hidden=true;
+    return valve;
+  }
+
+  // Share the single Valve Status window between the SOP steps; never append
+  // an additional image below the active TEMCON desktop.
+  function ensureSection2Step4Valve(){
+    var valve=ensureStep4Valve();
+    if(!valve)return null;
+    var image=valve.querySelector('img.sop-step4-window-image--valve');
+    if(image){
+      image.src='../assets/images/sop/section2-step4-valve-status.png';
+      image.alt='Valve Status window: Specimen / PIG4 EVAC Ready';
+    }
+    valve.hidden=false;
+    return valve;
+  }
+
+  function ensureSection2Step8Valve(){
+    // The same two TEMCON window slots are shared by Section 1 Step 4,
+    // Section 2 Step 4 and Section 2 Step 8.
+    var valve=ensureStep4Valve();
+    if(!valve)return null;
+    var image=valve.querySelector('img.sop-step4-window-image--valve');
+    if(image){
+      image.src='../assets/images/sop/section2-step8-valve-status.png';
+      image.alt='Valve Status window, showing Specimen / PIG4 EVAC Ready';
+    }
+    valve.hidden=false;
+    return valve;
+  }
+
+  function setSection1TopTemconState(htOn){
+    var htLamp=document.getElementById('pc-ht-lamp');
+    var beamLamp=document.getElementById('pc-beam-lamp');
+    var acc=document.getElementById('pc-acc-value');
+    var beamTop=document.getElementById('pc-beam-current-top');
+    var beamHv=document.getElementById('pc-beam-current-hv');
+    var htStatus=document.getElementById('pc-ht-status');
+    var htValue=document.getElementById('pc-ht-value');
+    var filStatus=document.getElementById('pc-fil-status');
+    if(htLamp){htLamp.classList.toggle('is-on',!!htOn);htLamp.innerHTML='<strong>HT</strong>';}
+    if(beamLamp){beamLamp.classList.remove('is-on');beamLamp.innerHTML='Beam<br><strong>NotReady</strong>';}
+    if(acc)acc.textContent='80.00 kV';
+    if(beamTop)beamTop.textContent=htOn?'8 µA':'0 µA';
+    if(beamHv)beamHv.textContent=htOn?'8.0 µA':'0.1 µA';
+    if(htStatus)htStatus.textContent='Ready';
+    if(htValue)htValue.textContent='80.00 kV';
+    if(filStatus)filStatus.textContent='NotReady';
+    var pd=document.getElementById('pc-current-density'); if(pd) pd.textContent='0.0 pA/cm²';
+    var stg=document.querySelector('.temcon-status__stage-mode'); if(stg&&!stg.querySelector('#sopStageNeutralVisible')) stg.textContent='Stage Neutral';
+  }
+
+  var step4HtReadyForConfirmation=false;
+  function showStep4StatusConfirmation(){
+    if(!step4HtReadyForConfirmation)return;
+    openModal({locked:false,tag:'SECTION 1 · TEMCON STATUS',title:'Confirm HT and valve status',step:'Step 4 of 7',
+      body:'<p class="sop-flow-modal__copy">Verify that the <strong>HT</strong> indicator is <strong>green</strong> at <strong>80.00 kV</strong>, the Beam status remains <strong>NotReady</strong>, and the Valve Status window shows the expected <strong>Evac Ready / vacuum status</strong> indicators.</p>',
+      footer:'<button type="button" class="sop-flow-btn sop-flow-btn--success" id="sopStep4ConfirmStatus">Confirm HT and valve status</button>'});
+    var confirm=document.getElementById('sopStep4ConfirmStatus');
+    if(confirm)confirm.onclick=function(){
+      if(confirm.disabled)return;
+      ensureAudio();confirm.disabled=true;
+      completeStep(function(){closeModal(true);hideSection1Step4Desk();closePcDrawer();});
+    };
+  }
+  var step4AlertTimer=null,step4ConfirmTimer=null;
+  function hideSection1Step4Desk(){
+    if(step4AlertTimer){clearTimeout(step4AlertTimer);step4AlertTimer=null;}
+    step4HtReadyForConfirmation=false;
+    var page=document.querySelector('[data-temcon-page="standard"]');
+    if(page)page.classList.remove('sop-step4-layout');
+    var alert=document.getElementById('sopStep4Alert');if(alert)alert.hidden=true;
+    var on=document.getElementById('sopStep4HtOnHotspot');if(on){on.onclick=null;on.disabled=false;on.classList.remove('is-active');}
+    if(step4ConfirmTimer){clearTimeout(step4ConfirmTimer);step4ConfirmTimer=null;}
+    closeModal(true);
+  }
+
+  function runSection1Step4Interactive(){
+    clearHtRampTimers();cleanupHtRampUi();closeModal(true);hideSection1Tour();hideViewportScene();openPcDrawer();selectTemconPage('standard');
+    step4HtReadyForConfirmation=false;
+    var replica=ensureStep4HvReplica();
+    var valve=ensureStep4Valve();
+    if(!replica||!valve)return;
+    replica.hidden=false;valve.hidden=false;
+    var page=document.querySelector('[data-temcon-page="standard"]');
+    page.classList.add('sop-step4-layout');
+    setSection1TopTemconState(false);
+    var on=document.getElementById('sopStep4HtOnHotspot');
+    if(!on)return;
+    on.disabled=false;on.classList.add('is-active');
+    on.onclick=function(){
+      if(on.disabled)return;
+      ensureAudio();on.disabled=true;on.classList.remove('is-active');
+      var alert=document.getElementById('sopStep4Alert');if(alert)alert.hidden=false;
+      var cancel=document.getElementById('sopStep4AlertCancel');if(cancel)cancel.onclick=function(){if(alert)alert.hidden=true;};
+      step4AlertTimer=setTimeout(function(){
+        step4AlertTimer=null;
+        if(state.currentSection!==1||state.currentStep!==3||!page.classList.contains('sop-step4-layout'))return;
+        if(alert)alert.hidden=true;
+        setSection1TopTemconState(true);
+        step4ConfirmTimer=setTimeout(function(){
+          step4ConfirmTimer=null;
+          if(state.currentSection!==1||state.currentStep!==3||!page.classList.contains('sop-step4-layout'))return;
+          step4HtReadyForConfirmation=true;
+          showStep4StatusConfirmation();
+        },1800);
+      },2600);
+    };
   }
 
   function showSection1(){
@@ -987,7 +1368,7 @@
     if(n===1){runSection1Step1Tour();}
     else if(n===2){openModal({locked:true,tag:'SECTION 1 · SAFETY',title:st.title,step:'Step 2 of 7',body:'<p class="sop-flow-modal__copy">'+st.instruction+'</p>',footer:confirmFooter('Confirm room condition')});bindConfirm();}
     else if(n===3){runSection1Step3Tour();}
-    else if(n===4){showSection1Step4Placeholder();}
+    else if(n===4){runSection1Step4Interactive();}
     else if(n===5){runSection1Step5Tour();}
     else if(n===6){
       openModal({locked:true,tag:'SECTION 1 · STARTUP',title:st.title,step:'Step 6 of 7',body:'<p class="sop-flow-modal__copy">'+st.instruction+'</p><div class="sop-stabilize"><div class="sop-stabilize__bar"><span id="sopStabilizeBar"></span></div><div class="sop-stabilize__read" id="sopStabilizeRead">Stabilizing · 0%</div></div>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopStabilizeContinue" disabled>Stabilizing…</button>'});
@@ -998,8 +1379,8 @@
     else if(n===7){var d=new Date();var date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');var time=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');openModal({locked:true,tag:'SECTION 1 · LOGBOOK',title:st.title,step:'Step 7 of 7',body:'<p class="sop-flow-modal__copy">'+st.instruction+'</p><div class="sop-log-grid"><div class="sop-log-field"><label>Date</label><input id="sopLogDate" type="date" value="'+date+'"></div><div class="sop-log-field"><label>Time</label><input id="sopLogTime" type="time" value="'+time+'"></div><div class="sop-log-field sop-log-field--wide"><label>Operator name</label><input id="sopLogName" type="text" placeholder="Enter operator name"></div></div>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopSaveLog" disabled>Save startup log</button>'});var name=document.getElementById('sopLogName'),save=document.getElementById('sopSaveLog');function valid(){save.disabled=!name.value.trim();}name.addEventListener('input',valid);save.addEventListener('click',function(){if(!name.value.trim())return;save.disabled=true;completeStep(function(){closeModal(true);});});}
   }
 
-  function openPcDrawer(){if(!drawer)return;var dt=document.getElementById('pc-drawer-title');if(dt)dt.textContent='PC · TEM CONTROL';drawer.classList.add('is-open');if(drawerHandle){drawerHandle.setAttribute('aria-expanded','true');drawerHandle.title='Collapse PC drawer';}if(pcTem){pcTem.hidden=false;pcTem.classList.add('is-active');pcTem.setAttribute('aria-hidden','false');}if(pcCam){pcCam.hidden=true;pcCam.classList.remove('is-active');}if(viewerStage)viewerStage.classList.add('has-drawer');var tabs=[].slice.call(document.querySelectorAll('[data-temcon-tab]'));tabs.forEach(function(b){var on=b.dataset.temconTab==='standard';b.classList.toggle('is-selected',on);b.setAttribute('aria-selected',on?'true':'false');});[].slice.call(document.querySelectorAll('[data-temcon-page]')).forEach(function(p){var on=p.dataset.temconPage==='standard';p.hidden=!on;p.classList.toggle('is-selected',on);});}
-  function closePcDrawer(){if(!drawer)return;drawer.classList.remove('is-open');if(drawerHandle)drawerHandle.setAttribute('aria-expanded','false');if(pcTem)pcTem.setAttribute('aria-hidden','true');if(viewerStage)viewerStage.classList.remove('has-drawer');var hg=document.querySelector('.temcon-group--hv');if(hg)hg.classList.remove('sop-ht-focus');var vg=document.querySelector('.temcon-group--vacuum');if(vg)vg.classList.remove('sop-evc-focus');var sp=document.querySelector('[data-temcon-page="stage"]');if(sp)sp.classList.remove('sop-holder-model-step');var hm=document.getElementById('pc-holder-model-pulldown');if(hm)hm.hidden=true;[].slice.call(document.querySelectorAll('[data-action="holder-type"]')).forEach(function(b){b.disabled=false;b.removeAttribute('aria-disabled');});}
+  function openPcDrawer(){if(!drawer)return;var dt=document.getElementById('pc-drawer-title');if(dt)dt.textContent='PC · TEM CONTROL';drawer.classList.add('is-open');if(drawerHandle){drawerHandle.setAttribute('aria-expanded','true');drawerHandle.title='Collapse PC drawer';}if(pcTem){pcTem.hidden=false;pcTem.classList.add('is-active');pcTem.setAttribute('aria-hidden','false');}if(pcCam){pcCam.hidden=true;pcCam.classList.remove('is-active');}if(viewerStage)viewerStage.classList.add('has-drawer');var storedHolder=document.getElementById('pc-holder-model-select');if(storedHolder&&state.selectedHolder)storedHolder.value=state.selectedHolder;var tabs=[].slice.call(document.querySelectorAll('[data-temcon-tab]'));tabs.forEach(function(b){var on=b.dataset.temconTab==='standard';b.classList.toggle('is-selected',on);b.setAttribute('aria-selected',on?'true':'false');});[].slice.call(document.querySelectorAll('[data-temcon-page]')).forEach(function(p){var on=p.dataset.temconPage==='standard';p.hidden=!on;p.classList.toggle('is-selected',on);});}
+  function closePcDrawer(){if(!drawer)return;drawer.classList.remove('is-open');if(drawerHandle)drawerHandle.setAttribute('aria-expanded','false');if(pcTem)pcTem.setAttribute('aria-hidden','true');if(viewerStage)viewerStage.classList.remove('has-drawer');var hg=document.querySelector('.temcon-group--hv');if(hg)hg.classList.remove('sop-ht-focus');var vg=document.querySelector('.temcon-group--vacuum');if(vg)vg.classList.remove('sop-evc-focus');var sp=document.querySelector('[data-temcon-page="stage"]');if(sp)sp.classList.remove('sop-holder-model-step');var win=document.querySelector('.temcon-window');if(win)win.classList.remove('sop-holder-model-guided');hideSection1Step4Desk();hideSection2Step4Desk();releaseS3HtPhoto();var hm=document.getElementById('pc-holder-model-pulldown');if(hm)hm.hidden=false;var cf=document.getElementById('pc-holder-model-confirm');if(cf){cf.hidden=true;cf.disabled=true;}var fb=document.getElementById('pc-holder-model-feedback');if(fb)fb.hidden=true;[].slice.call(document.querySelectorAll('[data-action="holder-type"]')).forEach(function(b){b.disabled=false;b.removeAttribute('aria-disabled');});}
   function openCameraDrawer(){
     if(!drawer)return;
     drawer.classList.add('is-open');
@@ -1016,10 +1397,10 @@
     var n=state.currentStep+1,st=currentStep();closePcDrawer();
     if(n===1){hideViewportScene();openModal({locked:true,tag:'SECTION 2 · HOLDER',title:st.title,step:'Step 1 of 8',body:'<p class="sop-flow-modal__copy">'+st.instruction+'</p><div class="sop-flow-modal__visual"><img src="../assets/images/sop/section2-step1-holder-orings.png" alt="Actual specimen holder photograph showing the O-rings"></div><p class="sop-flow-modal__copy" style="margin-top:10px">Inspect the visible O-rings for damage, dust, dried grease, or contamination. Clean with a lint-free wipe and apply only light re-greasing if required.</p>',footer:confirmFooter('Confirm O-ring inspection')});bindConfirm();}
     else if(n===2){showSection2Step2();}
-    else if(n===3){hideViewportScene();openModal({locked:true,tag:'SECTION 2 · GRID LOADING',title:st.title,step:'Step 3 of 8',body:'<p class="sop-flow-modal__copy">'+st.instruction+'</p><div class="sop-flow-modal__visual"><div style="width:min(760px,100%)"><img src="../assets/images/sop/section2-step3-grid-loading.png" alt="Actual holder cartridge photograph showing TEM grid loading with tweezers" style="margin-bottom:16px;"><div class="sop-grid-checks"><label class="sop-grid-check"><input type="checkbox" id="gridOpen"><span>1 · Open cartridge</span></label><label class="sop-grid-check is-disabled"><input type="checkbox" id="gridPlace" disabled><span>2 · Place grid sample-side up</span></label><label class="sop-grid-check is-disabled"><input type="checkbox" id="gridClose" disabled><span>3 · Close retaining clip</span></label></div></div></div>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="gridContinue" disabled>Continue</button>'});bindGrid();}
-    else if(n===4){runSection2Step4();}
-    else if(n===5){runSection2Step5();}
-    else if(n===6){runSection2Step7Evc();}
+    else if(n===3){hideViewportScene();openModal({locked:true,compactGrid:true,tag:'SECTION 2 · GRID LOADING',title:st.title,step:'Step 3 of 8',body:'<p class="sop-flow-modal__copy">'+st.instruction+'</p><div class="sop-flow-modal__visual"><div style="width:min(760px,100%)"><img src="../assets/images/sop/section2-step3-grid-loading.png" alt="Actual holder cartridge photograph showing TEM grid loading with tweezers" style="margin-bottom:16px;"><div class="sop-grid-checks"><label class="sop-grid-check"><input type="checkbox" id="gridOpen"><span>1 · Open cartridge</span></label><label class="sop-grid-check is-disabled"><input type="checkbox" id="gridPlace" disabled><span>2 · Place grid sample-side up</span></label><label class="sop-grid-check is-disabled"><input type="checkbox" id="gridClose" disabled><span>3 · Close retaining clip</span></label></div></div></div>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="gridContinue" disabled>Continue</button>'});bindGrid();}
+    else if(n===4){runSection2Step4Evac();}
+    else if(n===5){runSection2Step4();}
+    else if(n===6){runSection2Step5();}
     else if(n===7){runSection2Step8Rotation();}
     else if(n===8){runSection2Step10HolderModel();}
   }
@@ -1028,15 +1409,44 @@
     tabs.forEach(function(b){var on=b.dataset.temconTab===name;b.classList.toggle('is-selected',on);b.setAttribute('aria-selected',on?'true':'false');});
     [].slice.call(document.querySelectorAll('[data-temcon-page]')).forEach(function(p){var on=p.dataset.temconPage===name;p.hidden=!on;p.classList.toggle('is-selected',on);});
   }
-  function runSection2Step7Evc(){
-    hideViewportScene();closeModal(true);openPcDrawer();selectTemconPage('stage');
-    var evc=document.getElementById('pc-evc-status'),vac=document.querySelector('.temcon-group--vacuum'),air=document.getElementById('pc-vac-text');
-    if(evc)evc.textContent='READY';if(air)air.textContent='READY';if(vac)vac.classList.add('sop-evc-focus');
-    setTimeout(function(){
-      if(state.currentSection!==2||state.currentStep!==5)return;
-      openModal({locked:true,tag:'SECTION 2 · TEMCON',title:'Confirm EVC READY',step:'Step 6 of 8',body:'<p class="sop-flow-modal__copy">Verify the highlighted <strong>Specimen Exchange / Vacuum</strong> area in TEMCON. Confirm that <strong>EVC Status</strong> shows <strong>READY</strong> before rotating and fully inserting the holder.</p>',footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopConfirmEvc">Confirm EVC READY</button>'});
-      var b=document.getElementById('sopConfirmEvc');if(b)b.addEventListener('click',function(){b.disabled=true;completeStep(function(){if(vac)vac.classList.remove('sop-evc-focus');closeModal(true);closePcDrawer();});});
-    },3600);
+
+  var section2Step4Timer=null;
+  function hideSection2Step4Desk(){
+    if(section2Step4Timer){clearTimeout(section2Step4Timer);section2Step4Timer=null;}
+    var page=document.querySelector('[data-temcon-page="standard"]');
+    if(page)page.classList.remove('sop-step4-layout');
+    var valve=document.getElementById('sopStep4Valve');
+    if(valve)valve.hidden=true;
+    var replica=document.getElementById('sopStep4HvReplica');
+    if(replica)replica.hidden=true;
+  }
+
+  function runSection2Step4Evac(){
+    hideViewportScene();closeModal(true);openPcDrawer();selectTemconPage('standard');
+    var evc=document.getElementById('pc-evc-status'),air=document.getElementById('pc-vac-text');
+    var page=document.querySelector('[data-temcon-page="standard"]');
+    var replica=ensureStep4HvReplica();
+    var valve=ensureSection2Step4Valve();
+    if(!page||!replica||!valve)return;
+    page.classList.add('sop-step4-layout');
+    replica.hidden=false;valve.hidden=false;
+    var htOn=document.getElementById('sopStep4HtOnHotspot');
+    if(htOn){htOn.disabled=true;htOn.classList.remove('is-active');}
+    if(evc)evc.textContent='READY';if(air)air.textContent='READY';
+    setSection1TopTemconState(true);
+    section2Step4Timer=setTimeout(function(){
+      section2Step4Timer=null;
+      if(state.currentSection!==2||state.currentStep!==3)return;
+      openModal({locked:true,tag:'SECTION 2 · TEMCON',title:'Confirm EVAC READY for PIG4',step:'Step 4 of 8',
+        body:'<p class="sop-flow-modal__copy">In the <strong>Valve Status</strong> window, verify specifically that <strong>Specimen / PIG4</strong> shows <strong>EVAC Ready</strong> before proceeding with holder insertion.</p>',
+        footer:'<button class="sop-flow-btn sop-flow-btn--success" id="sopConfirmPIG4Evac">Confirm PIG4 EVAC Ready</button>'});
+      var button=document.getElementById('sopConfirmPIG4Evac');
+      if(button)button.addEventListener('click',function(){
+        if(button.disabled)return;
+        ensureAudio();button.disabled=true;
+        completeStep(function(){closeModal(true);hideSection2Step4Desk();closePcDrawer();});
+      });
+    },8000);
   }
 
   function runSection2Step8Rotation(){
@@ -1060,7 +1470,7 @@
     setViewportControls(controls);
     var b15=document.getElementById('rot15Btn'),b75=document.getElementById('rot75Btn'),next=document.getElementById('rotContinue');
 
-    // Existing Step-4 final position first, then gently fade to the first new fully-insertion image.
+    // Previous first-stop insertion (Section 2 Step 5) position first, then fade to the fully-insertion image.
     sceneTimers.push(setTimeout(function(){
       if(state.currentSection!==2||state.currentStep!==6)return;
       if(viewportScene)viewportScene.setAttribute('data-step8-phase','position4');
@@ -1100,40 +1510,70 @@
     },1800);
   }
 
+  // Step 8: choosing Single Tilt in the real TEMCON dropdown opens a standalone
+  // confirmation modal. Never put a confirmation button under the dropdown.
+  var showSection2Step8Confirmation=null;
   function runSection2Step10HolderModel(){
-    closeModal(true);hideViewportScene();openPcDrawer();selectTemconPage('stage');
+    closeModal(true);hideViewportScene();openPcDrawer();selectTemconPage('standard');
+    var page=document.querySelector('[data-temcon-page="standard"]');
     var stagePage=document.querySelector('[data-temcon-page="stage"]');
+    var replica=ensureStep4HvReplica(),valve=ensureSection2Step8Valve();
     var menu=document.getElementById('pc-holder-model-pulldown');
     var select=document.getElementById('pc-holder-model-select');
     var feedback=document.getElementById('pc-holder-model-feedback');
     var confirm=document.getElementById('pc-holder-model-confirm');
     var holderStatus=document.getElementById('pc-holder-status');
-    if(stagePage)stagePage.classList.add('sop-holder-model-step');
+    var win=document.querySelector('.temcon-window');
+    if(!page||!replica||!valve||!select)return;
+    page.classList.add('sop-step4-layout');
+    replica.hidden=false;valve.hidden=false;
+    var htHotspot=document.getElementById('sopStep4HtOnHotspot');
+    if(htHotspot){htHotspot.disabled=true;htHotspot.classList.remove('is-active');}
+    setSection1TopTemconState(true);
+    if(stagePage)stagePage.classList.remove('sop-holder-model-step');
+    if(win)win.classList.add('sop-holder-model-guided');
     if(menu)menu.hidden=false;
-    if(select){select.value='';select.disabled=false;}
-    if(feedback){feedback.textContent='Select the holder model used for this specimen holder.';feedback.className='temcon-holder-model__feedback';}
-    if(confirm){confirm.disabled=true;}
+    var placeholder=select.querySelector('option[value=""]');if(placeholder)placeholder.remove();
+    // The TEMCON desktop keeps its normal Beryllium default until the learner
+    // explicitly selects the required standard Single Tilt holder.
+    select.value='single-tilt-beryllium';select.disabled=false;
+    if(confirm){confirm.hidden=true;confirm.disabled=true;confirm.onclick=null;}
+    if(feedback){feedback.hidden=true;feedback.textContent='';feedback.className='temcon-holder-model__feedback';}
     var oldButtons=[].slice.call(document.querySelectorAll('[data-action="holder-type"]'));
     oldButtons.forEach(function(b){b.disabled=true;b.setAttribute('aria-disabled','true');});
-    if(select)select.onchange=function(){
-      ensureAudio();
-      var ok=select.value==='single-tilt';
-      if(confirm)confirm.disabled=!ok;
-      if(feedback){
-        feedback.textContent=ok?'Single Tilt holder selected. Confirm to complete specimen loading.':'This workflow uses the Single Tilt holder. Select Single Tilt.';
-        feedback.className='temcon-holder-model__feedback '+(ok?'is-ready':'is-warning');
-      }
-      if(holderStatus)holderStatus.textContent=ok?'SINGLE TILT SELECTED':'NOT SELECTED';
+    function restore(){
+      showSection2Step8Confirmation=null;
+      if(win)win.classList.remove('sop-holder-model-guided');
+      if(confirm){confirm.hidden=true;confirm.disabled=true;confirm.onclick=null;}
+      if(feedback)feedback.hidden=true;
+      select.onchange=null;
+      select.value=state.selectedHolder||'single-tilt'; // preserve confirmed holder when leaving Section 2
+      oldButtons.forEach(function(b){b.disabled=false;b.removeAttribute('aria-disabled');});
+      hideSection2Step4Desk();
+      closePcDrawer();
+    }
+    showSection2Step8Confirmation=function(){
+      if(state.currentSection!==2||state.currentStep!==7||select.value!=='single-tilt')return;
+      openModal({locked:false,tag:'SECTION 2 · HOLDER MODEL',title:'Confirm Single Tilt Holder',step:'Step 8 of 8',
+        body:'<p class="sop-flow-modal__copy">Verify that the TEMCON holder dropdown shows <strong>EM-21010/21020 : Single Tilt Holder</strong> (not Single Tilt Beryllium Holder). Confirm this selection to complete specimen-holder loading.</p>',
+        footer:'<button type="button" class="sop-flow-btn sop-flow-btn--success" id="sopConfirmSingleTilt">Confirm Single Tilt Holder</button>'});
+      var btn=document.getElementById('sopConfirmSingleTilt');
+      if(btn)btn.onclick=function(){
+        if(btn.disabled||state.currentSection!==2||state.currentStep!==7||select.value!=='single-tilt')return;
+        ensureAudio();btn.disabled=true;
+        if(holderStatus)holderStatus.textContent='SINGLE TILT SELECTED';
+        state.selectedHolder='single-tilt';
+        completeStep(function(){closeModal(true);restore();});
+      };
     };
-    if(confirm)confirm.onclick=function(){
-      if(!select||select.value!=='single-tilt')return;
-      ensureAudio();confirm.disabled=true;
-      completeStep(function(){
-        if(stagePage)stagePage.classList.remove('sop-holder-model-step');
-        if(menu)menu.hidden=true;
-        oldButtons.forEach(function(b){b.disabled=false;b.removeAttribute('aria-disabled');});
-        closePcDrawer();
-      });
+    select.onchange=function(){
+      ensureAudio();
+      var correct=select.value==='single-tilt';
+      if(holderStatus)holderStatus.textContent=correct?'SINGLE TILT SELECTED':'NOT SELECTED';
+      // Choosing the right holder opens a separate modal; there is no inline
+      // confirmation button or feedback panel obstructing the TEMCON controls.
+      if(correct){showSection2Step8Confirmation();}
+      else if(modal.classList.contains('is-open')&&modalTag.textContent==='SECTION 2 · HOLDER MODEL')closeModal(true);
     };
   }
 
@@ -1146,7 +1586,7 @@
     setPcText('pc-spot-value',String(bfState.spot||2));setPcText('pc-spot-value-top',String(bfState.spot||2));setPcText('pc-alpha-value',String(bfState.alpha||2));setPcText('pc-alpha-value-top',String(bfState.alpha||2));setPcText('pc-mag-value',mag);setPcText('pc-stg-z',Number(bfState.z||0).toFixed(1));
     var modeRead=document.getElementById('mag-mode-readout');if(modeRead)modeRead.textContent=mode;
     var magRead=document.getElementById('mag-caml-readout');if(magRead)magRead.textContent=mag;
-    var beamLamp=document.getElementById('pc-beam-lamp');if(beamLamp){beamLamp.classList.toggle('is-on',beam);var bs=beamLamp.querySelector('strong');if(bs)bs.textContent=beam?'ON':'OFF';}
+    var beamLamp=document.getElementById('pc-beam-lamp');if(beamLamp){beamLamp.classList.toggle('is-on',beam);var bs=beamLamp.querySelector('strong');if(bs)bs.textContent=beam?'ON':((state.currentSection===3&&state.currentStep<4)?'NotReady':'OFF');}
   }
 
   function resetBfState(){
@@ -1184,7 +1624,7 @@
     'stage-xy':{panel:'stage',label:'SPEC CONTROL · Trackball',x:19.0,y:42.0,w:63.0,h:38.0,note:'Actual JEOL specimen-stage control. Use the large trackball for specimen X/Y movement; the magnifier shows the real hardware layout.'}
   };
   function removeS3LocatorButtons(){[].slice.call(document.querySelectorAll('.sop-control-locator')).forEach(function(b){b.remove();});}
-  function closeS3Locator(){var m=document.getElementById('sopControlLocator');if(m){m.classList.remove('is-open');m.setAttribute('aria-hidden','true');}}
+  function closeS3Locator(){var m=document.getElementById('sopControlLocator');if(m){var pre=m.classList.contains('sop-prestart-reference');m.classList.remove('is-open','sop-prestart-reference');m.setAttribute('aria-hidden','true');if(pre){var hl=document.getElementById('sopLocatorHighlight');if(hl)hl.style.display='';if(prestartReturnFocus)prestartReturnFocus.focus();}}}
   function openS3Locator(controlKey){
     var cfg=s3LocatorMap[controlKey],m=document.getElementById('sopControlLocator');if(!cfg||!m)return;
     var img=document.getElementById('sopLocatorImage'),hl=document.getElementById('sopLocatorHighlight'),title=document.getElementById('sopLocatorTitle'),note=document.getElementById('sopLocatorNote');
@@ -1193,7 +1633,7 @@
     }
     if(title)title.textContent=(cfg.panel==='l1'?'L1 · ':(cfg.panel==='r1'?'R1 · ':'SPECIMEN STAGE · '))+cfg.label.replace('SPEC CONTROL · ','');
     if(note)note.textContent=cfg.note||'Highlighted area shows the active control on the actual TEM panel.';
-    if(hl){hl.style.left=cfg.x+'%';hl.style.top=cfg.y+'%';hl.style.width=cfg.w+'%';hl.style.height=cfg.h+'%';}
+    if(hl){hl.style.display='';hl.style.left=cfg.x+'%';hl.style.top=cfg.y+'%';hl.style.width=cfg.w+'%';hl.style.height=cfg.h+'%';}
     m.classList.add('is-open');m.setAttribute('aria-hidden','false');
   }
   function attachS3Locator(control,key){
@@ -1276,7 +1716,7 @@
     if(bfScene||!viewScreen)return;
     var w=document.createElement('div');w.id='sopBfScene';w.className='sop-bf-scene sop-bf-scene--screen';w.hidden=true;
     w.innerHTML='<div class="sop-bf-screen" id="sopBfScreen">'
-      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/real-sample/Tv5.jpg" alt="Real Bright Field specimen view">'
+      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/real-sample/Tv5.png" alt="Real Bright Field specimen view">'
       +'<div class="sop-bf-feature" id="sopBfFeature"><span></span></div>'
       +'<div class="sop-bf-beam" id="sopBfBeam"></div>'
       +'<div class="sop-bf-direct" id="sopBfDirect"></div>'
@@ -1288,11 +1728,11 @@
     viewScreen.appendChild(w);bfScene=w;bfScreen=document.getElementById('sopBfScreen');bfSpecimen=document.getElementById('sopBfSpecimen');bfBeam=document.getElementById('sopBfBeam');bfFeature=document.getElementById('sopBfFeature');bfDirect=document.getElementById('sopBfDirect');bfApertureRing=document.getElementById('sopBfApertureRing');bfFringe=document.getElementById('sopBfFringe');bfStatus=document.getElementById('sopBfStatus');bfControlCard=null;bfActions=null;
   }
   function hideBfScene(){ensureBfScene();clearBfTimers();clearPhysicalFocus();s3LockControls();if(!bfScene)return;bfScene.hidden=true;bfScene.className='sop-bf-scene sop-bf-scene--screen';if(viewEmpty)viewEmpty.style.display='';if(bfScreen)bfScreen.onclick=null;}
-  function showBfScene(){closeModal(true);closePcDrawer();hideViewportScene();hideSection1Tour();ensureBfScene();clearBfTimers();if(!bfScene)return;bfScene.hidden=false;bfScene.className='sop-bf-scene sop-bf-scene--screen';bfScene.classList.remove('is-fluorescent');if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');bfSetSpecimenImage(bfResolveImageKey());bfRender();syncPcLiveStatus();}
+  function showBfScene(){hideS3BeamScreenStill();closeModal(true);closePcDrawer();hideViewportScene();hideSection1Tour();ensureBfScene();clearBfTimers();if(!bfScene)return;bfScene.hidden=false;bfScene.className='sop-bf-scene sop-bf-scene--screen';bfScene.classList.remove('is-fluorescent');if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');bfSetSpecimenImage(bfResolveImageKey());bfRender();syncPcLiveStatus();}
   function bfSetStatus(text){if(bfStatus){bfStatus.textContent='';bfStatus.style.display='none';}}
   function updateBfDummyCue(){
     if(!bfDummyBadge && !bfStepIndicator) return;
-    var n=(state.currentSection===3)?(state.currentStep+1):0;
+    var n=(state.currentSection===3)?(state.currentStep+1+(state.currentStep>=4?1:0)):0;
     var label='REAL SAMPLE IMAGE', title='', sub='';
     if(n>=10){
       if(n===10){label='DUMMY · CA CENTERING'; title='Condenser Aperture Centering'; sub='Move CA X/Y so the beam expansion stays concentric about the optical axis.';}
@@ -1330,7 +1770,7 @@
     var ind=document.getElementById('ind-mag');if(ind)ind.textContent=Number(bfState.mag).toLocaleString()+'×';
     if(bfStatus)bfStatus.innerHTML='<span>Mode <strong>'+String(bfState.mode).toUpperCase()+'</strong></span><span>MAG <strong>'+Number(bfState.mag).toLocaleString()+'×</strong></span><span>Z <strong>'+Number(bfState.z).toFixed(1)+'</strong></span>';
   }
-  function clearS3PcPanel(){var p=document.getElementById('sopS3PcPanel');if(p)p.remove();var v=document.getElementById('sopS3ValvePanel');if(v)v.remove();var it=document.getElementById('sopItemPanel');if(it)it.remove();var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='';}
+  function clearS3PcPanel(){hideS3FocusViewport();var ws=document.querySelector('#pc-cam .camera-workstation');if(ws)ws.classList.remove('sop-item-workflow','sop-item-workflow--focus');var p=document.getElementById('sopS3PcPanel');if(p)p.remove();var v=document.getElementById('sopS3ValvePanel');if(v)v.remove();var it=document.getElementById('sopItemPanel');if(it)it.remove();var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='';}
   function addS3PcPanel(host,title,body){clearS3PcPanel();var p=document.createElement('div');p.id='sopS3PcPanel';p.className='sop-s3-pc-panel';p.innerHTML='<div class="sop-s3-pc-panel__title">'+title+'</div>'+body;host.appendChild(p);return p;}
 
   function showSection3(){var n=state.currentStep+1;s3StepCompleting=false;hideViewportScene();hideSection1Tour();clearS3PcPanel();s3LockControls();if(n===1)runS3Step1HtRamp();else if(n===2)runS3Step2Filament();else if(n===3)runS3Step3V2();else if(n===4)runS3Step4LowMag();else if(n===5)runS3Step5EucentricMag();else if(n===6)runS3Step6CenterFeature();else if(n===7)runS3Step7Wobble();else if(n===8)runS3Step8HighMagWobble();else if(n===9)runS3Step9Aperture();else if(n===10)runS3Step10CenterCA();else if(n===11)runS3Step11CondStig();else if(n===12)runS3Step12BeamCenter();else if(n===13)runS3Step13ObjAperture();else if(n===14)runS3Step14Focus();else if(n===15)runS3Step15FinalCheck();else if(n===16)runS3Step16Acquire();}
@@ -1407,7 +1847,46 @@
     function astigCheck(){if(Math.abs(bfState.condX)<=1&&Math.abs(bfState.condY)<=1){bfState.finalAstigChecked=true;bfSetStatus('Final magnification, focus and astigmatism verified.');s3AutoComplete(700);}}
     s3SetHandlers({'action:magnification':function(btn){if(btn.dataset.value!=='very-high'&&btn.dataset.value!=='high')return;s3SelectButton(btn);bfState.mag=btn.dataset.value==='very-high'?150000:100000;bfRender();bfSetStatus('Final magnification selected · re-check Fine Focus.');s3Activate(['focus-fine']);s3SetHandlers({'knob:focus-fine':function(v){bfState.focusFine=v;bfRender();if(Math.abs(v)<=.5){bfState.finalFocusChecked=true;bfSetStatus('Focus re-checked · select O.Stig mode.');s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(mb){if(mb.dataset.value!=='objStig')return;s3SelectButton(mb);bfSetStatus('O.Stig selected · center X/Y for final astigmatism check.');s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(x){bfState.condX=x;bfRender();astigCheck();},'defstig:y':function(y){bfState.condY=y;bfRender();astigCheck();}});}});}}});}});
   }
-  function drawBfCameraFrame(key,extraBlur,label){
+  /* Step 49 may preview on Viewing Screen; Step 50 is iTEM camera-only.
+     Focus changes must be examined in the actual camera acquisition workspace. */
+  var s3CameraFocusDrawToken=0;
+  function ensureS3FocusViewport(){
+    if(!viewScreen)return null;
+    var panel=document.getElementById('s3ItemFocusViewport');
+    if(!panel){
+      panel=document.createElement('div');panel.id='s3ItemFocusViewport';
+      panel.className='s3-item-focus-viewport';
+      panel.innerHTML='<canvas id="s3ItemFocusViewportCanvas" width="640" height="480" aria-label="Simulated TEM camera specimen focus preview"></canvas>'
+        +'<div class="s3-item-focus-viewport__top">OLYMPUS iTEM · CAMERA PREVIEW</div>'
+        +'<div class="s3-item-focus-viewport__caption" id="s3ItemViewportCondition">CAMERA LIVE · specimen visible</div>';
+      viewScreen.appendChild(panel);
+    }
+    panel.hidden=false;
+    if(viewEmpty)viewEmpty.style.display='none';
+    return panel;
+  }
+  function hideS3FocusViewport(){
+    s3CameraFocusDrawToken++;
+    var panel=document.getElementById('s3ItemFocusViewport');
+    if(panel)panel.hidden=true;
+  }
+  function showS3CameraSignal(){
+    var live=document.getElementById('pc-cam-live');
+    if(live)live.classList.add('is-active');
+    var placeholder=document.getElementById('pc-cam-placeholder');
+    if(placeholder)placeholder.style.display='none';
+    var led=document.getElementById('pc-cam-comm-led');if(led)led.classList.add('is-on');
+    var stateCell=document.getElementById('pc-cam-camera-state');if(stateCell)stateCell.textContent='Active · iTEM';
+    var screenCell=document.getElementById('pc-cam-screen-state');if(screenCell)screenCell.textContent='Raised';
+    var imageStatus=document.getElementById('pc-cam-image-state');if(imageStatus)imageStatus.textContent='Specimen image · 16-bit';
+    var file=document.getElementById('pc-cam-file-name');if(file)file.textContent='Live TEM · Bright Field / Specimen 01';
+    var message=document.getElementById('pc-cam-message');if(message)message.textContent='OLYMPUS iTEM · CCD acquisition connected';
+  }
+  function mirrorS3CameraToScreen(source,caption){
+    // Intentionally disabled: the acquisition/focus image lives in iTEM only.
+    // Keep this compatibility hook inert so no Viewing Screen overlay flashes.
+  }
+  function drawBfCameraFrame(key,extraBlur,label,onReady){
     var cv=document.getElementById('pc-cam-canvas');if(!cv)return;
     var ctx=cv.getContext('2d'),img=new Image();
     img.onload=function(){
@@ -1416,16 +1895,77 @@
       var blur=Math.max(0,Number(extraBlur||0));ctx.filter='grayscale(1) contrast('+(bfState.autoUsed?'1.34':'1.18')+')'+(blur>0?' blur('+blur.toFixed(2)+'px)':'');
       ctx.drawImage(img,dx,dy,dw,dh);ctx.filter='none';
       ctx.fillStyle='rgba(255,255,255,.86)';ctx.font='15px sans-serif';ctx.fillText(label||('BF · '+Number(bfState.mag||60000).toLocaleString()+'×'),14,24);ctx.restore();
+      showS3CameraSignal();
+      if(typeof onReady==='function')onReady(cv);
     };
     img.src=BF_SPECIMEN_IMAGES[key]||BF_SPECIMEN_IMAGES.acquire;
-    var ph=document.getElementById('pc-cam-placeholder');if(ph)ph.style.display='none';
+    showS3CameraSignal();
     var fn=document.getElementById('pc-cam-file-name');if(fn)fn.textContent='Live View — Real TEM sample';
     var ov=document.getElementById('pc-cam-overlay-mag');if(ov)ov.textContent='MAG '+s3FormatMag(bfState.mag||60000);
   }
   function drawBfCameraFocusPreview(){
-    var err=Math.abs(Number(bfState.focusCoarse||0))+Math.abs(Number(bfState.focusFine||0));
-    var key=err>12?'cameraLiveB':(err>4?'cameraLiveA':'cameraLiveC');
-    drawBfCameraFrame(key,Math.min(2.4,err*.08),'LIVE BF · focus touch-up');
+    var signed=Number(bfState.focusCoarse||0)+Number(bfState.focusFine||0);
+    var absF=Math.abs(signed);
+    var key='cameraLiveC'; // Compare one field of nanoparticles throughout the focus sweep.
+    var blur=Math.min(2.4,absF*.08);
+    /* Draw base frame first, then overlay Fresnel fringe simulation */
+    var cv=document.getElementById('pc-cam-canvas');if(!cv)return;
+    var ctx=cv.getContext('2d'),img=new Image(),drawToken=++s3CameraFocusDrawToken;
+    img.onload=function(){
+      if(drawToken!==s3CameraFocusDrawToken)return;
+      var cw=cv.width,ch=cv.height,scale=Math.min(cw/img.width,ch/img.height),dw=img.width*scale,dh=img.height*scale,dx=(cw-dw)/2,dy=(ch-dh)/2;
+      ctx.save();ctx.clearRect(0,0,cw,ch);ctx.fillStyle='#050505';ctx.fillRect(0,0,cw,ch);
+      var baseContrast=bfState.autoUsed?1.34:1.18;
+      /* Minimum contrast at true focus: smooth carbon film, no rim.
+         Underfocus emphasizes carbon texture; overfocus inverts rim contrast. */
+      var contrastMod=absF<=1.5?-.29:(signed<0?Math.min(.22,absF*.016):-.04);
+      var focusBlur=absF<=1.5?.75:blur;
+      ctx.filter='grayscale(1) contrast('+(baseContrast+contrastMod).toFixed(2)+')'+(focusBlur>0?' blur('+focusBlur.toFixed(2)+'px)':'');
+      ctx.drawImage(img,dx,dy,dw,dh);ctx.filter='none';
+      /* A simulated Fresnel halo follows dark specimen boundaries, not the
+         rectangular camera-window border. Light exterior halos indicate
+         negative focus offset; positive offsets invert the same rims. */
+      if(absF>2){
+        var rim=ctx.getImageData(0,0,cw,ch),pixels=rim.data;
+        var lum=new Uint8Array(cw*ch);
+        for(var i=0;i<lum.length;i++){
+          var j=i*4;lum[i]=(pixels[j]*.299+pixels[j+1]*.587+pixels[j+2]*.114)|0;
+        }
+        var strength=Math.min(1,absF/12),radius=3;
+        var x0=Math.max(4,Math.ceil(dx)+4),x1=Math.min(cw-4,Math.floor(dx+dw)-4);
+        var y0=Math.max(4,Math.ceil(dy)+4),y1=Math.min(ch-4,Math.floor(dy+dh)-4);
+        for(var y=y0;y<y1;y++)for(var x=x0;x<x1;x++){
+          var pos=y*cw+x,light=lum[pos];
+          var nearDark=Math.min(lum[pos-radius],lum[pos+radius],lum[pos-radius*cw],lum[pos+radius*cw]);
+          // Rim is on the brighter, exterior side of a dark particle edge.
+          var jump=light-nearDark;
+          if(jump<18)continue;
+          var mix=Math.min(.66,(jump-18)/105*.8)*strength;
+          var rgb=pos*4,goal=signed<0?255:0;
+          pixels[rgb]+=((goal-pixels[rgb])*mix)|0;
+          pixels[rgb+1]+=((goal-pixels[rgb+1])*mix)|0;
+          pixels[rgb+2]+=((goal-pixels[rgb+2])*mix)|0;
+        }
+        ctx.putImageData(rim,0,0);
+      }
+      /* Header label */
+      ctx.fillStyle='rgba(255,255,255,.86)';ctx.font='15px sans-serif';
+      ctx.fillText('LIVE BF · OBJ FOCUS',14,24);
+      /* Focus condition indicator */
+      var condText,condColor,condNote;
+      if(absF<=1.5){condText='IN FOCUS';condColor='#4ade80';condNote='Smooth carbon background · minimum contrast · no fringe';}
+      else if(signed<0){condText='UNDERFOCUS';condColor='#60a5fa';condNote='White fringe outside nanoparticles · textured carbon';}
+      else{condText='OVERFOCUS';condColor='#f59e0b';condNote='Dark outer nanoparticle fringe · avoid for sizing';}
+      ctx.font='bold 13px sans-serif';ctx.fillStyle=condColor;
+      ctx.fillText('\u25CF  '+condText,14,ch-16);
+      ctx.font='11px sans-serif';ctx.fillStyle='rgba(255,255,255,.65)';
+      ctx.fillText(condNote,14,ch-34);
+      ctx.restore();
+      showS3CameraSignal(); // Step 50: do not mirror focus conditions to Viewing Screen.
+    };
+    img.onerror=function(){var msg=document.getElementById('pc-cam-message');if(msg)msg.textContent='Camera image failed to load';};
+    img.src=BF_SPECIMEN_IMAGES[key]||BF_SPECIMEN_IMAGES.acquire;
+    showS3CameraSignal();
   }
   function startBfCameraLive(){
     var frames=['cameraLiveA','cameraLiveB','cameraLiveC','finalSharp'],i=0;
@@ -1433,7 +1973,24 @@
     var t=setInterval(function(){i=(i+1)%frames.length;drawBfCameraFrame(frames[i],.10,'LIVE BF · real sample');},620);
     bfTimers.push(t);return t;
   }
-  function drawCapturedBf(){drawBfCameraFrame('finalSharp',0,'BF SNAPSHOT · real sample');}
+  function drawCapturedBf(onReady){drawBfCameraFrame('finalSharp',0,'BF SNAPSHOT · real sample',onReady);}
+  function downloadCapturedBf(canvas){
+    if(!canvas)return false;
+    try{
+      var link=document.createElement('a');
+      var time=new Date().toISOString().replace(/[:.]/g,'-');
+      link.download='TEM_Bright_Field_Snapshot_'+time+'.png';
+      link.href=canvas.toDataURL('image/png');
+      document.body.appendChild(link);link.click();link.remove();
+      var note=document.getElementById('pc-cam-message');
+      if(note)note.textContent='Olympus iTEM · Bright Field snapshot downloaded';
+      return true;
+    }catch(e){
+      var warn=document.getElementById('pc-cam-message');
+      if(warn)warn.textContent='Snapshot captured. Browser blocked automatic download.';
+      return false;
+    }
+  }
   function installItemPanel(){
     var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return;var old=document.getElementById('sopItemPanel');if(old)old.remove();var p=document.createElement('div');p.id='sopItemPanel';p.className='sop-item-panel';p.innerHTML='<div class="sop-bf-card-title">iTEM acquisition</div><button id="s3ObjFocusCheck">OBJ FOCUS check (optional)</button><button id="s3Video">Video</button><button id="s3Snapshot" disabled>Snapshot</button><button id="s3F1Down" disabled>F1 · Return fluorescent screen</button>';host.appendChild(p);
     var objCheck=document.getElementById('s3ObjFocusCheck'),video=document.getElementById('s3Video'),snap=document.getElementById('s3Snapshot'),f1=document.getElementById('s3F1Down');if(objCheck)objCheck.onclick=function(){ensureAudio();objCheck.classList.add('is-done');objCheck.textContent='OBJ FOCUS checked';};video.onclick=function(){ensureAudio();video.classList.add('is-done');video.textContent='Video · LIVE';snap.disabled=false;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running';};snap.onclick=function(){ensureAudio();snap.classList.add('is-done');snap.disabled=true;drawCapturedBf();bfState.captured=true;var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Snapshot captured';f1.disabled=false;};f1.onclick=function(){ensureAudio();f1.classList.add('is-done');f1.disabled=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';bfSetStatus('Bright Field image recorded · fluorescent screen returned.');s3AutoComplete(900,function(){clearS3PcPanel();closePcDrawer();});};
@@ -1453,20 +2010,20 @@
   /* v4.9.1-RS1 — real Bright Field specimen image bank supplied by the user.
      The uploaded images are treated as Bright Field source material only. */
   var BF_SPECIMEN_IMAGES={
-    grid200:       '../assets/images/sop/real-sample/Tv2.jpg',
-    grid500:       '../assets/images/sop/real-sample/Tv1.jpg',
-    surveyEmpty:   '../assets/images/sop/real-sample/Tv3.jpg',
-    surveyEdge:    '../assets/images/sop/real-sample/Tv4.jpg',
-    surveyThin:    '../assets/images/sop/real-sample/Tv5.jpg',
-    mag50Edge:     '../assets/images/sop/real-sample/Tv6.jpg',
-    mag50Region:   '../assets/images/sop/real-sample/Tv7.jpg',
-    finalSharp:    '../assets/images/sop/real-sample/Tv8.jpg',
-    cameraLiveA:   '../assets/images/sop/real-sample/Tv9.jpg',
-    cameraLiveB:   '../assets/images/sop/real-sample/Tv10.jpg',
-    autoContrast:  '../assets/images/sop/real-sample/Tv11.jpg',
-    cameraLiveC:   '../assets/images/sop/real-sample/Tv12.jpg',
-    acquire:       '../assets/images/sop/real-sample/Tv8.jpg',
-    fallback:      '../assets/images/sop/real-sample/Tv5.jpg'
+    grid200:       '../assets/images/sop/real-sample/Tv2.png',
+    grid500:       '../assets/images/sop/real-sample/Tv1.png',
+    surveyEmpty:   '../assets/images/sop/real-sample/Tv3.png',
+    surveyEdge:    '../assets/images/sop/real-sample/Tv4.png',
+    surveyThin:    '../assets/images/sop/real-sample/Tv5.png',
+    mag50Edge:     '../assets/images/sop/real-sample/Tv6.png',
+    mag50Region:   '../assets/images/sop/real-sample/Tv7.png',
+    finalSharp:    '../assets/images/sop/real-sample/Tv8.png',
+    cameraLiveA:   '../assets/images/sop/real-sample/Tv9.png',
+    cameraLiveB:   '../assets/images/sop/real-sample/Tv10.png',
+    autoContrast:  '../assets/images/sop/real-sample/Tv11.png',
+    cameraLiveC:   '../assets/images/sop/real-sample/Tv12.png',
+    acquire:       '../assets/images/sop/real-sample/Tv12.png',
+    fallback:      '../assets/images/sop/real-sample/Tv5.png'
   };
   var bfCurrentImgKey='';
   var bfRealPreloaded=false;
@@ -1485,7 +2042,7 @@
      Stage-search steps intentionally move through empty -> edge -> thin-region
      fields so the trackball feels like navigation through the same specimen. */
   function bfResolveImageKey(){
-    var n=state.currentStep+1;
+    var n=state.currentStep+1+(state.currentStep>=4?1:0)+(state.currentStep>=22?1:0);
     var dist=Math.hypot(Number(bfState.stageX||0),Number(bfState.stageY||0));
     if(n<=9) return 'grid200';
     if(n===10||n===11) return 'grid200';
@@ -1508,7 +2065,11 @@
     if(n===47) return 'finalSharp';
     if(n===48) return bfState.autoUsed?'autoContrast':'finalSharp';
     if(n===49) return bfState.autoUsed?'autoContrast':'finalSharp';
-    if(n>=50) return 'finalSharp';
+    if(n===50) return 'cameraLiveA';
+    if(n===51) return 'cameraLiveB';
+    if(n===52) return 'autoContrast';
+    if(n===53) return 'acquire';
+    if(n>=54) return 'acquire';
     return 'surveyThin';
   }
   var bfCover=null,bfScreenAction=null,bfDummyBadge=null,bfStepIndicator=null;
@@ -1534,7 +2095,7 @@
     if(bfScene||!viewScreen)return;
     var w=document.createElement('div');w.id='sopBfScene';w.className='sop-bf-scene sop-bf-scene--screen';w.hidden=true;
     w.innerHTML='<div class="sop-bf-screen" id="sopBfScreen">'
-      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/real-sample/Tv5.jpg" alt="Real Bright Field specimen view">'
+      +'<img class="sop-bf-specimen" id="sopBfSpecimen" src="../assets/images/sop/real-sample/Tv5.png" alt="Real Bright Field specimen view">'
       +'<div class="sop-bf-step-indicator" id="sopBfStepIndicator"></div>'+'<div class="sop-dummy-badge" id="sopBfDummyBadge">REAL SAMPLE IMAGE</div>'
       +'<div class="sop-bf-feature" id="sopBfFeature"><span></span></div>'
       +'<div class="sop-bf-beam" id="sopBfBeam"></div>'
@@ -1613,7 +2174,7 @@
   function bfSetStatus(text){if(bfStatus){bfStatus.textContent='';bfStatus.style.display='none';}}
 
   function showBfScene(){
-    closeModal(true);closePcDrawer();hideViewportScene();hideSection1Tour();ensureBfScene();clearBfTimers();
+    hideS3BeamScreenStill();closeModal(true);closePcDrawer();hideViewportScene();hideSection1Tour();ensureBfScene();clearBfTimers();
     if(!bfScene)return;bfScene.hidden=false;if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');
     var phosphor=false; /* v4.8.10: grayscale specimen view; no phosphor overlay */
     bfScene.classList.remove('is-phosphor','is-fluorescent');
@@ -1714,11 +2275,18 @@
   function s3Complete(delay,before){syncPcLiveStatus();s3AutoComplete(delay||450,before);}
 
   function showSection3(){
-    var n=state.currentStep+1;s3StepCompleting=false;hideViewportScene();hideSection1Tour();clearS3PcPanel();s3LockControls();bfPreloadRealImages();
-    /* v4.8.11: dummy condenser-aperture hardware is used only through displayed Step 30. */
+    var displayedStep=state.currentStep+1;
+    if(displayedStep>4&&displayedStep!==8)releaseS3HtPhoto();
+    // Previously optional Step 23 (Z sensitivity) is removed. Preserve the
+    // physical atomic operations after it by mapping to their original slots.
+    var legacyStep=displayedStep>=23?displayedStep+1:displayedStep;
+    // Steps 5–7 retain the revised V2 -> Filament -> Beam Current order.
+    var n=legacyStep===5?8:(legacyStep===6?6:(legacyStep===7?7:(legacyStep>7?legacyStep+1:legacyStep)));
+    s3StepCompleting=false;hideViewportScene();hideSection1Tour();clearS3PcPanel();s3LockControls();bfPreloadRealImages();
+    /* One HT ON step was removed; downstream physical operations keep the original atomic mappings. */
     if(n<28||n>30)hideS3ApertureOverlay();
     switch(n){
-      case 1:return runBFAtomic01();case 2:return runBFAtomic02();case 3:return runBFAtomic03();case 4:return runBFAtomic04();case 5:return runBFAtomic05();
+      case 1:return runBFAtomic01();case 2:return runBFAtomic02();case 3:return runBFAtomic03();case 4:return runBFAtomic04();
       case 6:return runBFAtomic06();case 7:return runBFAtomic07();case 8:return runBFAtomic08();case 9:return runBFAtomic09();case 10:return runBFAtomic11();
       case 11:return runBFAtomic12();case 12:return runBFAtomic13();case 13:return runBFAtomic14();case 14:return runBFAtomic15();case 15:return runBFAtomic16();
       case 16:return runBFAtomic17();case 17:return runBFAtomic18();case 18:return runBFAtomic19();case 19:return runBFAtomic20();case 20:return runBFAtomic21();
@@ -1743,57 +2311,421 @@
   }
   function removeS3InlineProgress(){[].slice.call(document.querySelectorAll('.s3-inline-progress')).forEach(function(e){e.remove();});}
 
+  /* Section 3: image-based High Voltage Control used in the same TEMCON frame as Section 2.
+     Only the live readouts/selectors are HTML controls, so the reference image stays intact. */
+  var s3HtPhotoSource='../assets/images/sop/section3-high-voltage-control.png';
+  var s3HtRampTimer=null,s3V2ModalTimer=null,s3V2ReadyForConfirm=false,s3FilamentTimer=null;
+  function s3HtReadoutTime(){
+    var target=Number(bfState.htTarget||80),step=Number(bfState.htStep||1),time=Number(bfState.htTime||1);
+    return Math.max(0,(target-80)/step*time);
+  }
+  function s3HtPhotoNode(id){return document.getElementById(id);}
+  function s3HtUpdateTime(fraction){
+    var finish=s3HtPhotoNode('s3PhotoFinish');
+    var nativeFinish=s3HtPhotoNode('pc-autoht-finish');
+    var seconds=s3HtReadoutTime()*(1-(fraction||0));
+    var display='Time to finish '+(seconds/60).toFixed(1)+' min.';
+    if(finish)finish.textContent=display;
+    if(nativeFinish)nativeFinish.textContent=display;
+    return display;
+  }
+  function s3HtUpdateProgress(fraction){
+    var progress=s3HtPhotoNode('s3PhotoProgress'),pct=s3HtPhotoNode('s3PhotoProgressPct');
+    if(progress)progress.style.width=(Math.max(0,Math.min(1,fraction))*100).toFixed(1)+'%';
+    if(pct)pct.textContent=Math.round(fraction*100)+'%';
+    s3HtUpdateTime(fraction);
+  }
+  function ensureS3HtPhoto(showValve){
+    hideBfScene();hideS3ApertureOverlay();setViewer('column');
+    openPcDrawer();selectTemconPage('standard');s3ResetPcControls();
+    var page=document.querySelector('[data-temcon-page="standard"]');
+    var hv=ensureStep4HvReplica(),valve=showValve?ensureStep4Valve():document.getElementById('sopStep4Valve');
+    if(!page||!hv||(showValve&&!valve))return null;
+    page.classList.add('sop-step4-layout','sop-s3-ht-photo-layout');
+    page.classList.toggle('sop-s3-ht-no-valve',!showValve);
+    page.classList.toggle('sop-s3-v2-layout',!!showValve);
+    hv.hidden=false;if(valve)valve.hidden=!showValve;
+    var otherValve=document.getElementById('sopSection2Step6Valve');if(otherValve)otherValve.hidden=true;
+    var img=hv.querySelector('img.sop-step4-window-image');
+    if(img){if(!img.dataset.originalSource)img.dataset.originalSource=img.getAttribute('src');img.src=s3HtPhotoSource;img.alt='High Voltage Control, Auto HT ramp with Target, Step, Time/Step, Start and progress';}
+    var valveImg=valve&&valve.querySelector('img.sop-step4-window-image--valve');
+    if(valveImg&&showValve){if(!valveImg.dataset.originalSource)valveImg.dataset.originalSource=valveImg.getAttribute('src');valveImg.src='../assets/images/sop/section3-step7-valve-v2-open.png';valveImg.alt='Actual Valve Status showing V2 open and vacuum Ready';}
+    var hotspot=s3HtPhotoNode('sopStep4HtOnHotspot');if(hotspot){hotspot.hidden=true;hotspot.disabled=true;}
+    var wrap=hv.querySelector('.sop-step4-window-image-wrap');if(!wrap)return null;
+    var ui=s3HtPhotoNode('s3HtPhotoUi');
+    if(!ui){
+      ui=document.createElement('div');ui.id='s3HtPhotoUi';ui.className='s3-ht-photo-ui';
+      ui.innerHTML=`
+        <span class="s3-ht-photo__kv" id="s3PhotoKv">80.00</span>
+        <span class="s3-ht-photo__beam" id="s3PhotoBeam">40.5</span>
+        <div class="s3-ht-photo__progress" aria-label="Auto HT progress"><span id="s3PhotoProgress"></span></div>
+        <output class="s3-ht-photo__finish" id="s3PhotoFinish">Time to finish 0.0 min.</output>
+        <select class="s3-ht-photo__select s3-ht-photo__target" id="s3PhotoTarget" aria-label="Auto HT target voltage">
+          <option value="80">80.00</option><option value="120">120.00</option><option value="160">160.00</option><option value="200">200.00</option>
+        </select>
+        <select class="s3-ht-photo__select s3-ht-photo__step" id="s3PhotoStep" aria-label="Auto HT step size in kilovolts">
+          <option value="1">1.0</option><option value="0.5">0.5</option><option value="0.1">0.1</option>
+        </select>
+        <select class="s3-ht-photo__select s3-ht-photo__time" id="s3PhotoTime" aria-label="Auto HT time per step in seconds">
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="10">10</option>
+        </select>
+        <button type="button" class="s3-ht-photo__start" id="s3PhotoStart" aria-label="Start Auto HT ramp" disabled></button>
+        <span class="s3-ht-photo__progress-percent" id="s3PhotoProgressPct" aria-live="polite"></span>
+        <span class="s3-ht-photo__filament-state" id="s3PhotoFilamentState" hidden>NotReady</span>
+        <button type="button" class="s3-ht-photo__filament-on" id="s3PhotoFilamentOn" aria-label="Switch filament ON" hidden></button>
+      `;
+      wrap.appendChild(ui);
+    }
+    ui.hidden=false;
+    var filOn=s3HtPhotoNode('s3PhotoFilamentOn');if(filOn){filOn.hidden=true;filOn.onclick=null;filOn.disabled=true;filOn.classList.remove('is-active');}
+    var filStatusPhoto=s3HtPhotoNode('s3PhotoFilamentState');if(filStatusPhoto){filStatusPhoto.hidden=true;filStatusPhoto.textContent=bfState.filamentOn?'ON':'NotReady';}
+    var sels=[['s3PhotoTarget','htTarget'],['s3PhotoStep','htStep'],['s3PhotoTime','htTime']];
+    sels.forEach(function(pair){var el=s3HtPhotoNode(pair[0]);if(el){el.value=String(bfState[pair[1]]||1);el.onchange=null;}});
+    var start=s3HtPhotoNode('s3PhotoStart');if(start){start.disabled=true;start.onclick=null;}
+    var topHt=s3HtPhotoNode('pc-ht-lamp'),topBeam=s3HtPhotoNode('pc-beam-lamp');
+    if(topHt){topHt.classList.add('is-on');topHt.innerHTML='<strong>HT</strong>';}
+    if(topBeam){topBeam.classList.remove('is-on');topBeam.innerHTML='Beam<br><strong>NotReady</strong>';}
+    var htStatus=s3HtPhotoNode('pc-ht-status');if(htStatus)htStatus.textContent='ON';
+    var acc=s3HtPhotoNode('pc-acc-value');if(acc)acc.textContent=(bfState.htRamped?'200.00':'80.00')+' kV';
+    var topBeamCurrent=s3HtPhotoNode('pc-beam-current-top');
+    var readCurrent=bfState.filamentOn?Number(bfState.beamCurrent||43.2):43.2;
+    if(topBeamCurrent)topBeamCurrent.textContent=readCurrent.toFixed(1)+' µA';
+    var hvCurrent=s3HtPhotoNode('pc-beam-current-hv');if(hvCurrent)hvCurrent.textContent=readCurrent.toFixed(1)+' µA';
+    bfState.htOn=true; // physically enabled in Section 1, before this voltage ramp
+    var kv=s3HtPhotoNode('s3PhotoKv');if(kv)kv.textContent=bfState.htRamped?'200.00':'80.00';
+    var beam=s3HtPhotoNode('s3PhotoBeam');if(beam)beam.textContent=readCurrent.toFixed(1);
+    var htv=s3HtPhotoNode('pc-ht-value');if(htv)htv.textContent=(bfState.htRamped?'200.00':'80.00')+' kV';
+    s3HtUpdateProgress(bfState.htRamped?1:0);
+    return {page:page,ui:ui,wrap:wrap};
+  }
+  function releaseS3HtPhoto(){
+    if(s3HtRampTimer){clearInterval(s3HtRampTimer);s3HtRampTimer=null;}
+    if(s3FilamentTimer){clearInterval(s3FilamentTimer);s3FilamentTimer=null;}
+    var popup=document.getElementById('s3FilamentProgressPopup');if(popup)popup.hidden=true;
+    var page=document.querySelector('[data-temcon-page="standard"]');
+    if(s3V2ModalTimer){clearTimeout(s3V2ModalTimer);s3V2ModalTimer=null;}
+    s3V2ReadyForConfirm=false;
+    if(page)page.classList.remove('sop-s3-ht-photo-layout','sop-step4-layout','sop-s3-ht-no-valve','sop-s3-v2-layout','sop-s3-ramp-running','sop-s3-filament-photo-layout');
+    var overlay=s3HtPhotoNode('s3HtPhotoUi');if(overlay)overlay.hidden=true;
+    var ht=s3HtPhotoNode('sopStep4HvReplica');
+    if(ht){var im=ht.querySelector('img.sop-step4-window-image');if(im&&im.dataset.originalSource)im.src=im.dataset.originalSource;ht.hidden=true;}
+    var valve=s3HtPhotoNode('sopStep4Valve');if(valve){var vi=valve.querySelector('img.sop-step4-window-image--valve');if(vi&&vi.dataset.originalSource)vi.src=vi.dataset.originalSource;valve.hidden=true;}
+    var hotspot=s3HtPhotoNode('sopStep4HtOnHotspot');if(hotspot){hotspot.hidden=false;hotspot.disabled=false;}
+  }
+  function s3HtSetActive(name){
+    ['s3PhotoTarget','s3PhotoStep','s3PhotoTime'].forEach(function(id){
+      var e=s3HtPhotoNode(id);if(!e)return;e.disabled=(id!==name);e.classList.toggle('is-active',id===name);
+    });
+  }
+
   function runBFAtomic01(){
-    s3PreparePcStandard();var e=document.getElementById('pc-autoht-target');if(!e)return;e.value=String(bfState.htTarget||80);s3PcTarget(e);
-    e.onchange=function(){bfState.htTarget=Number(e.value);if(bfState.htTarget===200){s3PcDone(e);s3Complete(350);}};
-  }
-  function runBFAtomic02(){
-    s3PreparePcStandard();var e=document.getElementById('pc-autoht-step');if(!e)return;e.value=String(bfState.htStep||1);s3PcTarget(e);
-    e.onchange=function(){bfState.htStep=Number(e.value);if(bfState.htStep===0.5){s3PcDone(e);s3Complete(350);}};
-  }
-  function runBFAtomic03(){
-    s3PreparePcStandard();var e=document.getElementById('pc-autoht-time');if(!e)return;e.value=String(bfState.htTime||1);s3PcTarget(e);
-    e.onchange=function(){bfState.htTime=Number(e.value);if(bfState.htTime===10){s3PcDone(e);s3Complete(350);}};
-  }
-  function runBFAtomic04(){
-    s3PreparePcStandard();var start=document.getElementById('pc-autoht-start'),status=document.getElementById('pc-ht-status'),val=document.getElementById('pc-ht-value'),acc=document.getElementById('pc-acc-value'),finish=document.getElementById('pc-autoht-finish');
-    if(!start)return;bfState.htTarget=200;bfState.htStep=.5;bfState.htTime=10;var t=document.getElementById('pc-autoht-target'),s=document.getElementById('pc-autoht-step'),tm=document.getElementById('pc-autoht-time');if(t)t.value='200';if(s)s.value='0.5';if(tm)tm.value='10';
-    var prog=ensureS3InlineProgress('ht','HT RAMP-UP · 80 kV → 200 kV');
-    s3PcTarget(start);start.onclick=function(){ensureAudio();s3PcDone(start);if(status)status.textContent='RAMPING';if(prog&&prog.box)prog.box.classList.add('is-running');var t0=Date.now(),dur=7200;htRampInterval=setInterval(function(){var p=Math.min(1,(Date.now()-t0)/dur),kv=80+120*p,pct=Math.round(p*100);if(val)val.textContent=kv.toFixed(2)+' kV';if(acc)acc.textContent=Math.round(kv)+' kV';if(finish)finish.textContent='Simulated Auto HT · '+pct+'%';if(prog){prog.bar.style.width=pct+'%';prog.pct.textContent=pct+'%';}if(p>=1){clearInterval(htRampInterval);htRampInterval=null;bfState.htRamped=true;if(status)status.textContent='TARGET REACHED';if(val)val.textContent='200.00 kV';if(acc)acc.textContent='200 kV';if(finish)finish.textContent='Target 200 kV reached';if(prog&&prog.box){prog.box.classList.remove('is-running');prog.box.classList.add('is-complete');prog.pct.textContent='100% · TARGET REACHED';}s3Complete(700);}},100);};
-  }
-  function runBFAtomic05(){
-    s3PreparePcStandard();var e=document.getElementById('ht-on-btn'),status=document.getElementById('pc-ht-status'),lamp=document.getElementById('pc-ht-lamp');if(!e)return;e.disabled=false;e.removeAttribute('disabled');e.style.pointerEvents='auto';e.style.cursor='pointer';e.classList.add('sop-ht-next');
-    e.onclick=function(ev){if(ev){ev.preventDefault();ev.stopPropagation();}if(!bfState.htRamped)return;ensureAudio();bfState.htOn=true;e.classList.remove('sop-ht-next');if(status)status.textContent='ON';if(lamp){lamp.classList.add('is-on');var sp=lamp.querySelector('span');if(sp)sp.textContent='ON';}s3Complete(350,function(){e.onclick=null;e.disabled=true;});return false;};
-  }
-  function runBFAtomic06(){
-    s3PreparePcStandard();var e=document.getElementById('pc-filament-on'),fil=document.getElementById('pc-fil-status'),top=document.getElementById('pc-beam-current-top'),hv=document.getElementById('pc-beam-current-hv');if(!e)return;s3PcTarget(e);if(fil)fil.textContent='OFF';if(top)top.textContent='0 µA';if(hv)hv.textContent='0.0 µA';
-    e.onclick=function(){ensureAudio();bfState.filamentOn=true;bfState.beamCurrent=0;if(fil)fil.textContent='ON · RISING';s3PcDone(e);s3Complete(350);};
-  }
-  function runBFAtomic07(){
-    s3PreparePcStandard();var fil=document.getElementById('pc-fil-status'),top=document.getElementById('pc-beam-current-top'),hv=document.getElementById('pc-beam-current-hv'),finish=document.getElementById('pc-autoht-finish');if(fil)fil.textContent='ON · RISING';var prog=ensureS3InlineProgress('filament','FILAMENT STABILIZATION · Beam Current → ≈103 µA');if(prog&&prog.box)prog.box.classList.add('is-running');var t0=Date.now(),dur=4800,t=setInterval(function(){var p=Math.min(1,(Date.now()-t0)/dur),ua=103*p,pct=Math.round(p*100);bfState.beamCurrent=ua;if(top)top.textContent=ua.toFixed(0)+' µA';if(hv)hv.textContent=ua.toFixed(1)+' µA';if(finish)finish.textContent='Beam Current '+ua.toFixed(0)+' µA';if(prog){prog.bar.style.width=pct+'%';prog.pct.textContent=pct+'% · '+ua.toFixed(0)+' µA';}if(p>=1){clearInterval(t);bfState.beamCurrent=103;if(fil)fil.textContent='ON';if(top)top.textContent='≈103 µA';if(hv)hv.textContent='≈103 µA';if(finish)finish.textContent='Beam Current stabilized ≈103 µA';if(prog&&prog.box){prog.box.classList.remove('is-running');prog.box.classList.add('is-complete');prog.pct.textContent='100% · ≈103 µA';}s3Complete(650);}},100);bfTimers.push(t);
-  }
-  function runBFAtomic08(){
-    s3PreparePcStandard();var host=document.querySelector('[data-temcon-page="standard"]');addS3PcPanel(host,'Valve Status','<div class="sop-valve-grid"><span>V1</span><strong class="is-open">OPEN</strong><span>V2</span><strong id="s3V2State" class="'+(bfState.v2Open?'is-open':'is-closed')+'">'+(bfState.v2Open?'OPEN':'CLOSED')+'</strong></div><div class="sop-s3-pc-buttons"><button id="s3V2Open">OPEN V2</button></div><div class="sop-s3-pc-note">Dummy Valve Status window until the actual TEMCON image is supplied.</div>');var b=document.getElementById('s3V2Open'),st=document.getElementById('s3V2State');if(!b)return;b.onclick=function(){ensureAudio();bfState.v2Open=true;b.disabled=true;if(st){st.textContent='OPEN';st.className='is-open';}
-      /* v4.8.9: close PC drawer before advancing to step 9 */
-      setTimeout(function(){closePcDrawer();s3Complete(400);},600);
+    if(!ensureS3HtPhoto())return;
+    s3HtSetActive('s3PhotoTarget');
+    var sel=s3HtPhotoNode('s3PhotoTarget');sel.onchange=function(){
+      bfState.htTarget=Number(sel.value);s3HtUpdateTime(0);
+      if(bfState.htTarget===200){sel.disabled=true;sel.classList.remove('is-active');s3Complete(500);}
     };
   }
+  function runBFAtomic02(){
+    if(!ensureS3HtPhoto())return;
+    s3HtSetActive('s3PhotoStep');
+    var sel=s3HtPhotoNode('s3PhotoStep');sel.onchange=function(){
+      bfState.htStep=Number(sel.value);s3HtUpdateTime(0);
+      if(bfState.htStep===0.5){sel.disabled=true;sel.classList.remove('is-active');s3Complete(500);}
+    };
+  }
+  function runBFAtomic03(){
+    if(!ensureS3HtPhoto())return;
+    s3HtSetActive('s3PhotoTime');
+    var sel=s3HtPhotoNode('s3PhotoTime');sel.onchange=function(){
+      bfState.htTime=Number(sel.value);s3HtUpdateTime(0);
+      if(bfState.htTime===10){sel.disabled=true;sel.classList.remove('is-active');s3Complete(500);}
+    };
+  }
+  function runBFAtomic04(){
+    if(!ensureS3HtPhoto())return;
+    s3HtSetActive('');
+    var start=s3HtPhotoNode('s3PhotoStart');if(!start)return;
+    bfState.htTarget=200;bfState.htStep=0.5;bfState.htTime=10;
+    ['s3PhotoTarget','s3PhotoStep','s3PhotoTime'].forEach(function(id){var el=s3HtPhotoNode(id);if(el)el.disabled=true;});
+    start.disabled=false;start.classList.add('is-active');
+    s3HtUpdateProgress(0);
+    start.onclick=function(){
+      if(start.disabled)return;
+      ensureAudio();start.disabled=true;start.classList.remove('is-active');
+      var page=document.querySelector('[data-temcon-page="standard"]');
+      if(page)page.classList.add('sop-s3-ramp-running');
+      var htStatus=s3HtPhotoNode('pc-ht-status');if(htStatus)htStatus.textContent='ON · RAMPING';
+      var duration=12000,t0=Date.now();
+      if(s3HtRampTimer)clearInterval(s3HtRampTimer);
+      s3HtRampTimer=setInterval(function(){
+        if(state.currentSection!==3||state.currentStep!==3){clearInterval(s3HtRampTimer);s3HtRampTimer=null;return;}
+        var fraction=Math.min(1,(Date.now()-t0)/duration);
+        var kv=Math.round((80+120*fraction)*10)/10;
+        var ua=40.5+(kv-80)*0.0225; // actual photo sequence: ~43 µA at end of HT ramp
+        var displayKv=kv.toFixed(2)+' kV';
+        var topAcc=s3HtPhotoNode('pc-acc-value');if(topAcc)topAcc.textContent=displayKv;
+        var nativeKv=s3HtPhotoNode('pc-ht-value');if(nativeKv)nativeKv.textContent=displayKv;
+        var imgKv=s3HtPhotoNode('s3PhotoKv');if(imgKv)imgKv.textContent=kv.toFixed(2);
+        var imgUa=s3HtPhotoNode('s3PhotoBeam');if(imgUa)imgUa.textContent=ua.toFixed(1);
+        var topUa=s3HtPhotoNode('pc-beam-current-top');if(topUa)topUa.textContent=ua.toFixed(1)+' µA';
+        var nativeUa=s3HtPhotoNode('pc-beam-current-hv');if(nativeUa)nativeUa.textContent=ua.toFixed(1)+' µA';
+        s3HtUpdateProgress(fraction);
+        if(fraction>=1){
+          clearInterval(s3HtRampTimer);s3HtRampTimer=null;
+          bfState.htRamped=true;bfState.htOn=true;bfState.beamCurrent=43.2;
+          if(page)page.classList.remove('sop-s3-ramp-running');
+          if(htStatus)htStatus.textContent='ON';
+          s3HtUpdateProgress(1);
+          s3Complete(1100);
+        }
+      },100);
+    };
+  }
+  function prepareS3FilamentPhoto(showValve){
+    var result=ensureS3HtPhoto(!!showValve);
+    if(!result)return null;
+    result.page.classList.add('sop-s3-filament-photo-layout');
+    var nativeFil=document.getElementById('pc-fil-status');if(nativeFil)nativeFil.textContent=bfState.filamentOn?'ON':'NotReady';
+    var photoFil=document.getElementById('s3PhotoFilamentState');if(photoFil){photoFil.hidden=false;photoFil.textContent=bfState.filamentOn?'ON':'NotReady';}
+    return result;
+  }
+  function s3SetPhotoBeamCurrent(ua){
+    var n=Math.min(103,Math.max(0,ua));bfState.beamCurrent=n;
+    var val=n.toFixed(1),units=val+' µA';
+    var photo=document.getElementById('s3PhotoBeam');if(photo)photo.textContent=val;
+    var top=document.getElementById('pc-beam-current-top');if(top)top.textContent=units;
+    var native=document.getElementById('pc-beam-current-hv');if(native)native.textContent=units;
+  }
+  function ensureS3FilamentProgressPopup(){
+    var valve=document.getElementById('sopStep4Valve');
+    var host=valve&&valve.querySelector('.sop-step4-window-image-wrap--valve');
+    if(!host)return null;
+    var popup=document.getElementById('s3FilamentProgressPopup');
+    if(!popup){
+      popup=document.createElement('div');
+      popup.id='s3FilamentProgressPopup';
+      popup.className='s3-filament-progress-popup';
+      popup.hidden=true;
+      popup.setAttribute('role','status');
+      popup.setAttribute('aria-label','Filament setting progress');
+      popup.innerHTML='<div class="s3-filament-progress-popup__title">Filament</div>'
+        +'<div class="s3-filament-progress-popup__body"><span>Setting the Filament...</span>'
+        +'<div class="s3-filament-progress-popup__track" aria-hidden="true"><span id="s3FilamentProgressBar"></span></div>'
+        +'<strong id="s3FilamentProgressPercent">0%</strong>'
+        +'<button type="button" id="s3FilamentCancel" aria-label="Cancel filament setting">Cancel</button></div>';
+      host.appendChild(popup);
+    }
+    popup.hidden=false;
+    var bar=document.getElementById('s3FilamentProgressBar');if(bar)bar.style.width='0%';
+    var read=document.getElementById('s3FilamentProgressPercent');if(read)read.textContent='0%';
+    var cancel=document.getElementById('s3FilamentCancel');if(cancel){cancel.disabled=false;cancel.textContent='Cancel';}
+    return popup;
+  }
+  function runBFAtomic06(){
+    // Section 3 Step 6: filament ON, with the reference-style popup on top of Valve Status.
+    var result=prepareS3FilamentPhoto(true);
+    if(!result)return;
+    var on=document.getElementById('s3PhotoFilamentOn');
+    if(!on)return;
+    var valve=document.getElementById('sopStep4Valve');if(valve)valve.hidden=false;
+    s3SetPhotoBeamCurrent(43.2);
+    var nativeFil=document.getElementById('pc-fil-status');if(nativeFil)nativeFil.textContent='NotReady';
+    var photoFil=document.getElementById('s3PhotoFilamentState');if(photoFil)photoFil.textContent='NotReady';
+    bfState.filamentOn=false;
+    on.hidden=false;on.disabled=false;on.classList.add('is-active');
+    on.onclick=function(){
+      if(on.disabled)return;
+      ensureAudio();on.disabled=true;on.classList.remove('is-active');
+      var popup=ensureS3FilamentProgressPopup();
+      if(!popup){on.disabled=false;on.classList.add('is-active');return;}
+      var bar=document.getElementById('s3FilamentProgressBar');
+      var read=document.getElementById('s3FilamentProgressPercent');
+      var cancel=document.getElementById('s3FilamentCancel');
+      var duration=6500,t0=Date.now();
+      var stopped=false;
+      if(s3FilamentTimer)clearInterval(s3FilamentTimer);
+      if(cancel)cancel.onclick=function(){
+        if(stopped)return;stopped=true;
+        if(s3FilamentTimer){clearInterval(s3FilamentTimer);s3FilamentTimer=null;}
+        popup.hidden=true;on.disabled=false;on.classList.add('is-active');
+        bfState.filamentOn=false;s3SetPhotoBeamCurrent(43.2);
+        if(nativeFil)nativeFil.textContent='NotReady';
+        if(photoFil)photoFil.textContent='NotReady';
+      };
+      s3FilamentTimer=setInterval(function(){
+        if(state.currentSection!==3||state.currentStep!==5){clearInterval(s3FilamentTimer);s3FilamentTimer=null;return;}
+        if(stopped)return;
+        var fraction=Math.min(1,(Date.now()-t0)/duration),pct=Math.round(fraction*100);
+        if(bar)bar.style.width=pct+'%';
+        if(read)read.textContent=pct+'%';
+        // The beam-current readout changes only AFTER filament setting is complete.
+        if(fraction>=1){
+          clearInterval(s3FilamentTimer);s3FilamentTimer=null;stopped=true;
+          bfState.filamentOn=true;
+          if(nativeFil)nativeFil.textContent='ON';
+          if(photoFil)photoFil.textContent='ON';
+          s3SetPhotoBeamCurrent(103);
+          if(cancel){cancel.disabled=true;cancel.textContent='Complete';}
+          s3Complete(900);
+        }
+      },100);
+    };
+  }
+  var s3BeamCurrentReadyForConfirm=false;
+  function showS3BeamCurrentConfirmation(){
+    if(state.currentSection!==3||state.currentStep!==6||!s3BeamCurrentReadyForConfirm||stepTransitionPending)return;
+    openModal({locked:false,tag:'SECTION 3 · FILAMENT STATUS',title:'Confirm filament and beam current',step:'Step 7',
+      body:'<p class="sop-flow-modal__copy">Observe the TEMCON High Voltage Control window. Verify that the <strong>Filament status</strong> is <strong>ON</strong> and the <strong>Beam Current</strong> has stabilized at <strong>103 µA</strong>.</p>',
+      footer:'<button type="button" class="sop-flow-btn sop-flow-btn--success" id="s3ConfirmBeamCurrent">Confirm 103 µA beam current</button>'});
+    var btn=document.getElementById('s3ConfirmBeamCurrent');
+    if(btn)btn.onclick=function(){
+      if(btn.disabled||stepTransitionPending)return;
+      ensureAudio();btn.disabled=true;s3BeamCurrentReadyForConfirm=false;
+      closeModal(true);s3Complete(650);
+    };
+  }
+  function runBFAtomic07(){
+    // Step 7: learners must confirm the stabilized 103 µA beam current before moving on.
+    s3BeamCurrentReadyForConfirm=false;
+    if(!prepareS3FilamentPhoto(true))return;
+    var on=document.getElementById('s3PhotoFilamentOn');if(on){on.hidden=true;on.disabled=true;on.onclick=null;}
+    var popup=document.getElementById('s3FilamentProgressPopup');if(popup)popup.hidden=true;
+    bfState.filamentOn=true;
+    var nativeFil=document.getElementById('pc-fil-status');if(nativeFil)nativeFil.textContent='ON';
+    var photoFil=document.getElementById('s3PhotoFilamentState');if(photoFil)photoFil.textContent='ON';
+    s3SetPhotoBeamCurrent(103);
+    var t=setTimeout(function(){
+      if(state.currentSection!==3||state.currentStep!==6||stepTransitionPending)return;
+      s3BeamCurrentReadyForConfirm=true;
+      showS3BeamCurrentConfirmation();
+    },2100);
+    bfTimers.push(t);
+  }
+  function showS3V2VerificationModal(){
+    if(state.currentSection!==3||state.currentStep!==4||!s3V2ReadyForConfirm)return;
+    openModal({locked:false,tag:'SECTION 3 · VALVE STATUS',title:'Verify valve V2 is OPEN',step:'Step 5',
+      body:'<p class="sop-flow-modal__copy">Observe the <strong>Valve Status</strong> window beside High Voltage Control. Confirm that the <strong>V2 isolation valve</strong> is <strong>OPEN</strong> (green indicator) and the chamber vacuum shows <strong>Evac Ready</strong>.</p>',
+      footer:'<button type="button" class="sop-flow-btn sop-flow-btn--success" id="s3ConfirmV2">Confirm V2 OPEN</button>'});
+    var btn=document.getElementById('s3ConfirmV2');
+    if(btn)btn.onclick=function(){
+      if(btn.disabled)return;
+      ensureAudio();btn.disabled=true;bfState.v2Open=true;
+      closeModal(true);s3Complete(550);
+    };
+  }
+  function runBFAtomic08(){
+    if(!ensureS3HtPhoto(true))return;
+    var page=document.querySelector('[data-temcon-page="standard"]');
+    if(page)page.classList.remove('sop-s3-filament-photo-layout');
+    // V2 verification occurs BEFORE filament activation: retain NotReady / 43.2 µA.
+    bfState.filamentOn=false;
+    var photoFil=document.getElementById('s3PhotoFilamentState');if(photoFil){photoFil.hidden=false;photoFil.textContent='NotReady';}
+    s3SetPhotoBeamCurrent(43.2);
+    var fil=document.getElementById('pc-fil-status');if(fil)fil.textContent='NotReady';
+    var on=document.getElementById('s3PhotoFilamentOn');if(on){on.hidden=true;on.disabled=true;}
+    s3V2ReadyForConfirm=false;
+    if(s3V2ModalTimer)clearTimeout(s3V2ModalTimer);
+    s3V2ModalTimer=setTimeout(function(){
+      s3V2ModalTimer=null;
+      if(state.currentSection!==3||state.currentStep!==4)return;
+      s3V2ReadyForConfirm=true;
+      showS3V2VerificationModal();
+    },6000);
+  }
+  // Section 3 Step 8 — BEAM ON, TEMCON indication, column zoom and two green-screen references.
+  function hideS3BeamScreenStill(){
+    var still=document.getElementById('s3BeamScreenStill');
+    if(still){still.classList.remove('is-visible');still.hidden=true;}
+  }
+  function showS3BeamScreenStill(){
+    if(!viewScreen)return;
+    var still=document.getElementById('s3BeamScreenStill');
+    if(!still){
+      still=document.createElement('img');
+      still.id='s3BeamScreenStill';
+      still.className='sop-s3-beam-screen-still';
+      still.alt='Fluorescent viewing screen glowing green after BEAM ON';
+      still.src='../assets/images/sop/section3-step8-neon-screen.png';
+      still.hidden=true;
+      viewScreen.appendChild(still);
+    }
+    still.hidden=false;
+    if(viewEmpty)viewEmpty.style.display='none';
+    void still.offsetWidth;
+    still.classList.add('is-visible');
+  }
+  function runS3BeamIlluminationSequence(){
+    if(state.currentSection!==3||state.currentStep!==7)return;
+    // The existing full-column photograph zooms toward the fluorescent screen first.
+    hideBfScene();setViewer('column');
+    showViewportScene({
+      baseSrc:'../assets/images/sop/column-viewport-real.png',
+      focusSrc:'../assets/images/sop/section3-step8-emerald-control-station.png',
+      sceneClass:'is-s3-beam-glow-sequence'
+    });
+    if(!viewportScene)return;
+    if(viewportStep4Img1){
+      viewportStep4Img1.src='../assets/images/sop/section3-step8-emerald-control-station.png';
+      viewportStep4Img1.alt='TEM control station with a green illuminated viewing screen';
+    }
+    if(viewportStep4Img2){
+      viewportStep4Img2.src='../assets/images/sop/section3-step8-neon-screen.png';
+      viewportStep4Img2.alt='Close view of the luminous green phosphor screen';
+    }
+    function stage(delay,phase,action){
+      sceneTimers.push(setTimeout(function(){
+        if(state.currentSection!==3||state.currentStep!==7||!viewportScene||viewportScene.hidden)return;
+        viewportScene.setAttribute('data-s3-beam-phase',phase);
+        if(typeof action==='function')action();
+      },delay));
+    }
+    stage(100,'zoom');
+    stage(4300,'first');
+    stage(7600,'second');
+    stage(10800,'screen',function(){
+      /* v4.9.27: go directly to the grayscale specimen instead of
+         the neon-screen still photo.  showBfScene() calls
+         setViewer('screen') and hideViewportScene() internally.
+         Completion is folded in here because hideViewportScene sets
+         viewportScene.hidden=true, which would block any later
+         stage callback's guard check. */
+      bfState.coverOpen=true;
+      showBfScene();
+      s3Complete(1200);
+    });
+  }
   function runBFAtomic09(){
-    hideBfScene();hideS3ApertureOverlay();
-    bfSetStatus('Press BEAM on L1.');
+    hideS3BeamScreenStill();hideS3ApertureOverlay();
+    // Reopen the same 200 kV / 103 µA HT + V2 Valve TEMCON presentation seen at Step 7.
+    if(!prepareS3FilamentPhoto(true))return;
+    var filOn=s3HtPhotoNode('s3PhotoFilamentOn');
+    if(filOn){filOn.hidden=true;filOn.disabled=true;filOn.onclick=null;}
+    var popup=document.getElementById('s3FilamentProgressPopup');if(popup)popup.hidden=true;
+    var filState=s3HtPhotoNode('s3PhotoFilamentState');
+    if(filState){filState.hidden=false;filState.textContent='ON';}
+    var nativeFil=s3HtPhotoNode('pc-fil-status');if(nativeFil)nativeFil.textContent='ON';
+    bfState.filamentOn=true;
+    s3SetPhotoBeamCurrent(103);
+    bfState.beamOn=false;
+    var beamLamp=s3HtPhotoNode('pc-beam-lamp');
+    if(beamLamp){beamLamp.classList.remove('is-on','sop-s3-beam-powered');beamLamp.innerHTML='Beam<br><strong>NotReady</strong>';}
+    bfSetStatus('Press BEAM ON on L1. Observe green TEMCON status and the screen zoom.');
     s3Activate(['beam-on']);
+    var pressed=false;
     s3SetHandlers({'action:beam-toggle':function(btn){
-      s3SelectButton(btn);
+      if(pressed||state.currentSection!==3||state.currentStep!==7)return;
+      pressed=true;ensureAudio();s3SelectButton(btn);
+      s3SetHandlers({});s3Activate([]);
       bfState.beamOn=true;
-      /* v4.8.9: stay on PC drawer briefly to show beam value update */
-      syncPcLiveStatus();
-      s3PreparePcStandard();
-      setTimeout(function(){
+      if(beamLamp){beamLamp.classList.add('is-on','sop-s3-beam-powered');beamLamp.innerHTML='Beam<br><strong>Ready</strong>';}
+      bfSetStatus('BEAM ON · TEMCON status is green. Observe the fluorescent screen.');
+      var timer=setTimeout(function(){
+        if(state.currentSection!==3||state.currentStep!==7)return;
         closePcDrawer();
-        setTimeout(function(){
-          runS3BeamScreenSequence(function(){s3Complete(300);});
-        },400);
-      },1400);
+        runS3BeamIlluminationSequence();
+      },1750);
+      bfTimers.push(timer);
     }});
   }
   function runBFAtomic10(){showBfScene();setBfFluorescentMode(true);bfState.beamOn=true;bfState.coverOpen=false;bfRender();bfSetStatus('Remove the screen cover.');s3Activate([]);s3SetScreenAction('Remove screen cover',function(){bfState.coverOpen=true;bfRender();s3Complete(350);});}
@@ -1842,18 +2774,133 @@
   function runBFAtomic50(){showBfScene();bfState.screenRaised=false;bfSetStatus('Press F1 to lift the fluorescent screen and expose the camera.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);bfState.screenRaised=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
 
   function ensureAtomicItemPanel(mode){
-    openCameraDrawer();var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return null;var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='none';var old=document.getElementById('sopItemPanel');if(old)old.remove();var p=document.createElement('div');p.id='sopItemPanel';p.className='sop-item-panel';var html='<div class="sop-bf-card-title">iTEM acquisition</div>';
-    if(mode==='open')html+='<button id="s3ItemOpen">Open iTEM</button><div class="sop-s3-pc-note">Dummy iTEM interface until the actual screenshot is supplied.</div>';
-    if(mode==='focus')html+='<div class="sop-s3-pc-note">iTEM open · OBJ FOCUS adjustment is optional. Use the R1 focus knobs if needed.</div>';
-    if(mode==='video')html+='<button id="s3ItemVideo">Video</button><div class="sop-s3-pc-note">Start the live camera feed.</div>';
+    openCameraDrawer();
+    var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return null;
+    var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='none';
+    var old=document.getElementById('sopItemPanel');if(old)old.remove();
+    var ws=document.querySelector('#pc-cam .camera-workstation');if(ws){ws.classList.add('sop-item-workflow');ws.classList.toggle('sop-item-workflow--focus',mode==='focus');}
+    var p=document.createElement('div');p.id='sopItemPanel';p.className='sop-item-panel sop-item-panel--olympus';
+    var html='<div class="sop-item-panel__header"><span class="sop-item-panel__symbol">iTEM</span><strong>Acquisition</strong><small>Olympus TEM</small></div>';
+    if(mode==='open')html+='<div class="sop-item-panel__status">● Camera connected · imaging workspace ready</div><div class="sop-s3-pc-note">Olympus iTEM is open automatically. The real specimen is displayed in the iTEM acquisition window.</div>';
+    if(mode==='focus')html+='<div class="sop-s3-pc-note"><strong>Through-focus inspection</strong> — Observe all three focus conditions <strong>in the iTEM camera window only</strong>. Turn the OBJ FOCUS knobs counter-clockwise for underfocus, move toward minimum contrast, then clockwise for overfocus. Hold each view for one second.</div>'
+      +'<div class="s3-focus-condition" id="s3FocusCondition">Current: UNDERFOCUS</div>'
+      +'<div class="s3-focus-checklist" id="s3FocusChecklist" aria-label="Three focus conditions to observe">'
+      +'<div class="s3-focus-check" data-focus-check="under"><span class="s3-focus-check__circle">○</span><span>Underfocus (Scherzer)</span><small>Bright white fringe outside particle edges; textured carbon film</small></div>'
+      +'<div class="s3-focus-check" data-focus-check="sharp"><span class="s3-focus-check__circle">○</span><span>In focus</span><small>Low contrast; smooth carbon background; no edge fringes</small></div>'
+      +'<div class="s3-focus-check" data-focus-check="over"><span class="s3-focus-check__circle">○</span><span>Overfocus</span><small>Dark outer fringe; avoid for final sizing</small></div></div>'
+      +'<div class="s3-focus-readout" id="s3FocusReadout">Focus offset: −12.0 · Hold steady to inspect</div>'
+      +'<button type="button" id="s3ConfirmFocusThree" class="s3-focus-confirm" disabled>Confirm all three focus conditions</button>';
+    if(mode==='video')html+='<button id="s3ItemVideo">Video</button><div class="sop-s3-pc-note">Start the live Bright Field camera acquisition.</div>';
     if(mode==='snapshot')html+='<button id="s3ItemSnapshot">Snapshot</button><div class="sop-s3-pc-note">Capture the Bright Field image.</div>';
     if(mode==='done')html+='<div class="sop-s3-pc-note">Snapshot captured · press F1 on R1 to return the fluorescent screen.</div>';
-    p.innerHTML=html;host.appendChild(p);var ph=document.getElementById('pc-cam-placeholder');if(ph&&bfState.itemOpen)ph.style.display='none';return p;
+    p.innerHTML=html;host.appendChild(p);showS3CameraSignal();return p;
   }
-  function runBFAtomic51(){hideBfScene();hideS3ApertureOverlay();var p=ensureAtomicItemPanel('open'),b=document.getElementById('s3ItemOpen');if(!b)return;b.onclick=function(){ensureAudio();bfState.itemOpen=true;b.disabled=true;var ph=document.getElementById('pc-cam-placeholder');if(ph)ph.style.display='none';drawBfCameraFrame('cameraLiveC',.20,'iTEM · real BF specimen');s3Complete(650);};}
-  function runBFAtomic52(){hideBfScene();hideS3ApertureOverlay();ensureAtomicItemPanel('focus');drawBfCameraFrame('cameraLiveA',.65,'LIVE BF · focus touch-up');s3Activate(['focus-coarse','focus-fine']);var timer=setTimeout(function(){s3Complete(100);},2800);bfTimers.push(timer);function touched(){drawBfCameraFocusPreview();clearTimeout(timer);s3Complete(450);}s3SetHandlers({'knob:focus-coarse':function(v){bfState.focusCoarse=v;touched();},'knob:focus-fine':function(v){bfState.focusFine=v;touched();}});}
-  function runBFAtomic53(){hideBfScene();var p=ensureAtomicItemPanel('video'),b=document.getElementById('s3ItemVideo');if(!b)return;b.onclick=function(){ensureAudio();bfState.videoOn=true;b.disabled=true;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running';startBfCameraLive();s3Complete(1500);};}
-  function runBFAtomic54(){hideBfScene();var p=ensureAtomicItemPanel('snapshot'),b=document.getElementById('s3ItemSnapshot');if(!b)return;drawBfCameraFrame('cameraLiveC',.08,'LIVE BF · ready for snapshot');b.onclick=function(){ensureAudio();bfState.captured=true;b.disabled=true;drawCapturedBf();var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Real BF snapshot captured';s3Complete(800);};}
+  function runBFAtomic51(){
+    // Stay on the Column tab: iTEM lives only inside the camera drawer.
+    setViewer('column');hideBfScene();hideS3ApertureOverlay();hideS3FocusViewport();
+    bfState.itemOpen=true;
+    var panel=ensureAtomicItemPanel('open');
+    if(!panel)return;
+    showS3CameraSignal();
+    drawBfCameraFrame('cameraLiveC',.18,'OLYMPUS iTEM · live TEM specimen');
+    var live=document.getElementById('pc-cam-live-state');if(live)live.textContent='Preview ready';
+    // Auto-opened iTEM workspace is the new Section 3 Step 48.
+    var t=setTimeout(function(){if(state.currentSection===3&&state.currentStep===47)s3Complete(650);},2000);
+    bfTimers.push(t);
+  }
+  function runBFAtomic52(){
+    // Focus conditions appear only in iTEM; never briefly switch to screen.
+    setViewer('column');hideBfScene();hideS3ApertureOverlay();hideS3FocusViewport();
+    bfState.itemOpen=true;
+    bfState.focusCoarse=-12;bfState.focusFine=0;
+    s3SetKnob('focus-coarse',-12);s3SetKnob('focus-fine',0);
+    var panel=ensureAtomicItemPanel('focus');
+    if(!panel)return;
+    hideS3FocusViewport();
+    setViewer('column'); // Only the iTEM camera shows under/in/overfocus. No screen overlay.
+    showS3CameraSignal();
+    drawBfCameraFocusPreview();
+    var seen={under:false,sharp:false,over:false},holdTimer=null,lastCondition='',stableSince=0;
+    var confirm=document.getElementById('s3ConfirmFocusThree');
+    var read=document.getElementById('s3FocusReadout');
+    var cond=document.getElementById('s3FocusCondition');
+    var lastSigned=-12;
+    function which(v){return v<=-5?'under':(Math.abs(v)<=1.5?'sharp':(v>=5?'over':'transition'));}
+    function name(c){return c==='under'?'UNDERFOCUS':(c==='sharp'?'IN FOCUS':(c==='over'?'OVERFOCUS':'TRANSITION'));}
+    function syncChecklist(active){
+      ['under','sharp','over'].forEach(function(c){
+        var el=document.querySelector('[data-focus-check="'+c+'"]');if(!el)return;
+        el.classList.toggle('is-seen',!!seen[c]);el.classList.toggle('is-current',c===active);
+        var ico=el.querySelector('.s3-focus-check__circle');if(ico)ico.textContent=seen[c]?'✓':'○';
+      });
+      var all=seen.under&&seen.sharp&&seen.over;
+      var returned=(lastSigned>=-3&&lastSigned<=1.5);
+      if(confirm)confirm.disabled=!(all&&returned);
+      if(read)read.textContent='Focus offset: '+lastSigned.toFixed(1)+' · '+Object.values(seen).filter(Boolean).length+'/3 conditions observed'+(all&&!returned?' · Return near focus to confirm':'');
+    }
+    function inspect(){
+      var signed=Number(bfState.focusCoarse||0)+Number(bfState.focusFine||0);
+      lastSigned=signed;
+      var active=which(signed);
+      if(holdTimer)clearTimeout(holdTimer);
+      if(cond)cond.textContent='Current: '+name(active)+(active==='transition'?' · adjust knob':' · hold to verify');
+      drawBfCameraFocusPreview();syncChecklist(active);
+      if(active==='transition'||seen[active])return;
+      lastCondition=active;stableSince=Date.now();
+      holdTimer=setTimeout(function(){
+        if(state.currentSection!==3||state.currentStep!==48)return;
+        var present=Number(bfState.focusCoarse||0)+Number(bfState.focusFine||0);
+        if(which(present)!==lastCondition||Date.now()-stableSince<700)return;
+        seen[active]=true;syncChecklist(active);
+        if(cond)cond.textContent=name(active)+' observed ✓ — proceed to the next condition';
+      },850);
+      bfTimers.push(holdTimer);
+    }
+    // Focus knobs remain disabled while the learner reads the introduction.
+    s3Activate([]);
+    s3SetHandlers({
+      'knob:focus-coarse':function(v){bfState.focusCoarse=v;inspect();},
+      'knob:focus-fine':function(v){bfState.focusFine=v;inspect();}
+    });
+    if(confirm)confirm.onclick=function(){
+      if(confirm.disabled||!(seen.under&&seen.sharp&&seen.over))return;
+      ensureAudio();confirm.disabled=true;
+      var n=document.getElementById('pc-cam-message');if(n)n.textContent='iTEM · Underfocus, in-focus, overfocus confirmed';
+      s3Complete(550,function(){hideS3FocusViewport();});
+    };
+    // The camera is visible underneath the modal. After OK, enable the
+    // actual OBJ FOCUS controls and begin evaluating three held conditions.
+    openModal({locked:true,dismissible:false,tag:'SECTION 3 · iTEM FOCUS TRAINING',
+      title:'Observe all three focus conditions',step:'Step '+(state.currentStep+1)+' of '+sections[2].steps.length,
+      body:'<p class="sop-flow-modal__copy"><strong>This step is for learning purposes only.</strong> Observe the three focus conditions inside the <strong>iTEM camera window</strong>. Refer to the <strong>instructions on the right side of the camera screen</strong>.</p>'
+        +'<p class="sop-flow-modal__copy" style="margin-top:9px"><strong>Underfocus:</strong> bright white fringes outside nanoparticle edges. <strong>In focus:</strong> smooth carbon background and minimum contrast. <strong>Overfocus:</strong> dark fringes outside particle edges.</p>'
+        +'<p class="sop-flow-modal__copy" style="margin-top:9px">Use OBJ FOCUS COARSE/FINE to observe each condition, then return near focus and confirm your observations.</p>',
+      footer:'<button type="button" class="sop-flow-btn sop-flow-btn--success" id="s3FocusLearningOk">OK — Begin focus observation</button>'});
+    var ok=document.getElementById('s3FocusLearningOk');
+    if(ok)ok.onclick=function(){
+      closeModal(true);
+      if(state.currentSection!==3||state.currentStep!==48)return;
+      s3Activate(['focus-coarse','focus-fine']);
+      inspect();
+    };
+  }
+  function runBFAtomic53(){hideBfScene();hideS3FocusViewport();var p=ensureAtomicItemPanel('video'),b=document.getElementById('s3ItemVideo');if(!b)return;b.onclick=function(){ensureAudio();bfState.videoOn=true;b.disabled=true;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running';startBfCameraLive();s3Complete(1500);};}
+  function runBFAtomic54(){
+    setViewer('column');hideBfScene();clearBfTimers();
+    var p=ensureAtomicItemPanel('snapshot'),b=document.getElementById('s3ItemSnapshot');if(!b)return;
+    drawBfCameraFrame('cameraLiveC',.08,'LIVE BF · ready for snapshot');
+    b.onclick=function(){
+      if(b.disabled)return;
+      ensureAudio();b.disabled=true;
+      drawCapturedBf(function(canvas){
+        if(state.currentSection!==3||state.currentStep!==50)return;
+        bfState.captured=true;
+        var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Real BF snapshot captured';
+        downloadCapturedBf(canvas);
+        s3Complete(800);
+      });
+    };
+  }
   function runBFAtomic55(){hideBfScene();ensureAtomicItemPanel('done');if(bfState.captured)drawCapturedBf();bfSetStatus('Press F1 to return the fluorescent screen.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!bfState.captured)return;s3SelectButton(btn);bfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideS3ApertureOverlay();});}});}
 
 
@@ -2004,10 +3051,10 @@
 
   function bindTrackball(){var ball=document.getElementById('specTrackball'),dot=document.getElementById('stageDot'),btn=document.getElementById('trackConfirm');var drag=false,lx=0,ly=0,total=0,x=50,y=50;ball.addEventListener('pointerdown',function(e){ensureAudio();drag=true;lx=e.clientX;ly=e.clientY;ball.setPointerCapture(e.pointerId);ball.classList.add('is-dragging');});ball.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;total+=Math.abs(dx)+Math.abs(dy);x=Math.max(12,Math.min(88,x+dx*.18));y=Math.max(12,Math.min(88,y+dy*.18));dot.style.left=x+'%';dot.style.top=y+'%';if(total>42&&!state.trackballMoved){state.trackballMoved=true;btn.disabled=false;}});ball.addEventListener('pointerup',function(){drag=false;ball.classList.remove('is-dragging');});btn.addEventListener('click',function(){if(!state.trackballMoved)return;btn.disabled=true;completeStep(function(){closeModal(true);});});}
 
-  function resetSession(){clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();resetBfState();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer)clearInterval(state.pumpTimer);state={sample:null,currentSection:0,currentStep:0,unlockedThrough:0,sectionComplete:{},completed:{},gridStage:0,insertionDone:false,pumpStarted:false,evacuationDone:false,rotation15:false,rotation75:false,holderSeated:false,trackballMoved:false,pumpTimer:null};sampleInd.textContent='SELECT SAMPLE';closePcDrawer();closeModal(true);setSessionControls(false);renderNav();setInstruction();updateProgress();}
+  function resetSession(){hideS3BeamScreenStill();stopPrestartExplore();clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();releaseS3HtPhoto();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();resetBfState();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer)clearInterval(state.pumpTimer);state={sample:null,currentSection:0,currentStep:0,unlockedThrough:0,sectionComplete:{},completed:{},gridStage:0,insertionDone:false,pumpStarted:false,evacuationDone:false,rotation15:false,rotation75:false,holderSeated:false,trackballMoved:false,pumpTimer:null};var holderReset=document.getElementById('pc-holder-model-select');if(holderReset)holderReset.value='single-tilt-beryllium';sampleInd.textContent='SELECT SAMPLE';closePcDrawer();closeModal(true);setSessionControls(false);renderNav();setInstruction();updateProgress();startPrestartExplore();}
 
   var restart=document.getElementById('btn-restart');if(restart)restart.addEventListener('click',function(){
-    if(!state.sample){showSampleModal();return;}
+    if(!state.sample){stopPrestartExplore();showSampleModal();return;}
     resetSession();
   });
   var undo=document.getElementById('btn-undo-step');if(undo)undo.addEventListener('click',function(){
@@ -2016,21 +3063,62 @@
     if(wasPending)delete state.completed[key()];
     clearPendingStepTransition();
     if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}
-    clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();closeModal(true);closePcDrawer();hideSection1Tour();stopPump();if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}
+    clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();releaseS3HtPhoto();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();closeModal(true);closePcDrawer();hideSection1Tour();stopPump();if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}
     if(!wasPending&&state.currentStep>0){state.currentStep--;delete state.completed[key()];}
-    if(state.currentSection===2 && state.currentStep>=4){state.pumpStarted=false;state.evacuationDone=false;}
+    if(state.currentSection===2 && state.currentStep>=5){state.pumpStarted=false;state.evacuationDone=false;}
     setInstruction();renderNav();updateProgress();setTimeout(showCurrentStep,650);
   });
   var showStep=document.getElementById('btn-show-step');if(showStep)showStep.addEventListener('click',function(){
+    if(state.currentSection===3&&state.currentStep===6&&s3BeamCurrentReadyForConfirm){showS3BeamCurrentConfirmation();return;}
+    if(state.currentSection===3&&state.currentStep===4&&s3V2ReadyForConfirm){showS3V2VerificationModal();return;}
+    if(state.currentSection===2&&state.currentStep===7&&state.sample&&!stepTransitionPending&&showSection2Step8Confirmation){
+      var holderSelect=document.getElementById('pc-holder-model-select');
+      if(holderSelect&&holderSelect.value==='single-tilt')showSection2Step8Confirmation();
+      else openModal({locked:false,tag:'SECTION 2 · HOLDER MODEL',title:'Select Single Tilt Holder',step:'Step 8 of 8',
+        body:'<p class="sop-flow-modal__copy">Use the TEMCON holder dropdown in the F1–F6 row. Choose <strong>EM-21010/21020 : Single Tilt Holder</strong> to open the final confirmation.</p>',footer:''});
+      return;
+    }
+    if(state.currentSection===1&&state.currentStep===3&&state.sample){
+      if(step4HtReadyForConfirmation){showStep4StatusConfirmation();}
+      else{
+        openModal({locked:false,tag:'SECTION 1 · HIGH VOLTAGE',title:'Switch HT ON',step:'Step 4 of 7',
+          body:'<p class="sop-flow-modal__copy">In the existing High Voltage Control window, press <strong>HT ON</strong>. Wait for the accelerating-voltage alert to disappear and the HT indicator to turn green. Then verify the Valve Status window.</p>',footer:''});
+      }
+      return;
+    }
+
     if(stepTransitionPending){delete state.completed[key()];updateProgress();}
     clearPendingStepTransition();
-    clearBfTimers();clearS3PcPanel();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();closeModal(true);hideSection1Tour();
+    clearBfTimers();clearS3PcPanel();releaseS3HtPhoto();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();closeModal(true);hideSection1Tour();
     if(!state.sample){showSampleModal();return;}
     var s=currentSection();if(!s||state.sectionComplete[s.id]||!s.implemented)return;
-    if(state.currentSection===2 && state.currentStep===4){state.pumpStarted=false;state.evacuationDone=false;stopPump();if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}}
+    if(state.currentSection===2 && state.currentStep===5){state.pumpStarted=false;state.evacuationDone=false;stopPump();if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}}
     setInstruction();showCurrentStep();
   });
-  if(drawerHandle)drawerHandle.addEventListener('click',function(){if(state.currentSection===1&&state.currentStep===3)return;if(drawer.classList.contains('is-open'))closePcDrawer();else openPcDrawer();});
+  function togglePcDrawerForLearner(){
+    if(!drawer||state.currentSection===1&&state.currentStep===3)return;
+    var opening=!drawer.classList.contains('is-open');
+    drawer.classList.toggle('is-open',opening);
+    if(viewerStage)viewerStage.classList.toggle('has-drawer',opening);
+    if(drawerHandle){
+      drawerHandle.setAttribute('aria-expanded',opening?'true':'false');
+      drawerHandle.title=opening?'Collapse PC drawer':'Expand PC drawer';
+    }
+    // Keep pcCam/pcTem visibility and their DOM content unchanged. In particular,
+    // do NOT invoke openPcDrawer(), which would switch iTEM back to TEMCON.
+    if(opening&&pcCam&&!pcCam.hidden&&pcCam.classList.contains('is-active')){
+      var dt=document.getElementById('pc-drawer-title');if(dt)dt.textContent='PC · iTEM CAMERA';
+      if(state.currentSection===3&&state.currentStep===48){
+        showS3CameraSignal();drawBfCameraFocusPreview();
+      }
+    }
+  }
+  if(drawerHandle){
+    drawerHandle.addEventListener('click',togglePcDrawerForLearner);
+    drawerHandle.addEventListener('keydown',function(ev){
+      if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();togglePcDrawerForLearner();}
+    });
+  }
 
   // Keep the old theory button functional.
   var theory=document.getElementById('guidedTheory'),theoryBtn=document.getElementById('guidedTheoryBtn'),theoryClose=document.getElementById('guidedTheoryClose'),theoryGot=document.getElementById('guidedTheoryGotIt'),theoryBg=document.getElementById('guidedTheoryBackdrop');
@@ -2038,7 +3126,7 @@
   function closeTheory(){if(!theory)return;theory.classList.remove('is-open');setTimeout(function(){theory.hidden=true;},180);}
   if(theoryBtn)theoryBtn.addEventListener('click',openTheory);if(theoryClose)theoryClose.addEventListener('click',closeTheory);if(theoryGot)theoryGot.addEventListener('click',closeTheory);if(theoryBg)theoryBg.addEventListener('click',closeTheory);
 
-  document.addEventListener('visibilitychange',function(){if(document.hidden)stopPump();else if(state.pumpStarted&&!state.evacuationDone&&state.currentSection===2&&state.currentStep===4)startPump();});
+  document.addEventListener('visibilitychange',function(){if(document.hidden)stopPump();else if(state.pumpStarted&&!state.evacuationDone&&state.currentSection===2&&state.currentStep===5)startPump();});
   window.addEventListener('beforeunload',stopPump);
 
   window.addEventListener('resize',function(){refreshInstructionMarquee();});
@@ -2051,5 +3139,5 @@
   var stageDock=document.getElementById('sop-stage-dock'),stageToggle=document.getElementById('sop-stage-dock-toggle'),stageLocator=document.getElementById('sop-stage-dock-locator');
   if(stageToggle&&stageDock){stageToggle.addEventListener('click',function(){var open=!stageDock.classList.contains('is-open');stageDock.classList.toggle('is-open',open);stageToggle.setAttribute('aria-expanded',open?'true':'false');if(open)setTimeout(function(){revealStageControl('smooth');},30);});}
   if(stageLocator){stageLocator.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();openS3Locator('stage-xy');});}
-var lc=document.getElementById('sopLocatorClose');if(lc)lc.addEventListener('click',closeS3Locator);[].slice.call(document.querySelectorAll('[data-locator-close]')).forEach(function(e){e.addEventListener('click',closeS3Locator);});var pdh=document.getElementById('pc-drawer-handle');if(pdh)pdh.addEventListener('click',function(){setTimeout(syncPcLiveStatus,40);});setSessionControls(false);renderNav();setInstruction();updateProgress();closePcDrawer();
+var lc=document.getElementById('sopLocatorClose');if(lc)lc.addEventListener('click',closeS3Locator);[].slice.call(document.querySelectorAll('[data-locator-close]')).forEach(function(e){e.addEventListener('click',closeS3Locator);});var pdh=document.getElementById('pc-drawer-handle');if(pdh)pdh.addEventListener('click',function(){setTimeout(syncPcLiveStatus,40);});setSessionControls(false);renderNav();setInstruction();updateProgress();closePcDrawer();wirePrestartExplore();startPrestartExplore();
 })();
