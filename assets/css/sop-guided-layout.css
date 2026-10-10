@@ -2146,8 +2146,8 @@ body.iit-sop .sop-bf-scene--screen .sop-bf-specimen[data-real-sample].is-wobblin
 .sop-prestart-explore__hotspot:hover,.sop-prestart-explore__hotspot:focus-visible{background:rgba(255,255,255,.93);color:#13283a;outline:2px solid #7bbaf1;outline-offset:2px}
 .sop-prestart-explore__dot{position:relative;height:9px;width:9px;border-radius:50%;background:#4ec8ff;box-shadow:0 0 0 1px rgba(255,255,255,.95),0 0 10px rgba(78,200,255,.8);flex:0 0 auto;animation:sopPrestartBlink 1.15s ease-in-out infinite}
 .sop-prestart-explore__hotspot:hover .sop-prestart-explore__dot{background:#f5a623;box-shadow:0 0 0 1px rgba(24,41,58,.95),0 0 10px rgba(245,166,35,.85)}
-.sop-prestart-explore__hotspot--l1{top:63.2%;left:15.6%}
-.sop-prestart-explore__hotspot--r1{top:63.1%;left:56.7%}
+.sop-prestart-explore__hotspot--l1{top:59.2%;left:32.0%}
+.sop-prestart-explore__hotspot--r1{top:59.2%;left:48.5%}
 .sop-prestart-explore__toolbar{position:absolute;top:12px;right:12px;z-index:2;display:flex;align-items:center;gap:4px;padding:5px;background:rgba(244,247,250,.88);border:1px solid rgba(151,170,191,.75);border-radius:9px;box-shadow:0 3px 14px rgba(0,0,0,.12)}
 .sop-prestart-explore__toolbar button{border:1px solid rgba(165,183,201,.9);border-radius:5px;min-width:31px;height:30px;padding:0 8px;background:#f8fafc;color:#4d647c;font:700 15px Arial,sans-serif;cursor:pointer}
 .sop-prestart-explore__toolbar button:disabled{opacity:.4;cursor:default}
@@ -2157,7 +2157,7 @@ body.iit-sop .sop-bf-scene--screen .sop-bf-specimen[data-real-sample].is-wobblin
 .sop-locator-modal.sop-prestart-reference .sop-locator-modal__panel{width:min(1050px,96vw);max-height:93vh}
 .sop-locator-modal.sop-prestart-reference .sop-locator-modal__canvas,.sop-locator-modal.sop-prestart-reference .sop-locator-modal__imagewrap img{max-height:77vh}
 .sop-locator-modal.sop-prestart-reference .sop-locator-modal__highlight{display:none!important}
-@media(max-width:680px){.sop-prestart-explore__hotspot{min-width:30px;height:20px;padding:0 6px 0 4px;gap:3px}.sop-prestart-explore__hotspot--l1{left:16.4%;top:63.2%}.sop-prestart-explore__hotspot--r1{left:57.8%;top:63.1%}.sop-prestart-explore__hint{font-size:10px}}
+@media(max-width:680px){.sop-prestart-explore__hotspot{min-width:30px;height:20px;padding:0 6px 0 4px;gap:3px}.sop-prestart-explore__hotspot--l1{left:32.0%;top:59.2%}.sop-prestart-explore__hotspot--r1{left:48.5%;top:59.2%}.sop-prestart-explore__hint{font-size:10px}}
 
 @keyframes sopPrestartBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.82)}}
 
@@ -2340,3 +2340,84 @@ body.iit-sop #pc-cam .camera-workstation.sop-item-workflow .camera-palette--fft{
 body.iit-sop #pc-cam .camera-workstation.sop-item-workflow .camera-side-column{grid-template-rows:minmax(0,1fr)}
 body.iit-sop #pc-cam .camera-workstation.sop-item-workflow--focus .camera-status-grid{display:none}
 body.iit-sop #pc-cam .camera-workstation.sop-item-workflow--focus .camera-palette__body{padding:5px}
+
+/* v4.9.32 — Section 3: brighter observable beam + CA selection on Viewing Screen */
+body.iit-sop .sop-bf-scene--screen .sop-bf-beam{
+  display:block!important;
+  border-radius:var(--beam-roundness,50%)!important;
+  background:radial-gradient(ellipse at center,
+    rgba(237,255,226,.16) 0%,
+    rgba(214,255,196,.23) 36%,
+    rgba(175,246,156,.30) 61%,
+    rgba(143,234,130,.37) 78%,
+    rgba(198,255,179,.62) 95%,
+    rgba(226,255,211,.65) 100%)!important;
+  border:1px solid rgba(201,255,192,.72)!important;
+  box-shadow:0 0 28px rgba(164,245,146,.36),0 0 48px rgba(200,255,194,.18),inset 0 0 18px rgba(255,255,255,.13)!important;
+  mix-blend-mode:screen!important;
+  filter:none;
+  transition:width .42s ease,height .65s ease,left 1.45s cubic-bezier(.2,.72,.28,1),top 1.45s cubic-bezier(.2,.72,.28,1),transform .75s ease,clip-path .6s ease,opacity .2s ease!important;
+  pointer-events:none;
+}
+/* Pre-CA: deliberately jagged asymmetric beam so the optical improvement is visible. */
+body.iit-sop .sop-bf-scene--screen .sop-bf-beam.is-ca-irregular{
+  clip-path:polygon(12% 0%,39% 4%,60% 0%,86% 11%,98% 28%,93% 52%,100% 77%,79% 91%,52% 100%,28% 94%,9% 83%,1% 59%,6% 29%)!important;
+  border-radius:42% 61% 48% 55%!important;
+  filter:drop-shadow(3px 2px 8px rgba(170,255,132,.15));
+}
+body.iit-sop .sop-bf-scene--screen .sop-bf-beam:not(.is-ca-irregular){
+  clip-path:none!important;
+}
+body.iit-sop .sop-bf-scene--screen .sop-bf-beam.is-cond-elliptical{
+  border:2px solid rgba(219,255,214,.86)!important;
+  box-shadow:0 0 35px rgba(176,254,168,.43),0 0 55px rgba(194,255,174,.17)!important;
+}
+/* A low-profile overlay in the Viewing Screen, not the Column viewport. */
+.s3-ca-checklist{
+  position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+  z-index:40;width:min(370px,92%);padding:7px 10px;
+  border:1px solid rgba(182,220,214,.75);border-radius:11px;
+  background:rgba(12,24,29,.92);box-shadow:0 6px 24px rgba(0,0,0,.44);
+  color:#effdf7;font:600 11px/1.25 "Segoe UI",Arial,sans-serif;
+  backdrop-filter:blur(7px);
+}
+.s3-ca-checklist[hidden]{display:none!important}
+.s3-ca-checklist__heading{color:#a8f5d6;font-size:10px;letter-spacing:.08em;margin:0 0 4px;text-align:center}
+.s3-ca-checklist__row{display:flex;align-items:center;gap:8px;padding:3px 5px;min-height:25px;border-radius:5px;cursor:pointer}
+.s3-ca-checklist__row.is-current{background:rgba(128,220,164,.14);color:#fff}
+.s3-ca-checklist__row.is-complete{color:#9ee7b7}
+.s3-ca-checklist__row input{width:15px;height:15px;flex:0 0 15px;accent-color:#34bd74;margin:0;cursor:pointer}
+.s3-ca-checklist__row input:disabled{cursor:default}
+.s3-ca-checklist__feedback{font-size:10px;line-height:1.3;color:#d0deea;text-align:center;margin-top:4px;padding:4px 2px 0;border-top:1px solid rgba(200,240,228,.17)}
+@media(max-width:620px){.s3-ca-checklist{bottom:4px;padding:5px 7px;width:min(340px,97%)}.s3-ca-checklist__row{min-height:22px;font-size:10px}.s3-ca-checklist__heading{font-size:9px}}
+.s3-ca-checklist__row.is-adjusting{background:rgba(145,241,181,.16);color:#e3ffec;animation:s3CaAdjust 1s ease-in-out infinite alternate}
+@keyframes s3CaAdjust{from{opacity:.7}to{opacity:1}}
+
+/* v4.9.33 — physically continuous aperture / condenser-stig beam state.
+   CA smooths the edge but does not cancel astigmatism. Both adjustments are
+   calculated from the same persisted optical state, not from the step number. */
+body.iit-sop .sop-bf-scene--screen .sop-bf-beam,
+body.iit-sop .sop-bf-scene--screen .sop-bf-beam.is-ca-irregular,
+body.iit-sop .sop-bf-scene--screen .sop-bf-beam:not(.is-ca-irregular){
+  clip-path:none!important;
+  border-radius:var(--beam-roundness,50%)!important;
+  transition:width .65s ease,height .75s ease,left 1.45s cubic-bezier(.2,.72,.28,1),
+    top 1.45s cubic-bezier(.2,.72,.28,1),transform .8s ease,
+    border-radius 1.5s ease,opacity .2s ease!important;
+}
+
+/* Old specimen field fades out while a new field/magnification fades in. */
+body.iit-sop .sop-bf-scene--screen .sop-bf-specimen.sop-bf-specimen-crossfade{
+  z-index:2!important;pointer-events:none!important;
+  transition:opacity .86s ease!important;
+}
+
+/* v4.9.35: Persist Step-8 zoomed fluorescent-screen image on COLUMN tab.
+   Independent of the temporary zoom scene and the live Viewing Screen. */
+.viewer__panel[data-view-panel="column"].sop-s3-column-screen-locked .viewer__column-image{
+  display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  object-fit:cover!important;object-position:center center!important;
+}
+
+.viewer__panel[data-view-panel="column"].sop-s3-column-screen-locked .viewer__column-hotspots,
+.viewer__panel[data-view-panel="column"].sop-s3-column-screen-locked .viewer__column-beam{visibility:hidden!important;}

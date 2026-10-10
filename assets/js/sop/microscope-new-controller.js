@@ -54,9 +54,9 @@
       {title:'Z Correction · Wobbler ON',instruction:'Press MAG WOB X or MAG WOB Y on R1 to start the wobble.',hint:'Use either axis as specified in the manual.'},
       {title:'Z Correction · Minimize wobble',instruction:'While the wobbler is ON, use Z UP / Z DOWN until lateral motion is minimized.',hint:'The real specimen image wobble reduces as Z approaches the correct height.'},
       {title:'Z Correction · Wobbler OFF',instruction:'Press the same MAG WOB X or MAG WOB Y control again to switch the wobble OFF.',hint:'The corrected Z height is retained.'},
-      {title:'Condenser Aperture · Select',instruction:'Select an appropriate condenser aperture using the Knob 1 click-stops on the condenser-aperture assembly.',hint:'A temporary dummy column-hardware control is used until the actual reference image is supplied.'},
-      {title:'Condenser Aperture · Centre X',instruction:'Adjust the condenser-aperture CA X centering control.',hint:'Center the beam horizontally.'},
-      {title:'Condenser Aperture · Centre Y',instruction:'Adjust the condenser-aperture CA Y centering control.',hint:'Center the beam vertically.'},
+      {title:'Condenser Aperture · Select',instruction:'In the Viewing Screen, select the condenser aperture using checkbox 1 beneath the image. Observe the irregular beam become cleaner while remaining off-centre.',hint:'The selected aperture improves the beam outline; centering follows in the next two steps.'},
+      {title:'Condenser Aperture · Centre X',instruction:'In the Viewing Screen, tick checkbox 2 to centre condenser-aperture X. Observe the beam move horizontally toward the optical axis.',hint:'Allow the simulated horizontal adjustment to finish before the next step.'},
+      {title:'Condenser Aperture · Centre Y',instruction:'In the Viewing Screen, tick checkbox 3 to centre condenser-aperture Y. Observe the beam move vertically and confirm the centred beam in the modal.',hint:'The final confirmation appears after the beam reaches the centre.'},
       {title:'Condenser Aperture · Verify',instruction:'Vary BRIGHTNESS so the beam spreads and contracts symmetrically about the optical axis.',hint:'Verify there is no off-centre shift or crescent clipping.'},
       {title:'Condenser Lens · Crossover',instruction:'Adjust BRIGHTNESS to bring the beam to crossover.',hint:'Use the Viewing Screen to observe the minimum beam diameter.'},
       {title:'Condenser Lens · SHIFT X',instruction:'Use SHIFT X on L1 to centre the crossover horizontally.',hint:'Move the beam toward the viewing-axis centre.'},
@@ -1025,7 +1025,7 @@
     [].slice.call(modal.querySelectorAll('[data-sample]')).forEach(function(b){b.addEventListener('click',function(){if(b.dataset.sample!=='nanoparticles')return;ensureAudio();state.sample=b.dataset.sample;sampleInd.textContent=({nanoparticles:'NANOPARTICLES', 'bulk-metallic':'BULK METALLIC', 'cross-section':'CROSS-SECTION'}[state.sample]||'SELECTED');state.unlockedThrough=1;state.currentSection=1;state.currentStep=0;closeModal(true);setSessionControls(true);renderNav();setInstruction();setTimeout(showCurrentStep,SECTION1_STEP1_START_DELAY_MS);});});
   }
 
-  function openSection(id){if(!sections[id-1]||sections[id-1].hidden||sections[id-1].upcoming)return;hideS3BeamScreenStill();if(stepTransitionPending){delete state.completed[key()];updateProgress();}clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();releaseS3HtPhoto();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();closePcDrawer();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}if(id===2){state.gridStage=0;state.insertionDone=false;state.pumpStarted=false;state.evacuationDone=false;state.rotation15=false;state.rotation75=false;state.holderSeated=false;state.trackballMoved=false;}if(id===3){resetBfState();}if(id===4){resetDfState();}state.currentSection=id;state.currentStep=0;renderNav();setInstruction();if(state.sectionComplete[id])return;if(!sections[id-1].implemented)return;setTimeout(showCurrentStep,STEP_MODAL_READING_DELAY_MS);}
+  function openSection(id){setS3ColumnScreenLocked(false);removeS3CaChecklist();if(!sections[id-1]||sections[id-1].hidden||sections[id-1].upcoming)return;hideS3BeamScreenStill();if(stepTransitionPending){delete state.completed[key()];updateProgress();}clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();releaseS3HtPhoto();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();closePcDrawer();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}if(id===2){state.gridStage=0;state.insertionDone=false;state.pumpStarted=false;state.evacuationDone=false;state.rotation15=false;state.rotation75=false;state.holderSeated=false;state.trackballMoved=false;}if(id===3){resetBfState();}if(id===4){resetDfState();}state.currentSection=id;state.currentStep=0;renderNav();setInstruction();if(state.sectionComplete[id])return;if(!sections[id-1].implemented)return;setTimeout(showCurrentStep,STEP_MODAL_READING_DELAY_MS);}
 
   function clearPendingStepTransition(){
     stepTransitionPending=false;pendingStepCleanup=null;
@@ -1595,32 +1595,57 @@
   function clearBfTimers(){bfTimers.forEach(function(t){try{clearTimeout(t);}catch(e){}try{clearInterval(t);}catch(e){}});bfTimers=[];s3StepCompleting=false;}
   function clearPhysicalFocus(){[].slice.call(document.querySelectorAll('.sop-control-focus')).forEach(function(e){e.classList.remove('sop-control-focus');});}
   function focusPhysical(selectors){clearPhysicalFocus();selectors.forEach(function(sel){var e=document.querySelector(sel);if(e)e.classList.add('sop-control-focus');});}
+  // v4.9.35: Keep the final zoomed fluorescent-screen photograph in the
+  // COLUMN viewport after Section 3 Step 8. The separate Viewing Screen
+  // remains interactive for optical adjustments; iTEM remains in PC drawer.
+  var s3ColumnBaseSrc='../assets/images/sop/column-viewport-real.png';
+  var s3ColumnZoomSrc='../assets/images/sop/section3-step8-neon-screen.png';
+  function setS3ColumnScreenLocked(locked){
+    var panel=document.querySelector('.viewer__panel[data-view-panel="column"]');
+    if(!panel)return;
+    var image=panel.querySelector('.viewer__column-image');
+    panel.classList.toggle('sop-s3-column-screen-locked',!!locked);
+    if(image){
+      var desired=locked?s3ColumnZoomSrc:s3ColumnBaseSrc;
+      if(image.getAttribute('src')!==desired)image.setAttribute('src',desired);
+      image.alt=locked?'Zoomed-in TEM fluorescent screen, maintained throughout Bright Field alignment and acquisition':'Actual TEM instrument room view';
+    }
+  }
+
   function setViewer(which){
     [].slice.call(document.querySelectorAll('.viewer__tab')).forEach(function(t){var on=t.dataset.view===which;t.classList.toggle('is-active',on);t.setAttribute('aria-selected',on?'true':'false');});
     [].slice.call(document.querySelectorAll('.viewer__panel')).forEach(function(p){p.classList.toggle('is-active',p.dataset.viewPanel===which);});
     var cap=document.getElementById('viewer-caption');if(cap)cap.textContent=which==='screen'?'VIEWING SCREEN · PHOSPHOR':'ELECTRON OPTICAL COLUMN';
   }
   function wireS3ViewerTabs(){[].slice.call(document.querySelectorAll('.viewer__tab')).forEach(function(t){if(t.dataset.sopWired)return;t.dataset.sopWired='1';t.addEventListener('click',function(){setViewer(t.dataset.view);});});}
+  // Reference-marker rectangles are matched to actual JEOL panel controls.
+  // Percentages are based on the 1448×1086 L1/R1 photograph, not the GUI's
+  // synthetic button grid. Marker sizing stays correct as the photo scales.
   var s3LocatorMap={
-    'probe-tem':{panel:'l1',label:'TEM',x:20.2,y:41.0,w:8.0,h:10.0},
-    'beam-on':{panel:'l1',label:'BEAM',x:8.0,y:11.0,w:9.5,h:11.0,note:'Beam control region on the supplied L1 reference.'},
-    'brightness':{panel:'l1',label:'BRIGHTNESS',x:56.0,y:58.0,w:17.5,h:22.0},
-    'spot-size':{panel:'l1',label:'SPOT SIZE',x:34.0,y:70.0,w:14.5,h:19.0},
-    'alpha-selector':{panel:'l1',label:'α SELECTOR',x:16.0,y:70.0,w:14.5,h:19.0},
-    'def-stig-mode':{panel:'l1',label:'COND STIG',x:66.5,y:36.0,w:17.0,h:9.0},
-    'shift-x':{panel:'l1',label:'SHIFT X',x:77.0,y:50.0,w:15.0,h:18.0},
-    'def-stig-x':{panel:'l1',label:'DEF/STIG X',x:77.0,y:72.0,w:15.0,h:19.0},
-    'f1':{panel:'r1',label:'F1',x:61.0,y:12.0,w:8.0,h:10.0},
-    'mag-mode':{panel:'r1',label:'MAG 1 / LOW MAG',x:14.0,y:29.0,w:20.0,h:13.0},
-    'mag-caml':{panel:'r1',label:'MAG/CAM L',x:34.0,y:43.0,w:18.0,h:21.0},
-    'std-focus':{panel:'r1',label:'STD FOCUS',x:78.0,y:29.0,w:13.5,h:15.0},
-    'wobbler':{panel:'r1',label:'MAG WOB X / Y',x:35.0,y:12.0,w:20.0,h:10.0},
-    'auto-contrast':{panel:'r1',label:'AUTO',x:81.0,y:65.0,w:10.0,h:11.0},
-    'shift-y':{panel:'r1',label:'SHIFT Y',x:10.0,y:46.0,w:13.0,h:17.0},
-    'def-stig-y':{panel:'r1',label:'DEF/STIG Y',x:10.0,y:73.0,w:14.0,h:18.0},
-    'focus-fine':{panel:'r1',label:'OBJ FOCUS FINE',x:35.0,y:72.0,w:17.0,h:20.0},
-    'focus-coarse':{panel:'r1',label:'OBJ FOCUS COARSE',x:58.0,y:70.0,w:20.0,h:22.0},
-    'stage-z':{panel:'r1',label:'Z UP / Z DOWN',x:8.0,y:11.0,w:24.0,h:12.0},
+    'probe-tem':{panel:'l1',label:'TEM',x:20.51,y:39.23,w:4.83,h:6.08},
+    'beam-on':{panel:'l1',label:'BEAM · Upper-left switch',x:19.48,y:13.54,w:6.49,h:8.84,note:'BEAM is the first square switch at the upper-left corner of the actual L1 control panel. Press the BEAM control on L1 in the simulator to turn the beam on.'},
+    'brightness':{panel:'l1',label:'BRIGHTNESS',x:55.04,y:56.63,w:11.81,h:15.19},
+    'spot-size':{panel:'l1',label:'SPOT SIZE',x:34.74,y:69.61,w:8.7,h:11.33},
+    'alpha-selector':{panel:'l1',label:'α SELECTOR',x:18.92,y:69.52,w:8.7,h:11.33},
+    'def-stig-mode':{panel:'l1',label:'COND STIG · ON STIG',x:67.2,y:36.28,w:4.97,h:6.35},
+    'shift-x':{panel:'l1',label:'SHIFT X',x:76.31,y:48.71,w:7.39,h:8.84},
+    'def-stig-x':{panel:'l1',label:'DEF/STIG X',x:76.31,y:70.99,w:7.46,h:9.21},
+    'f1':{panel:'r1',label:'F1',x:55.94,y:16.02,w:4.9,h:6.81},
+    'mag-mode':{panel:'r1',label:'MAG 1 / LOW MAG',x:14.36,y:30.48,w:14.78,h:7.18},
+    'mag-caml':{panel:'r1',label:'MAG/CAM L',x:32.87,y:44.11,w:11.74,h:14.18},
+    'std-focus':{panel:'r1',label:'STD FOCUS',x:74.03,y:29.37,w:7.6,h:9.12},
+    'wobbler':{panel:'r1',label:'MAG WOB X / Y',x:35.01,y:16.02,w:10.15,h:6.81},
+    'auto-contrast':{panel:'r1',label:'AUTO',x:74.86,y:60.96,w:5.11,h:6.91},
+    'shift-y':{panel:'r1',label:'SHIFT Y',x:13.05,y:47.42,w:7.8,h:9.3},
+    'def-stig-y':{panel:'r1',label:'DEF/STIG Y',x:13.05,y:71.09,w:7.87,h:10.31},
+    'focus-fine':{panel:'r1',label:'OBJ FOCUS FINE',x:33.43,y:69.52,w:9.25,h:13.44},
+    'focus-coarse':{panel:'r1',label:'OBJ FOCUS COARSE',x:55.11,y:68.32,w:12.09,h:16.11},
+    'stage-z':{panel:'r1',label:'Z UP / Z DOWN',x:15.26,y:16.02,w:12.91,h:7.0},
+    'aperture-select':{panel:'l1',label:'CL aperture selector',x:33.43,y:15.19,w:4.42,h:6.35},
+    'aperture-size':{panel:'l1',label:'Aperture size 1–4',x:37.98,y:24.77,w:17.96,h:6.35},
+    'aperture-align':{panel:'l1',label:'Aperture X/Y alignment',x:61.4,y:14.73,w:12.43,h:16.85},
+    'imaging-mode':{panel:'l1',label:'TEM imaging mode',x:20.51,y:39.23,w:4.83,h:6.08},
+    'magnification':{panel:'r1',label:'MAG/CAM L',x:32.87,y:44.11,w:11.74,h:14.18},
     'stage-xy':{panel:'stage',label:'SPEC CONTROL · Trackball',x:19.0,y:42.0,w:63.0,h:38.0,note:'Actual JEOL specimen-stage control. Use the large trackball for specimen X/Y movement; the magnifier shows the real hardware layout.'}
   };
   function removeS3LocatorButtons(){[].slice.call(document.querySelectorAll('.sop-control-locator')).forEach(function(b){b.remove();});}
@@ -1633,7 +1658,7 @@
     }
     if(title)title.textContent=(cfg.panel==='l1'?'L1 · ':(cfg.panel==='r1'?'R1 · ':'SPECIMEN STAGE · '))+cfg.label.replace('SPEC CONTROL · ','');
     if(note)note.textContent=cfg.note||'Highlighted area shows the active control on the actual TEM panel.';
-    if(hl){hl.style.display='';hl.style.left=cfg.x+'%';hl.style.top=cfg.y+'%';hl.style.width=cfg.w+'%';hl.style.height=cfg.h+'%';}
+    if(hl){var hasBox=[cfg.x,cfg.y,cfg.w,cfg.h].every(function(n){return typeof n==='number'&&isFinite(n);});hl.style.display=hasBox?'':'none';if(hasBox){hl.style.left=cfg.x+'%';hl.style.top=cfg.y+'%';hl.style.width=cfg.w+'%';hl.style.height=cfg.h+'%';}}
     m.classList.add('is-open');m.setAttribute('aria-hidden','false');
   }
   function attachS3Locator(control,key){
@@ -2026,6 +2051,7 @@
     fallback:      '../assets/images/sop/real-sample/Tv5.png'
   };
   var bfCurrentImgKey='';
+  var bfSpecimenCrossfade=null;
   var bfRealPreloaded=false;
   function bfPreloadRealImages(){
     if(bfRealPreloaded)return;bfRealPreloaded=true;
@@ -2034,6 +2060,22 @@
   function bfSetSpecimenImage(key){
     if(!bfSpecimen||bfCurrentImgKey===key)return;
     var src=BF_SPECIMEN_IMAGES[key]||BF_SPECIMEN_IMAGES.fallback;
+    // A change of field or magnification must never create a hard image cut.
+    // Keep the exact previous field visible while the new field fades into it.
+    if(bfSpecimenCrossfade){bfSpecimenCrossfade.remove();bfSpecimenCrossfade=null;}
+    if(bfCurrentImgKey&&bfSpecimen.parentElement&&bfState.beamOn){
+      var previous=bfSpecimen.cloneNode(false);
+      previous.removeAttribute('id');
+      previous.className='sop-bf-specimen sop-bf-specimen-crossfade';
+      previous.setAttribute('aria-hidden','true');
+      previous.style.setProperty('opacity','0.92','important');
+      bfSpecimen.insertAdjacentElement('afterend',previous);
+      bfSpecimenCrossfade=previous;
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
+        if(previous.isConnected)previous.style.setProperty('opacity','0','important');
+      });});
+      setTimeout(function(){previous.remove();if(bfSpecimenCrossfade===previous)bfSpecimenCrossfade=null;},940);
+    }
     bfCurrentImgKey=key;
     bfSpecimen.src=src;
     bfSpecimen.dataset.realSample=key;
@@ -2082,7 +2124,7 @@
       c2:55,beamX:7,beamY:-6,caX:0,caY:0,condX:5,condY:-4,condStigOn:false,
       focusCoarse:0,focusFine:0,captured:false,screenRaised:false,autoUsed:false,
       htTarget:80,htStep:1,htTime:1,htRamped:false,htOn:false,filamentOn:false,beamCurrent:0,v2Open:false,
-      temMode:false,apertureSelected:false,finalMagTouched:false,itemOpen:false,videoOn:false
+      temMode:false,apertureSelected:false,caShapeReady:false,caQuality:.08,finalMagTouched:false,itemOpen:false,videoOn:false
     };
   }
 
@@ -2149,14 +2191,33 @@
       bfFeature.style.opacity=(bfState.beamOn&&bfState.coverOpen)?'1':'0';
     }
     var size=Math.max(8,Math.min(94,Number(bfState.c2||55)));
-    var ellipticity=(Math.abs(bfState.condX||0)+Math.abs(bfState.condY||0))*3.5;
+    var displayedStep=state.currentStep+1;
+    // A continuous, history-dependent optical state rather than step-dependent shapes.
+    // The condenser aperture reduces edge distortion and offsets the visible cone;
+    // it does NOT remove the independent condenser-lens astigmatism.
+    var stigX=Math.abs(Number(bfState.condX||0));
+    var stigY=Math.abs(Number(bfState.condY||0));
+    var stigNorm=Math.min(1,Math.hypot(stigX,stigY)/6.4);
+    var caQuality=Math.max(0,Math.min(1,Number(bfState.caQuality==null?.08:bfState.caQuality)));
+    var edgeError=(1-caQuality)*stigNorm;
+    var ellipticity=Math.min(size*.32,stigX*1.7+stigY*1.10);
     var beamH=Math.max(8,size-ellipticity);
+    var f=function(n){return n.toFixed(2)+'%';};
+    // Smooth organic contour instead of a polygon with unrealistic hard corners.
+    // This remains uneven after CA insertion and becomes near circular only after
+    // BOTH DEF/STIG axes have been corrected by the learner.
     if(bfBeam){
       bfBeam.style.width=size+'%';bfBeam.style.height=beamH+'%';
       bfBeam.style.left=(50+(bfState.beamX||0)+(bfState.caX||0))+'%';bfBeam.style.top=(50+(bfState.beamY||0)+(bfState.caY||0))+'%';
-      bfBeam.style.transform='translate(-50%,-50%) rotate('+((bfState.condX||0)*6)+'deg)';
-      bfBeam.style.opacity=bfState.beamOn?'0.88':'0';
-      bfBeam.style.setProperty('--beam-roundness',(Math.max(18,100-ellipticity*1.4))+'%');
+      bfBeam.style.transform='translate(-50%,-50%) rotate('+((bfState.condX||0)*2.8)+'deg)';
+      bfBeam.style.opacity=bfState.beamOn?'1':'0';
+      bfBeam.classList.toggle('is-ca-irregular',!bfState.apertureSelected);
+      bfBeam.classList.toggle('is-cond-elliptical',ellipticity>3);
+      // Keep the X/Y slash between horizontal and vertical corner radii.
+      var radius=[f(50-12*edgeError),f(50+11*edgeError),f(50-8*edgeError),f(50+9*edgeError)].join(' ')
+        +' / '+[f(50+6*edgeError),f(50-7*edgeError),f(50+8*edgeError),f(50-5*edgeError)].join(' ');
+      bfBeam.style.setProperty('--beam-roundness',radius);
+      bfBeam.style.setProperty('--beam-ca-quality',caQuality.toFixed(3));
     }
     if(bfFringe){
       bfFringe.style.opacity=(bfState.beamOn&&bfState.coverOpen)?Math.min(.92,(focus+zDefocus*.25)/7).toFixed(2):'0';
@@ -2276,6 +2337,11 @@
 
   function showSection3(){
     var displayedStep=state.currentStep+1;
+    // Replaying any step through BEAM ON restores the full-column starting
+    // image. Steps 9–52 inherit the final Step 8 fluorescent-screen close-up.
+    if(displayedStep<=8)setS3ColumnScreenLocked(false);
+    else setS3ColumnScreenLocked(true);
+    if(displayedStep<26||displayedStep>28)removeS3CaChecklist();
     if(displayedStep>4&&displayedStep!==8)releaseS3HtPhoto();
     // Previously optional Step 23 (Z sensitivity) is removed. Preserve the
     // physical atomic operations after it by mapping to their original slots.
@@ -2691,6 +2757,7 @@
          viewportScene.hidden=true, which would block any later
          stage callback's guard check. */
       bfState.coverOpen=true;
+      setS3ColumnScreenLocked(true);
       showBfScene();
       s3Complete(1200);
     });
@@ -2748,28 +2815,123 @@
   function runBFAtomic26(){showBfScene();bfState.wobble=false;bfState.wobbleAxis='';bfRender();bfSetStatus('Press MAG WOB X or MAG WOB Y.');s3Activate(['wobbler']);s3SetHandlers({'action:mag-wob':function(btn){bfState.wobble=true;bfState.wobbleAxis=btn.dataset.axis||'x';s3SelectButton(btn);bfRender();s3Complete(350);}});}
   function runBFAtomic27(){showBfScene();bfState.wobble=true;bfRender();bfSetStatus('Use Z UP / Z DOWN until lateral wobble is minimized.');s3Activate(['stage-z']);s3SetHandlers({'action:stage-z':function(btn){bfState.z=Math.max(-8,Math.min(8,bfState.z+Number(btn.dataset.dir)*(bfState.zSensitivity||1)));bfRender();if(Math.abs(bfState.z)<=1)s3Complete(350);}});}
   function runBFAtomic28(){showBfScene();bfState.wobble=true;bfRender();bfSetStatus('Press the same MAG WOB control again to switch wobble OFF.');s3Activate(['wobbler']);s3SetHandlers({'action:mag-wob':function(btn){var ax=btn.dataset.axis||'x';if(bfState.wobbleAxis&&ax!==bfState.wobbleAxis)return;bfState.wobble=false;btn.classList.remove('is-selected');bfRender();s3Complete(350);}});}
-  function runBFAtomic29(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('select');s3ApKnob1Pos=0;var b=document.getElementById('s3ApKnob1'),r=document.getElementById('s3ApKnob1Read');if(!b)return;r.textContent='OPEN';b.onclick=function(){ensureAudio();s3ApKnob1Pos=(s3ApKnob1Pos+1)%3;r.textContent=s3ApKnob1Pos===0?'OPEN':(s3ApKnob1Pos===1?'SURVEY':'ROUTINE BF/DF');b.style.setProperty('--ap-rot',(s3ApKnob1Pos*60)+'deg');if(s3ApKnob1Pos===2){bfState.apertureSelected=true;b.onclick=null;s3Complete(450);}};}
-  function runBFAtomic30(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('x');bfState.beamX=0;bfState.beamY=0;bfState.caX=6;bfState.caY=-6;s3SetApKnob('x',6);s3SetApKnob('y',-6);bfRender();bfSetStatus('Adjust CA X until the beam is horizontally centered.');s3SetHandlers({'ap:ca-x':function(v){bfState.caX=v;bfRender();if(Math.abs(v)<=1){dfState.astigX=0;s3SetKnob('defstig-x',0);dfRender();s3Complete(400);}}});}
-  function runBFAtomic31(){closePcDrawer();hideBfScene();hideSection1Tour();setViewer('column');showS3ApertureOverlay('y');bfRender();bfSetStatus('Adjust CA Y until the beam is vertically centered.');s3SetHandlers({'ap:ca-y':function(v){bfState.caY=v;bfRender();if(Math.abs(v)<=1)s3Complete(250,function(){hideS3ApertureOverlay();});}});}
-  function runBFAtomic32(){hideS3ApertureOverlay();showBfScene();bfState.caX=0;bfState.caY=0;bfState.c2=55;s3SetKnob('brightness',55);bfRender();var low=false,high=false;bfSetStatus('Vary BRIGHTNESS through contraction and expansion to verify symmetric centering.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}
-  function runBFAtomic33(){showBfScene();hideS3ApertureOverlay();bfState.c2=55;s3SetKnob('brightness',55);bfRender();bfSetStatus('Adjust BRIGHTNESS back to crossover.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v<=22)s3Complete(400);}});}
-  function runBFAtomic34(){showBfScene();bfState.beamX=6;bfState.beamY=-5;s3SetKnob('shift-x',6);s3SetKnob('shift-y',-5);bfRender();bfSetStatus('Use SHIFT X to centre the crossover horizontally.');s3Activate(['shift-x']);s3SetHandlers({'knob:shift-x':function(v){bfState.beamX=v;bfRender();if(Math.abs(v)<=1){dfState.astigY=0;s3SetKnob('defstig-y',0);dfRender();s3Complete(400);}}});}
+  /* v4.9.32 — visual condenser-aperture training on the Viewing Screen only.
+     The three checkboxes persist across displayed Steps 26–28. */
+  var s3CaTraining={done:[false,false,false],busy:false,ready:false};
+  function removeS3CaChecklist(){
+    var old=document.getElementById('s3CaChecklist');if(old)old.remove();
+    s3CaTraining.busy=false;s3CaTraining.ready=false;
+  }
+  function showS3CaChecklist(active){
+    if(!viewScreen)return;
+    var pane=document.getElementById('s3CaChecklist');
+    if(!pane){
+      pane=document.createElement('div');pane.id='s3CaChecklist';pane.className='s3-ca-checklist';
+      pane.setAttribute('role','group');pane.setAttribute('aria-label','Condenser aperture selection and centering');
+      pane.innerHTML='<div class="s3-ca-checklist__heading">CONDENSER APERTURE · 3 GUIDED ACTIONS</div>'+
+        '<label class="s3-ca-checklist__row"><input type="checkbox" data-ca-check="0"><span>1 · Select condenser aperture (CA)</span></label>'+
+        '<label class="s3-ca-checklist__row"><input type="checkbox" data-ca-check="1"><span>2 · Centre CA horizontally (X)</span></label>'+
+        '<label class="s3-ca-checklist__row"><input type="checkbox" data-ca-check="2"><span>3 · Centre CA vertically (Y)</span></label>'+
+        '<div class="s3-ca-checklist__feedback" id="s3CaFeedback" aria-live="polite">Select the first checkbox to observe the beam shape improve.</div>';
+      // Mount above the round Viewing Screen rather than inside it: no circular clipping.
+      (viewScreen.parentElement||viewScreen).appendChild(pane);
+      pane.querySelectorAll('[data-ca-check]').forEach(function(input){
+        input.addEventListener('change',function(){
+          var i=Number(input.dataset.caCheck);
+          if(!input.checked||s3CaTraining.busy||s3CaTraining.done[i]||state.currentSection!==3||state.currentStep!==25+i){
+            input.checked=!!s3CaTraining.done[i];return;
+          }
+          ensureAudio();s3CaTraining.busy=true;
+          var feedback=document.getElementById('s3CaFeedback');
+          input.checked=false;input.disabled=true;
+          input.closest('label').classList.add('is-adjusting');
+          if(i===0){
+            bfState.apertureSelected=true;bfState.caShapeReady=true;bfState.caQuality=.68;
+            // An inserted, initially off-axis aperture makes the cone cleaner but
+            // offset. Both alignment axes and residual astigmatism remain visible.
+            bfState.caX=8;bfState.caY=-6;
+            if(feedback)feedback.textContent='CA inserted: the beam is smoother, still slightly elliptical and off-centre.';
+          }else if(i===1){
+            bfState.caX=0;
+            if(feedback)feedback.textContent='CA X moves the existing beam horizontally to the optical axis.';
+          }else{
+            bfState.caY=0;
+            if(feedback)feedback.textContent='CA Y moves the same beam vertically to the centre; residual astigmatism remains.';
+          }
+          bfRender();
+          var sec=state.currentSection,step=state.currentStep;
+          var t=setTimeout(function(){
+            if(state.currentSection!==sec||state.currentStep!==step)return;
+            s3CaTraining.done[i]=true;s3CaTraining.busy=false;
+            input.closest('label').classList.remove('is-adjusting');
+            if(feedback)feedback.textContent=i===0?'CA inserted; residual ellipticity is expected. Next: centre X.':(i===1?'Horizontal centering complete. Next: centre Y.':'CA centred on both axes; slight ellipticity remains for condenser stigmation.');
+            if(i===2)s3CaTraining.ready=true;
+            showS3CaChecklist(i);
+            if(i===2){showS3CaFinalConfirmation();}
+            else s3Complete(750);
+          },1750);
+          bfTimers.push(t);
+        });
+      });
+    }
+    pane.hidden=false;
+    pane.querySelectorAll('[data-ca-check]').forEach(function(input){
+      var i=Number(input.dataset.caCheck);
+      input.checked=!!s3CaTraining.done[i];
+      input.disabled=s3CaTraining.done[i]||i!==active||s3CaTraining.busy;
+      input.closest('label').classList.toggle('is-complete',!!s3CaTraining.done[i]);
+      input.closest('label').classList.toggle('is-current',i===active&&!s3CaTraining.done[i]);
+    });
+    if(!s3CaTraining.busy){
+      var f=document.getElementById('s3CaFeedback');
+      if(f)f.textContent=active===0?'Select CA to reduce the irregular contour without removing astigmatism.':
+        active===1?'Select X centering; watch the beam move left or right.':
+        s3CaTraining.ready?'CA centred: residual ellipse will be corrected later with DEF/STIG X/Y.':'Select Y centering; watch the beam move up or down.';
+    }
+  }
+  function showS3CaFinalConfirmation(){
+    if(!s3CaTraining.done.every(Boolean)||state.currentSection!==3||state.currentStep!==27)return;
+    openModal({locked:false,tag:'SECTION 3 · CONDENSER APERTURE',title:'Confirm CA selection and centering',step:'Step 28 of '+sections[2].steps.length,
+      body:'<p class="sop-flow-modal__copy">Verify in the <strong>Viewing Screen</strong> that the condenser aperture has been selected and its beam is now <strong>centred horizontally and vertically</strong>. The edge should be <strong>smoother but still slightly uneven/elliptical</strong>; condenser astigmatism is corrected later with DEF/STIG X and Y.</p>',
+      footer:'<button type="button" class="sop-flow-btn sop-flow-btn--success" id="s3CaConfirm">Confirm centred condenser aperture</button>'});
+    var b=document.getElementById('s3CaConfirm');if(b)b.onclick=function(){if(b.disabled)return;b.disabled=true;ensureAudio();s3Complete(400,function(){closeModal(true);removeS3CaChecklist();});};
+  }
+
+  function runBFAtomic29(){
+    hideS3ApertureOverlay();showBfScene();s3Activate([]);s3SetHandlers({});
+    s3CaTraining={done:[false,false,false],busy:false,ready:false};
+    // Inherit the screen condition from the preceding MAG WOB step. No
+    // instantaneous change of position, diameter or specimen on entry.
+    bfState.apertureSelected=false;bfState.caShapeReady=false;bfState.caQuality=.08;
+    bfRender();showS3CaChecklist(0);
+  }
+  function runBFAtomic30(){
+    hideS3ApertureOverlay();showBfScene();s3Activate([]);s3SetHandlers({});
+    bfRender();showS3CaChecklist(1);
+  }
+  function runBFAtomic31(){
+    hideS3ApertureOverlay();showBfScene();s3Activate([]);s3SetHandlers({});
+    bfRender();showS3CaChecklist(2);
+  }
+  function runBFAtomic32(){hideS3ApertureOverlay();showBfScene();s3SetKnob('brightness',bfState.c2);bfRender();var low=false,high=false;bfSetStatus('Vary BRIGHTNESS through contraction and expansion to verify symmetric centering.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}
+  function runBFAtomic33(){showBfScene();hideS3ApertureOverlay();s3SetKnob('brightness',bfState.c2);bfRender();bfSetStatus('Adjust BRIGHTNESS back to crossover.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=22){bfState.beamX=5.5;bfState.beamY=-4.5;}bfRender();if(v<=22)s3Complete(400);}});}
+  function runBFAtomic34(){showBfScene();s3SetKnob('shift-x',bfState.beamX);s3SetKnob('shift-y',bfState.beamY);bfRender();bfSetStatus('Use SHIFT X to centre the crossover horizontally.');s3Activate(['shift-x']);s3SetHandlers({'knob:shift-x':function(v){bfState.beamX=v;bfRender();if(Math.abs(v)<=1){s3Complete(400);}}});}
   function runBFAtomic35(){showBfScene();bfSetStatus('Use SHIFT Y to centre the crossover vertically.');s3Activate(['shift-y']);s3SetHandlers({'knob:shift-y':function(v){bfState.beamY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
-  function runBFAtomic36(){showBfScene();bfState.beamX=0;bfState.beamY=0;bfSetStatus('Spread the beam with BRIGHTNESS.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v>=72)s3Complete(400,function(){bfState.beamX=3;bfState.beamY=-3;});}});}
+  function runBFAtomic36(){showBfScene();bfSetStatus('Spread the beam with BRIGHTNESS.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;var spread=Math.max(0,Math.min(1,(v-22)/50));bfState.beamX=3*spread;bfState.beamY=-3*spread;bfRender();if(v>=72)s3Complete(400);}});}
   function runBFAtomic37(){showBfScene();s3SetKnob('shift-x',3);bfRender();bfSetStatus('Fine-correct horizontal drift with SHIFT X.');s3Activate(['shift-x']);s3SetHandlers({'knob:shift-x':function(v){bfState.beamX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runBFAtomic38(){showBfScene();s3SetKnob('shift-y',-3);bfRender();bfSetStatus('Fine-correct vertical drift with SHIFT Y.');s3Activate(['shift-y']);s3SetHandlers({'knob:shift-y':function(v){bfState.beamY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
-  function runBFAtomic39(){showBfScene();s3SetKnob('spot-size',2);bfState.spot=2;bfSetStatus('Set SPOT SIZE to 1.');s3Activate(['spot-size']);s3SetHandlers({'knob:spot-size':function(v){bfState.spot=Math.round(v);if(bfState.spot===1)s3Complete(400);}});}
+  function runBFAtomic39(){showBfScene();bfRender();s3SetKnob('spot-size',bfState.spot);bfSetStatus('Set SPOT SIZE to 1 while observing the still-elliptical beam.');s3Activate(['spot-size']);if(bfState.spot===1){s3Complete(950);return;}s3SetHandlers({'knob:spot-size':function(v){bfState.spot=Math.round(v);if(bfState.spot===1)s3Complete(400);}});}
   function runBFAtomic40(){showBfScene();bfState.condStigOn=false;bfSetStatus('Press COND STIG on L1.');s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='condStig')return;s3SelectButton(btn);bfState.condStigOn=true;s3Complete(350);}});}
-  function runBFAtomic41(){showBfScene();bfState.condX=5;bfState.condY=-4;bfState.c2=55;s3SetKnob('brightness',55);s3SetKnob('defstig-x',5);s3SetKnob('defstig-y',-4);bfRender();var low=false,high=false;bfSetStatus('Rotate BRIGHTNESS clockwise and anticlockwise through crossover to inspect beam shape.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=35)low=true;if(v>=65)high=true;bfRender();if(low&&high){
-    /* v4.8.9: auto-correct beam — make ellipse circular on completion */
-    bfState.condX=0;bfState.condY=0;s3SetKnob('defstig-x',0);s3SetKnob('defstig-y',0);bfRender();s3Complete(100);}}});}
+  function runBFAtomic41(){showBfScene();s3SetKnob('brightness',bfState.c2);s3SetKnob('defstig-x',bfState.condX);s3SetKnob('defstig-y',bfState.condY);bfRender();var low=false,high=false;bfSetStatus('Rotate BRIGHTNESS clockwise and anticlockwise through crossover to inspect beam shape.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=35)low=true;if(v>=65)high=true;bfRender();if(low&&high){
+    /* Preserve ellipse so learners must correct X and Y in the next two steps. */
+    bfRender();s3Complete(400);}}});}
   function runBFAtomic42(){showBfScene();bfSetStatus('Adjust DEF/STIG X to reduce ellipticity.');s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(v){bfState.condX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runBFAtomic43(){showBfScene();bfSetStatus('Adjust DEF/STIG Y to make the beam circular.');s3Activate(['def-stig-y']);s3SetHandlers({'defstig:y':function(v){bfState.condY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
-  function runBFAtomic44(){showBfScene();bfState.condX=0;bfState.condY=0;bfState.c2=55;s3SetKnob('brightness',55);bfRender();var low=false,high=false;bfSetStatus('Verify the circular beam by moving BRIGHTNESS back and forth.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}
+  function runBFAtomic44(){showBfScene();s3SetKnob('brightness',bfState.c2);bfRender();var low=false,high=false;bfSetStatus('Verify the circular beam by moving BRIGHTNESS back and forth.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}
   function runBFAtomic45(){showBfScene();bfSetStatus('Press COND STIG again to exit adjustment.');s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='condStig')return;bfState.condStigOn=false;btn.classList.remove('is-selected');s3Complete(350);}});}
   function runBFAtomic46(){showBfScene();bfState.featureX=66;bfState.featureY=63;bfState.stageX=54;bfState.stageY=-43;s3SetPad('stage-xy',54,-43);bfRender();bfSetStatus('Use the stage trackball to centre the final area of interest.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.28;bfState.featureY=50-pos.y*.28;bfRender();if(Math.abs(pos.x)<=9&&Math.abs(pos.y)<=9)s3Complete(400);}});}
   function runBFAtomic47(){showBfScene();bfState.finalMagTouched=false;bfSetStatus('With MAG 1 retained, set MAG/CAM L to X60k for the supplied real-sample sequence.');s3Activate(['mag-caml']);s3SetHandlers({'knob:mag-caml':function(v){var i=Math.round(v);bfState.magIndex=i;bfState.mag=BF_MAG_VALUES[i]||8000;bfRender();if(bfState.mag===60000){bfState.finalMagTouched=true;s3Complete(450);}}});}
-  function runBFAtomic48(){showBfScene();bfState.c2=50;s3SetKnob('brightness',50);bfRender();bfSetStatus('Spread the beam appropriately for image recording.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v>=70)s3Complete(400);}});}
+  function runBFAtomic48(){showBfScene();s3SetKnob('brightness',bfState.c2);bfRender();bfSetStatus('Spread the beam appropriately for image recording.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v>=70)s3Complete(400);}});}
   function runBFAtomic49(){showBfScene();bfSetStatus('AUTO contrast is optional. Press AUTO now if desired.');s3Activate(['auto-contrast']);var timer=setTimeout(function(){s3Complete(100);},2300);bfTimers.push(timer);s3SetHandlers({'action:auto-contrast':function(btn){clearTimeout(timer);s3SelectButton(btn);bfState.autoUsed=true;bfRender();s3Complete(300);}});}
   function runBFAtomic50(){showBfScene();bfState.screenRaised=false;bfSetStatus('Press F1 to lift the fluorescent screen and expose the camera.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);bfState.screenRaised=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
 
@@ -2901,7 +3063,7 @@
       });
     };
   }
-  function runBFAtomic55(){hideBfScene();ensureAtomicItemPanel('done');if(bfState.captured)drawCapturedBf();bfSetStatus('Press F1 to return the fluorescent screen.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!bfState.captured)return;s3SelectButton(btn);bfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideS3ApertureOverlay();});}});}
+  function runBFAtomic55(){hideBfScene();ensureAtomicItemPanel('done');if(bfState.captured)drawCapturedBf();bfSetStatus('Press F1 to return the fluorescent screen.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!bfState.captured)return;s3SelectButton(btn);bfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';setS3ColumnScreenLocked(false);setViewer('column');s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideS3ApertureOverlay();});}});}
 
 
   /* =====================================================================
@@ -3051,7 +3213,7 @@
 
   function bindTrackball(){var ball=document.getElementById('specTrackball'),dot=document.getElementById('stageDot'),btn=document.getElementById('trackConfirm');var drag=false,lx=0,ly=0,total=0,x=50,y=50;ball.addEventListener('pointerdown',function(e){ensureAudio();drag=true;lx=e.clientX;ly=e.clientY;ball.setPointerCapture(e.pointerId);ball.classList.add('is-dragging');});ball.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;total+=Math.abs(dx)+Math.abs(dy);x=Math.max(12,Math.min(88,x+dx*.18));y=Math.max(12,Math.min(88,y+dy*.18));dot.style.left=x+'%';dot.style.top=y+'%';if(total>42&&!state.trackballMoved){state.trackballMoved=true;btn.disabled=false;}});ball.addEventListener('pointerup',function(){drag=false;ball.classList.remove('is-dragging');});btn.addEventListener('click',function(){if(!state.trackballMoved)return;btn.disabled=true;completeStep(function(){closeModal(true);});});}
 
-  function resetSession(){hideS3BeamScreenStill();stopPrestartExplore();clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();releaseS3HtPhoto();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();resetBfState();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer)clearInterval(state.pumpTimer);state={sample:null,currentSection:0,currentStep:0,unlockedThrough:0,sectionComplete:{},completed:{},gridStage:0,insertionDone:false,pumpStarted:false,evacuationDone:false,rotation15:false,rotation75:false,holderSeated:false,trackballMoved:false,pumpTimer:null};var holderReset=document.getElementById('pc-holder-model-select');if(holderReset)holderReset.value='single-tilt-beryllium';sampleInd.textContent='SELECT SAMPLE';closePcDrawer();closeModal(true);setSessionControls(false);renderNav();setInstruction();updateProgress();startPrestartExplore();}
+  function resetSession(){setS3ColumnScreenLocked(false);removeS3CaChecklist();hideS3BeamScreenStill();stopPrestartExplore();clearPendingStepTransition();clearHtRampTimers();cleanupHtRampUi();clearBfTimers();clearS3PcPanel();releaseS3HtPhoto();hideBfScene();if(typeof hideDfScene==='function')hideDfScene();if(typeof hideS3ApertureOverlay==='function')hideS3ApertureOverlay();resetBfState();stopPump();hideViewportScene();hideSection1Tour();if(nextModalTimer){clearTimeout(nextModalTimer);nextModalTimer=null;}if(state.pumpTimer)clearInterval(state.pumpTimer);state={sample:null,currentSection:0,currentStep:0,unlockedThrough:0,sectionComplete:{},completed:{},gridStage:0,insertionDone:false,pumpStarted:false,evacuationDone:false,rotation15:false,rotation75:false,holderSeated:false,trackballMoved:false,pumpTimer:null};var holderReset=document.getElementById('pc-holder-model-select');if(holderReset)holderReset.value='single-tilt-beryllium';sampleInd.textContent='SELECT SAMPLE';closePcDrawer();closeModal(true);setSessionControls(false);renderNav();setInstruction();updateProgress();startPrestartExplore();}
 
   var restart=document.getElementById('btn-restart');if(restart)restart.addEventListener('click',function(){
     if(!state.sample){stopPrestartExplore();showSampleModal();return;}
@@ -3069,6 +3231,7 @@
     setInstruction();renderNav();updateProgress();setTimeout(showCurrentStep,650);
   });
   var showStep=document.getElementById('btn-show-step');if(showStep)showStep.addEventListener('click',function(){
+    if(state.currentSection===3&&state.currentStep===27&&s3CaTraining.ready){showS3CaFinalConfirmation();return;}
     if(state.currentSection===3&&state.currentStep===6&&s3BeamCurrentReadyForConfirm){showS3BeamCurrentConfirmation();return;}
     if(state.currentSection===3&&state.currentStep===4&&s3V2ReadyForConfirm){showS3V2VerificationModal();return;}
     if(state.currentSection===2&&state.currentStep===7&&state.sample&&!stepTransitionPending&&showSection2Step8Confirmation){
