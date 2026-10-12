@@ -2421,3 +2421,51 @@ body.iit-sop .sop-bf-scene--screen .sop-bf-specimen.sop-bf-specimen-crossfade{
 
 .viewer__panel[data-view-panel="column"].sop-s3-column-screen-locked .viewer__column-hotspots,
 .viewer__panel[data-view-panel="column"].sop-s3-column-screen-locked .viewer__column-beam{visibility:hidden!important;}
+
+
+/* v4.9.36 — physically illuminated BF fluorescent-screen viewport.
+   Source micrographs are used only as electron-transmission intensity maps in
+   the canvas. Outside the illuminated condenser-beam footprint the screen is
+   BLACK; no full-frame grayscale sample or artificial spotlight may appear.
+   The iTEM PC continues to render its separate digital grayscale micrograph. */
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-screen{
+  background:#010302!important;
+  box-shadow:inset 0 0 50px rgba(0,0,0,.9)!important;
+}
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-phosphor-canvas{
+  display:block;position:absolute;inset:0;width:100%;height:100%;z-index:4;
+  border-radius:50%;pointer-events:none;
+}
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-specimen,
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-specimen.sop-bf-specimen-crossfade{
+  visibility:hidden!important;opacity:0!important;
+}
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-beam,
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-feature,
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-fringe,
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-crosshair{
+  visibility:hidden!important;
+}
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-screen::after{
+  background:radial-gradient(circle at center,transparent 0 75%,rgba(0,0,0,.18) 93%,rgba(0,0,0,.38) 100%)!important;
+}
+
+
+/* v4.9.36 — same illuminated-pixel rule in Section 4 image/DF modes.
+   Diffraction remains the existing selectable spot workflow, now phosphor green. */
+body.iit-sop .sop-df-screen .sop-df-phosphor-canvas{
+  display:block;position:absolute;inset:0;width:100%;height:100%;z-index:2;
+  border-radius:50%;pointer-events:none;
+}
+body.iit-sop .sop-df-scene:not(.is-diff) .sop-df-specimen{
+  visibility:hidden!important;
+}
+body.iit-sop .sop-df-scene.is-diff .sop-df-spot{
+  background:#bcff9e;box-shadow:0 0 9px rgba(156,255,130,.92),0 0 18px rgba(95,220,88,.56);
+}
+body.iit-sop .sop-df-scene.is-diff .sop-df-spot.is-direct{
+  background:#e2ffb5;box-shadow:0 0 12px rgba(203,255,165,1),0 0 23px rgba(115,247,95,.8);
+}
+/* Physical fluorescent screen edge in Section 4, consistent with Section 3. */
+body.iit-sop .sop-df-scene{padding:0;border-radius:50%;overflow:hidden;background:#010302}
+body.iit-sop .sop-df-scene .sop-df-screen{border:0;border-radius:50%;background:#010302}

@@ -653,13 +653,11 @@
   }
 
   function setBfFluorescentMode(enabled){
-    // v4.8.8: the Viewing Screen is always a live simulator surface.
-    // Never swap in the old static fluorescent reference image.
+    // The screen is always a live phosphor surface. Never replace the
+    // specimen source with a still, or tint the iTEM camera preview.
     ensureBfScene();
-    if(!bfScene) return;
-    bfScene.classList.remove('is-fluorescent');
-    if(bfSpecimen) bfSpecimen.src='../assets/images/sop/bf-midmag-survey.png';
-    if(bfDummyBadge) bfDummyBadge.style.display='';
+    if(bfScene)bfScene.classList.add('is-phosphor-live');
+    bfPhosphorSchedule();
   }
   function runS3BeamScreenSequence(done){
     // v4.8.10: BEAM ON goes directly to the live grayscale specimen view.
@@ -1999,26 +1997,33 @@
     bfTimers.push(t);return t;
   }
   function drawCapturedBf(onReady){drawBfCameraFrame('finalSharp',0,'BF SNAPSHOT · real sample',onReady);}
-  function downloadCapturedBf(canvas){
-    if(!canvas)return false;
+  // v4.9.37: Download a pre-rendered, faithful PNG of the iTEM camera frame.
+  // Embedded PNG data is same-origin for both localhost and offline file://.
+  // Call this DIRECTLY in the Snapshot button's click handler, not from an
+  // asynchronous Image.onload (which can lose browser download permission).
+  function downloadSnapshotPng(mode,canvas){
+    var data=window.TEMSopSnapshotData&&window.TEMSopSnapshotData[mode];
     try{
+      var url=data||(canvas&&canvas.toDataURL('image/png'));
+      if(!url)throw Error('PNG not available');
       var link=document.createElement('a');
       var time=new Date().toISOString().replace(/[:.]/g,'-');
-      link.download='TEM_Bright_Field_Snapshot_'+time+'.png';
-      link.href=canvas.toDataURL('image/png');
-      document.body.appendChild(link);link.click();link.remove();
+      link.download='TEM_'+(mode==='dark'?'Dark':'Bright')+'_Field_Snapshot_'+time+'.png';
+      link.href=url;document.body.appendChild(link);
+      link.click();link.remove();
       var note=document.getElementById('pc-cam-message');
-      if(note)note.textContent='Olympus iTEM · Bright Field snapshot downloaded';
+      if(note)note.textContent='iTEM · '+(mode==='dark'?'Dark':'Bright')+' Field PNG download requested';
       return true;
     }catch(e){
       var warn=document.getElementById('pc-cam-message');
-      if(warn)warn.textContent='Snapshot captured. Browser blocked automatic download.';
+      if(warn)warn.textContent='Snapshot captured. Use Download PNG again to save the image.';
       return false;
     }
   }
+  function downloadCapturedBf(canvas){return downloadSnapshotPng('bright',canvas);}
   function installItemPanel(){
     var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return;var old=document.getElementById('sopItemPanel');if(old)old.remove();var p=document.createElement('div');p.id='sopItemPanel';p.className='sop-item-panel';p.innerHTML='<div class="sop-bf-card-title">iTEM acquisition</div><button id="s3ObjFocusCheck">OBJ FOCUS check (optional)</button><button id="s3Video">Video</button><button id="s3Snapshot" disabled>Snapshot</button><button id="s3F1Down" disabled>F1 · Return fluorescent screen</button>';host.appendChild(p);
-    var objCheck=document.getElementById('s3ObjFocusCheck'),video=document.getElementById('s3Video'),snap=document.getElementById('s3Snapshot'),f1=document.getElementById('s3F1Down');if(objCheck)objCheck.onclick=function(){ensureAudio();objCheck.classList.add('is-done');objCheck.textContent='OBJ FOCUS checked';};video.onclick=function(){ensureAudio();video.classList.add('is-done');video.textContent='Video · LIVE';snap.disabled=false;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running';};snap.onclick=function(){ensureAudio();snap.classList.add('is-done');snap.disabled=true;drawCapturedBf();bfState.captured=true;var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Snapshot captured';f1.disabled=false;};f1.onclick=function(){ensureAudio();f1.classList.add('is-done');f1.disabled=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';bfSetStatus('Bright Field image recorded · fluorescent screen returned.');s3AutoComplete(900,function(){clearS3PcPanel();closePcDrawer();});};
+    var objCheck=document.getElementById('s3ObjFocusCheck'),video=document.getElementById('s3Video'),snap=document.getElementById('s3Snapshot'),f1=document.getElementById('s3F1Down');if(objCheck)objCheck.onclick=function(){ensureAudio();objCheck.classList.add('is-done');objCheck.textContent='OBJ FOCUS checked';};video.onclick=function(){ensureAudio();video.classList.add('is-done');video.textContent='Video · LIVE';snap.disabled=false;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running';};snap.onclick=function(){ensureAudio();snap.classList.add('is-done');snap.disabled=true;downloadCapturedBf();drawCapturedBf();bfState.captured=true;var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Snapshot captured';f1.disabled=false;};f1.onclick=function(){ensureAudio();f1.classList.add('is-done');f1.disabled=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';bfSetStatus('Bright Field image recorded · fluorescent screen returned.');s3AutoComplete(900,function(){clearS3PcPanel();closePcDrawer();});};
   }
   function runS3Step16Acquire(){
     showBfScene();bfState.captured=false;bfSetStatus('Click the Viewing Screen to select the area of interest.');s3Activate([]);if(!bfScreen)return;bfScreen.classList.add('is-roi-select');
@@ -2074,7 +2079,7 @@
       requestAnimationFrame(function(){requestAnimationFrame(function(){
         if(previous.isConnected)previous.style.setProperty('opacity','0','important');
       });});
-      setTimeout(function(){previous.remove();if(bfSpecimenCrossfade===previous)bfSpecimenCrossfade=null;},940);
+      setTimeout(function(){previous.remove();if(bfSpecimenCrossfade===previous)bfSpecimenCrossfade=null;},1450);
     }
     bfCurrentImgKey=key;
     bfSpecimen.src=src;
@@ -2116,7 +2121,211 @@
   }
   var bfCover=null,bfScreenAction=null,bfDummyBadge=null,bfStepIndicator=null;
 
+  /* v4.9.36 — physically illuminated TEM fluorescent-screen renderer.
+     An unexposed phosphor pixel is black. The grayscale micrograph is NOT a
+     picture under a transparent green disk: its transmitted-electron intensity
+     multiplies the phosphor emission, within the condenser-beam footprint only.
+     Rendering is canvas-based but never reads source-image pixel data, so
+     downloaded file:// builds also work without canvas origin permissions. */
+  var bfPhosphorCanvas=null,bfPhosphorCtx=null,bfPhosphorRaf=0,bfPhosphorLastTime=0;
+  var bfPhosphorDisplay=null,bfPhosphorWasLit=false,bfPhosphorDecay=null;
+  var bfPhosphorImageReadyTime=0,bfPhosphorNoisePattern=null;
+  function bfPhosphorSchedule(){
+    if(!bfPhosphorCanvas||bfPhosphorRaf||!bfScene||bfScene.hidden)return;
+    bfPhosphorRaf=requestAnimationFrame(bfPhosphorPaint);
+  }
+  function bfPhosphorBeamPath(ctx,b){
+    ctx.beginPath();
+    var total=72,distortion=Math.max(0,Math.min(1,b.edge));
+    var rot=b.rot*Math.PI/180,cos=Math.cos(rot),sin=Math.sin(rot);
+    for(var i=0;i<=total;i++){
+      var t=i/total*Math.PI*2;
+      var rough=1+distortion*(.064*Math.sin(3*t+.4)+.032*Math.cos(5*t+.8)+.021*Math.sin(7*t));
+      var x=b.rx*rough*Math.cos(t),y=b.ry*rough*Math.sin(t);
+      var px=b.x+x*cos-y*sin,py=b.y+x*sin+y*cos;
+      if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+  }
+  function bfPhosphorGetTarget(w,h){
+    var size=Math.max(8,Math.min(94,Number(bfState.c2||55)));
+    // With enough condenser spreading the beam can cover the WHOLE screen.
+    // The original control thresholds and alignment sequence are unchanged.
+    if(Number(bfState.c2)>88)size=Math.min(120,88+(Number(bfState.c2)-88)*2.6);
+    var stigX=Math.abs(Number(bfState.condX||0));
+    var stigY=Math.abs(Number(bfState.condY||0));
+    var caQuality=Math.max(0,Math.min(1,Number(bfState.caQuality==null?.08:bfState.caQuality)));
+    var distorted=Math.min(1,Math.hypot(stigX,stigY)/6.4)*(1-caQuality);
+    var ellipticity=Math.min(size*.32,stigX*1.7+stigY*1.10);
+    return {
+      x:w*(.5+(Number(bfState.beamX||0)+Number(bfState.caX||0))/100),
+      y:h*(.5+(Number(bfState.beamY||0)+Number(bfState.caY||0))/100),
+      rx:w*size/200,ry:h*Math.max(8,size-ellipticity)/200,
+      rot:Number(bfState.condX||0)*2.8,edge:distorted
+    };
+  }
+  function bfPhosphorDrawSpecimen(ctx,img,w,h,time,alpha){
+    if(!img||!img.complete||!img.naturalWidth||alpha<=0)return;
+    var focus=Math.abs(Number(bfState.focusCoarse||0)+Number(bfState.focusFine||0));
+    var zDefocus=Math.abs(Number(bfState.z||0));
+    var blur=Math.min(5.5,focus*.30+zDefocus*.12);
+    // v4.9.37: Images were captured digitally with a wide grayscale range.
+    // A pixel value near mid-gray means electrons reached the screen, not that
+    // the phosphor should be a half-lit dark green. Normalize bright regions
+    // toward full phosphor output and let low-transmission specimen features
+    // attenuate it strongly. Opaque grid bars remain nearly black.
+    var isGrid=bfCurrentImgKey==='grid200'||bfCurrentImgKey==='grid500';
+    var specimenGain=isGrid?2.0:1.65;
+    var contrast=isGrid?1.55:1.55+(bfState.autoUsed?.16:0);
+    var magScale=1+Math.max(0,Math.log10(Math.max(1000,bfState.mag)/1000))*.16;
+    var tx=Math.max(-18,Math.min(18,Number(bfState.stageX||0)*-.12))*w/100;
+    var ty=Math.max(-18,Math.min(18,Number(bfState.stageY||0)*.12))*h/100;
+    var wobble=bfState.wobble?Math.sin(time/235)*Math.min(16,zDefocus*1.8):0;
+    if(String(bfState.wobbleAxis||'x').toLowerCase()==='y')ty+=wobble;
+    else tx+=wobble;
+    // Match the existing cover-scaled DOM image: src is square and object-fit:cover.
+    var dw=w*1.08*magScale,dh=h*1.08*magScale;
+    var scale=Math.max(dw/img.naturalWidth,dh/img.naturalHeight);
+    dw=img.naturalWidth*scale;dh=img.naturalHeight*scale;
+    ctx.save();
+    ctx.globalAlpha=alpha;
+    ctx.globalCompositeOperation='multiply';
+    ctx.filter='grayscale(1) brightness('+specimenGain.toFixed(2)+') contrast('+contrast.toFixed(2)+') blur('+blur.toFixed(2)+'px)';
+    ctx.drawImage(img,(w-dw)/2+tx,(h-dh)/2+ty,dw,dh);
+    ctx.restore();
+  }
+  function bfPhosphorPaint(time){
+    bfPhosphorRaf=0;
+    if(!bfScene||bfScene.hidden||!bfPhosphorCanvas)return;
+    var w=bfScreen.clientWidth,h=bfScreen.clientHeight;
+    if(w<8||h<8)return;
+    var ratio=Math.min(1.5,Math.max(1,window.devicePixelRatio||1));
+    var pxW=Math.round(w*ratio),pxH=Math.round(h*ratio),ctx=bfPhosphorCtx;
+    if(bfPhosphorCanvas.width!==pxW||bfPhosphorCanvas.height!==pxH){
+      bfPhosphorCanvas.width=pxW;bfPhosphorCanvas.height=pxH;
+      bfPhosphorDisplay=null;bfPhosphorWasLit=false;bfPhosphorDecay=null;
+    }
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+    var dt=Math.min(60,Math.max(16,time-(bfPhosphorLastTime||time)));
+    bfPhosphorLastTime=time;
+    var lit=!!(bfState.beamOn&&bfState.coverOpen&&!bfState.screenRaised);
+    if(!lit&&bfPhosphorWasLit){
+      var previous=document.createElement('canvas');
+      previous.width=bfPhosphorCanvas.width;previous.height=bfPhosphorCanvas.height;
+      previous.getContext('2d').drawImage(bfPhosphorCanvas,0,0);
+      bfPhosphorDecay={canvas:previous,start:time};
+    }
+    bfPhosphorWasLit=lit;
+    ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.filter='none';
+    ctx.fillStyle='#010302';ctx.fillRect(0,0,w,h);
+    if(!lit){
+      if(bfPhosphorDecay){
+        var remaining=Math.max(0,1-(time-bfPhosphorDecay.start)/130);
+        if(remaining>0){ctx.globalAlpha=remaining*.82;ctx.drawImage(bfPhosphorDecay.canvas,0,0,w,h);ctx.globalAlpha=1;bfPhosphorSchedule();}
+        else bfPhosphorDecay=null;
+      }
+      return;
+    }
+    bfPhosphorDecay=null;
+    var target=bfPhosphorGetTarget(w,h),moving=false;
+    if(!bfPhosphorDisplay)bfPhosphorDisplay=target;
+    else{
+      var coordRate=1-Math.exp(-dt/310),sizeRate=1-Math.exp(-dt/180);
+      ['x','y','rx','ry','rot','edge'].forEach(function(k){
+        var current=bfPhosphorDisplay[k],goal=target[k];
+        if(Math.abs(goal-current)>.04){moving=true;bfPhosphorDisplay[k]=current+(goal-current)*((k==='x'||k==='y')?coordRate:sizeRate);}
+        else bfPhosphorDisplay[k]=goal;
+      });
+    }
+    var beam=bfPhosphorDisplay;
+    // v4.9.38: No separate green halo or circular rim is painted.
+    // Phosphor light is derived solely from the beam-covered specimen.
+    ctx.save();bfPhosphorBeamPath(ctx,beam);ctx.clip();
+    var spot=Number(bfState.spot||2),alpha=Number(bfState.alpha||2);
+    var gain=Math.max(.72,Math.min(1.18,1+(3-spot)*.05+(alpha-2)*.025));
+    var grad=ctx.createRadialGradient(beam.x-beam.rx*.18,beam.y-beam.ry*.16,0,beam.x,beam.y,Math.max(beam.rx,beam.ry)*1.18);
+    grad.addColorStop(0,'rgb('+Math.round(157*gain)+','+Math.min(255,Math.round(250*gain))+','+Math.round(111*gain)+')');
+    grad.addColorStop(.73,'rgb('+Math.round(131*gain)+','+Math.min(255,Math.round(233*gain))+','+Math.round(85*gain)+')');
+    grad.addColorStop(1,'rgb('+Math.round(76*gain)+','+Math.min(255,Math.round(187*gain))+','+Math.round(49*gain)+')');
+    ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+    // During image loading hold the OLD illuminated field instead of exposing
+    // a fully green disk or cutting abruptly to a different magnification.
+    var nextReady=bfSpecimen&&bfSpecimen.complete&&bfSpecimen.naturalWidth>0;
+    var old=bfSpecimenCrossfade;
+    var oldReady=old&&old.complete&&old.naturalWidth>0;
+    var fraction=nextReady?Math.min(1,Math.max(0,(time-bfPhosphorImageReadyTime)/650)):0;
+    if(oldReady&&fraction<1){
+      bfPhosphorDrawSpecimen(ctx,old,w,h,time,1);
+      // Normal source-over here blends the two transmitted intensities rather
+      // than overlaying a full-rect photograph outside the illumination mask.
+      if(nextReady){
+        ctx.save();ctx.globalAlpha=fraction;
+        // The new specimen is painted as an intensity layer into the same mask.
+        // Crossfade with an isolated offscreen surface so multiply is not applied twice.
+        var temp=document.createElement('canvas');temp.width=bfPhosphorCanvas.width;temp.height=bfPhosphorCanvas.height;
+        var ctemp=temp.getContext('2d');ctemp.setTransform(ratio,0,0,ratio,0,0);
+        var gtemp=ctemp.createRadialGradient(beam.x-beam.rx*.18,beam.y-beam.ry*.16,0,beam.x,beam.y,Math.max(beam.rx,beam.ry)*1.18);
+        gtemp.addColorStop(0,'rgb('+Math.round(157*gain)+','+Math.min(255,Math.round(250*gain))+','+Math.round(111*gain)+')');
+        gtemp.addColorStop(.73,'rgb('+Math.round(131*gain)+','+Math.min(255,Math.round(233*gain))+','+Math.round(85*gain)+')');
+        gtemp.addColorStop(1,'rgb('+Math.round(76*gain)+','+Math.min(255,Math.round(187*gain))+','+Math.round(49*gain)+')');
+        ctemp.fillStyle=gtemp;ctemp.fillRect(0,0,w,h);
+        bfPhosphorDrawSpecimen(ctemp,bfSpecimen,w,h,time,1);
+        ctx.globalCompositeOperation='source-over';ctx.drawImage(temp,0,0,w,h);ctx.restore();
+      }
+    }else if(nextReady)bfPhosphorDrawSpecimen(ctx,bfSpecimen,w,h,time,1);
+    // A faint fine-grain phosphor texture, clipped to the illuminated pixels.
+    if(bfPhosphorNoisePattern){ctx.globalCompositeOperation='soft-light';ctx.fillStyle=bfPhosphorNoisePattern;ctx.fillRect(0,0,w,h);}
+    // Lens defocus produces visible Fresnel-like contour cues only under beam.
+    var focusErr=Math.abs(Number(bfState.focusCoarse||0)+Number(bfState.focusFine||0));
+    if(focusErr>1.4){
+      ctx.globalCompositeOperation='source-over';ctx.lineWidth=Math.min(4,1+focusErr*.17);
+      ctx.strokeStyle='rgba(5,40,11,'+Math.min(.15,focusErr*.011).toFixed(3)+')';
+      ctx.beginPath();ctx.ellipse(beam.x,beam.y,beam.rx*.64,beam.ry*.65,beam.rot*Math.PI/180,0,2*Math.PI);ctx.stroke();
+    }
+    // Feather the final luminous intensity, *including specimen attenuation*,
+    // over the outer part of the beam instead of outlining the perimeter.
+    // Rotating/scaling the radial falloff matches the real asymmetric C2 beam.
+    ctx.save();ctx.globalCompositeOperation='source-over';ctx.filter='none';
+    ctx.translate(beam.x,beam.y);ctx.rotate(beam.rot*Math.PI/180);
+    ctx.scale(Math.max(1,beam.rx),Math.max(1,beam.ry));
+    var beamFalloff=ctx.createRadialGradient(0,0,.79,0,0,1.005);
+    beamFalloff.addColorStop(0,'rgba(1,3,2,0)');
+    beamFalloff.addColorStop(.30,'rgba(1,3,2,.045)');
+    beamFalloff.addColorStop(.55,'rgba(1,3,2,.21)');
+    beamFalloff.addColorStop(.76,'rgba(1,3,2,.52)');
+    beamFalloff.addColorStop(.95,'rgba(1,3,2,.97)');
+    beamFalloff.addColorStop(1,'rgba(1,3,2,1)');
+    ctx.fillStyle=beamFalloff;ctx.fillRect(-1.4,-1.4,2.8,2.8);
+    ctx.restore();
+    ctx.restore();
+    if(moving||bfState.wobble||(oldReady&&fraction<1))bfPhosphorSchedule();
+  }
+  function bfPhosphorInit(){
+    if(!bfScreen||bfPhosphorCanvas)return;
+    bfPhosphorCanvas=document.createElement('canvas');
+    bfPhosphorCanvas.id='sopBfPhosphorCanvas';bfPhosphorCanvas.className='sop-bf-phosphor-canvas';
+    bfPhosphorCanvas.setAttribute('aria-label','Live fluorescent phosphor emission: green only where the electron beam strikes; specimen regions attenuate the green');
+    bfScreen.insertBefore(bfPhosphorCanvas,bfScreen.firstChild);
+    bfPhosphorCtx=bfPhosphorCanvas.getContext('2d',{alpha:false});
+    var tile=document.createElement('canvas');tile.width=64;tile.height=64;
+    var tc=tile.getContext('2d'),seed=1911;
+    for(var i=0;i<850;i++){
+      seed=(seed*1664525+1013904223)>>>0;var x=seed%64;
+      seed=(seed*1664525+1013904223)>>>0;var y=seed%64;
+      seed=(seed*1664525+1013904223)>>>0;
+      tc.fillStyle=(seed&1)?'rgba(220,255,196,.065)':'rgba(1,20,5,.048)';
+      tc.fillRect(x,y,1,1);
+    }
+    bfPhosphorNoisePattern=bfPhosphorCtx.createPattern(tile,'repeat');
+    if(bfSpecimen)bfSpecimen.addEventListener('load',function(){
+      bfPhosphorImageReadyTime=performance.now();bfPhosphorSchedule();
+    });
+    if(typeof ResizeObserver!=='undefined')new ResizeObserver(function(){bfPhosphorSchedule();}).observe(bfScreen);
+  }
+
+
   function resetBfState(){
+    bfPhosphorDisplay=null;bfPhosphorWasLit=false;bfPhosphorDecay=null;
     bfState={
       mag:8000,magIndex:3,magMode:'',beamOn:false,coverOpen:false,
       featureX:72,featureY:67,stageX:0,stageY:0,z:-6,zSensitivity:1,wobble:false,wobbleAxis:'',
@@ -2151,6 +2360,7 @@
     bfScene=w;bfScreen=document.getElementById('sopBfScreen');bfSpecimen=document.getElementById('sopBfSpecimen');
     bfBeam=document.getElementById('sopBfBeam');bfFeature=document.getElementById('sopBfFeature');bfFringe=document.getElementById('sopBfFringe');
     bfStatus=document.getElementById('sopBfStatus');bfCover=document.getElementById('sopBfCover');bfScreenAction=document.getElementById('sopBfScreenAction');bfDummyBadge=document.getElementById('sopBfDummyBadge');bfStepIndicator=document.getElementById('sopBfStepIndicator');
+    bfPhosphorInit();
   }
 
   function bfRender(){
@@ -2181,7 +2391,7 @@
       var wantKey=bfResolveImageKey();
       if(wantKey!==bfCurrentImgKey)bfSetSpecimenImage(wantKey);
       /* Toggle camera class for acquisition steps */
-      if(bfScene)bfScene.classList.toggle('is-camera',isCamera&&phosphor);
+      if(bfScene)bfScene.classList.remove('is-camera');
     }
     if(bfCover){bfCover.classList.toggle('is-open',!!bfState.coverOpen);}
     if(bfFeature){
@@ -2230,6 +2440,7 @@
     var ind=document.getElementById('ind-mag');if(ind)ind.textContent=Number(bfState.mag||0).toLocaleString()+'×';
     var mr=document.getElementById('mag-caml-readout');if(mr)mr.textContent=s3FormatMag(bfState.mag||8000);
     var mode=document.getElementById('mag-mode-readout');if(mode)mode.textContent=(bfState.magMode||'—').toUpperCase();updateBfDummyCue();syncPcLiveStatus();
+    bfPhosphorSchedule();
   }
 
   function bfSetStatus(text){if(bfStatus){bfStatus.textContent='';bfStatus.style.display='none';}}
@@ -2238,17 +2449,18 @@
     hideS3BeamScreenStill();closeModal(true);closePcDrawer();hideViewportScene();hideSection1Tour();ensureBfScene();clearBfTimers();
     if(!bfScene)return;bfScene.hidden=false;if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');
     var phosphor=false; /* v4.8.10: grayscale specimen view; no phosphor overlay */
-    bfScene.classList.remove('is-phosphor','is-fluorescent');
+    bfScene.classList.remove('is-fluorescent','is-camera');
+    bfScene.classList.add('is-phosphor-live');
     bfState.coverOpen=true;
     var imgKey=bfResolveImageKey();
     bfSetSpecimenImage(imgKey);
-    bfScene.classList.toggle('is-camera',state.currentStep>=50);
+    bfScene.classList.remove('is-camera');
     if(bfDummyBadge)bfDummyBadge.style.display='none';
     bfRender();syncPcLiveStatus();
   }
 
   function hideBfScene(){
-    ensureBfScene();clearBfTimers();clearPhysicalFocus();s3LockControls();if(!bfScene)return;bfScene.hidden=true;if(viewEmpty)viewEmpty.style.display='';if(bfScreen)bfScreen.onclick=null;if(bfScreenAction){bfScreenAction.onclick=null;bfScreenAction.hidden=true;}
+    ensureBfScene();clearBfTimers();clearPhysicalFocus();s3LockControls();if(bfPhosphorRaf){cancelAnimationFrame(bfPhosphorRaf);bfPhosphorRaf=0;}bfPhosphorLastTime=0;if(!bfScene)return;bfScene.hidden=true;if(viewEmpty)viewEmpty.style.display='';if(bfScreen)bfScreen.onclick=null;if(bfScreenAction){bfScreenAction.onclick=null;bfScreenAction.hidden=true;}
   }
 
   function s3SetScreenAction(label,fn){
@@ -2933,7 +3145,7 @@
   function runBFAtomic47(){showBfScene();bfState.finalMagTouched=false;bfSetStatus('With MAG 1 retained, set MAG/CAM L to X60k for the supplied real-sample sequence.');s3Activate(['mag-caml']);s3SetHandlers({'knob:mag-caml':function(v){var i=Math.round(v);bfState.magIndex=i;bfState.mag=BF_MAG_VALUES[i]||8000;bfRender();if(bfState.mag===60000){bfState.finalMagTouched=true;s3Complete(450);}}});}
   function runBFAtomic48(){showBfScene();s3SetKnob('brightness',bfState.c2);bfRender();bfSetStatus('Spread the beam appropriately for image recording.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v>=70)s3Complete(400);}});}
   function runBFAtomic49(){showBfScene();bfSetStatus('AUTO contrast is optional. Press AUTO now if desired.');s3Activate(['auto-contrast']);var timer=setTimeout(function(){s3Complete(100);},2300);bfTimers.push(timer);s3SetHandlers({'action:auto-contrast':function(btn){clearTimeout(timer);s3SelectButton(btn);bfState.autoUsed=true;bfRender();s3Complete(300);}});}
-  function runBFAtomic50(){showBfScene();bfState.screenRaised=false;bfSetStatus('Press F1 to lift the fluorescent screen and expose the camera.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);bfState.screenRaised=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
+  function runBFAtomic50(){showBfScene();bfState.screenRaised=false;bfSetStatus('Press F1 to lift the fluorescent screen and expose the camera.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);bfState.screenRaised=true;bfPhosphorSchedule();var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
 
   function ensureAtomicItemPanel(mode){
     openCameraDrawer();
@@ -2954,8 +3166,8 @@
       +'<button type="button" id="s3ConfirmFocusThree" class="s3-focus-confirm" disabled>Confirm all three focus conditions</button>';
     if(mode==='video')html+='<button id="s3ItemVideo">Video</button><div class="sop-s3-pc-note">Start the live Bright Field camera acquisition.</div>';
     if(mode==='snapshot')html+='<button id="s3ItemSnapshot">Snapshot</button><div class="sop-s3-pc-note">Capture the Bright Field image.</div>';
-    if(mode==='done')html+='<div class="sop-s3-pc-note">Snapshot captured · press F1 on R1 to return the fluorescent screen.</div>';
-    p.innerHTML=html;host.appendChild(p);showS3CameraSignal();return p;
+    if(mode==='done')html+='<div class="sop-s3-pc-note">Snapshot captured · press F1 on R1 to return the fluorescent screen.</div><button type="button" id="s3DownloadAgain">Download PNG again</button>';
+    p.innerHTML=html;host.appendChild(p);var again=document.getElementById('s3DownloadAgain');if(again)again.onclick=function(){downloadCapturedBf();};showS3CameraSignal();return p;
   }
   function runBFAtomic51(){
     // Stay on the Column tab: iTEM lives only inside the camera drawer.
@@ -3054,13 +3266,13 @@
     b.onclick=function(){
       if(b.disabled)return;
       ensureAudio();b.disabled=true;
-      drawCapturedBf(function(canvas){
-        if(state.currentSection!==3||state.currentStep!==50)return;
-        bfState.captured=true;
-        var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Real BF snapshot captured';
-        downloadCapturedBf(canvas);
-        s3Complete(800);
-      });
+      // Synchronous user-gesture download; asynchronous canvas draw is only
+      // for preview and must not gate the PNG saving or the guided transition.
+      downloadCapturedBf();
+      drawCapturedBf();
+      bfState.captured=true;
+      var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Real BF snapshot captured';
+      s3Complete(800);
     };
   }
   function runBFAtomic55(){hideBfScene();ensureAtomicItemPanel('done');if(bfState.captured)drawCapturedBf();bfSetStatus('Press F1 to return the fluorescent screen.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!bfState.captured)return;s3SelectButton(btn);bfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';setS3ColumnScreenLocked(false);setViewer('column');s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideS3ApertureOverlay();});}});}
@@ -3084,6 +3296,48 @@
     if(!bfState.mag||bfState.mag<8000){bfState.mag=40000;bfState.magIndex=5;}
   }
 
+  // The Dark Field viewport uses the same physical phosphor boundary as BF.
+  // Its brighter DF details are an explicitly simulated inverted-contrast
+  // electron-signal model; the original specimen source remains unchanged.
+  var dfPhosphorCanvas=null,dfPhosphorCtx=null;
+  function dfRenderPhosphor(){
+    if(!dfScreen||!dfPhosphorCanvas||!dfScene||dfScene.hidden)return;
+    var w=dfScreen.clientWidth,h=dfScreen.clientHeight;if(w<8||h<8)return;
+    var ratio=Math.min(1.5,Math.max(1,window.devicePixelRatio||1));
+    var pixelW=Math.round(w*ratio),pixelH=Math.round(h*ratio);
+    if(dfPhosphorCanvas.width!==pixelW||dfPhosphorCanvas.height!==pixelH){dfPhosphorCanvas.width=pixelW;dfPhosphorCanvas.height=pixelH;}
+    var ctx=dfPhosphorCtx;ctx.setTransform(ratio,0,0,ratio,0,0);
+    ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.filter='none';
+    ctx.fillStyle='#010302';ctx.fillRect(0,0,w,h);
+    if(dfState.mode==='diff'||dfState.screenRaised||!bfState.beamOn)return;
+    var beam=bfPhosphorGetTarget(w,h);
+    ctx.save();bfPhosphorBeamPath(ctx,beam);
+    ctx.shadowColor='rgba(60,210,65,.18)';ctx.shadowBlur=8;
+    ctx.fillStyle='#041207';ctx.fill();ctx.restore();
+    ctx.save();bfPhosphorBeamPath(ctx,beam);ctx.clip();
+    if(dfState.darkField){
+      // The selected diffracted beam lights reflecting particles on a near-
+      // black background; the BF image is never displayed unmodified in DF.
+      ctx.fillStyle='#7be678';
+    }else{
+      var g=ctx.createRadialGradient(beam.x,beam.y,0,beam.x,beam.y,Math.max(beam.rx,beam.ry));
+      g.addColorStop(0,'#9df789');g.addColorStop(1,'#60c95a');ctx.fillStyle=g;
+    }
+    ctx.fillRect(0,0,w,h);
+    if(dfSpecimen&&dfSpecimen.complete&&dfSpecimen.naturalWidth){
+      var focusErr=Math.abs(Number(dfState.focusCoarse||0))+Math.abs(Number(dfState.focusFine||0));
+      var stigErr=Math.abs(Number(dfState.astigX||0))+Math.abs(Number(dfState.astigY||0));
+      var defocus=Math.min(5.5,focusErr*.20+stigErr*.055);
+      ctx.globalCompositeOperation='multiply';
+      ctx.filter=dfState.darkField
+        ?'grayscale(1) invert(1) contrast(5) brightness(.70) blur('+defocus.toFixed(2)+'px)'
+        :'grayscale(1) contrast(1.18) blur('+Math.min(3,focusErr*.12).toFixed(2)+'px)';
+      var scale=Math.max(w*1.08/dfSpecimen.naturalWidth,h*1.08/dfSpecimen.naturalHeight);
+      var iw=dfSpecimen.naturalWidth*scale,ih=dfSpecimen.naturalHeight*scale;
+      ctx.drawImage(dfSpecimen,(w-iw)/2,(h-ih)/2,iw,ih);
+    }
+    ctx.restore();
+  }
   function ensureDfScene(){
     if(dfScene||!viewScreen)return;
     var w=document.createElement('div');w.id='sopDfScene';w.className='sop-df-scene';w.hidden=true;
@@ -3096,6 +3350,14 @@
       +'</div>';
     viewScreen.appendChild(w);dfScene=w;dfScreen=document.getElementById('sopDfScreen');dfSpecimen=document.getElementById('sopDfSpecimen');dfPattern=document.getElementById('sopDfPattern');dfApertureShade=document.getElementById('sopDfApertureShade');dfFringe=document.getElementById('sopDfFringe');
     dfPattern.innerHTML=DF_SPOTS.map(function(s){return '<button type="button" class="sop-df-spot'+(s.direct?' is-direct':'')+(s.target?' is-target':'')+'" data-df-spot="'+s.id+'" aria-label="Diffraction spot '+s.id+'"><span></span></button>';}).join('');
+    dfPhosphorCanvas=document.createElement('canvas');
+    dfPhosphorCanvas.id='sopDfPhosphorCanvas';dfPhosphorCanvas.className='sop-df-phosphor-canvas';
+    dfPhosphorCanvas.setAttribute('aria-label','Simulated TEM phosphor display for bright- and dark-field contrast');
+    dfScreen.insertBefore(dfPhosphorCanvas,dfScreen.firstChild);
+    dfPhosphorCtx=dfPhosphorCanvas.getContext('2d',{alpha:false});
+    dfSpecimen.addEventListener('load',dfRenderPhosphor);
+    if(typeof ResizeObserver!=='undefined')new ResizeObserver(dfRenderPhosphor).observe(dfScreen);
+
   }
 
   function dfRender(){
@@ -3135,6 +3397,7 @@
       dfFringe.style.opacity=dfState.darkField?Math.min(.85,ferr/16).toFixed(2):'0';
       dfFringe.style.borderWidth=(2+Math.min(8,ferr*.35))+'px';
     }
+    dfRenderPhosphor();
   }
 
   function showDfScene(){
@@ -3174,7 +3437,7 @@
   function runDF13(){showDfScene();setDefStigLabels('OBJ STIG X','OBJ STIG Y');s3SetKnob('defstig-x',9);dfState.astigX=9;dfRender();s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(v){dfState.astigX=v;dfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runDF14(){showDfScene();setDefStigLabels('OBJ STIG X','OBJ STIG Y');s3SetKnob('defstig-y',-8);dfState.astigY=-8;dfRender();s3Activate(['def-stig-y']);s3SetHandlers({'defstig:y':function(v){dfState.astigY=v;dfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runDF15(){showDfScene();setDefStigLabels('OBJ STIG X','OBJ STIG Y');dfRender();s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='objStig')return;btn.classList.remove('is-selected');dfState.objStigOn=false;setDefStigLabels('DEF/STIG X','DEF/STIG Y');s3Complete(350);}});}
-  function runDF16(){showDfScene();dfState.screenRaised=false;s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);dfState.screenRaised=true;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
+  function runDF16(){showDfScene();dfState.screenRaised=false;s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);dfState.screenRaised=true;dfRenderPhosphor();var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
 
   function ensureDfItemPanel(mode){
     hideDfScene();openCameraDrawer();var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return null;var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='none';var old=document.getElementById('sopItemPanel');if(old)old.remove();
@@ -3182,16 +3445,16 @@
     if(mode==='open')html+='<button id="s4ItemOpen">Open iTEM</button><div class="sop-s3-pc-note">Dark Field acquisition workspace.</div>';
     if(mode==='video')html+='<button id="s4ItemVideo">Video</button><div class="sop-s3-pc-note">Start the live Dark Field camera feed.</div>';
     if(mode==='snapshot')html+='<button id="s4ItemSnapshot">Snapshot</button><div class="sop-s3-pc-note">Capture the Dark Field image.</div>';
-    if(mode==='record')html+='<div class="sop-df-record"><span>Selected reflection</span><strong>g1</strong><button id="s4RecordReflection">Record DF + g1</button></div>';
-    if(mode==='done')html+='<div class="sop-s3-pc-note">Dark Field image and reflection g1 recorded. Press F1 on R1 to return the fluorescent screen.</div>';
-    p.innerHTML=html;host.appendChild(p);var ph=document.getElementById('pc-cam-placeholder');if(ph&&dfState.itemOpen)ph.style.display='none';return p;
+    if(mode==='record')html+='<div class="sop-df-record"><span>Selected reflection</span><strong>g1</strong><button id="s4RecordReflection">Record DF + g1</button></div><button type="button" id="s4DownloadAgain">Download PNG again</button>';
+    if(mode==='done')html+='<div class="sop-s3-pc-note">Dark Field image and reflection g1 recorded. Press F1 on R1 to return the fluorescent screen.</div><button type="button" id="s4DownloadAgain">Download PNG again</button>';
+    p.innerHTML=html;host.appendChild(p);var again=document.getElementById('s4DownloadAgain');if(again)again.onclick=function(){downloadSnapshotPng('dark');};var ph=document.getElementById('pc-cam-placeholder');if(ph&&dfState.itemOpen)ph.style.display='none';return p;
   }
   function drawCapturedDf(){
     var cv=document.getElementById('pc-cam-canvas');if(!cv)return;var ctx=cv.getContext('2d'),img=new Image();img.onload=function(){ctx.clearRect(0,0,cv.width,cv.height);ctx.fillStyle='#050505';ctx.fillRect(0,0,cv.width,cv.height);ctx.filter='grayscale(1) invert(1) brightness(.72) contrast(2.2)';ctx.drawImage(img,0,0,cv.width,cv.height);ctx.filter='none';ctx.fillStyle='rgba(255,255,255,.86)';ctx.font='15px sans-serif';ctx.fillText('DF · selected reflection g1',14,25);};img.src='../assets/images/sop/bf-acquisition.png';
   }
   function runDF17(){var p=ensureDfItemPanel('open'),b=document.getElementById('s4ItemOpen');if(!b)return;b.onclick=function(){ensureAudio();dfState.itemOpen=true;b.disabled=true;var ph=document.getElementById('pc-cam-placeholder');if(ph)ph.style.display='none';s3Complete(350);};}
   function runDF18(){var p=ensureDfItemPanel('video'),b=document.getElementById('s4ItemVideo');if(!b)return;b.onclick=function(){ensureAudio();dfState.videoOn=true;b.disabled=true;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running · DF';drawCapturedDf();s3Complete(350);};}
-  function runDF19(){var p=ensureDfItemPanel('snapshot'),b=document.getElementById('s4ItemSnapshot');if(!b)return;b.onclick=function(){ensureAudio();dfState.captured=true;b.disabled=true;drawCapturedDf();var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Dark Field snapshot captured';s3Complete(350);};}
+  function runDF19(){var p=ensureDfItemPanel('snapshot'),b=document.getElementById('s4ItemSnapshot');if(!b)return;b.onclick=function(){ensureAudio();dfState.captured=true;b.disabled=true;downloadSnapshotPng('dark');drawCapturedDf();var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Dark Field snapshot captured';s3Complete(350);};}
   function runDF20(){var p=ensureDfItemPanel('record'),b=document.getElementById('s4RecordReflection');if(!b)return;b.onclick=function(){ensureAudio();if(!dfState.captured)return;dfState.recorded=true;b.disabled=true;b.textContent='Recorded · DF + g1';s3Complete(380);};}
   function runDF21(){ensureDfItemPanel('done');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!dfState.recorded)return;s3SelectButton(btn);dfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideDfScene();setDefStigLabels('DEF/STIG X','DEF/STIG Y');});}});}
 
