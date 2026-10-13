@@ -39,7 +39,7 @@
       {title:'Beam · Turn BEAM ON',instruction:'Press BEAM on control panel L1. Observe the TEMCON Beam indicator turn green, then watch the fluorescent screen illuminate as the viewport zooms in and switches to Viewing Screen automatically.',hint:'Wait for both green-illumination views to fade in and for the automatic Viewing Screen transition.'},
       {title:'Imaging Mode · TEM',instruction:'Select TEM imaging mode on control panel L1.',hint:'Only the TEM control is active for this step.'},
       {title:'Magnification · LOW MAG',instruction:'Select LOW MAG on control panel R1.',hint:'Use LOW MAG for locating the region of interest.'},
-      {title:'Magnification · Survey range',instruction:'Rotate MAG/CAM L until the magnification is within approximately 1,000–5,000×.',hint:'Any value in the manual-specified survey range is accepted.'},
+      {title:'Magnification · Survey range',instruction:'Rotate MAG/CAM L into the 1,000–5,000× survey range and observe how the same grid features change size.',hint:'Rotate the highlighted knob into the survey range. The step advances automatically after the adjustment; hovering or clicking without rotation will not complete it.'},
       {title:'Specimen · Locate thin region',instruction:'Use the specimen-stage trackball to move to a hole or thin region of the specimen.',hint:'Center a distinct feature in the real specimen image.'},
       {title:'Focus · STD FOCUS',instruction:'Press STD FOCUS on control panel R1.',hint:'STD FOCUS resets objective focus to its standard reference.'},
       {title:'Illumination · SPOT SIZE',instruction:'Set the desired SPOT SIZE using the L1 rotary control.',hint:'The manual does not prescribe a fixed value here; make a deliberate selection.'},
@@ -49,14 +49,14 @@
       {title:'Illumination · Crossover',instruction:'Rotate BRIGHTNESS until the filament illumination is focused to a crossover.',hint:'Reach the smallest beam diameter.'},
       {title:'Illumination · Spread beam',instruction:'Turn BRIGHTNESS clockwise to overfocus the C3 condenser lens and spread illumination to fill the screen.',hint:'Expand the beam after reaching crossover.'},
       {title:'Z Correction · Center feature',instruction:'At MAG 1, use the stage trackball to position a thin feature at the screen centre.',hint:'Center the highlighted feature.'},
-      {title:'Z Correction · STD FOCUS',instruction:'Press STD FOCUS before adjusting specimen height.',hint:'Reset objective focus before Z correction.'},
+      {title:'Z Correction · STD FOCUS',instruction:'Press STD FOCUS before adjusting specimen height. Observe the real specimen become sharper as the lens returns to standard focus.',hint:'Watch the change in image sharpness after pressing STD FOCUS.'},
       {title:'Z Correction · Coarse Z',instruction:'Use Z UP / Z DOWN to bring the feature toward focus or minimum contrast.',hint:'Approach the eucentric-height region.'},
-      {title:'Z Correction · Wobbler ON',instruction:'Press MAG WOB X or MAG WOB Y on R1 to start the wobble.',hint:'Use either axis as specified in the manual.'},
-      {title:'Z Correction · Minimize wobble',instruction:'While the wobbler is ON, use Z UP / Z DOWN until lateral motion is minimized.',hint:'The real specimen image wobble reduces as Z approaches the correct height.'},
+      {title:'Z Correction · Wobbler ON',instruction:'Press MAG WOB X or MAG WOB Y on R1. Observe specimen movement against the scale on the fluorescent screen.',hint:'Watch the scale indicator move with the wobble.'},
+      {title:'Z Correction · Minimize wobble',instruction:'While MAG WOB remains ON, adjust Z UP / Z DOWN and observe the marker moving against the on-screen scale.',hint:'The movement reduces as Z approaches the eucentric height.'},
       {title:'Z Correction · Wobbler OFF',instruction:'Press the same MAG WOB X or MAG WOB Y control again to switch the wobble OFF.',hint:'The corrected Z height is retained.'},
-      {title:'Condenser Aperture · Select',instruction:'In the Viewing Screen, select the condenser aperture using checkbox 1 beneath the image. Observe the irregular beam become cleaner while remaining off-centre.',hint:'The selected aperture improves the beam outline; centering follows in the next two steps.'},
+      {title:'Condenser Aperture · Select',instruction:'Read the required note about the physical condenser-aperture controls on the TEM column and press OK. Then select checkbox 1 to simulate aperture selection and observe the beam.',hint:'The checkboxes represent operations on the real column aperture assembly.'},
       {title:'Condenser Aperture · Centre X',instruction:'In the Viewing Screen, tick checkbox 2 to centre condenser-aperture X. Observe the beam move horizontally toward the optical axis.',hint:'Allow the simulated horizontal adjustment to finish before the next step.'},
-      {title:'Condenser Aperture · Centre Y',instruction:'In the Viewing Screen, tick checkbox 3 to centre condenser-aperture Y. Observe the beam move vertically and confirm the centred beam in the modal.',hint:'The final confirmation appears after the beam reaches the centre.'},
+      {title:'Condenser Aperture · Centre Y',instruction:'In the Viewing Screen, tick checkbox 3 to centre condenser-aperture Y. Observe the gradual change in beam position, then confirm it in the modal.',hint:'The final confirmation appears after the simulated Y-axis adjustment has been visible long enough to inspect.'},
       {title:'Condenser Aperture · Verify',instruction:'Vary BRIGHTNESS so the beam spreads and contracts symmetrically about the optical axis.',hint:'Verify there is no off-centre shift or crescent clipping.'},
       {title:'Condenser Lens · Crossover',instruction:'Adjust BRIGHTNESS to bring the beam to crossover.',hint:'Use the Viewing Screen to observe the minimum beam diameter.'},
       {title:'Condenser Lens · SHIFT X',instruction:'Use SHIFT X on L1 to centre the crossover horizontally.',hint:'Move the beam toward the viewing-axis centre.'},
@@ -64,12 +64,12 @@
       {title:'Condenser Lens · Spread',instruction:'Turn BRIGHTNESS to spread the beam over the screen.',hint:'Expand the illumination after centering the crossover.'},
       {title:'Condenser Lens · Re-centre X',instruction:'If the expanding beam drifts, use SHIFT X to correct the horizontal position.',hint:'Keep the expanded beam centered.'},
       {title:'Condenser Lens · Re-centre Y',instruction:'If the expanding beam drifts, use SHIFT Y to correct the vertical position.',hint:'Keep the expanded beam centered.'},
-      {title:'CL Astigmatism · Spot Size 1',instruction:'Set SPOT SIZE to 1.',hint:'Spot Size 1 is required before condenser-lens astigmatism correction.'},
+      {title:'CL Astigmatism · Spot Size 1',instruction:'Rotate the L1 SPOT SIZE control and deliberately select 1 for condenser-lens astigmatism correction.',hint:'Move the SPOT SIZE knob to 1. The step does not auto-complete from an unchanged previous setting.'},
       {title:'CL Astigmatism · COND STIG ON',instruction:'Press COND STIG on L1 to enter condenser-stigmator adjustment.',hint:'DEF/STIG X and Y now adjust condenser stigmation.'},
       {title:'CL Astigmatism · Inspect shape',instruction:'Rotate BRIGHTNESS clockwise and anticlockwise through crossover to inspect the beam shape.',hint:'The simulated illumination outline is intentionally elliptical before correction while the real specimen remains visible.'},
-      {title:'CL Astigmatism · DEF/STIG X',instruction:'Adjust DEF/STIG X on L1 to reduce the X component of beam ellipticity.',hint:'Move the beam shape toward circular.'},
-      {title:'CL Astigmatism · DEF/STIG Y',instruction:'Adjust DEF/STIG Y on R1 to reduce the Y component of beam ellipticity.',hint:'Complete the circularization.'},
-      {title:'CL Astigmatism · Verify',instruction:'Rotate BRIGHTNESS back and forth through crossover and verify the beam remains approximately circular.',hint:'Check the correction on both sides of crossover.'},
+      {title:'CL Astigmatism · DEF/STIG X',instruction:'Adjust DEF/STIG X on L1 and observe the elongated beam begin to become more circular.',hint:'Observe how the ellipse shortens as the horizontal stigmator correction approaches zero.'},
+      {title:'CL Astigmatism · DEF/STIG Y',instruction:'Adjust DEF/STIG Y on R1 until the ellipse becomes approximately circular.',hint:'The step advances automatically after the Y correction; BRIGHTNESS is not required.'},
+      {title:'CL Astigmatism · Verify',instruction:'Observe the circular beam through crossover, then increase BRIGHTNESS until illumination covers almost the entire viewing screen.',hint:'Complete a narrow-to-nearly-full-screen sweep; the step advances after the beam has stabilized.'},
       {title:'CL Astigmatism · COND STIG OFF',instruction:'Press COND STIG again to exit condenser-stigmator adjustment.',hint:'The corrected setting is retained.'},
       {title:'Acquisition · Select ROI',instruction:'Use the stage trackball to select and centre the final area of interest.',hint:'Centre the required area using the real specimen image.'},
       {title:'Acquisition · Final magnification',instruction:'With MAG 1 retained, rotate MAG/CAM L to X60k for this real-sample exercise.',hint:'The supplied final Bright Field image sequence was recorded at 60,000×, so use X60k for the acquisition sequence.'},
@@ -77,7 +77,7 @@
       {title:'Acquisition · AUTO contrast',instruction:'Press AUTO if automatic image-contrast adjustment is desired.',hint:'AUTO is optional and does not block progression.'},
       {title:'Acquisition · F1 screen UP',instruction:'Press F1 on R1 to lift the fluorescent screen and expose the transmitted beam to the camera.',hint:'The camera exposure path becomes active.'},
       {title:'Acquisition · iTEM workspace',instruction:'The Olympus iTEM acquisition workspace opens automatically in the PC drawer. Observe the specimen preview and camera tools before proceeding.',hint:'No Open iTEM button is needed. The workspace opens and the real specimen image appears automatically.'},
-      {title:'Acquisition · Three focus conditions',instruction:'Inspect the specimen only in the Olympus iTEM camera window. Turn OBJ FOCUS counter-clockwise for underfocus (bright outer fringes), bring the image to in-focus (smooth background and minimum contrast), then turn clockwise for overfocus (dark outer fringes). Observe each condition, return near focus, and confirm in iTEM.',hint:'Underfocus / Scherzer: bright white fringe outside nanoparticle edges and textured carbon background. In-focus: flat, smooth background and no edge fringe. Overfocus: dark shadow fringe outside particle edges; avoid for final size measurement.'},
+      {title:'Acquisition · Three focus conditions',instruction:'Inspect the specimen only in the Olympus iTEM camera window. Turn OBJ FOCUS counter-clockwise for underfocus (bright outer fringes), bring the image to in-focus (smooth background and minimum contrast), then turn clockwise for overfocus (dark outer fringes). Observe each condition, return near focus, and confirm in the separate Focus Verification training panel.',hint:'Underfocus / Scherzer: bright white fringe outside nanoparticle edges and textured carbon background. In-focus: flat, smooth background and no edge fringe. Overfocus: dark shadow fringe outside particle edges; avoid for final size measurement.'},
       {title:'Acquisition · Video',instruction:'Click the Video icon in iTEM to start the live camera feed.',hint:'Live acquisition begins.'},
       {title:'Acquisition · Snapshot',instruction:'Click Snapshot in iTEM to capture the Bright Field image.',hint:'The real-sample Bright Field image is captured.'},
       {title:'Acquisition · F1 screen DOWN',instruction:'After acquiring the image, press F1 again to return the fluorescent screen.',hint:'Bright Field acquisition is complete; limit real camera exposure as required by the operating procedure.'}
@@ -961,6 +961,9 @@
   }
   function dismissModal(){
     if(!modal.classList.contains('is-open'))return;
+    // Step 26 physical-hardware explanation is mandatory: Escape cannot
+    // bypass the OK acknowledgement and leave its checklist unavailable.
+    if(document.getElementById('s3CaHardwareOK'))return;
     // Dismissal never completes the active step. The instruction bar remains on that step.
     if(state.currentSection===2){
       if(state.currentStep===2)state.gridStage=0;
@@ -1616,6 +1619,98 @@
     var cap=document.getElementById('viewer-caption');if(cap)cap.textContent=which==='screen'?'VIEWING SCREEN · PHOSPHOR':'ELECTRON OPTICAL COLUMN';
   }
   function wireS3ViewerTabs(){[].slice.call(document.querySelectorAll('.viewer__tab')).forEach(function(t){if(t.dataset.sopWired)return;t.dataset.sopWired='1';t.addEventListener('click',function(){setViewer(t.dataset.view);});});}
+  /* v4.9.43 — an angled, operator-eye-level view of the SAME physical phosphor.
+     The original canvas, beam controls, specimen motion and screen-cover
+     action remain in #view-screen; only its observation geometry is changed.
+     iTEM/camera rendering never passes through this viewing chamber. */
+  // v4.9.50: the seated operator perspective is the sole physical screen view.
+  // There is no direct/front-on alternate and no presentation mode to persist.
+  var sopObservationShell=null,sopObservationWell=null,sopObservationObserver=null;
+  // v4.9.56 — a physical, hinge-driven large fluorescent-screen movement.
+  // Only the screen disc rotates. The column chamber/rim stays fixed. During
+  // lifting the actual phosphor image remains painted on its moving surface.
+  var sopF1MotionBusy=false;
+  var SOP_F1_MOTION_MS=3000;
+  function sopF1ResetMotion(){
+    sopF1MotionBusy=false;
+    if(sopObservationShell)sopObservationShell.classList.remove('is-f1-moving');
+  }
+  function sopF1SyncRestPose(raised){
+    if(!sopObservationShell)return;
+    sopObservationShell.classList.remove('is-f1-moving');
+    sopObservationShell.classList.toggle('is-f1-raised',!!raised);
+    sopObservationShell.classList.toggle('is-f1-parked',!!raised);
+  }
+  function sopF1AnimateScreen(raise,section,onFinished){
+    if(sopF1MotionBusy||!sopObservationShell)return false;
+    var step=state.currentStep;
+    sopF1MotionBusy=true;
+    var shell=sopObservationShell;
+    shell.classList.add('is-f1-moving');
+    shell.classList.remove('is-f1-parked');
+    // On return from a camera step this places the screen vertically first,
+    // without displaying the phosphor while it is outside the electron path.
+    // Force the start pose to be committed before triggering CSS interpolation.
+    shell.classList.toggle('is-f1-raised',!raise);
+    void shell.offsetWidth;
+    requestAnimationFrame(function(){
+      if(shell!==sopObservationShell||state.currentSection!==section||state.currentStep!==step)return;
+      shell.classList.toggle('is-f1-raised',!!raise);
+    });
+    var timer=setTimeout(function(){
+      if(shell!==sopObservationShell||state.currentSection!==section||state.currentStep!==step){sopF1ResetMotion();return;}
+      shell.classList.remove('is-f1-moving');
+      // Fully raised disc parks outside the user's observation window;
+      // only the black chamber and its static metal rim remain visible.
+      shell.classList.toggle('is-f1-parked',!!raise);
+      sopF1MotionBusy=false;
+      if(typeof onFinished==='function')onFinished();
+    },SOP_F1_MOTION_MS+85);
+    bfTimers.push(timer);
+    return true;
+  }
+  function sopObservationResize(){
+    if(!sopObservationWell||!sopObservationShell)return;
+    var w=sopObservationWell.clientWidth,h=sopObservationWell.clientHeight;
+    if(w<50||h<50)return;
+    var d=Math.min(w*.83,h*1.16,760);
+    sopObservationShell.style.setProperty('--sop-observation-diameter',Math.round(d)+'px');
+  }
+  function sopObservationEnsure(){
+    if(sopObservationShell||!viewScreen||!screenPanel)return;
+    var parent=viewScreen.parentNode;
+    if(!parent)return;
+    var shell=document.createElement('div');shell.id='sopObservationShell';
+    shell.className='sop-observation-shell is-operator';
+    shell.innerHTML='<div class="sop-observation-well" id="sopObservationWell">'
+      +'<div class="sop-observation-depth" aria-hidden="true"></div>'
+      +'<div class="sop-observation-rim" aria-hidden="true"></div>'
+      +'<div class="sop-observation-screen-mount" id="sopObservationScreenMount"></div>'
+      +'<div class="sop-observation-glass" aria-hidden="true"></div>'
+      +'</div>'
+      ;
+    parent.replaceChild(shell,viewScreen);
+    shell.querySelector('#sopObservationScreenMount').appendChild(viewScreen);
+    sopObservationShell=shell;
+    sopObservationWell=shell.querySelector('#sopObservationWell');
+    // If the learner returns from iTEM, show the screen in its parked pose
+    // before the first paint. Never flash the horizontal green screen.
+    sopF1SyncRestPose((state.currentSection===4?dfState.screenRaised:bfState.screenRaised));
+    if(typeof ResizeObserver!=='undefined'){sopObservationObserver=new ResizeObserver(sopObservationResize);sopObservationObserver.observe(sopObservationWell);}
+    sopObservationResize();
+  }
+  function sopObservationUpdate(){
+    if(!screenPanel||!sopObservationShell)return;
+    var shown=(!!bfScene&&!bfScene.hidden)||(!!dfScene&&!dfScene.hidden);
+    screenPanel.classList.toggle('has-sop-observation',shown);
+    if(shown){sopObservationResize();return;}
+    // Return the physical screen to its exact original parent when no live
+    // BF/DF observation is active (other sections and idle tabs are untouched).
+    if(sopObservationObserver){sopObservationObserver.disconnect();sopObservationObserver=null;}
+    sopF1ResetMotion();
+    if(sopObservationShell.parentNode)sopObservationShell.parentNode.replaceChild(viewScreen,sopObservationShell);
+    sopObservationShell=null;sopObservationWell=null;
+  }
   // Reference-marker rectangles are matched to actual JEOL panel controls.
   // Percentages are based on the 1448×1086 L1/R1 photograph, not the GUI's
   // synthetic button grid. Marker sizing stays correct as the photo scales.
@@ -1728,6 +1823,7 @@
     if(s3StepCompleting)return;s3StepCompleting=true;var sec=state.currentSection,step=state.currentStep;
     var t=setTimeout(function(){if(state.currentSection!==sec||state.currentStep!==step){s3StepCompleting=false;return;}completeStep(before);},delay||650);bfTimers.push(t);
   }
+  var s3MagGesture={down:false,x:0,y:0,deliberate:false,onRelease:null};
   function initS3PanelInteractions(){
     if(s3PanelInit)return;s3PanelInit=true;if(!(window.TEM&&TEM.controlsUI))return;
     [].slice.call(document.querySelectorAll('[data-action]')).forEach(function(btn){btn.addEventListener('click',function(){if(state.currentSection!==3&&state.currentSection!==4)return;var ctl=btn.closest('.ctl');if(ctl&&!ctl.classList.contains('is-active'))return;var fn=s3Handlers['action:'+btn.dataset.action];if(fn)fn(btn);});});
@@ -1793,7 +1889,7 @@
     var ind=document.getElementById('ind-mag');if(ind)ind.textContent=Number(bfState.mag).toLocaleString()+'×';
     if(bfStatus)bfStatus.innerHTML='<span>Mode <strong>'+String(bfState.mode).toUpperCase()+'</strong></span><span>MAG <strong>'+Number(bfState.mag).toLocaleString()+'×</strong></span><span>Z <strong>'+Number(bfState.z).toFixed(1)+'</strong></span>';
   }
-  function clearS3PcPanel(){hideS3FocusViewport();var ws=document.querySelector('#pc-cam .camera-workstation');if(ws)ws.classList.remove('sop-item-workflow','sop-item-workflow--focus');var p=document.getElementById('sopS3PcPanel');if(p)p.remove();var v=document.getElementById('sopS3ValvePanel');if(v)v.remove();var it=document.getElementById('sopItemPanel');if(it)it.remove();var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='';}
+  function clearS3PcPanel(){hideS3FocusViewport();clearS3ExternalFocusPanel();var ws=document.querySelector('#pc-cam .camera-workstation');if(ws)ws.classList.remove('sop-item-workflow','sop-item-workflow--focus');var p=document.getElementById('sopS3PcPanel');if(p)p.remove();var v=document.getElementById('sopS3ValvePanel');if(v)v.remove();var it=document.getElementById('sopItemPanel');if(it)it.remove();var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='';}
   function addS3PcPanel(host,title,body){clearS3PcPanel();var p=document.createElement('div');p.id='sopS3PcPanel';p.className='sop-s3-pc-panel';p.innerHTML='<div class="sop-s3-pc-panel__title">'+title+'</div>'+body;host.appendChild(p);return p;}
 
   function showSection3(){var n=state.currentStep+1;s3StepCompleting=false;hideViewportScene();hideSection1Tour();clearS3PcPanel();s3LockControls();if(n===1)runS3Step1HtRamp();else if(n===2)runS3Step2Filament();else if(n===3)runS3Step3V2();else if(n===4)runS3Step4LowMag();else if(n===5)runS3Step5EucentricMag();else if(n===6)runS3Step6CenterFeature();else if(n===7)runS3Step7Wobble();else if(n===8)runS3Step8HighMagWobble();else if(n===9)runS3Step9Aperture();else if(n===10)runS3Step10CenterCA();else if(n===11)runS3Step11CondStig();else if(n===12)runS3Step12BeamCenter();else if(n===13)runS3Step13ObjAperture();else if(n===14)runS3Step14Focus();else if(n===15)runS3Step15FinalCheck();else if(n===16)runS3Step16Acquire();}
@@ -2016,7 +2112,7 @@
       return true;
     }catch(e){
       var warn=document.getElementById('pc-cam-message');
-      if(warn)warn.textContent='Snapshot captured. Use Download PNG again to save the image.';
+      if(warn)warn.textContent='Snapshot captured. Use Save Image As… to save the image.';
       return false;
     }
   }
@@ -2058,6 +2154,22 @@
   var bfCurrentImgKey='';
   var bfSpecimenCrossfade=null;
   var bfRealPreloaded=false;
+  var bfSurveyThinTexture=null;
+  function bfEnsureSurveyThinTexture(){
+    // Preload the Step 13 thin-region field before it first enters the beam.
+    // The stage handoff is a direct image replacement, never a dissolve.
+    if(!bfSurveyThinTexture){
+      bfSurveyThinTexture=new Image();
+      bfSurveyThinTexture.addEventListener('load',bfPhosphorSchedule);
+      bfSurveyThinTexture.src=BF_SPECIMEN_IMAGES.surveyThin;
+    }
+    return bfSurveyThinTexture;
+  }
+  function bfSurveyHasReachedThinRegion(x,y){
+    // Actual stage movement, not a clock, triggers the field replacement.
+    // There is still ample trackball travel left for final centering.
+    return Math.hypot(Number(x||0),Number(y||0))<=42;
+  }
   function bfPreloadRealImages(){
     if(bfRealPreloaded)return;bfRealPreloaded=true;
     Object.keys(BF_SPECIMEN_IMAGES).forEach(function(k){var im=new Image();im.src=BF_SPECIMEN_IMAGES[k];});
@@ -2065,10 +2177,13 @@
   function bfSetSpecimenImage(key){
     if(!bfSpecimen||bfCurrentImgKey===key)return;
     var src=BF_SPECIMEN_IMAGES[key]||BF_SPECIMEN_IMAGES.fallback;
-    // A change of field or magnification must never create a hard image cut.
-    // Keep the exact previous field visible while the new field fades into it.
+    // Normal acquisition changes retain their original crossfade.
+    // EXCEPTION: Step 12 stage search switches directly from the shifted Tv2
+    // grid to the newly reached Tv5 thin region, with NO opacity fade.
     if(bfSpecimenCrossfade){bfSpecimenCrossfade.remove();bfSpecimenCrossfade=null;}
-    if(bfCurrentImgKey&&bfSpecimen.parentElement&&bfState.beamOn){
+    var step12DirectSwitch=state.currentSection===3&&state.currentStep===11&&
+      bfCurrentImgKey==='grid200'&&key==='surveyThin';
+    if(bfCurrentImgKey&&bfSpecimen.parentElement&&bfState.beamOn&&!step12DirectSwitch){
       var previous=bfSpecimen.cloneNode(false);
       previous.removeAttribute('id');
       previous.className='sop-bf-specimen sop-bf-specimen-crossfade';
@@ -2093,12 +2208,8 @@
     var dist=Math.hypot(Number(bfState.stageX||0),Number(bfState.stageY||0));
     if(n<=9) return 'grid200';
     if(n===10||n===11) return 'grid200';
-    if(n===12) return 'grid500';
-    if(n===13){
-      if(dist>72)return 'surveyEmpty';
-      if(dist>28)return 'surveyEdge';
-      return 'surveyThin';
-    }
+    if(n===12) return 'grid200'; // Step 11: keep the same grid throughout MAG/CAM L adjustment
+    if(n===13)return bfState.surveyThinLocated?'surveyThin':'grid200'; // Step 12: trackball pans Tv2, then switches directly to Tv5
     if(n>=14&&n<=17) return 'surveyThin';
     if(n===18) return Number(bfState.mag||0)>=20000?'mag50Edge':'surveyThin';
     if(n>=19&&n<=20) return 'mag50Edge';
@@ -2147,8 +2258,37 @@
     }
     ctx.closePath();
   }
+  function bfPhosphorHasIntroIllumination(){
+    // Section 3 Step 8 first beam appearance: allow a somewhat wider initial
+    // illuminated area and a touch more side spill, while later brightness
+    // training still uses the learner's actual BRIGHTNESS/C2 adjustments.
+    return state.currentSection===3&&(state.currentStep===7||state.currentStep===8);
+  }
+  function bfStigShapeResponse(size){
+    // A condenser stigmator has two orthogonal correction components. The
+    // ellipse eccentricity depends on their combined residual, not on one
+    // arbitrary single-axis height penalty. Values within the accepted ±1
+    // training tolerance are treated as essentially corrected.
+    var dx=Math.max(0,Math.abs(Number(bfState.condX||0))-1)*4.8;
+    var dy=Math.max(0,Math.abs(Number(bfState.condY||0))-1)*5.9;
+    var residual=Math.hypot(dx,dy);
+    // Keep Step 38 inspection and Step 39 correction at the same uncorrected
+    // optical state; only actual DEF/STIG X/Y adjustments reduce ellipticity.
+    return {
+      loss:Math.min(size*.51,residual),
+      rotation:residual>0.01?(Math.atan2(Number(bfState.condY||0)*dy,Number(bfState.condX||0)*dx)*.5*180/Math.PI):0
+    };
+  }
+  function bfStigVisualCircularity(){
+    // Use exactly the same apparent roundness threshold for the learning
+    // step and its top-down beam guide. A beam that already reads "Almost
+    // circular" must not remain stuck waiting for an invisible finer value.
+    var size=Math.max(8,Math.min(110,Number(bfState.c2||55)));
+    return Math.max(.48,1-bfStigShapeResponse(size).loss/size);
+  }
   function bfPhosphorGetTarget(w,h){
     var size=Math.max(8,Math.min(94,Number(bfState.c2||55)));
+    if(bfPhosphorHasIntroIllumination())size=Math.max(size,82);
     // With enough condenser spreading the beam can cover the WHOLE screen.
     // The original control thresholds and alignment sequence are unchanged.
     if(Number(bfState.c2)>88)size=Math.min(120,88+(Number(bfState.c2)-88)*2.6);
@@ -2156,13 +2296,67 @@
     var stigY=Math.abs(Number(bfState.condY||0));
     var caQuality=Math.max(0,Math.min(1,Number(bfState.caQuality==null?.08:bfState.caQuality)));
     var distorted=Math.min(1,Math.hypot(stigX,stigY)/6.4)*(1-caQuality);
-    var ellipticity=Math.min(size*.32,stigX*1.7+stigY*1.10);
+    var strongY=bfPhosphorStrongStigPreview();
+    var shape=strongY?bfStigShapeResponse(size):null;
+    var ellipticity=strongY?shape.loss:Math.min(size*.32,stigX*1.7+stigY*1.10);
     return {
       x:w*(.5+(Number(bfState.beamX||0)+Number(bfState.caX||0))/100),
       y:h*(.5+(Number(bfState.beamY||0)+Number(bfState.caY||0))/100),
       rx:w*size/200,ry:h*Math.max(8,size-ellipticity)/200,
-      rot:Number(bfState.condX||0)*2.8,edge:distorted
+      rot:strongY?shape.rotation:Number(bfState.condX||0)*2.8,edge:distorted
     };
+  }
+  function bfPhosphorStrongStigPreview(){
+    // Constrain the stronger Y-axis shape feedback to the condenser-stigmation
+    // learning sequence. Earlier beam-size and aperture behavior is retained.
+    return state.currentSection===3&&state.currentStep>=37&&state.currentStep<=41;
+  }
+  function bfPhosphorIsSingleGridIntro(){
+    return state.currentSection===3&&(state.currentStep===7||state.currentStep===8)&&bfCurrentImgKey==='grid200';
+  }
+  function bfPhosphorMaskSingleGridIntro(ctx,w,h,beam){
+    if(!bfPhosphorIsSingleGridIntro())return;
+    var cx=beam.x-w*.01,cy=beam.y-h*.01;
+    var half=Math.min(beam.rx,beam.ry)*.54;
+    function edgePoint(side,t){
+      // Uneven physical mesh boundary: broad waviness, small kinks and
+      // fine-scale edge roughness, but without an artificial polygon.
+      var jitter=Math.sin(t*Math.PI*2*(side%2?1.65:2.15)+side*.83)*half*.105+
+                 Math.cos(t*Math.PI*2*4.2+side*.37)*half*.044+
+                 Math.sin(t*Math.PI*2*9.1+side*.71)*half*.018;
+      if(side===0)return [cx-half + t*(half*2), cy-half+jitter];
+      if(side===1)return [cx+half+jitter, cy-half + t*(half*2)];
+      if(side===2)return [cx+half - t*(half*2), cy+half+jitter];
+      return [cx-half+jitter, cy+half - t*(half*2)];
+    }
+    ctx.save();
+    ctx.globalCompositeOperation='source-over';
+    ctx.fillStyle='rgba(2,8,4,0.86)';
+    ctx.beginPath();
+    ctx.rect(0,0,w,h);
+    var steps=56;
+    for(var side=0;side<4;side++){
+      for(var i=0;i<=steps;i++){
+        var t=i/steps,p=edgePoint(side,t);
+        if(side===0&&i===0)ctx.moveTo(p[0],p[1]);
+        else ctx.lineTo(p[0],p[1]);
+      }
+    }
+    ctx.closePath();
+    ctx.fill('evenodd');
+    ctx.strokeStyle='rgba(8,24,11,0.70)';
+    ctx.lineWidth=Math.max(2.2,half*.075);
+    ctx.beginPath();
+    for(var side2=0;side2<4;side2++){
+      for(var j=0;j<=steps;j++){
+        var t2=j/steps,p2=edgePoint(side2,t2);
+        if(side2===0&&j===0)ctx.moveTo(p2[0],p2[1]);
+        else ctx.lineTo(p2[0],p2[1]);
+      }
+    }
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
   }
   function bfPhosphorDrawSpecimen(ctx,img,w,h,time,alpha){
     if(!img||!img.complete||!img.naturalWidth||alpha<=0)return;
@@ -2175,11 +2369,51 @@
     // toward full phosphor output and let low-transmission specimen features
     // attenuate it strongly. Opaque grid bars remain nearly black.
     var isGrid=bfCurrentImgKey==='grid200'||bfCurrentImgKey==='grid500';
-    var specimenGain=isGrid?2.0:1.65;
-    var contrast=isGrid?1.55:1.55+(bfState.autoUsed?.16:0);
+    // The earlier 2x gain / 1.55 contrast clipped all gray values within
+    // electron-transparent grid openings to white. Preserve the real porous
+    // texture and thickness contrast in Tv1/Tv2 as green intensity variation.
+    var specimenGain=isGrid?1.12:1.65;
+    var contrast=isGrid?1.18:1.55+(bfState.autoUsed?.16:0);
     var magScale=1+Math.max(0,Math.log10(Math.max(1000,bfState.mag)/1000))*.16;
-    var tx=Math.max(-18,Math.min(18,Number(bfState.stageX||0)*-.12))*w/100;
-    var ty=Math.max(-18,Math.min(18,Number(bfState.stageY||0)*.12))*h/100;
+    // The Step 12 trackball is initialized at (+70,-60) for the centering
+    // exercise. That starting control position must NOT teleport the image:
+    // treat it as the relative zero and translate only as the learner moves.
+    var stageX=Number(bfState.stageX||0),stageY=Number(bfState.stageY||0);
+    var isStageSurveyGrid=state.currentSection===3&&state.currentStep===11&&bfCurrentImgKey==='grid200';
+    // Keep the exact Step 11 grid framing when Step 12 first opens, then
+    // visibly pan the grid as the learner moves away from (+70,-60).
+    // After reaching the thin region, use the same framing as Step 13.
+    var tx=isStageSurveyGrid?
+      Math.max(-26,Math.min(26,(stageX-70)*(-.28)))*w/100:
+      Math.max(-18,Math.min(18,stageX*(-.12)))*w/100;
+    var ty=isStageSurveyGrid?
+      Math.max(-26,Math.min(26,(stageY+60)*(.28)))*h/100:
+      Math.max(-18,Math.min(18,stageY*(.12)))*h/100;
+    var singleGridIntro=bfPhosphorIsSingleGridIntro();
+    // Step 8 initial BEAM ON view: show only one illuminated grid opening,
+    // with the real Tv2 texture visible inside it. Later steps should return
+    // toward the broader multi-opening teaching view used previously.
+    if(singleGridIntro){
+      magScale=1.30;
+      // The original Tv2 mesh contains real nanoparticle/thickness texture
+      // around its lower-right transparent opening (about 79%,65% of source).
+      // Put that *actual* opening beneath the beam, instead of the dark
+      // central support bars. Do not synthesize or paint specimen particles.
+      var sourceScale=1.08*magScale;
+      var desiredX=(Number(bfState.beamX||0)+Number(bfState.caX||0))/100-.01;
+      var desiredY=(Number(bfState.beamY||0)+Number(bfState.caY||0))/100-.01;
+      tx=w*(desiredX-(.79-.5)*sourceScale);
+      ty=h*(desiredY-(.65-.5)*sourceScale);
+    }
+    // After the initial one-grid reveal, keep the familiar broader grid view
+    // only for the immediate follow-up steps, similar to the v4.9.40 teaching
+    // presentation, instead of preserving the same special framing too long.
+    var followupGridView=state.currentSection===3&&state.currentStep>=9&&state.currentStep<=11&&bfCurrentImgKey==='grid200';
+    if(followupGridView){
+      magScale*=.86;
+      tx+=w*.018;
+      ty+=h*.018;
+    }
     var wobble=bfState.wobble?Math.sin(time/235)*Math.min(16,zDefocus*1.8):0;
     if(String(bfState.wobbleAxis||'x').toLowerCase()==='y')ty+=wobble;
     else tx+=wobble;
@@ -2190,6 +2424,9 @@
     ctx.save();
     ctx.globalAlpha=alpha;
     ctx.globalCompositeOperation='multiply';
+    // Exactly one full-opacity specimen image is drawn at a time. Tv2 pans
+    // under stage control; Tv5 directly replaces it when the thin field is
+    // reached. No intermediate transparency, blended pixels or fade frames.
     ctx.filter='grayscale(1) brightness('+specimenGain.toFixed(2)+') contrast('+contrast.toFixed(2)+') blur('+blur.toFixed(2)+'px)';
     ctx.drawImage(img,(w-dw)/2+tx,(h-dh)/2+ty,dw,dh);
     ctx.restore();
@@ -2238,8 +2475,22 @@
       });
     }
     var beam=bfPhosphorDisplay;
-    // v4.9.38: No separate green halo or circular rim is painted.
-    // Phosphor light is derived solely from the beam-covered specimen.
+    bfWobbleGaugeUpdate(time);
+    var introIllumination=bfPhosphorHasIntroIllumination();
+    // Add only a very faint phosphor spill outside the main beam footprint so
+    // the transition into the dark screen feels more natural than a hard stop.
+    // This is kept deliberately weak to avoid recreating an artificial ring.
+    var spillGain=introIllumination?1:.58;
+    var spillRadius=Math.max(beam.rx,beam.ry);
+    var spill=ctx.createRadialGradient(
+      beam.x-beam.rx*.10,beam.y-beam.ry*.08,spillRadius*.18,
+      beam.x,beam.y,spillRadius*(introIllumination?1.52:1.36)
+    );
+    spill.addColorStop(0,'rgba(132,220,105,'+(0.070*spillGain).toFixed(3)+')');
+    spill.addColorStop(.52,'rgba(112,201,84,'+(0.050*spillGain).toFixed(3)+')');
+    spill.addColorStop(.80,'rgba(90,170,65,'+(0.024*spillGain).toFixed(3)+')');
+    spill.addColorStop(1,'rgba(70,138,52,0)');
+    ctx.fillStyle=spill;ctx.fillRect(0,0,w,h);
     ctx.save();bfPhosphorBeamPath(ctx,beam);ctx.clip();
     var spot=Number(bfState.spot||2),alpha=Number(bfState.alpha||2);
     var gain=Math.max(.72,Math.min(1.18,1+(3-spot)*.05+(alpha-2)*.025));
@@ -2251,6 +2502,11 @@
     // During image loading hold the OLD illuminated field instead of exposing
     // a fully green disk or cutting abruptly to a different magnification.
     var nextReady=bfSpecimen&&bfSpecimen.complete&&bfSpecimen.naturalWidth>0;
+    // A precached Tv5 is available even if the DOM <img> has not yet fired
+    // load. Avoid exposing a blank/green-only frame during the direct switch.
+    var directStageSwitch=state.currentSection===3&&state.currentStep===11&&bfCurrentImgKey==='surveyThin';
+    var readySurvey=directStageSwitch?bfEnsureSurveyThinTexture():null;
+    var paintImage=nextReady?bfSpecimen:(readySurvey&&readySurvey.complete&&readySurvey.naturalWidth?readySurvey:null);
     var old=bfSpecimenCrossfade;
     var oldReady=old&&old.complete&&old.naturalWidth>0;
     var fraction=nextReady?Math.min(1,Math.max(0,(time-bfPhosphorImageReadyTime)/650)):0;
@@ -2272,7 +2528,8 @@
         bfPhosphorDrawSpecimen(ctemp,bfSpecimen,w,h,time,1);
         ctx.globalCompositeOperation='source-over';ctx.drawImage(temp,0,0,w,h);ctx.restore();
       }
-    }else if(nextReady)bfPhosphorDrawSpecimen(ctx,bfSpecimen,w,h,time,1);
+    }else if(paintImage)bfPhosphorDrawSpecimen(ctx,paintImage,w,h,time,1);
+    bfPhosphorMaskSingleGridIntro(ctx,w,h,beam);
     // A faint fine-grain phosphor texture, clipped to the illuminated pixels.
     if(bfPhosphorNoisePattern){ctx.globalCompositeOperation='soft-light';ctx.fillStyle=bfPhosphorNoisePattern;ctx.fillRect(0,0,w,h);}
     // Lens defocus produces visible Fresnel-like contour cues only under beam.
@@ -2324,11 +2581,62 @@
   }
 
 
+  var bfWobbleGauge=null;
+  function bfWobbleGaugeEnsure(){
+    // Place the bare reference scale ON the phosphor surface: it inherits
+    // the seated operator's 61-degree perspective with the actual screen.
+    if(!bfScreen)return null;
+    if(!bfWobbleGauge){
+      bfWobbleGauge=document.createElement('div');
+      bfWobbleGauge.id='s3WobbleGauge';bfWobbleGauge.className='s3-wobble-gauge';
+      bfWobbleGauge.setAttribute('role','img');
+      bfWobbleGauge.setAttribute('aria-label','On-screen wobble displacement scale, with moving indicator');
+      bfWobbleGauge.innerHTML='<div class="s3-wobble-gauge__ruler" aria-hidden="true">'+
+        '<span class="s3-wobble-gauge__zero"></span><span class="s3-wobble-gauge__marker"></span></div>';
+    }
+    if(bfWobbleGauge.parentNode!==bfScreen)bfScreen.appendChild(bfWobbleGauge);
+    return bfWobbleGauge;
+  }
+  function bfWobbleGaugeUpdate(time){
+    // Displayed Steps 23–24 only; no external guide or explanatory text.
+    var active=state.currentSection===3&&state.currentStep>=22&&state.currentStep<=23&&
+      !!bfState.wobble&&!!bfScene&&!bfScene.hidden;
+    if(!active){if(bfWobbleGauge)bfWobbleGauge.hidden=true;return;}
+    var gauge=bfWobbleGaugeEnsure();if(!gauge)return;
+    gauge.hidden=false;
+    var amplitude=Math.min(10,Math.abs(Number(bfState.z||0))*1.42);
+    var swing=amplitude*Math.sin(Number(time||0)/235);
+    var marker=gauge.querySelector('.s3-wobble-gauge__marker');
+    if(marker)marker.style.left=(50+swing*4.5).toFixed(1)+'%';
+  }
+  var bfStigGauge=null;
+  function bfStigGaugeUpdate(){
+    var visible=state.currentSection===3&&state.currentStep>=38&&state.currentStep<=39&&
+      bfScene&&!bfScene.hidden;
+    if(!visible){if(bfStigGauge)bfStigGauge.hidden=true;return;}
+    if(!bfStigGauge){
+      bfStigGauge=document.createElement('div');bfStigGauge.className='s3-stig-guide';
+      bfStigGauge.id='s3StigGuide';bfStigGauge.setAttribute('aria-label','Top-down simulation guide to beam shape');
+      bfStigGauge.innerHTML='<strong>BEAM SHAPE · TOP-DOWN GUIDE</strong>'+
+        '<div class="s3-stig-guide__figure"><span class="s3-stig-guide__ellipse"></span></div>'+
+        '<div class="s3-stig-guide__read">Elliptical</div>'+
+        '<small>Projection on the angled screen remains foreshortened</small>';
+    }
+    var host=sopObservationShell||screenPanel||viewScreen;
+    if(host&&bfStigGauge.parentNode!==host)host.appendChild(bfStigGauge);
+    bfStigGauge.hidden=false;
+    var shape=bfStigShapeResponse(Math.max(8,Math.min(110,Number(bfState.c2||55))));
+    var v=bfStigVisualCircularity();
+    var el=bfStigGauge.querySelector('.s3-stig-guide__ellipse');
+    if(el)el.style.transform='rotate('+shape.rotation.toFixed(1)+'deg) scaleY('+v.toFixed(3)+')';
+    var read=bfStigGauge.querySelector('.s3-stig-guide__read');
+    if(read)read.textContent=v>=.96?'Almost circular':(v>=.77?'Becoming circular':'Elliptical — correction needed');
+  }
   function resetBfState(){
     bfPhosphorDisplay=null;bfPhosphorWasLit=false;bfPhosphorDecay=null;
     bfState={
       mag:8000,magIndex:3,magMode:'',beamOn:false,coverOpen:false,
-      featureX:72,featureY:67,stageX:0,stageY:0,z:-6,zSensitivity:1,wobble:false,wobbleAxis:'',
+      featureX:72,featureY:67,stageX:0,stageY:0,surveyThinLocated:false,z:-6,zSensitivity:1,wobble:false,wobbleAxis:'',
       spot:2,alpha:2,spotMoved:false,alphaMoved:false,
       c2:55,beamX:7,beamY:-6,caX:0,caY:0,condX:5,condY:-4,condStigOn:false,
       focusCoarse:0,focusFine:0,captured:false,screenRaised:false,autoUsed:false,
@@ -2410,7 +2718,9 @@
     var stigNorm=Math.min(1,Math.hypot(stigX,stigY)/6.4);
     var caQuality=Math.max(0,Math.min(1,Number(bfState.caQuality==null?.08:bfState.caQuality)));
     var edgeError=(1-caQuality)*stigNorm;
-    var ellipticity=Math.min(size*.32,stigX*1.7+stigY*1.10);
+    var strongY=bfPhosphorStrongStigPreview();
+    var shape=strongY?bfStigShapeResponse(size):null;
+    var ellipticity=strongY?shape.loss:Math.min(size*.32,stigX*1.7+stigY*1.10);
     var beamH=Math.max(8,size-ellipticity);
     var f=function(n){return n.toFixed(2)+'%';};
     // Smooth organic contour instead of a polygon with unrealistic hard corners.
@@ -2419,7 +2729,7 @@
     if(bfBeam){
       bfBeam.style.width=size+'%';bfBeam.style.height=beamH+'%';
       bfBeam.style.left=(50+(bfState.beamX||0)+(bfState.caX||0))+'%';bfBeam.style.top=(50+(bfState.beamY||0)+(bfState.caY||0))+'%';
-      bfBeam.style.transform='translate(-50%,-50%) rotate('+((bfState.condX||0)*2.8)+'deg)';
+      bfBeam.style.transform='translate(-50%,-50%) rotate('+(strongY?shape.rotation:Number(bfState.condX||0)*2.8)+'deg)';
       bfBeam.style.opacity=bfState.beamOn?'1':'0';
       bfBeam.classList.toggle('is-ca-irregular',!bfState.apertureSelected);
       bfBeam.classList.toggle('is-cond-elliptical',ellipticity>3);
@@ -2441,6 +2751,7 @@
     var mr=document.getElementById('mag-caml-readout');if(mr)mr.textContent=s3FormatMag(bfState.mag||8000);
     var mode=document.getElementById('mag-mode-readout');if(mode)mode.textContent=(bfState.magMode||'—').toUpperCase();updateBfDummyCue();syncPcLiveStatus();
     bfPhosphorSchedule();
+    bfStigGaugeUpdate();
   }
 
   function bfSetStatus(text){if(bfStatus){bfStatus.textContent='';bfStatus.style.display='none';}}
@@ -2448,6 +2759,8 @@
   function showBfScene(){
     hideS3BeamScreenStill();closeModal(true);closePcDrawer();hideViewportScene();hideSection1Tour();ensureBfScene();clearBfTimers();
     if(!bfScene)return;bfScene.hidden=false;if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');
+    sopObservationEnsure();sopObservationUpdate();
+    bfWobbleGaugeUpdate(performance.now());
     var phosphor=false; /* v4.8.10: grayscale specimen view; no phosphor overlay */
     bfScene.classList.remove('is-fluorescent','is-camera');
     bfScene.classList.add('is-phosphor-live');
@@ -2460,7 +2773,7 @@
   }
 
   function hideBfScene(){
-    ensureBfScene();clearBfTimers();clearPhysicalFocus();s3LockControls();if(bfPhosphorRaf){cancelAnimationFrame(bfPhosphorRaf);bfPhosphorRaf=0;}bfPhosphorLastTime=0;if(!bfScene)return;bfScene.hidden=true;if(viewEmpty)viewEmpty.style.display='';if(bfScreen)bfScreen.onclick=null;if(bfScreenAction){bfScreenAction.onclick=null;bfScreenAction.hidden=true;}
+    ensureBfScene();clearBfTimers();clearPhysicalFocus();s3LockControls();if(bfPhosphorRaf){cancelAnimationFrame(bfPhosphorRaf);bfPhosphorRaf=0;}bfPhosphorLastTime=0;if(!bfScene)return;bfScene.hidden=true;if(viewEmpty)viewEmpty.style.display='';if(bfScreen)bfScreen.onclick=null;if(bfScreenAction){bfScreenAction.onclick=null;bfScreenAction.hidden=true;}if(bfWobbleGauge)bfWobbleGauge.hidden=true;if(bfStigGauge)bfStigGauge.hidden=true;sopObservationUpdate();
   }
 
   function s3SetScreenAction(label,fn){
@@ -2472,6 +2785,7 @@
     var h=s3KnobHandles['mag-caml'];if(h)h.value=idx;bfRender();
   }
 
+  var s3MagGesture={down:false,x:0,y:0,deliberate:false,onRelease:null};
   function initS3PanelInteractions(){
     if(s3PanelInit)return;s3PanelInit=true;if(!(window.TEM&&TEM.controlsUI))return;
     [].slice.call(document.querySelectorAll('[data-action]')).forEach(function(btn){
@@ -2484,6 +2798,17 @@
     knobNames.forEach(function(name){
       var el=document.querySelector('[data-knob="'+name+'"]');if(!el)return;
       var min=Number(el.dataset.min||0),max=Number(el.dataset.max||100),step=Number(el.dataset.step||0),value=Number(el.dataset.value||0);
+      // Genuine MAG/CAM L operation: pointer movement or keyboard arrows,
+      // never a mere hover or single pointerdown/click on the knob.
+      if(name==='mag-caml'){
+        el.addEventListener('pointerdown',function(e){s3MagGesture.down=true;s3MagGesture.x=e.clientX;s3MagGesture.y=e.clientY;},true);
+        el.addEventListener('pointermove',function(e){
+          if(s3MagGesture.down&&Math.hypot(e.clientX-s3MagGesture.x,e.clientY-s3MagGesture.y)>=8)s3MagGesture.deliberate=true;
+        },true);
+        window.addEventListener('pointerup',function(){s3MagGesture.down=false;if(s3MagGesture.onRelease)s3MagGesture.onRelease();});
+        window.addEventListener('pointercancel',function(){s3MagGesture.down=false;if(s3MagGesture.onRelease)s3MagGesture.onRelease();});
+        el.addEventListener('keydown',function(e){if(/^Arrow(Up|Down|Left|Right)$/.test(e.key))s3MagGesture.deliberate=true;},true);
+      }
       var fmt=null;
       if(name==='alpha-selector')fmt=function(v){return 'α'+Math.round(v);};
       if(name==='mag-caml')fmt=function(v){return s3FormatMag(BF_MAG_VALUES[Math.round(v)]||8000);};
@@ -2554,6 +2879,8 @@
     if(displayedStep<=8)setS3ColumnScreenLocked(false);
     else setS3ColumnScreenLocked(true);
     if(displayedStep<26||displayedStep>28)removeS3CaChecklist();
+    if((displayedStep<23||displayedStep>24)&&bfWobbleGauge)bfWobbleGauge.hidden=true;
+    if((displayedStep<39||displayedStep>40)&&bfStigGauge)bfStigGauge.hidden=true;
     if(displayedStep>4&&displayedStep!==8)releaseS3HtPhoto();
     // Previously optional Step 23 (Z sensitivity) is removed. Preserve the
     // physical atomic operations after it by mapping to their original slots.
@@ -2561,6 +2888,7 @@
     // Steps 5–7 retain the revised V2 -> Filament -> Beam Current order.
     var n=legacyStep===5?8:(legacyStep===6?6:(legacyStep===7?7:(legacyStep>7?legacyStep+1:legacyStep)));
     s3StepCompleting=false;hideViewportScene();hideSection1Tour();clearS3PcPanel();s3LockControls();bfPreloadRealImages();
+    s3MagGesture.onRelease=null;
     /* One HT ON step was removed; downstream physical operations keep the original atomic mappings. */
     if(n<28||n>30)hideS3ApertureOverlay();
     switch(n){
@@ -2650,7 +2978,8 @@
         <button type="button" class="s3-ht-photo__start" id="s3PhotoStart" aria-label="Start Auto HT ramp" disabled></button>
         <span class="s3-ht-photo__progress-percent" id="s3PhotoProgressPct" aria-live="polite"></span>
         <span class="s3-ht-photo__filament-state" id="s3PhotoFilamentState" hidden>NotReady</span>
-        <button type="button" class="s3-ht-photo__filament-on" id="s3PhotoFilamentOn" aria-label="Switch filament ON" hidden></button>
+        <button type="button" class="s3-ht-photo__filament-on" id="s3PhotoFilamentOn" aria-label="Switch filament ON" hidden>ON</button>
+        <span class="s3-ht-photo__filament-off-label" aria-hidden="true">OFF</span>
       `;
       wrap.appendChild(ui);
     }
@@ -2969,6 +3298,10 @@
          viewportScene.hidden=true, which would block any later
          stage callback's guard check. */
       bfState.coverOpen=true;
+      // First fluorescence appearance: begin with a somewhat broader beam so
+      // learners immediately perceive a realistic illuminated region.
+      bfState.c2=Math.max(88,Number(bfState.c2||0));
+      if(typeof s3SetKnob==='function')s3SetKnob('brightness',bfState.c2);
       setS3ColumnScreenLocked(true);
       showBfScene();
       s3Complete(1200);
@@ -3011,8 +3344,78 @@
   function runBFAtomic11(){showBfScene();bfState.coverOpen=true;bfRender();bfSetStatus('Select TEM imaging mode on L1.');s3Activate(['probe-tem']);s3SetHandlers({'action:probe-mode':function(btn){if(btn.dataset.value!=='tem')return;s3SelectButton(btn);bfState.temMode=true;s3Complete(350);}});}
   function runBFAtomic12(){showBfScene();bfSetStatus('Select TEM imaging mode on L1.');s3Activate(['probe-tem']);s3SetHandlers({'action:probe-mode':function(btn){if(btn.dataset.value!=='tem')return;s3SelectButton(btn);bfState.temMode=true;s3Complete(350);}});}
   function runBFAtomic12(){showBfScene();bfSetStatus('Select LOW MAG on R1.');s3Activate(['mag-mode']);s3SetHandlers({'action:mag-mode':function(btn){if(btn.dataset.value!=='lowmag')return;s3SelectButton(btn);bfState.magMode='LOW MAG';bfRender();s3Complete(350);}});}
-  function runBFAtomic13(){showBfScene();if(!bfState.magMode)bfState.magMode='LOW MAG';s3SetMagIndex(3);bfSetStatus('Rotate MAG/CAM L into the 1,000–5,000× survey range.');s3Activate(['mag-caml']);s3SetHandlers({'knob:mag-caml':function(v){var i=Math.round(v);bfState.magIndex=i;bfState.mag=BF_MAG_VALUES[i]||8000;bfRender();if(bfState.mag>=1000&&bfState.mag<=5000)s3Complete(450);}});}
-  function runBFAtomic14(){showBfScene();bfState.featureX=72;bfState.featureY=68;bfState.stageX=70;bfState.stageY=-60;s3SetPad('stage-xy',70,-60);bfRender();bfSetStatus('Use the stage trackball to centre a hole or thin region.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.30;bfState.featureY=50-pos.y*.30;bfRender();if(Math.abs(pos.x)<=10&&Math.abs(pos.y)<=10)s3Complete(450);}});}
+  function runBFAtomic13(){
+    showBfScene();if(!bfState.magMode)bfState.magMode='LOW MAG';
+    // Retain the same Tv2 specimen field. Magnification changes its apparent
+    // scale live; only a genuinely rotated knob can complete this step.
+    s3SetKnob('mag-caml',bfState.magIndex==null?3:bfState.magIndex);
+    s3MagGesture.deliberate=false;s3MagGesture.down=false;
+    bfSetStatus('Rotate MAG/CAM L and observe the grid change size.');
+    var startingIndex=bfState.magIndex==null?3:bfState.magIndex;
+    var changed=false,observationTimer=null;
+    function scheduleObservationCompletion(){
+      if(observationTimer){clearTimeout(observationTimer);observationTimer=null;}
+      if(state.currentSection!==3||state.currentStep!==10||s3StepCompleting||
+         !s3MagGesture.deliberate||!changed||s3MagGesture.down||
+         bfState.mag<1000||bfState.mag>5000)return;
+      // Allow the final visual change to settle before advancing. In
+      // particular, do not lock the knob while the learner is dragging it.
+      observationTimer=setTimeout(function(){
+        observationTimer=null;
+        if(state.currentSection===3&&state.currentStep===10&&!s3StepCompleting&&
+           s3MagGesture.deliberate&&changed&&!s3MagGesture.down&&
+           bfState.mag>=1000&&bfState.mag<=5000)s3Complete(450);
+      },1200);
+      bfTimers.push(observationTimer);
+    }
+    s3MagGesture.onRelease=scheduleObservationCompletion;
+    s3Activate(['mag-caml']);
+    s3SetHandlers({'knob:mag-caml':function(v){
+      var i=Math.round(v);bfState.magIndex=i;bfState.mag=BF_MAG_VALUES[i]||8000;
+      bfRender();
+      if(s3MagGesture.deliberate&&i!==startingIndex)changed=true;
+      scheduleObservationCompletion();
+    }});
+  }
+  function runBFAtomic14(){
+    // Reset the search field before showing the first Step 12 frame (also
+    // important when replaying or revisiting a partially completed step).
+    bfState.surveyThinLocated=false;
+    showBfScene();
+    // Step 12 begins on the exact Step 11 grid. Stage movement pans that
+    // grid across the illuminated screen. Once the learner reaches the next
+    // field, directly replace Tv2 with Tv5 (no fade or pixel blending).
+    bfEnsureSurveyThinTexture();
+    bfState.featureX=72;bfState.featureY=68;
+    bfState.stageX=70;bfState.stageY=-60;bfState.surveyThinLocated=false;
+    s3SetPad('stage-xy',70,-60);bfRender();
+    bfSetStatus('Move the trackball to centre the thin region.');
+    s3Activate(['stage-xy']);
+    s3SetHandlers({'pad:stage-xy':function(pos){
+      bfState.stageX=pos.x;bfState.stageY=pos.y;
+      if(!bfState.surveyThinLocated&&bfSurveyHasReachedThinRegion(pos.x,pos.y)){
+        bfState.surveyThinLocated=true;
+      }
+      bfState.featureX=50+pos.x*.30;bfState.featureY=50-pos.y*.30;
+      bfRender();
+      if(bfState.surveyThinLocated&&Math.abs(pos.x)<=10&&Math.abs(pos.y)<=10){
+        // Step 13 uses the identical Tv5 pixels, scale, and stage state.
+        // Wait for the direct-replacement image to be ready before advancing.
+        if(bfSpecimen&&bfSpecimen.complete&&bfSpecimen.naturalWidth>0){
+          s3Complete(450);
+        }else if(bfSpecimen&&!bfSpecimen.dataset.surveyCompletionPending){
+          bfSpecimen.dataset.surveyCompletionPending='1';
+          bfSpecimen.addEventListener('load',function onSurveyReady(){
+            delete bfSpecimen.dataset.surveyCompletionPending;
+            if(state.currentSection===3&&state.currentStep===11&&
+               bfState.surveyThinLocated&&bfCurrentImgKey==='surveyThin'&&
+               Math.abs(Number(bfState.stageX||0))<=10&&
+               Math.abs(Number(bfState.stageY||0))<=10)s3Complete(450);
+          },{once:true});
+        }
+      }
+    }});
+  }
   function runBFAtomic15(){showBfScene();bfSetStatus('Press STD FOCUS on R1.');s3Activate(['std-focus']);s3SetHandlers({'action:std-focus':function(btn){s3SelectButton(btn);bfState.focusCoarse=0;bfState.focusFine=0;bfRender();s3Complete(350);}});}
   function runBFAtomic16(){showBfScene();var start=Number((s3KnobHandles['spot-size']&&s3KnobHandles['spot-size'].value)||2);bfSetStatus('Set the desired SPOT SIZE.');s3Activate(['spot-size']);s3SetHandlers({'knob:spot-size':function(v){bfState.spot=Math.round(v);syncPcLiveStatus();if(Math.round(v)!==Math.round(start))s3Complete(400);}});}
   function runBFAtomic17(){showBfScene();var start=Number((s3KnobHandles['alpha-selector']&&s3KnobHandles['alpha-selector'].value)||2);bfSetStatus('Set the desired α SELECTOR.');s3Activate(['alpha-selector']);s3SetHandlers({'knob:alpha-selector':function(v){bfState.alpha=Math.round(v);syncPcLiveStatus();if(Math.round(v)!==Math.round(start))s3Complete(400);}});}
@@ -3021,7 +3424,30 @@
   function runBFAtomic20(){showBfScene();bfState.c2=55;s3SetKnob('brightness',55);bfRender();bfSetStatus('Rotate BRIGHTNESS to the smallest crossover.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v<=22)s3Complete(450);}});}
   function runBFAtomic21(){showBfScene();bfSetStatus('Turn BRIGHTNESS clockwise to spread illumination over the screen.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v>=72)s3Complete(450);}});}
   function runBFAtomic22(){showBfScene();bfState.featureX=67;bfState.featureY=62;bfState.stageX=55;bfState.stageY=-40;s3SetPad('stage-xy',55,-40);bfRender();bfSetStatus('At MAG 1, centre a thin feature with the trackball.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.28;bfState.featureY=50-pos.y*.28;bfRender();if(Math.abs(pos.x)<=9&&Math.abs(pos.y)<=9)s3Complete(400);}});}
-  function runBFAtomic23(){showBfScene();bfSetStatus('Press STD FOCUS before Z correction.');s3Activate(['std-focus']);s3SetHandlers({'action:std-focus':function(btn){s3SelectButton(btn);bfState.focusCoarse=0;bfState.focusFine=0;s3Complete(350);}});}
+  function runBFAtomic23(){
+    showBfScene();
+    // Visibly demonstrate the objective returning to its nominal focus,
+    // instead of changing a value that was already zero with no image update.
+    bfState.focusCoarse=5;bfState.focusFine=1;bfRender();
+    bfSetStatus('Press STD FOCUS and watch the image sharpen.');
+    s3Activate(['std-focus']);
+    s3SetHandlers({'action:std-focus':function(btn){
+      s3SelectButton(btn);s3Activate([]);s3SetHandlers({});
+      // Capture the actual current step index. Displayed Step 21 is index 20;
+      // the old hard-coded check for index 21 aborted the focus animation and
+      // stranded learners after pressing STD FOCUS.
+      var focusStepIndex=state.currentStep;
+      var t0=Date.now(),duration=1400;
+      var timer=setInterval(function(){
+        if(state.currentSection!==3||state.currentStep!==focusStepIndex){clearInterval(timer);return;}
+        var u=Math.min(1,(Date.now()-t0)/duration),smooth=u*u*(3-2*u);
+        bfState.focusCoarse=5*(1-smooth);bfState.focusFine=1*(1-smooth);
+        bfRender();
+        if(u>=1){clearInterval(timer);bfState.focusCoarse=0;bfState.focusFine=0;bfRender();s3Complete(450);}
+      },40);
+      bfTimers.push(timer);
+    }});
+  }
   function runBFAtomic24(){showBfScene();bfState.z=-6;bfState.zSensitivity=1;bfRender();bfSetStatus('Use Z UP / Z DOWN to approach minimum contrast.');s3Activate(['stage-z']);s3SetHandlers({'action:stage-z':function(btn){bfState.z=Math.max(-12,Math.min(12,bfState.z+Number(btn.dataset.dir)*(bfState.zSensitivity||1)));bfRender();if(Math.abs(bfState.z)<=3)s3Complete(350);}});}
   function runBFAtomic25(){s3PreparePcStage();var host=document.querySelector('[data-temcon-page="stage"]');addS3PcPanel(host,'Z Control Sensitivity','<div class="sop-s3-pc-note">Optional: adjust sensitivity only if needed.</div><div class="sop-s3-pc-buttons"><button id="s3ZSensDown">◀ Finer</button><strong id="s3ZSensRead">Normal</strong><button id="s3ZSensUp">Coarser ▶</button></div>');var d=document.getElementById('s3ZSensDown'),u=document.getElementById('s3ZSensUp'),r=document.getElementById('s3ZSensRead');var timer=setTimeout(function(){s3Complete(100);},2400);bfTimers.push(timer);function set(v,label){bfState.zSensitivity=v;if(r)r.textContent=label;clearTimeout(timer);s3Complete(250);}if(d)d.onclick=function(){set(.5,'Fine');};if(u)u.onclick=function(){set(2,'Coarse');};}
   function runBFAtomic26(){showBfScene();bfState.wobble=false;bfState.wobbleAxis='';bfRender();bfSetStatus('Press MAG WOB X or MAG WOB Y.');s3Activate(['wobbler']);s3SetHandlers({'action:mag-wob':function(btn){bfState.wobble=true;bfState.wobbleAxis=btn.dataset.axis||'x';s3SelectButton(btn);bfRender();s3Complete(350);}});}
@@ -3041,12 +3467,14 @@
       pane=document.createElement('div');pane.id='s3CaChecklist';pane.className='s3-ca-checklist';
       pane.setAttribute('role','group');pane.setAttribute('aria-label','Condenser aperture selection and centering');
       pane.innerHTML='<div class="s3-ca-checklist__heading">CONDENSER APERTURE · 3 GUIDED ACTIONS</div>'+
-        '<label class="s3-ca-checklist__row"><input type="checkbox" data-ca-check="0"><span>1 · Select condenser aperture (CA)</span></label>'+
-        '<label class="s3-ca-checklist__row"><input type="checkbox" data-ca-check="1"><span>2 · Centre CA horizontally (X)</span></label>'+
-        '<label class="s3-ca-checklist__row"><input type="checkbox" data-ca-check="2"><span>3 · Centre CA vertically (Y)</span></label>'+
-        '<div class="s3-ca-checklist__feedback" id="s3CaFeedback" aria-live="polite">Select the first checkbox to observe the beam shape improve.</div>';
-      // Mount above the round Viewing Screen rather than inside it: no circular clipping.
-      (viewScreen.parentElement||viewScreen).appendChild(pane);
+        '<div class="s3-ca-checklist__actions">'+
+        '<label class="s3-ca-checklist__row"><input type="checkbox" data-ca-check="0"><span>1 · Select aperture</span></label>'+
+        '<label class="s3-ca-checklist__row"><input type="checkbox" data-ca-check="1"><span>2 · Centre X</span></label>'+
+        '<label class="s3-ca-checklist__row"><input type="checkbox" data-ca-check="2"><span>3 · Centre Y</span></label>'+
+        '</div><div class="s3-ca-checklist__feedback" id="s3CaFeedback" aria-live="polite">Select the first checkbox to observe the beam shape improve.</div>';
+      // The observation screen is tilted 61 degrees. Mount the learner's
+      // checklist on its UNTRANSFORMED shell, not on the tilted screen mount.
+      (sopObservationShell||screenPanel||viewScreen).appendChild(pane);
       pane.querySelectorAll('[data-ca-check]').forEach(function(input){
         input.addEventListener('change',function(){
           var i=Number(input.dataset.caCheck);
@@ -3081,7 +3509,7 @@
             showS3CaChecklist(i);
             if(i===2){showS3CaFinalConfirmation();}
             else s3Complete(750);
-          },1750);
+          },i===2?3900:2450);
           bfTimers.push(t);
         });
       });
@@ -3115,7 +3543,19 @@
     // Inherit the screen condition from the preceding MAG WOB step. No
     // instantaneous change of position, diameter or specimen on entry.
     bfState.apertureSelected=false;bfState.caShapeReady=false;bfState.caQuality=.08;
-    bfRender();showS3CaChecklist(0);
+    bfRender();removeS3CaChecklist();
+    // This is a required teaching acknowledgement, not a completion action.
+    // Only after OK may the learner use the three ordinary CA checkboxes.
+    openModal({locked:true,dismissible:false,tag:'SECTION 3 · PHYSICAL COLUMN CONTROL',
+      title:'Condenser aperture: hardware operation',step:'Step 26',
+      body:'<p class="sop-flow-modal__copy">On a real TEM, the <strong>condenser aperture assembly is mounted on the physical microscope column</strong>. The operator uses the instrument’s aperture-selection and alignment controls to select the aperture and centre it in X and Y.</p>'+
+      '<p class="sop-flow-modal__copy">Here, the three guided checkboxes <strong>simulate those physical hardware operations</strong>. After selecting OK, use the checkboxes in order and observe the beam on the fluorescent screen.</p>',
+      footer:'<button type="button" class="sop-flow-btn sop-flow-btn--success" id="s3CaHardwareOK">OK</button>'});
+    var ok=document.getElementById('s3CaHardwareOK');
+    if(ok)ok.onclick=function(){
+      if(state.currentSection!==3||state.currentStep!==25||ok.disabled)return;
+      ok.disabled=true;ensureAudio();closeModal(true);showS3CaChecklist(0);
+    };
   }
   function runBFAtomic30(){
     hideS3ApertureOverlay();showBfScene();s3Activate([]);s3SetHandlers({});
@@ -3132,22 +3572,183 @@
   function runBFAtomic36(){showBfScene();bfSetStatus('Spread the beam with BRIGHTNESS.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;var spread=Math.max(0,Math.min(1,(v-22)/50));bfState.beamX=3*spread;bfState.beamY=-3*spread;bfRender();if(v>=72)s3Complete(400);}});}
   function runBFAtomic37(){showBfScene();s3SetKnob('shift-x',3);bfRender();bfSetStatus('Fine-correct horizontal drift with SHIFT X.');s3Activate(['shift-x']);s3SetHandlers({'knob:shift-x':function(v){bfState.beamX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runBFAtomic38(){showBfScene();s3SetKnob('shift-y',-3);bfRender();bfSetStatus('Fine-correct vertical drift with SHIFT Y.');s3Activate(['shift-y']);s3SetHandlers({'knob:shift-y':function(v){bfState.beamY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
-  function runBFAtomic39(){showBfScene();bfRender();s3SetKnob('spot-size',bfState.spot);bfSetStatus('Set SPOT SIZE to 1 while observing the still-elliptical beam.');s3Activate(['spot-size']);if(bfState.spot===1){s3Complete(950);return;}s3SetHandlers({'knob:spot-size':function(v){bfState.spot=Math.round(v);if(bfState.spot===1)s3Complete(400);}});}
+  function runBFAtomic39(){
+    showBfScene();
+    // If Spot Size already happens to be 1, move to a neighboring training
+    // setting so the learner must deliberately select 1 again.
+    if(Math.round(Number(bfState.spot||2))===1)bfState.spot=2;
+    var initialSpot=bfState.spot,selected=false,settle=null;
+    s3SetKnob('spot-size',initialSpot);bfRender();
+    bfSetStatus('Rotate SPOT SIZE deliberately to select 1.');
+    s3Activate(['spot-size']);
+    s3SetHandlers({'knob:spot-size':function(v){
+      var next=Math.round(v);
+      if(next!==initialSpot)selected=true;
+      bfState.spot=next;bfRender();
+      if(settle){clearTimeout(settle);settle=null;}
+      if(selected&&next===1){
+        settle=setTimeout(function(){
+          settle=null;
+          if(state.currentSection===3&&state.currentStep===35&&bfState.spot===1&&!s3StepCompleting)s3Complete(350);
+        },1200);
+        bfTimers.push(settle);
+      }
+    }});
+  }
   function runBFAtomic40(){showBfScene();bfState.condStigOn=false;bfSetStatus('Press COND STIG on L1.');s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='condStig')return;s3SelectButton(btn);bfState.condStigOn=true;s3Complete(350);}});}
-  function runBFAtomic41(){showBfScene();s3SetKnob('brightness',bfState.c2);s3SetKnob('defstig-x',bfState.condX);s3SetKnob('defstig-y',bfState.condY);bfRender();var low=false,high=false;bfSetStatus('Rotate BRIGHTNESS clockwise and anticlockwise through crossover to inspect beam shape.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=35)low=true;if(v>=65)high=true;bfRender();if(low&&high){
-    /* Preserve ellipse so learners must correct X and Y in the next two steps. */
-    bfRender();s3Complete(400);}}});}
-  function runBFAtomic42(){showBfScene();bfSetStatus('Adjust DEF/STIG X to reduce ellipticity.');s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(v){bfState.condX=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
-  function runBFAtomic43(){showBfScene();bfSetStatus('Adjust DEF/STIG Y to make the beam circular.');s3Activate(['def-stig-y']);s3SetHandlers({'defstig:y':function(v){bfState.condY=v;bfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
-  function runBFAtomic44(){showBfScene();s3SetKnob('brightness',bfState.c2);bfRender();var low=false,high=false;bfSetStatus('Verify the circular beam by moving BRIGHTNESS back and forth.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;if(v<=30)low=true;if(v>=70)high=true;bfRender();if(low&&high)s3Complete(450);}});}
+  function runBFAtomic41(){
+    showBfScene();
+    // Verification must expose a visibly elliptical uncorrected beam; the
+    // following two steps perform the actual X and Y correction.
+    if(Math.abs(Number(bfState.condX||0))<=1)bfState.condX=5;
+    if(Math.abs(Number(bfState.condY||0))<=1)bfState.condY=-4;
+    s3SetKnob('brightness',bfState.c2);
+    s3SetKnob('defstig-x',bfState.condX);s3SetKnob('defstig-y',bfState.condY);
+    bfRender();
+    // Inspect the beam on both sides of crossover instead of completing
+    // immediately after the learner happens to touch one narrow/wide value.
+    // Require narrow -> wide -> narrow -> wide, finishing with a visible
+    // expanded beam for the ensuing X/Y stigmation corrections.
+    var visits=[],firstMotion=0,settleTimer=null;
+    bfSetStatus('Sweep BRIGHTNESS through crossover and back, observing the elliptical beam before correcting X and Y.');
+    s3Activate(['brightness']);
+    s3SetHandlers({'knob:brightness':function(v){
+      bfState.c2=v;bfRender();
+      var zone=v<=32?'narrow':(v>=67?'wide':null);
+      if(zone&&(!visits.length||visits[visits.length-1]!==zone)){
+        if(!visits.length){if(zone==='narrow'){visits.push(zone);firstMotion=Date.now();}}
+        else visits.push(zone);
+      }
+      if(settleTimer){clearTimeout(settleTimer);settleTimer=null;}
+      if(visits.length>=4&&visits.slice(0,4).join(',')==='narrow,wide,narrow,wide'&&v>=67){
+        // A real observation interval, including 1.5s with the knob settled.
+        var remaining=Math.max(1500,3600-(Date.now()-firstMotion));
+        settleTimer=setTimeout(function(){
+          settleTimer=null;
+          if(state.currentSection===3&&state.currentStep===37&&!s3StepCompleting&&bfState.c2>=67){
+            s3Complete(450);
+          }
+        },remaining);
+        bfTimers.push(settleTimer);
+      }
+    }});
+  }
+  function runBFAtomic42(){
+    showBfScene();
+    var startX=Number(bfState.condX||0),adjusted=false,settle=null;
+    s3SetKnob('defstig-x',startX);bfRender();
+    bfSetStatus('Correct the horizontal component of the beam ellipse.');
+    s3Activate(['def-stig-x']);
+    s3SetHandlers({'defstig:x':function(v){
+      if(Math.abs(Number(v)-startX)>.05)adjusted=true;
+      bfState.condX=Number(v);bfRender();
+      if(settle){clearTimeout(settle);settle=null;}
+      if(adjusted&&Math.abs(bfState.condX)<=1){
+        settle=setTimeout(function(){
+          if(state.currentSection===3&&state.currentStep===38&&!s3StepCompleting&&Math.abs(bfState.condX)<=1)s3Complete(400);
+        },650);bfTimers.push(settle);
+      }
+    }});
+  }
+  function runBFAtomic43(){
+    showBfScene();
+    var startingY=Number(bfState.condY||0),yAdjusted=false,settle=null;
+    s3SetKnob('defstig-y',startingY);
+    bfRender();
+    bfSetStatus('Adjust DEF/STIG Y until the beam is approximately circular.');
+    s3Activate(['def-stig-y']);
+    s3SetHandlers({'defstig:y':function(v){
+      var next=Number(v);
+      if(!Number.isFinite(next))return;
+      if(Math.abs(next-startingY)>.05)yAdjusted=true;
+      bfState.condY=next;
+      bfRender();
+      if(settle){clearTimeout(settle);settle=null;}
+      // Step 40 advances when the *visible* beam becomes almost circular.
+      // This is the same >=0.96 criterion shown by the top-down shape guide,
+      // rather than the stricter hidden ±1 knob threshold that caused stalls.
+      // Step 39 already handled X; only deliberate Y control is active here.
+      if(yAdjusted&&bfStigVisualCircularity()>=.96){
+        settle=setTimeout(function(){
+          settle=null;
+          if(state.currentSection===3&&state.currentStep===39&&!s3StepCompleting&&
+             yAdjusted&&bfStigVisualCircularity()>=.96)
+            s3Complete(350);
+        },450);
+        bfTimers.push(settle);
+      }
+    }});
+  }
+  function runBFAtomic44(){
+    showBfScene();s3SetKnob('brightness',bfState.c2);bfRender();
+    var low=false,nearFull=false,settle=null;
+    bfSetStatus('Verify the circular beam through crossover, then spread it until it nearly fills the viewing screen.');
+    s3Activate(['brightness']);
+    s3SetHandlers({'knob:brightness':function(v){
+      bfState.c2=v;
+      if(v<=30)low=true;
+      var bounds=bfScreen?bfPhosphorGetTarget(bfScreen.clientWidth,bfScreen.clientHeight):null;
+      // At around 94 the rendered footprint approaches the perimeter of
+      // the observation screen. Test actual shape dimensions as well.
+      nearFull=!!(bounds&&v>=94&&bounds.rx>=bfScreen.clientWidth*.48&&bounds.ry>=bfScreen.clientHeight*.44);
+      bfRender();
+      if(settle){clearTimeout(settle);settle=null;}
+      if(low&&nearFull){
+        settle=setTimeout(function(){
+          if(state.currentSection===3&&state.currentStep===40&&!s3StepCompleting&&
+             bfState.c2>=94)s3Complete(400);
+        },850);bfTimers.push(settle);
+      }
+    }});
+  }
   function runBFAtomic45(){showBfScene();bfSetStatus('Press COND STIG again to exit adjustment.');s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='condStig')return;bfState.condStigOn=false;btn.classList.remove('is-selected');s3Complete(350);}});}
   function runBFAtomic46(){showBfScene();bfState.featureX=66;bfState.featureY=63;bfState.stageX=54;bfState.stageY=-43;s3SetPad('stage-xy',54,-43);bfRender();bfSetStatus('Use the stage trackball to centre the final area of interest.');s3Activate(['stage-xy']);s3SetHandlers({'pad:stage-xy':function(pos){bfState.stageX=pos.x;bfState.stageY=pos.y;bfState.featureX=50+pos.x*.28;bfState.featureY=50-pos.y*.28;bfRender();if(Math.abs(pos.x)<=9&&Math.abs(pos.y)<=9)s3Complete(400);}});}
   function runBFAtomic47(){showBfScene();bfState.finalMagTouched=false;bfSetStatus('With MAG 1 retained, set MAG/CAM L to X60k for the supplied real-sample sequence.');s3Activate(['mag-caml']);s3SetHandlers({'knob:mag-caml':function(v){var i=Math.round(v);bfState.magIndex=i;bfState.mag=BF_MAG_VALUES[i]||8000;bfRender();if(bfState.mag===60000){bfState.finalMagTouched=true;s3Complete(450);}}});}
   function runBFAtomic48(){showBfScene();s3SetKnob('brightness',bfState.c2);bfRender();bfSetStatus('Spread the beam appropriately for image recording.');s3Activate(['brightness']);s3SetHandlers({'knob:brightness':function(v){bfState.c2=v;bfRender();if(v>=70)s3Complete(400);}});}
   function runBFAtomic49(){showBfScene();bfSetStatus('AUTO contrast is optional. Press AUTO now if desired.');s3Activate(['auto-contrast']);var timer=setTimeout(function(){s3Complete(100);},2300);bfTimers.push(timer);s3SetHandlers({'action:auto-contrast':function(btn){clearTimeout(timer);s3SelectButton(btn);bfState.autoUsed=true;bfRender();s3Complete(300);}});}
-  function runBFAtomic50(){showBfScene();bfState.screenRaised=false;bfSetStatus('Press F1 to lift the fluorescent screen and expose the camera.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);bfState.screenRaised=true;bfPhosphorSchedule();var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
+  function runBFAtomic50(){
+    showBfScene();bfState.screenRaised=false;sopF1SyncRestPose(false);
+    bfSetStatus('Press F1 to lift the fluorescent screen and expose the camera.');
+    s3Activate(['f1']);
+    s3SetHandlers({'action:f1':function(btn){
+      if(sopF1MotionBusy)return;
+      s3SelectButton(btn);
+      sopF1AnimateScreen(true,3,function(){
+        // Electron illumination ends only once the physical screen has
+        // cleared the beam. The chamber is now black for camera operation.
+        bfState.screenRaised=true;bfPhosphorSchedule();
+        var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';
+        s3Complete(250);
+      });
+    }});
+  }
 
+  // v4.9.62: Step 49 learning guidance is confined to iTEM's RIGHT control
+  // palette. This is a simulator-only annotation, not part of the micrograph,
+  // and does not increase the overall workstation width.
+  function clearS3ExternalFocusPanel(){
+    var old=document.getElementById('s3FocusLearningPanel');if(old)old.remove();
+    var guide=document.getElementById('s3FocusCameraGuide');if(guide)guide.remove();
+    var host=document.getElementById('pc-cam');if(host)host.classList.remove('s3-focus-learning-layout');
+  }
+  function showS3CameraFocusGuide(){
+    clearS3ExternalFocusPanel();
+    var palette=document.querySelector('#pc-cam .camera-palette--acquisition .camera-palette__body');
+    if(!palette)return null;
+    var panel=document.createElement('section');
+    panel.id='s3FocusCameraGuide';panel.className='s3-focus-camera-guide';
+    panel.setAttribute('aria-label','Simulator focus training guidance (outside acquired image)');
+    panel.innerHTML='<div class="s3-focus-camera-guide__tag">SIMULATOR GUIDE · NOT IMAGE DATA</div>'+
+      '<div class="s3-focus-camera-guide__title">FOCUS OBSERVATION</div>'+
+      '<div class="s3-focus-camera-guide__condition" id="s3FocusCondition" aria-live="polite">UNDERFOCUS</div>'+
+      '<p class="s3-focus-camera-guide__message" id="s3FocusDetail">Bright fringes outside particle edges.</p>'+
+      '<div class="s3-focus-camera-guide__state" id="s3FocusHold" aria-live="polite">Hold this condition to verify</div>'+
+      '<div class="s3-focus-camera-guide__progress" id="s3FocusReadout" aria-live="polite">0 of 3 conditions verified</div>';
+    palette.appendChild(panel);
+    return panel;
+  }
   function ensureAtomicItemPanel(mode){
+    if(mode!=='focus')clearS3ExternalFocusPanel();
     openCameraDrawer();
     var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return null;
     var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='none';
@@ -3156,18 +3757,11 @@
     var p=document.createElement('div');p.id='sopItemPanel';p.className='sop-item-panel sop-item-panel--olympus';
     var html='<div class="sop-item-panel__header"><span class="sop-item-panel__symbol">iTEM</span><strong>Acquisition</strong><small>Olympus TEM</small></div>';
     if(mode==='open')html+='<div class="sop-item-panel__status">● Camera connected · imaging workspace ready</div><div class="sop-s3-pc-note">Olympus iTEM is open automatically. The real specimen is displayed in the iTEM acquisition window.</div>';
-    if(mode==='focus')html+='<div class="sop-s3-pc-note"><strong>Through-focus inspection</strong> — Observe all three focus conditions <strong>in the iTEM camera window only</strong>. Turn the OBJ FOCUS knobs counter-clockwise for underfocus, move toward minimum contrast, then clockwise for overfocus. Hold each view for one second.</div>'
-      +'<div class="s3-focus-condition" id="s3FocusCondition">Current: UNDERFOCUS</div>'
-      +'<div class="s3-focus-checklist" id="s3FocusChecklist" aria-label="Three focus conditions to observe">'
-      +'<div class="s3-focus-check" data-focus-check="under"><span class="s3-focus-check__circle">○</span><span>Underfocus (Scherzer)</span><small>Bright white fringe outside particle edges; textured carbon film</small></div>'
-      +'<div class="s3-focus-check" data-focus-check="sharp"><span class="s3-focus-check__circle">○</span><span>In focus</span><small>Low contrast; smooth carbon background; no edge fringes</small></div>'
-      +'<div class="s3-focus-check" data-focus-check="over"><span class="s3-focus-check__circle">○</span><span>Overfocus</span><small>Dark outer fringe; avoid for final sizing</small></div></div>'
-      +'<div class="s3-focus-readout" id="s3FocusReadout">Focus offset: −12.0 · Hold steady to inspect</div>'
-      +'<button type="button" id="s3ConfirmFocusThree" class="s3-focus-confirm" disabled>Confirm all three focus conditions</button>';
+    if(mode==='focus')html+='<div class="sop-s3-pc-note">Adjust OBJ FOCUS on R1. One focus-condition instruction appears at a time in the right-side simulator guide.</div>';
     if(mode==='video')html+='<button id="s3ItemVideo">Video</button><div class="sop-s3-pc-note">Start the live Bright Field camera acquisition.</div>';
     if(mode==='snapshot')html+='<button id="s3ItemSnapshot">Snapshot</button><div class="sop-s3-pc-note">Capture the Bright Field image.</div>';
-    if(mode==='done')html+='<div class="sop-s3-pc-note">Snapshot captured · press F1 on R1 to return the fluorescent screen.</div><button type="button" id="s3DownloadAgain">Download PNG again</button>';
-    p.innerHTML=html;host.appendChild(p);var again=document.getElementById('s3DownloadAgain');if(again)again.onclick=function(){downloadCapturedBf();};showS3CameraSignal();return p;
+    if(mode==='done')html+='<div class="sop-s3-pc-note">Snapshot captured · press F1 on R1 to return the fluorescent screen.</div><button type="button" id="s3DownloadAgain">Save Image As…</button>';
+    p.innerHTML=html;host.appendChild(p);if(mode==='focus')showS3CameraFocusGuide();var again=document.getElementById('s3DownloadAgain');if(again)again.onclick=function(){downloadCapturedBf();};showS3CameraSignal();return p;
   }
   function runBFAtomic51(){
     // Stay on the Column tab: iTEM lives only inside the camera drawer.
@@ -3183,77 +3777,97 @@
     bfTimers.push(t);
   }
   function runBFAtomic52(){
-    // Focus conditions appear only in iTEM; never briefly switch to screen.
+    // Step 49: show exactly one condition at a time beside (never over) the
+    // iTEM micrograph. Completing all three held observations opens a required
+    // confirmation modal, after which the existing video/snapshot path resumes.
     setViewer('column');hideBfScene();hideS3ApertureOverlay();hideS3FocusViewport();
     bfState.itemOpen=true;
     bfState.focusCoarse=-12;bfState.focusFine=0;
     s3SetKnob('focus-coarse',-12);s3SetKnob('focus-fine',0);
     var panel=ensureAtomicItemPanel('focus');
     if(!panel)return;
-    hideS3FocusViewport();
-    setViewer('column'); // Only the iTEM camera shows under/in/overfocus. No screen overlay.
-    showS3CameraSignal();
-    drawBfCameraFocusPreview();
-    var seen={under:false,sharp:false,over:false},holdTimer=null,lastCondition='',stableSince=0;
-    var confirm=document.getElementById('s3ConfirmFocusThree');
-    var read=document.getElementById('s3FocusReadout');
+    hideS3FocusViewport();setViewer('column');
+    showS3CameraSignal();drawBfCameraFocusPreview();
+    var seen={under:false,sharp:false,over:false};
+    var holdTimer=null,started=false,confirmationOpen=false;
     var cond=document.getElementById('s3FocusCondition');
-    var lastSigned=-12;
+    var detail=document.getElementById('s3FocusDetail');
+    var hold=document.getElementById('s3FocusHold');
+    var read=document.getElementById('s3FocusReadout');
     function which(v){return v<=-5?'under':(Math.abs(v)<=1.5?'sharp':(v>=5?'over':'transition'));}
-    function name(c){return c==='under'?'UNDERFOCUS':(c==='sharp'?'IN FOCUS':(c==='over'?'OVERFOCUS':'TRANSITION'));}
-    function syncChecklist(active){
-      ['under','sharp','over'].forEach(function(c){
-        var el=document.querySelector('[data-focus-check="'+c+'"]');if(!el)return;
-        el.classList.toggle('is-seen',!!seen[c]);el.classList.toggle('is-current',c===active);
-        var ico=el.querySelector('.s3-focus-check__circle');if(ico)ico.textContent=seen[c]?'✓':'○';
-      });
-      var all=seen.under&&seen.sharp&&seen.over;
-      var returned=(lastSigned>=-3&&lastSigned<=1.5);
-      if(confirm)confirm.disabled=!(all&&returned);
-      if(read)read.textContent='Focus offset: '+lastSigned.toFixed(1)+' · '+Object.values(seen).filter(Boolean).length+'/3 conditions observed'+(all&&!returned?' · Return near focus to confirm':'');
+    var messages={
+      under:{title:'UNDERFOCUS',detail:'Bright fringes outside nanoparticle edges.'},
+      sharp:{title:'IN FOCUS',detail:'Reduced fringes; particle edges appear sharper.'},
+      over:{title:'OVERFOCUS',detail:'Dark fringes outside nanoparticle edges.'},
+      transition:{title:'ADJUST OBJ FOCUS',detail:'Turn OBJ FOCUS until one of the three conditions is visible.'}
+    };
+    function countSeen(){return (seen.under?1:0)+(seen.sharp?1:0)+(seen.over?1:0);}
+    function showCondition(active){
+      var m=messages[active];
+      if(cond)cond.textContent=m.title;
+      if(detail)detail.textContent=m.detail;
+      if(hold)hold.textContent=active==='transition'?'Continue adjusting OBJ FOCUS':(seen[active]?'✓ Verified — observe another condition':'Hold this condition for 1 second');
+      if(read)read.textContent=countSeen()+' of 3 conditions verified';
+    }
+    function showCompletionModal(){
+      if(confirmationOpen||!started||state.currentSection!==3||state.currentStep!==48||
+         !seen.under||!seen.sharp||!seen.over)return;
+      confirmationOpen=true;
+      s3Activate([]);
+      if(cond)cond.textContent='ALL THREE VERIFIED';
+      if(detail)detail.textContent='Underfocus, in focus, and overfocus have each been observed.';
+      if(hold)hold.textContent='✓ Focus observation complete';
+      if(read)read.textContent='3 of 3 conditions verified';
+      openModal({locked:true,dismissible:false,tag:'SECTION 3 · FOCUS VERIFICATION',
+        title:'All three focus conditions verified',
+        step:'Step '+(state.currentStep+1)+' of '+sections[2].steps.length,
+        body:'<p class="sop-flow-modal__copy">You have observed <strong>underfocus</strong>, <strong>in focus</strong> and <strong>overfocus</strong> in the iTEM camera image.</p>'+
+          '<p class="sop-flow-modal__copy" style="margin-top:9px">Click <strong>Confirm</strong> to complete the focus-observation exercise and continue with normal camera acquisition.</p>',
+        footer:'<button type="button" class="sop-flow-btn sop-flow-btn--success" id="s3FocusObservationConfirm">Confirm and continue</button>'});
+      var confirm=document.getElementById('s3FocusObservationConfirm');
+      if(confirm)confirm.onclick=function(){
+        if(state.currentSection!==3||state.currentStep!==48||!confirmationOpen)return;
+        confirm.disabled=true;closeModal(true);
+        var status=document.getElementById('pc-cam-message');
+        if(status)status.textContent='iTEM · Underfocus, in focus, overfocus verified';
+        s3Complete(550,function(){hideS3FocusViewport();});
+      };
     }
     function inspect(){
+      if(!started||confirmationOpen)return;
       var signed=Number(bfState.focusCoarse||0)+Number(bfState.focusFine||0);
-      lastSigned=signed;
       var active=which(signed);
-      if(holdTimer)clearTimeout(holdTimer);
-      if(cond)cond.textContent='Current: '+name(active)+(active==='transition'?' · adjust knob':' · hold to verify');
-      drawBfCameraFocusPreview();syncChecklist(active);
+      if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
+      drawBfCameraFocusPreview();showCondition(active);
       if(active==='transition'||seen[active])return;
-      lastCondition=active;stableSince=Date.now();
       holdTimer=setTimeout(function(){
-        if(state.currentSection!==3||state.currentStep!==48)return;
+        holdTimer=null;
+        if(!started||confirmationOpen||state.currentSection!==3||state.currentStep!==48)return;
         var present=Number(bfState.focusCoarse||0)+Number(bfState.focusFine||0);
-        if(which(present)!==lastCondition||Date.now()-stableSince<700)return;
-        seen[active]=true;syncChecklist(active);
-        if(cond)cond.textContent=name(active)+' observed ✓ — proceed to the next condition';
-      },850);
+        if(which(present)!==active)return;
+        seen[active]=true;showCondition(active);
+        if(seen.under&&seen.sharp&&seen.over)showCompletionModal();
+      },1000);
       bfTimers.push(holdTimer);
     }
-    // Focus knobs remain disabled while the learner reads the introduction.
+    // Do not begin counting until the learner reads and acknowledges the modal.
     s3Activate([]);
     s3SetHandlers({
       'knob:focus-coarse':function(v){bfState.focusCoarse=v;inspect();},
       'knob:focus-fine':function(v){bfState.focusFine=v;inspect();}
     });
-    if(confirm)confirm.onclick=function(){
-      if(confirm.disabled||!(seen.under&&seen.sharp&&seen.over))return;
-      ensureAudio();confirm.disabled=true;
-      var n=document.getElementById('pc-cam-message');if(n)n.textContent='iTEM · Underfocus, in-focus, overfocus confirmed';
-      s3Complete(550,function(){hideS3FocusViewport();});
-    };
-    // The camera is visible underneath the modal. After OK, enable the
-    // actual OBJ FOCUS controls and begin evaluating three held conditions.
+    showCondition('under');
     openModal({locked:true,dismissible:false,tag:'SECTION 3 · iTEM FOCUS TRAINING',
       title:'Observe all three focus conditions',step:'Step '+(state.currentStep+1)+' of '+sections[2].steps.length,
-      body:'<p class="sop-flow-modal__copy"><strong>This step is for learning purposes only.</strong> Observe the three focus conditions inside the <strong>iTEM camera window</strong>. Refer to the <strong>instructions on the right side of the camera screen</strong>.</p>'
-        +'<p class="sop-flow-modal__copy" style="margin-top:9px"><strong>Underfocus:</strong> bright white fringes outside nanoparticle edges. <strong>In focus:</strong> smooth carbon background and minimum contrast. <strong>Overfocus:</strong> dark fringes outside particle edges.</p>'
-        +'<p class="sop-flow-modal__copy" style="margin-top:9px">Use OBJ FOCUS COARSE/FINE to observe each condition, then return near focus and confirm your observations.</p>',
+      body:'<p class="sop-flow-modal__copy"><strong>Learning exercise:</strong> adjust OBJ FOCUS on the physical R1 panel and observe the specimen inside the iTEM camera.</p>'+
+        '<p class="sop-flow-modal__copy" style="margin-top:9px">A <strong>single focus message</strong> will appear at a time in the <strong>right-side camera control area</strong>. It is simulator guidance, not part of the micrograph.</p>'+
+        '<p class="sop-flow-modal__copy" style="margin-top:9px">Observe and hold <strong>underfocus</strong> (bright fringes), <strong>in focus</strong> (reduced fringes), and <strong>overfocus</strong> (dark fringes). After all three have been verified, confirm to continue.</p>',
       footer:'<button type="button" class="sop-flow-btn sop-flow-btn--success" id="s3FocusLearningOk">OK — Begin focus observation</button>'});
     var ok=document.getElementById('s3FocusLearningOk');
     if(ok)ok.onclick=function(){
       closeModal(true);
       if(state.currentSection!==3||state.currentStep!==48)return;
+      started=true;
       s3Activate(['focus-coarse','focus-fine']);
       inspect();
     };
@@ -3275,7 +3889,25 @@
       s3Complete(800);
     };
   }
-  function runBFAtomic55(){hideBfScene();ensureAtomicItemPanel('done');if(bfState.captured)drawCapturedBf();bfSetStatus('Press F1 to return the fluorescent screen.');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!bfState.captured)return;s3SelectButton(btn);bfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';setS3ColumnScreenLocked(false);setViewer('column');s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideS3ApertureOverlay();});}});}
+  function runBFAtomic55(){
+    hideBfScene();ensureAtomicItemPanel('done');if(bfState.captured)drawCapturedBf();
+    bfSetStatus('Press F1 to return the fluorescent screen.');s3Activate(['f1']);
+    s3SetHandlers({'action:f1':function(btn){
+      if(!bfState.captured||sopF1MotionBusy)return;
+      s3SelectButton(btn);
+      // Reopen the physical observation chamber before lowering: the disc
+      // starts vertically, not in its original illuminated horizontal pose.
+      showBfScene();sopF1SyncRestPose(true);
+      sopF1AnimateScreen(false,3,function(){
+        bfState.screenRaised=false;bfPhosphorSchedule();
+        var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';
+        setS3ColumnScreenLocked(false);
+        s3Complete(330,function(){
+          setViewer('column');clearS3PcPanel();closePcDrawer();hideS3ApertureOverlay();
+        });
+      });
+    }});
+  }
 
 
   /* =====================================================================
@@ -3402,10 +4034,10 @@
 
   function showDfScene(){
     closeModal(true);closePcDrawer();hideBfScene();hideViewportScene();hideSection1Tour();ensureDfScene();clearBfTimers();
-    if(!dfScene)return;dfScene.hidden=false;if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');dfRender();
+    if(!dfScene)return;dfScene.hidden=false;if(viewEmpty)viewEmpty.style.display='none';setViewer('screen');sopObservationEnsure();sopObservationUpdate();dfRender();
   }
   function hideDfScene(){
-    if(!dfScene)return;dfScene.hidden=true;if(viewEmpty)viewEmpty.style.display='';if(dfPattern)[].slice.call(dfPattern.querySelectorAll('[data-df-spot]')).forEach(function(b){b.onclick=null;});
+    if(!dfScene)return;dfScene.hidden=true;if(viewEmpty)viewEmpty.style.display='';sopObservationUpdate();if(dfPattern)[].slice.call(dfPattern.querySelectorAll('[data-df-spot]')).forEach(function(b){b.onclick=null;});
   }
 
   function setDefStigLabels(x,y){
@@ -3437,7 +4069,18 @@
   function runDF13(){showDfScene();setDefStigLabels('OBJ STIG X','OBJ STIG Y');s3SetKnob('defstig-x',9);dfState.astigX=9;dfRender();s3Activate(['def-stig-x']);s3SetHandlers({'defstig:x':function(v){dfState.astigX=v;dfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runDF14(){showDfScene();setDefStigLabels('OBJ STIG X','OBJ STIG Y');s3SetKnob('defstig-y',-8);dfState.astigY=-8;dfRender();s3Activate(['def-stig-y']);s3SetHandlers({'defstig:y':function(v){dfState.astigY=v;dfRender();if(Math.abs(v)<=1)s3Complete(400);}});}
   function runDF15(){showDfScene();setDefStigLabels('OBJ STIG X','OBJ STIG Y');dfRender();s3Activate(['def-stig-mode']);s3SetHandlers({'action:def-stig-mode':function(btn){if(btn.dataset.value!=='objStig')return;btn.classList.remove('is-selected');dfState.objStigOn=false;setDefStigLabels('DEF/STIG X','DEF/STIG Y');s3Complete(350);}});}
-  function runDF16(){showDfScene();dfState.screenRaised=false;s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){s3SelectButton(btn);dfState.screenRaised=true;dfRenderPhosphor();var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';s3Complete(350);}});}
+  function runDF16(){
+    showDfScene();dfState.screenRaised=false;sopF1SyncRestPose(false);s3Activate(['f1']);
+    s3SetHandlers({'action:f1':function(btn){
+      if(sopF1MotionBusy)return;
+      s3SelectButton(btn);
+      sopF1AnimateScreen(true,4,function(){
+        dfState.screenRaised=true;dfRenderPhosphor();
+        var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Raised';
+        s3Complete(250);
+      });
+    }});
+  }
 
   function ensureDfItemPanel(mode){
     hideDfScene();openCameraDrawer();var host=document.querySelector('.camera-palette--acquisition .camera-palette__body');if(!host)return null;var legacy=document.querySelector('.pc-cam-controls');if(legacy)legacy.style.display='none';var old=document.getElementById('sopItemPanel');if(old)old.remove();
@@ -3445,8 +4088,8 @@
     if(mode==='open')html+='<button id="s4ItemOpen">Open iTEM</button><div class="sop-s3-pc-note">Dark Field acquisition workspace.</div>';
     if(mode==='video')html+='<button id="s4ItemVideo">Video</button><div class="sop-s3-pc-note">Start the live Dark Field camera feed.</div>';
     if(mode==='snapshot')html+='<button id="s4ItemSnapshot">Snapshot</button><div class="sop-s3-pc-note">Capture the Dark Field image.</div>';
-    if(mode==='record')html+='<div class="sop-df-record"><span>Selected reflection</span><strong>g1</strong><button id="s4RecordReflection">Record DF + g1</button></div><button type="button" id="s4DownloadAgain">Download PNG again</button>';
-    if(mode==='done')html+='<div class="sop-s3-pc-note">Dark Field image and reflection g1 recorded. Press F1 on R1 to return the fluorescent screen.</div><button type="button" id="s4DownloadAgain">Download PNG again</button>';
+    if(mode==='record')html+='<div class="sop-df-record"><span>Selected reflection</span><strong>g1</strong><button id="s4RecordReflection">Record DF + g1</button></div><button type="button" id="s4DownloadAgain">Save Image As…</button>';
+    if(mode==='done')html+='<div class="sop-s3-pc-note">Dark Field image and reflection g1 recorded. Press F1 on R1 to return the fluorescent screen.</div><button type="button" id="s4DownloadAgain">Save Image As…</button>';
     p.innerHTML=html;host.appendChild(p);var again=document.getElementById('s4DownloadAgain');if(again)again.onclick=function(){downloadSnapshotPng('dark');};var ph=document.getElementById('pc-cam-placeholder');if(ph&&dfState.itemOpen)ph.style.display='none';return p;
   }
   function drawCapturedDf(){
@@ -3456,7 +4099,18 @@
   function runDF18(){var p=ensureDfItemPanel('video'),b=document.getElementById('s4ItemVideo');if(!b)return;b.onclick=function(){ensureAudio();dfState.videoOn=true;b.disabled=true;var ls=document.getElementById('pc-cam-live-state');if(ls)ls.textContent='Running · DF';drawCapturedDf();s3Complete(350);};}
   function runDF19(){var p=ensureDfItemPanel('snapshot'),b=document.getElementById('s4ItemSnapshot');if(!b)return;b.onclick=function(){ensureAudio();dfState.captured=true;b.disabled=true;downloadSnapshotPng('dark');drawCapturedDf();var s=document.getElementById('pc-cam-image-state');if(s)s.textContent='Dark Field snapshot captured';s3Complete(350);};}
   function runDF20(){var p=ensureDfItemPanel('record'),b=document.getElementById('s4RecordReflection');if(!b)return;b.onclick=function(){ensureAudio();if(!dfState.captured)return;dfState.recorded=true;b.disabled=true;b.textContent='Recorded · DF + g1';s3Complete(380);};}
-  function runDF21(){ensureDfItemPanel('done');s3Activate(['f1']);s3SetHandlers({'action:f1':function(btn){if(!dfState.recorded)return;s3SelectButton(btn);dfState.screenRaised=false;var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';s3Complete(450,function(){clearS3PcPanel();closePcDrawer();hideDfScene();setDefStigLabels('DEF/STIG X','DEF/STIG Y');});}});}
+  function runDF21(){
+    ensureDfItemPanel('done');s3Activate(['f1']);
+    s3SetHandlers({'action:f1':function(btn){
+      if(!dfState.recorded||sopF1MotionBusy)return;
+      s3SelectButton(btn);showDfScene();sopF1SyncRestPose(true);
+      sopF1AnimateScreen(false,4,function(){
+        dfState.screenRaised=false;dfRenderPhosphor();
+        var s=document.getElementById('pc-cam-screen-state');if(s)s.textContent='Down';
+        s3Complete(350,function(){clearS3PcPanel();closePcDrawer();hideDfScene();setDefStigLabels('DEF/STIG X','DEF/STIG Y');});
+      });
+    }});
+  }
 
   function bindGrid(){
     var a=document.getElementById('gridOpen'),b=document.getElementById('gridPlace'),c=document.getElementById('gridClose'),next=document.getElementById('gridContinue');

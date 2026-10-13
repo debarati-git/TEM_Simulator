@@ -2335,7 +2335,7 @@ body.iit-sop .s3-item-focus-viewport__top{position:absolute;top:13%;left:50%;tra
 body.iit-sop .s3-item-focus-viewport__caption{position:absolute;bottom:13%;left:50%;transform:translateX(-50%);width:80%;padding:6px 8px;text-align:center;background:rgba(0,0,0,.75);border-radius:4px;color:#eff3f4;font:700 11px/1.3 Tahoma,sans-serif}
 @media(max-width:800px){body.iit-sop #pc-cam .camera-desktop{min-width:710px}}
 
-/* Keep three-condition focus checklist fully accessible next to the live image. */
+/* Keep the iTEM right-side acquisition palette available during Step 49. */
 body.iit-sop #pc-cam .camera-workstation.sop-item-workflow .camera-palette--fft{display:none}
 body.iit-sop #pc-cam .camera-workstation.sop-item-workflow .camera-side-column{grid-template-rows:minmax(0,1fr)}
 body.iit-sop #pc-cam .camera-workstation.sop-item-workflow--focus .camera-status-grid{display:none}
@@ -2469,3 +2469,289 @@ body.iit-sop .sop-df-scene.is-diff .sop-df-spot.is-direct{
 /* Physical fluorescent screen edge in Section 4, consistent with Section 3. */
 body.iit-sop .sop-df-scene{padding:0;border-radius:50%;overflow:hidden;background:#010302}
 body.iit-sop .sop-df-scene .sop-df-screen{border:0;border-radius:50%;background:#010302}
+
+
+/* =====================================================================
+   v4.9.43 — seated-eye-level observation chamber, live phosphor unchanged.
+   Fixed strong 61-degree seated viewing angle; no direct-view alternative.
+   These rules only apply when the physical BF/DF viewing scene is active.
+   The iTEM workspace and its grayscale camera canvas remain untransformed.
+   ===================================================================== */
+body.iit-sop .viewer__panel[data-view-panel="screen"].has-sop-observation{
+  background:#0a1013!important;padding:0!important;
+}
+body.iit-sop .viewer__panel.has-sop-observation .sop-observation-shell{
+  display:flex;flex-direction:column;position:relative;isolation:isolate;
+  width:100%;height:100%;min-height:0;min-width:0;overflow:hidden;
+  background:linear-gradient(158deg,#242c30 0%,#131b1f 31%,#070c10 100%);
+  color:#dce5e6;font-family:inherit;
+}
+body.iit-sop .sop-observation-shell{display:none}
+body.iit-sop .sop-observation-well{
+  flex:1 1 auto;position:relative;min-height:0;overflow:hidden;
+  perspective:1000px;perspective-origin:50% 25%;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 47%,rgba(92,112,108,.22) 0%,rgba(25,34,37,.55) 50%,transparent 80%),
+    linear-gradient(160deg,#131c20 0%,#070d0f 48%,#010406 100%);
+}
+body.iit-sop .sop-observation-well::before{
+  content:"";position:absolute;inset:3% 4%;border-radius:46% 46% 35% 35% / 34% 34% 45% 45%;
+  border:1px solid rgba(152,174,178,.14);
+  box-shadow:inset 0 0 38px #000,0 0 30px rgba(0,0,0,.6);
+  pointer-events:none;
+}
+body.iit-sop .sop-observation-depth{
+  position:absolute;width:var(--sop-observation-diameter,560px);
+  height:var(--sop-observation-diameter,560px);left:50%;top:50%;border-radius:50%;
+  transform:translate(-50%,-39%) rotateX(61deg) scale(1.18);
+  background:radial-gradient(circle at 50% 50%,#020504 0 66%,#13201e 77%,#495859 81%,#070d10 93%);
+  box-shadow:0 46px 54px rgba(0,0,0,.95),0 7px 25px rgba(0,0,0,.8);
+  pointer-events:none;
+}
+body.iit-sop .sop-observation-rim{
+  position:absolute;width:var(--sop-observation-diameter,560px);
+  height:var(--sop-observation-diameter,560px);left:50%;top:50%;border-radius:50%;
+  transform:translate(-50%,-50%) rotateX(61deg) scale(1.09);
+  background:conic-gradient(from 12deg,#859593,#263532,#768582,#1a2725,#a8b8b1,#263b36,#6e7d79,#859593);
+  box-shadow:0 6px 0 #283631,0 16px 0 #0a1110,0 30px 36px rgba(0,0,0,.9);
+  pointer-events:none;
+}
+body.iit-sop .sop-observation-rim::after{
+  content:"";position:absolute;inset:3%;border-radius:50%;
+  background:radial-gradient(circle,#010403 0 68%,#1b2924 82%,#000 100%);
+  border:2px solid rgba(200,220,213,.23);
+  box-shadow:inset 0 0 30px #000;
+}
+body.iit-sop .sop-observation-screen-mount{
+  position:absolute;left:50%;top:50%;width:var(--sop-observation-diameter,560px);
+  height:var(--sop-observation-diameter,560px);
+  transform:translate(-50%,-50%) rotateX(61deg);
+  transform-style:preserve-3d;
+}
+body.iit-sop .sop-observation-screen-mount > .viewer__screen{
+  position:relative;width:100%;height:100%;max-height:none;
+  aspect-ratio:1/1;overflow:hidden;border-radius:50%;
+  border:2px solid rgba(110,155,132,.36);
+  box-shadow:inset 0 0 45px rgba(0,0,0,.8),0 0 22px rgba(86,155,110,.12);
+  background:#010302;
+}
+body.iit-sop .sop-observation-glass{
+  position:absolute;left:12%;right:12%;top:8%;height:18%;
+  transform:skewX(-12deg);border-radius:50%;z-index:3;
+  background:linear-gradient(180deg,rgba(191,226,231,.085),rgba(191,226,231,0));
+  filter:blur(11px);pointer-events:none;
+}
+@media(max-width:560px){
+  body.iit-sop .sop-observation-toolbar{padding:6px 9px;gap:5px}
+  body.iit-sop .sop-observation-heading{font-size:8px;letter-spacing:.08em}
+  body.iit-sop .sop-observation-angle{padding:5px 7px;font-size:9px}
+}
+
+/* v4.9.47 — condenser-aperture checklist in the unrotated operator UI.
+   Three compact horizontal actions, like the guided holder-loading controls.
+   The operator 61-degree projection does not tilt it. */
+body.iit-sop .sop-observation-shell > .s3-ca-checklist{
+  position:absolute!important;
+  left:50%!important;bottom:41px!important;
+  transform:translateX(-50%)!important;
+  transform-origin:center center!important;
+  width:min(710px,96%)!important;max-width:96%;
+  padding:9px 12px 8px;
+  z-index:28;
+  background:rgba(11,24,28,.96);
+  border-radius:12px;
+  box-shadow:0 8px 28px rgba(0,0,0,.62);
+}
+body.iit-sop .sop-observation-shell .s3-ca-checklist__heading{
+  margin:0 0 6px;text-align:center;font-size:10px;
+}
+body.iit-sop .sop-observation-shell .s3-ca-checklist__actions{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:stretch;gap:7px;
+}
+body.iit-sop .sop-observation-shell .s3-ca-checklist__row{
+  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;
+  gap:7px;min-height:38px;padding:7px 9px;
+  border:1px solid rgba(153,199,188,.26);border-radius:8px;
+  background:rgba(29,43,45,.88);font-size:11px;line-height:1.3;
+  white-space:normal;transform:none!important;
+}
+body.iit-sop .sop-observation-shell .s3-ca-checklist__row.is-current{
+  border-color:#78d7a5;background:rgba(77,137,103,.27);
+}
+body.iit-sop .sop-observation-shell .s3-ca-checklist__row input{
+  flex:0 0 17px;width:17px;height:17px;margin:0;
+}
+body.iit-sop .sop-observation-shell .s3-ca-checklist__feedback{
+  margin-top:6px;padding:6px 1px 0;
+}
+@media(max-width:610px){
+  body.iit-sop .sop-observation-shell > .s3-ca-checklist{padding:7px 7px 6px}
+  body.iit-sop .sop-observation-shell .s3-ca-checklist__actions{gap:3px}
+  body.iit-sop .sop-observation-shell .s3-ca-checklist__row{
+    font-size:9px;padding:5px 4px;gap:4px;min-height:36px;
+  }
+  body.iit-sop .sop-observation-shell .s3-ca-checklist__row input{
+    flex-basis:14px;width:14px;height:14px;
+  }
+}
+
+/* v4.9.51 — wobble reference scale is part of the real, angled
+   fluorescent-screen surface. Only ticks and a moving indicator are drawn.
+   No floating instructional card, numbers, or readout text. */
+body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-screen > .s3-wobble-gauge{
+  display:block;position:absolute;z-index:16;
+  left:50%;bottom:24%;width:39%;height:27px;
+  padding:0;margin:0;max-width:none;
+  transform:translateX(-50%)!important;
+  background:transparent;border:0;box-shadow:none;border-radius:0;
+  pointer-events:none;opacity:.94;
+}
+body.iit-sop .sop-bf-screen > .s3-wobble-gauge[hidden]{display:none!important}
+body.iit-sop .sop-bf-screen .s3-wobble-gauge__ruler{
+  position:relative;display:block;box-sizing:border-box;
+  height:19px;width:100%;margin:0;
+  border-bottom:2px solid rgba(236,254,221,.92);
+  background:repeating-linear-gradient(to right,
+    rgba(235,252,223,.79) 0 1px,transparent 1px 10%);
+  background-size:100% 12px;background-position:bottom;background-repeat:no-repeat;
+  filter:drop-shadow(0 1px 2px #061007);
+}
+body.iit-sop .sop-bf-screen .s3-wobble-gauge__zero{
+  position:absolute;left:50%;bottom:-1px;height:21px;
+  border-left:2px solid rgba(255,250,186,.98);
+}
+body.iit-sop .sop-bf-screen .s3-wobble-gauge__marker{
+  position:absolute;left:50%;bottom:-8px;width:8px;height:8px;
+  border:1px solid #fff1bb;background:#fff3b2;border-radius:50%;
+  transform:translateX(-50%);box-shadow:0 0 6px rgba(250,246,195,.87);
+}
+@media(max-width:650px){
+  body.iit-sop .sop-bf-scene--screen.is-phosphor-live .sop-bf-screen > .s3-wobble-gauge{
+    width:45%;height:23px;bottom:23%;
+  }
+}
+
+/* v4.9.49 — stable un-tilted educational top-down shape inset for
+   condenser astigmatism correction. It is not a second camera view. */
+body.iit-sop .s3-stig-guide{
+  z-index:8;position:absolute;top:55px;right:12px;width:174px;
+  max-width:38%;padding:8px 10px;border:1px solid #82bc98;
+  border-radius:10px;background:rgba(4,19,14,.92);color:#e0f9e8;
+  box-shadow:0 9px 25px rgba(0,0,0,.55);pointer-events:none;
+  transform:none!important;text-align:center;
+}
+body.iit-sop .s3-stig-guide[hidden]{display:none!important}
+body.iit-sop .s3-stig-guide strong{display:block;font-size:9px;letter-spacing:.03em}
+body.iit-sop .s3-stig-guide__figure{height:67px;display:flex;align-items:center;justify-content:center}
+body.iit-sop .s3-stig-guide__ellipse{
+  display:block;width:67px;height:67px;border-radius:50%;
+  background:radial-gradient(circle at 42% 42%,#b4e997,#48934f 78%,#16351e);
+  border:1px solid rgba(198,255,188,.55);
+  box-shadow:0 0 10px rgba(137,235,125,.35);
+}
+body.iit-sop .s3-stig-guide__read{font-size:10px;font-weight:700;color:#f6efbb}
+body.iit-sop .s3-stig-guide small{font-size:9px;color:#9ab9a5;line-height:1.2}
+@media(max-width:650px){body.iit-sop .s3-stig-guide{width:150px;right:5px;top:46px;padding:6px}}
+
+
+/* v4.9.56 — hinged fluorescent screen for seated operator observation.
+   The physical disc rotates around its operator-near edge, toward the observer.
+   The chamber, window, outer rim and instrument controls remain stationary. */
+body.iit-sop .sop-observation-screen-mount{
+  transform-style:preserve-3d;
+  backface-visibility:visible;
+}
+body.iit-sop .sop-observation-screen-mount > .viewer__screen{
+  /* Original v4.9.56 full-size hinge motion: no scale-down or pullback.
+     During the 90-degree lift some of the disc may leave the chamber viewport. */
+  transform:rotateX(0deg);
+  transform-origin:50% 92%;
+  transform-style:preserve-3d;
+  backface-visibility:visible;
+  will-change:transform;
+  transition:transform 3000ms cubic-bezier(.34,.05,.18,1),
+    box-shadow 3000ms ease;
+}
+body.iit-sop .sop-observation-shell.is-f1-raised .sop-observation-screen-mount > .viewer__screen{
+  transform:rotateX(-90deg);
+  box-shadow:inset 0 0 48px #010302,0 16px 26px rgba(0,0,0,.75);
+}
+/* Dark optical cavity, revealed only when the lifted phosphor disc leaves
+   the electron path. Avoid a glowing residual fake viewing screen. */
+body.iit-sop .sop-observation-shell.is-f1-raised .sop-observation-depth{
+  background:radial-gradient(circle at 50% 50%,#000 0 68%,#09100f 77%,#35423f 83%,#05090b 96%);
+}
+/* The glass belongs to the stationary observation window, never the hinge. */
+body.iit-sop .sop-observation-shell.is-f1-moving .sop-observation-glass,
+body.iit-sop .sop-observation-shell.is-f1-raised .sop-observation-glass{
+  opacity:.4;
+}
+
+/* Once fully raised, the disc has cleared the seated operator's window. */
+body.iit-sop .sop-observation-shell.is-f1-parked .sop-observation-screen-mount > .viewer__screen{
+  visibility:hidden;
+}
+
+/* v4.9.61 — readable guided modals (opaque and accessible text). */
+body.iit-sop .sop-flow-modal__panel:not(.sop-grid-step3){
+  background:#fff!important;color:#172332!important;backdrop-filter:none!important;
+  border-color:#aebbc7!important;
+}
+body.iit-sop .sop-flow-modal__panel:not(.sop-grid-step3) .sop-flow-modal__head{
+  background:#f1f5f9!important;border-bottom-color:#c5d0d9!important;
+}
+body.iit-sop .sop-flow-modal__panel:not(.sop-grid-step3) .sop-flow-modal__body{background:#fff!important;}
+body.iit-sop .sop-flow-modal__panel:not(.sop-grid-step3) .sop-flow-modal__copy{
+  font-size:16px!important;line-height:1.65!important;color:#1c2937!important;font-weight:500!important;
+}
+body.iit-sop .sop-flow-modal__panel:not(.sop-grid-step3) .sop-flow-modal__copy strong{color:#0e1e2d;font-weight:800;}
+body.iit-sop .sop-flow-modal__panel:not(.sop-grid-step3) .sop-flow-modal__head h3{font-size:20px!important;color:#142236!important;}
+body.iit-sop .sop-flow-modal__panel:not(.sop-grid-step3) .sop-flow-modal__footer{background:#f1f5f9!important;border-top-color:#c5d0d9!important;}
+body.iit-sop .sop-flow-modal__panel:not(.sop-grid-step3) .sop-flow-btn{font-size:14px!important;min-height:39px;}
+/* Keep special Section 2 grid-loading modal sizing intact. */
+/* Step 6: genuinely black ON/OFF text even over the embedded TEMCON photo. */
+body.iit-sop #pc-filament-on,body.iit-sop #pc-filament-off,
+body.iit-sop #pc-filament-on:disabled,body.iit-sop #pc-filament-off:disabled{
+  color:#070707!important;-webkit-text-fill-color:#070707!important;font-weight:800!important;
+  opacity:1!important;
+}
+body.iit-sop .temcon-page.sop-s3-filament-photo-layout .s3-ht-photo__filament-on:not([hidden]){
+  background:#dddddd!important;color:#070707!important;-webkit-text-fill-color:#070707!important;
+  font:700 clamp(9px,1vw,13px) Tahoma,Arial,sans-serif;text-align:center;
+  border:1px solid #9b9b9b!important;display:flex;align-items:center;justify-content:center;
+}
+body.iit-sop .s3-ht-photo__filament-off-label{display:none;position:absolute;left:17.55%;top:33.4%;width:10.8%;height:4.15%;pointer-events:none;
+  align-items:center;justify-content:center;background:#dddddd;border:1px solid #aaa;
+  color:#070707;font:700 clamp(9px,1vw,13px) Tahoma,Arial,sans-serif;
+}
+body.iit-sop .temcon-page.sop-s3-filament-photo-layout .s3-ht-photo__filament-off-label{display:flex;}
+/* v4.9.62 — compact Step 49 single-condition feedback inside the RIGHT
+   iTEM acquisition palette. It never overlays or becomes part of the canvas. */
+body.iit-sop #pc-cam .s3-focus-camera-guide{
+  box-sizing:border-box;width:100%;margin-top:9px;padding:11px 10px 12px;
+  border:2px solid #536f88;border-radius:6px;background:#fff;
+  color:#172b3b;font:600 14px/1.42 'Segoe UI',Arial,sans-serif;
+  box-shadow:0 2px 5px rgba(15,30,43,.14);
+}
+body.iit-sop #pc-cam .s3-focus-camera-guide__tag{
+  font-size:10px;font-weight:850;letter-spacing:.035em;line-height:1.35;color:#45586c;
+}
+body.iit-sop #pc-cam .s3-focus-camera-guide__title{
+  margin-top:7px;color:#263f56;font-size:13px;font-weight:800;
+}
+body.iit-sop #pc-cam .s3-focus-camera-guide__condition{
+  margin-top:8px;padding:8px 7px;border:1px solid #9baebe;background:#e8f3fb;
+  border-radius:4px;font-size:15px;font-weight:850;line-height:1.25;color:#103b5e;
+}
+body.iit-sop #pc-cam .s3-focus-camera-guide__message{
+  color:#1b2b3b;font-size:14px;font-weight:600;line-height:1.45;
+  padding:0;margin:9px 0;
+}
+body.iit-sop #pc-cam .s3-focus-camera-guide__state{
+  background:#f2f7f2;color:#1f5632;border:1px solid #a4bea9;
+  border-radius:4px;padding:7px;font-size:12px;font-weight:750;line-height:1.35;
+}
+body.iit-sop #pc-cam .s3-focus-camera-guide__progress{
+  margin-top:9px;color:#24394b;font-size:13px;font-weight:800;line-height:1.35;
+}
