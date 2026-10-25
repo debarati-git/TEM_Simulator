@@ -46,7 +46,7 @@
      ===================================================================== */
   const exteriorFace = {
     image: {
-      src: '../assets/images/column/tem-exterior.png',
+      src: 'https://edwisely-global-content.s3.ap-south-1.amazonaws.com/Concept_Summary_Cards/HtmlImages/tem-exterior20261025080616.png',
       width: 929,
       height: 833
     },
@@ -285,7 +285,7 @@
      ===================================================================== */
   const interiorFace = {
     image: {
-      src: '../assets/images/column/tem-interior.png',
+      src: 'https://edwisely-global-content.s3.ap-south-1.amazonaws.com/Concept_Summary_Cards/HtmlImages/tem-interior20261025080630.png',
       width: 1135,
       height: 1136
     },
@@ -611,7 +611,7 @@
      ===================================================================== */
   const panelL1Face = {
     image: {
-      src: '../assets/images/column/panel-l1.png',
+      src: 'https://edwisely-global-content.s3.ap-south-1.amazonaws.com/Concept_Summary_Cards/HtmlImages/panel-l120261025075925.png',
       width: 1105,
       height: 829
     },
@@ -741,7 +741,7 @@
      ===================================================================== */
   const panelR1Face = {
     image: {
-      src: '../assets/images/column/panel-r1.png',
+      src: 'https://edwisely-global-content.s3.ap-south-1.amazonaws.com/Concept_Summary_Cards/HtmlImages/panel-r120261025080512.png',
       width: 1278,
       height: 833
     },
@@ -878,7 +878,7 @@
      ===================================================================== */
   const panelGoniometerFace = {
     image: {
-      src: '../assets/images/column/panel-goniometer.png',
+      src: 'https://edwisely-global-content.s3.ap-south-1.amazonaws.com/Concept_Summary_Cards/HtmlImages/panel-goniometer20261025075812.png',
       width: 1028,
       height: 866
     },

@@ -546,3 +546,9 @@ h1, h2, h3, h4 {
   color: var(--signal);
   text-shadow: none;
 }
+
+/* v4.9.65: single compact help icon directly after the READY badge. */
+.topnav__help{display:inline-grid;place-items:center;flex:0 0 auto;width:27px;height:27px;line-height:1;
+  border:1px solid var(--border-strong);border-radius:50%;background:var(--bg-panel);color:var(--text-primary);
+  font:700 15px/1 var(--font-body);cursor:pointer;transition:border-color .16s,background .16s}
+.topnav__help:hover,.topnav__help:focus-visible{border-color:var(--signal);background:var(--bg-panel-3);outline-offset:2px}

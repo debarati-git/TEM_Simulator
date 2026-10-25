@@ -2755,3 +2755,157 @@ body.iit-sop #pc-cam .s3-focus-camera-guide__state{
 body.iit-sop #pc-cam .s3-focus-camera-guide__progress{
   margin-top:9px;color:#24394b;font-size:13px;font-weight:800;line-height:1.35;
 }
+
+/* v4.9.62 patch: four visible full-width section tabs (1, 2, 3, Shutdown as 4). */
+body.iit-sop .sop-mini-nav{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+body.iit-sop .sop-mini-tab{min-width:0;min-height:48px;padding:8px 12px;}
+body.iit-sop .sop-mini-tab__t{font-size:.76rem;}
+@media(max-width:580px){body.iit-sop .sop-mini-nav{grid-template-columns:repeat(4,minmax(148px,1fr));}}
+body.iit-sop .sop-skip-toolbar:not([hidden]){display:inline-flex;align-items:center;justify-content:center;border-color:#c9a775;background:#fffaf0;color:#815516;font-weight:750;}
+body.iit-sop .sop-skip-toolbar:disabled{opacity:.52;cursor:not-allowed;}
+body.iit-sop .sop-howto-trigger{font-weight:700;white-space:nowrap;}
+.sop-flow-modal__footer .sop-flow-btn--skip{background:#fffaf0;color:#815516;border:1px solid #c9a775;margin-right:auto;}
+.sop-flow-modal__footer .sop-flow-btn--skip:hover{background:#fff0d7;filter:none;}
+.sop-flow-modal__footer .sop-flow-btn--skip:disabled{opacity:.42;cursor:not-allowed;}
+:root[data-theme="dark"] body.iit-sop .sop-skip-toolbar:not([hidden]),
+:root[data-theme="dark"] .sop-flow-modal__footer .sop-flow-btn--skip{background:#3a2d19;color:#ffe3a4;border-color:#977242;}
+
+body.iit-sop #btn-skip-step[hidden]{display:none!important;}
+
+/* v4.9.65: reserve the original 476×575 HT photograph geometry while
+   loading, so the overlaid selectors and target scroll remain anchored. */
+.temcon-page.sop-s3-ht-photo-layout .sop-step4-hv-replica .sop-step4-window-image-wrap{
+  aspect-ratio:476 / 575;
+}
+.temcon-page.sop-s3-ht-photo-layout .sop-step4-hv-replica .sop-step4-window-image{
+  width:100%;height:100%;object-fit:fill;
+}
+
+/* v4.9.68 — duration warnings now use the standard SOP modal.
+   TEMCON itself displays only the calculated Time to finish. */
+
+/* v4.9.69: Step 17 magnifies the single specimen raster within the
+   existing phosphor canvas. No overlaid image layers or blending. */
+
+
+.sop-vscene.is-s3-ca-column-sequence .sop-vscene__focus,
+.sop-vscene.is-s3-ca-column-sequence .sop-vscene__step4photo,
+.sop-vscene.is-s3-ca-column-sequence .sop-vscene__step8final,
+.sop-vscene.is-s3-ca-column-sequence .sop-vscene__holder,
+.sop-vscene.is-s3-ca-column-sequence .sop-vscene__switch-hotspot,
+.sop-vscene.is-s3-ca-column-sequence .sop-vscene__clicks,
+.sop-vscene.is-s3-ca-column-sequence .sop-vscene__progress{display:none!important}
+.sop-vscene.is-s3-ca-column-sequence .sop-vscene__controls{display:none}
+.sop-vscene.is-s3-ca-column-sequence .sop-vscene__base{
+  transform:translate3d(0,0,0) scale(1);
+  transform-origin:50% 32%;
+  transition:transform 5.4s cubic-bezier(.22,.61,.36,1),filter 1.2s ease,opacity .8s ease;
+}
+.sop-vscene.is-s3-ca-column-sequence[data-s3-ca-phase="zoom"] .sop-vscene__base{
+  transform:translate3d(-2.2%,7.8%,0) scale(2.62);
+}
+
+
+/* v4.9.75 — guided shutdown (Section 4). Keep original TEMCON theme. */
+.s4-maintenance-menu{font:inherit;color:inherit;background:transparent;border:0;padding:0 4px;cursor:pointer}
+.s4-maintenance-menu:disabled{cursor:default;opacity:1}
+.s4-maintenance-menu:not(:disabled):hover,.s4-maintenance-menu.is-selected{text-decoration:underline;background:rgba(110,140,175,.16)}
+.s4-info{margin:10px 8px;padding:12px;border:1px solid #8da4b9;background:#edf3fa;color:#22394d;border-radius:8px;font-size:13px}
+.s4-info p{margin:6px 0 2px}
+.s4-progress{height:12px;border-radius:8px;overflow:hidden;margin:12px 0;background:#c3ced9;border:1px solid #a7b6c7}
+.s4-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#6b98d4,#40b38f);transition:width .13s linear}
+.s4-air-control{display:flex;align-items:center;gap:18px;flex-wrap:wrap;color:#22394d;width:100%}
+.s4-air-control .sop-pump-vertical{display:flex!important;flex:none}
+.s4-air-readout{flex:1;min-width:170px;font-size:13px}
+.s4-air-readout .s4-progress{margin:5px 0}
+.s4-maintenance-pane{border:1px solid #8da4b9;margin:8px 12px;padding:14px;border-radius:7px;background:#e8f0f8;color:#22394d}
+.s4-maintenance-pane__head{font-size:16px;font-weight:700;margin-bottom:14px}
+.s4-maintenance-pane__row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.s4-maintenance-pane__row strong{color:#b33c35}
+.s4-maintenance-pane__row button{background:#e0ebf5;border:1px solid #6d8fb0;padding:7px 13px;border-radius:5px;cursor:pointer}
+.s4-maintenance-pane__row button:disabled{cursor:default;opacity:.7}
+.s4-logbook{display:grid;gap:12px;min-width:min(520px,100%)}
+.s4-logbook label{display:grid;gap:5px;font-weight:600;color:#273648}
+.s4-logbook input,.s4-logbook textarea{width:100%;box-sizing:border-box;border:1px solid #aebcd0;border-radius:6px;padding:9px;background:#fff;color:#172637;font:inherit}
+.s4-logbook__error{font-size:13px;color:#b03933;margin:0}
+:root[data-theme="dark"] .s4-info,:root[data-theme="dark"] .s4-maintenance-pane{background:#24384b;color:#f0f4fa;border-color:#52718e}
+
+/* v4.9.76 — shutdown control overlays share the existing Section 3 HT photograph. */
+.temcon-page.s4-photo-layout .s4-photo-ht-state,
+.temcon-page.s4-photo-layout .s4-photo-filament-state{
+  position:absolute;display:flex;align-items:center;justify-content:flex-start;
+  background:#ededed;color:#101010;font:normal clamp(9px,1.1vw,17px) Tahoma,Arial,sans-serif;
+  height:3.5%;pointer-events:none;white-space:nowrap;
+}
+.temcon-page.s4-photo-layout .s4-photo-ht-state{top:4.85%;left:32.2%;width:11.4%}
+.temcon-page.s4-photo-layout .s4-photo-filament-state{top:9%;left:36%;width:12%}
+.s4-photo-ht-off,.s4-photo-filament-off{
+  position:absolute;display:flex;align-items:center;justify-content:center;
+  pointer-events:auto;background:#d4d4d4;border:1px solid #919191;
+  color:#191919;font:700 clamp(9px,1.1vw,16px) Tahoma,Arial,sans-serif;cursor:pointer;
+}
+.s4-photo-ht-off{left:17.55%;top:21.95%;width:10.8%;height:4.25%}
+.s4-photo-filament-off{left:17.55%;top:33.4%;width:10.8%;height:4.15%}
+.s4-photo-ht-off[hidden],.s4-photo-filament-off[hidden]{display:none!important}
+.s4-photo-ht-off.is-active,.s4-photo-filament-off.is-active{outline:3px solid #f59e0b;outline-offset:1px;box-shadow:0 0 0 3px rgba(245,158,11,.22)}
+.s4-check-confirm{display:flex!important;align-items:flex-start;gap:10px;margin:12px 0;padding:10px;
+  border:1px solid #b2c6d5;border-radius:5px;background:#f4f8fc;color:#1b2934;font-weight:600}
+.s4-check-confirm input{width:18px;height:18px;flex:0 0 auto;accent-color:#276eae;cursor:pointer}
+
+/* v4.9.77 — shutdown interface corrections */
+/* Step 1: preserve the real status/Neutralize header and leave lower TEMCON blank. */
+#pc-tem.s4-neutral-stage-view .temcon-client{
+  min-height:420px;
+  background:#e0e0e0;
+}
+#pc-tem.s4-neutral-stage-view .temcon-client .temcon-page{
+  display:none!important;
+}
+#sopStageNeutralVisible.s4-stage-target{
+  background:#fff1ce!important;
+  color:#432b09!important;
+  border:2px solid #e38a17!important;
+  outline:3px solid #ed9d21!important;
+  outline-offset:2px;
+  box-shadow:0 0 0 5px rgba(253,169,40,.25),0 0 14px rgba(241,148,19,.72)!important;
+}
+/* Step 4: Beam ON is deep green (like the HT lamp); OFF is gray NotReady. */
+#pc-beam-lamp.temcon-lamp--beam.is-on.s4-shutdown-beam-live{
+  background:linear-gradient(180deg,#128b43,#075b2b)!important;
+  color:#f2fff6!important;
+  box-shadow:inset 0 0 7px rgba(255,255,255,.22),0 0 3px #064b25!important;
+}
+#pc-beam-lamp.temcon-lamp--beam:not(.is-on){background:#9e9e9e;color:#171717;}
+/* Step 12: the uploaded vintage TEMCON dialog, hosted on S3, remains unaltered. */
+.temcon-page.s4-acd-photo-layout > :not(.s4-acd-photo-pane){display:none!important;}
+.temcon-page.s4-acd-photo-layout{
+  background:#d3d3d3;
+  padding:8px 10px 18px;
+  min-height:550px;
+}
+.s4-acd-photo-pane{
+  /* Sized like the HT control dialog rather than filling TEMCON. The
+     image keeps its original proportions, as does the clickable ON hotspot. */
+  width:min(100%,390px);
+  margin:14px auto 12px;
+  position:relative;
+}
+.s4-acd-photo-frame{position:relative;width:100%;}
+.s4-acd-reference{display:block;width:100%;height:auto;user-select:none;}
+.s4-acd-on-hit{
+  position:absolute;left:28.55%;top:17.0%;width:14.35%;height:4.35%;
+  z-index:2;cursor:pointer;border:3px solid #f59e0b;
+  background:rgba(255,198,60,.12);
+  box-shadow:0 0 0 3px rgba(245,158,11,.19);
+  border-radius:1px;
+}
+.s4-acd-on-hit:hover,.s4-acd-on-hit:focus-visible{
+  background:rgba(245,158,11,.25);outline:2px solid #e28e06;outline-offset:2px;
+}
+.s4-acd-on-hit:disabled{cursor:default;border-color:#218054;background:rgba(43,173,92,.28);box-shadow:none;}
+.s4-acd-on-state{
+  position:absolute;z-index:3;left:48%;top:17.5%;
+  padding:4px 9px;border:1px solid #29864f;background:#e0f6e7;
+  color:#09552c;font:700 11px Tahoma,Arial,sans-serif;
+}
+.s4-acd-on-state[hidden]{display:none!important;}

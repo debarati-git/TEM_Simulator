@@ -118,6 +118,7 @@
             <span class="topnav__status-dot" aria-hidden="true"></span>
             <span>READY</span>
           </div>
+          <button type="button" class="topnav__help" id="btn-howto" title="How to use this simulator" aria-label="How to use this simulator">?</button>
         </div>
       </nav>
     `;

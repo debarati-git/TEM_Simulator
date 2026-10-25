@@ -11,7 +11,7 @@
 <link href="../assets/css/module2-control-panels-3d.css" rel="stylesheet"/>
 <link href="../assets/css/module2-tem-pc.css" rel="stylesheet"/>
 <link href="../assets/css/module2-camera-pc.css" rel="stylesheet"/>
-<link href="../assets/css/sop-guided-layout.css" rel="stylesheet"/></head>
+<link href="../assets/css/sop-guided-layout.css" rel="stylesheet"/><link href="../assets/css/welcome-guide.css" rel="stylesheet"/></head>
 <body class="iit-sop">
 <div data-module="microscope-iit" data-topnav=""></div>
 <main class="guided-page">
@@ -99,6 +99,7 @@
 </div>
 </div>
 <div class="guided-context__actions">
+<button class="guided-context__restart sop-skip-toolbar" id="btn-skip-step" type="button" title="Skip the current guided step without performing it" hidden disabled>Skip Step →</button>
 <button class="guided-context__restart" id="btn-show-step" title="Reopen the current step modal">
 <svg aria-hidden="true" fill="none" height="11" stroke="currentColor" stroke-width="1.5" viewbox="0 0 16 16" width="11">
 <rect x="2.5" y="3" width="11" height="10" rx="1.5"></rect>
@@ -263,13 +264,13 @@
 <div class="viewer__stage" id="viewer-stage">
 <!-- Column view -->
 <div class="viewer__panel is-active" data-view-panel="column">
-<img alt="Actual TEM instrument room view" class="viewer__column-image" src="../assets/images/sop/column-viewport-real.png"/>
+<img alt="Actual TEM instrument room view" class="viewer__column-image" src="https://edwisely-global-content.s3.ap-south-1.amazonaws.com/Concept_Summary_Cards/HtmlImages/column-viewport-real20261025083014.png"/>
 <div class="viewer__column-hotspots" id="diagram-hotspots"></div>
 <!-- Pre-start-only exploration: independent of guided SOP imagery / controls. -->
 <div class="sop-prestart-explore" id="sopPrestartExplore" hidden aria-label="Explore the microscope before starting">
   <div class="sop-prestart-explore__surface" id="sopPrestartZoomSurface" aria-label="Microscope image: wheel to zoom, drag to pan">
     <div class="sop-prestart-explore__transform" id="sopPrestartZoomTransform">
-      <img class="sop-prestart-explore__photo" src="../assets/images/sop/column-viewport-real.png" alt="Actual JEOL TEM instrument and left and right control panels" draggable="false"/>
+      <img class="sop-prestart-explore__photo" src="https://edwisely-global-content.s3.ap-south-1.amazonaws.com/Concept_Summary_Cards/HtmlImages/column-viewport-real20261025083014.png" alt="Actual JEOL TEM instrument and left and right control panels" draggable="false"/>
       <button class="sop-prestart-explore__hotspot sop-prestart-explore__hotspot--l1" type="button" data-explore-panel="l1" title="View actual L1 control panel layout" aria-label="View actual L1 left control panel layout"><span class="sop-prestart-explore__dot" aria-hidden="true"></span><strong>L1</strong></button>
       <button class="sop-prestart-explore__hotspot sop-prestart-explore__hotspot--r1" type="button" data-explore-panel="r1" title="View actual R1 control panel layout" aria-label="View actual R1 right control panel layout"><span class="sop-prestart-explore__dot" aria-hidden="true"></span><strong>R1</strong></button>
     </div>
@@ -310,7 +311,7 @@
 </div>
 <div aria-label="TEMCON menu bar" class="temcon-menubar">
 <span>File</span><span>Dialogue</span><span>Monitor</span><span>Property</span>
-<span>Option</span><span>Maintenance</span><span>Display</span><span>JEOLS</span><span>Help</span>
+<span>Option</span><button type="button" id="s4MaintenanceMenu" class="s4-maintenance-menu" disabled>Maintenance</button><span>Display</span><span>JEOLS</span><span>Help</span>
 </div>
 <div aria-label="TEMCON function shortcuts" class="temcon-shortcuts">
 <span class="temcon-shortcut temcon-shortcut--ht" id="pc-ht-shortcut" role="button" tabindex="0">HT</span>
@@ -348,7 +349,7 @@
 <div class="temcon-status__inline"><span></span><strong>Alpha <span id="pc-alpha-value-top">2</span></strong></div>
 </div>
 <div class="temcon-status__cell">
-<div class="temcon-status__pair"><span>SAMAG :</span><strong id="pc-mag-value">X8000</strong></div>
+<div class="temcon-status__pair"><span>SAMAG :</span><strong id="pc-mag-value">X200</strong></div>
 <div class="temcon-status__pair"><span>Defocus:</span><strong id="pc-defocus-value">0.00 nm</strong></div>
 </div>
 <div class="temcon-status__cell">
@@ -465,7 +466,7 @@
 <div class="temcon-live-grid">
   <span>Beam</span><strong id="pc-live-beam">OFF</strong>
   <span>Mode</span><strong id="pc-live-mode">—</strong>
-  <span>Magnification</span><strong id="pc-live-mag">X8000</strong>
+  <span>Magnification</span><strong id="pc-live-mag">X200</strong>
   <span>Spot Size</span><strong id="pc-live-spot">2</strong>
   <span>Alpha</span><strong id="pc-live-alpha">2</strong>
   <span>Z</span><strong id="pc-live-z">0.0 µm</strong>
@@ -744,13 +745,13 @@
 </div>
 </div>
 <div class="ctl ctl--center" data-control="mag-caml">
-<div class="knob knob--stepped" data-knob="mag-caml" data-min="0" data-max="8" data-step="1" data-value="3">
+<div class="knob knob--stepped" data-knob="mag-caml" data-min="0" data-max="9" data-step="1" data-value="0">
 <div class="knob__ring"></div><div class="knob__arc"></div><div class="knob__body"></div><div class="knob__value">X8k</div>
 </div>
 <div class="ctl__label ctl__label--below">MAG/CAM L</div>
 </div>
 <div class="readout-strip readout-strip--mag-center">
-<div class="readout-cell"><div class="readout-cell__key">MAG</div><div class="readout-cell__val" id="mag-caml-readout">X8k</div></div>
+<div class="readout-cell"><div class="readout-cell__key">MAG</div><div class="readout-cell__val" id="mag-caml-readout">X200</div></div>
 <div class="readout-cell"><div class="readout-cell__key">MODE</div><div class="readout-cell__val" id="mag-mode-readout">—</div></div>
 </div>
 </div>
@@ -993,5 +994,5 @@
 
 
 
-<script src="../assets/js/global.js"></script><script src="../assets/js/guided/controls-ui.js"></script><script src="../assets/js/sop/snapshot-export.js"></script><script src="../assets/js/sop/microscope-new-controller.js"></script></body>
+<script src="../assets/js/global.js"></script><script src="../assets/js/welcome-guide.js"></script><script src="../assets/js/guided/controls-ui.js"></script><script src="../assets/js/sop/snapshot-export.js"></script><script src="../assets/js/sop/microscope-new-controller.js"></script></body>
 </html>
