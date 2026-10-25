@@ -51,7 +51,7 @@
       {title:'Z Correction · Center feature',instruction:'At MAG 1, use the stage trackball to position a thin feature at the screen centre.',hint:'Center the highlighted feature.'},
       {title:'Z Correction · STD FOCUS',instruction:'Press STD FOCUS before adjusting specimen height. Observe the real specimen become sharper as the lens returns to standard focus.',hint:'Watch the change in image sharpness after pressing STD FOCUS.'},
       {title:'Z Correction · Wobbler ON',instruction:'Observe the same specimen field as in Step 20. Press MAG WOB X or MAG WOB Y on R1 to alternate underfocus and overfocus at the same viewing angle while the image wobbles.',hint:'Focus variation and image movement begin only after MAG WOB is pressed.'},
-      {title:'Z Correction · Minimize wobble',instruction:'With MAG WOB ON, adjust Z UP / Z DOWN toward approximately 250 µm. Observe progressively smaller image movement until the wobble is minimized and the specimen view stabilizes.',hint:'The movement reduces as Z approaches the eucentric height.'},
+      {title:'Z Correction · Minimize wobble',instruction:'With MAG WOB ON, use Z UP or Z DOWN to reduce image movement. Minimum wobble occurs at +70 µm with Z UP or −70 µm with Z DOWN. The stage Z adjustment range is −250 to +250 µm.',hint:'Adjust Z toward +70 µm or −70 µm; the focus-pair alternation stops at minimum wobble.'},
       {title:'Z Correction · Wobbler OFF',instruction:'Press the same MAG WOB X or MAG WOB Y control again to switch the wobble OFF.',hint:'The corrected Z height is retained.'},
       {title:'Condenser Aperture · Select and align',instruction:'Watch the Column view zoom to the condenser aperture. Confirm CA insertion and alignment using X and Y controls. The simulator then returns to the Viewing Screen and advances to the beam-verification step.',hint:'Confirm the hardware alignment after inspecting the zoomed condenser-aperture section.'},
       {title:'Condenser Aperture · Verify',instruction:'Vary BRIGHTNESS so the beam spreads and contracts symmetrically about the optical axis.',hint:'Verify there is no off-centre shift or crescent clipping.'},
@@ -1088,8 +1088,116 @@
     }
   }
 
-  // Optional learner-controlled bypass. A skipped action advances the guide but
-  // is explicitly not recorded as a completed microscope operation.
+  // A learner skip is treated as an achieved training state. Carry the
+  // essential output of the bypassed operation forward so subsequent guided
+  // actions do not wait for equipment flags that would otherwise be missing.
+  // This affects simulator state only, not a real microscope.
+  function applySkipCompletedState(sectionId,stepNumber){
+    if(sectionId===1){
+      if(stepNumber===4){
+        bfState.htOn=true;
+        var lamp=document.getElementById('pc-ht-lamp');if(lamp)lamp.classList.add('is-on');
+        var ht=document.getElementById('pc-ht-status');if(ht)ht.textContent='ON';
+      }
+      return;
+    }
+    if(sectionId===2){
+      if(stepNumber===4){state.evacuationDone=true;}
+      if(stepNumber===5){state.insertionDone=true;}
+      if(stepNumber===6){state.pumpStarted=true;state.evacuationDone=true;}
+      if(stepNumber===7){state.rotation15=true;state.rotation75=true;state.holderSeated=true;}
+      if(stepNumber===8){
+        state.selectedHolder='single-tilt';
+        var holder=document.getElementById('pc-holder-model-select');if(holder)holder.value='single-tilt';
+      }
+      return;
+    }
+    if(sectionId===3){
+      switch(stepNumber){
+        case 1:bfState.htTarget=200;break;
+        case 2:bfState.htStep=.5;break;
+        case 3:bfState.htTime=5;break;
+        case 4:bfState.htVoltage=200;bfState.htOn=true;bfState.htRampDone=true;break;
+        case 5:bfState.v2Open=true;break;
+        case 6:bfState.filamentOn=true;bfState.beamCurrent=103;break;
+        case 7:bfState.beamCurrent=103;break;
+        case 8:bfState.beamOn=true;bfState.coverOpen=true;bfState.c2=Math.max(88,Number(bfState.c2)||88);break;
+        case 9:bfState.temMode=true;break;
+        case 10:bfState.magMode='LOW MAG';break;
+        case 11:bfState.mag=3000;bfState.magIndex=BF_MAG_VALUES.indexOf(3000);break;
+        case 12:bfState.surveyImageKey='surveyEdge';bfState.stageX=0;bfState.stageY=0;break;
+        case 13:bfState.focusCoarse=0;bfState.focusFine=0;break;
+        case 14:bfState.spot=1;break;
+        case 15:bfState.alpha=2;break;
+        case 16:bfState.magMode='MAG 1';break;
+        case 17:bfState.mag=40000;bfState.magIndex=BF_MAG_VALUES.indexOf(40000);bfState.step17MagChanged=true;break;
+        case 18:bfState.c2=50;break;
+        case 19:bfState.c2=94;break;
+        case 20:bfState.stageX=0;bfState.stageY=0;bfState.featureX=50;bfState.featureY=50;break;
+        case 21:bfState.focusCoarse=0;bfState.focusFine=0;break;
+        case 22:bfState.wobble=true;bfState.wobbleAxis='x';bfState.wobblePhase=false;break;
+        case 23:bfState.z=0;bfState.zMicrons=70;bfState.zWobbleMinimized=true;break;
+        case 24:bfState.wobble=false;break;
+        case 25:
+          bfState.apertureSelected=true;bfState.caShapeReady=true;bfState.caQuality=.68;
+          bfState.caX=0;bfState.caY=0;break;
+        case 26:bfState.c2=70;break;
+        case 27:bfState.c2=50;break;
+        case 28:bfState.beamX=0;break;
+        case 29:bfState.beamY=0;break;
+        case 30:bfState.c2=72;break;
+        case 31:bfState.beamX=0;break;
+        case 32:bfState.beamY=0;break;
+        case 33:bfState.spot=1;break;
+        case 34:bfState.condStigOn=true;break;
+        case 36:bfState.condX=0;break;
+        case 37:bfState.condY=0;break;
+        case 38:bfState.c2=94;break;
+        case 39:bfState.condStigOn=false;break;
+        case 40:bfState.stageX=0;bfState.stageY=0;break;
+        case 41:bfState.magMode='MAG 1';bfState.mag=60000;bfState.magIndex=BF_MAG_VALUES.indexOf(60000);break;
+        case 42:bfState.c2=80;break;
+        case 43:bfState.autoUsed=true;break;
+        case 44:bfState.screenRaised=true;break;
+        case 45:bfState.itemOpen=true;break;
+        case 46:bfState.finalFocusChecked=true;break;
+        case 47:bfState.videoOn=true;break;
+        case 48:bfState.captured=true;break;
+        case 49:bfState.screenRaised=false;break;
+      }
+      if(typeof syncPcLiveStatus==='function')syncPcLiveStatus();
+      return;
+    }
+    if(sectionId===6){
+      switch(stepNumber){
+        case 1:
+          shutdownState.neutralized=true;bfState.stageX=0;bfState.stageY=0;bfState.z=0;break;
+        case 2:
+          shutdownState.aperturesOut=true;bfState.apertureSelected=false;bfState.aperture='';bfState.objInserted=false;break;
+        case 3:
+          shutdownState.lowMag=true;bfState.magMode='LOW MAG';bfState.mag=3000;
+          bfState.magIndex=BF_MAG_VALUES.indexOf(3000);break;
+        case 4:
+          shutdownState.beamOff=true;shutdownState.beamCurrent=0;bfState.beamOn=false;break;
+        case 5:
+          shutdownState.htTarget=80;shutdownState.htStep=.5;shutdownState.htTime=10;
+          shutdownState.htStarted=true;break;
+        case 6:
+          shutdownState.htStarted=true;shutdownState.htReached=true;shutdownState.htVoltage=80;break;
+        case 7:shutdownState.htOff=true;bfState.htOn=false;break;
+        case 8:shutdownState.filamentOff=true;bfState.filamentOn=false;shutdownState.beamCurrent=0;break;
+        case 9:shutdownState.holderRotated=true;break;
+        case 10:shutdownState.airSelected=true;shutdownState.vented=true;break;
+        case 11:shutdownState.holderRemoved=true;state.holderSeated=false;break;
+        case 12:shutdownState.acdHeat=true;break;
+        case 13:shutdownState.logSaved=true;break;
+      }
+      if(typeof shTopStatus==='function')shTopStatus();
+    }
+  }
+
+  // Skipping marks the current learning step complete and opens the next
+  // step using the same navigation path as a successful guided action.
   function skipCurrentStep(){
     if(!stepCanSkip())return;
     var s=currentSection(),stepNumber=state.currentStep+1,skippedKey=key();
@@ -1106,10 +1214,11 @@
     if(state.pumpTimer){clearInterval(state.pumpTimer);state.pumpTimer=null;}
     state.pumpStarted=false;
     closeModal(true);closePcDrawer();
-    delete state.completed[skippedKey];state.skipped[skippedKey]=true;
+    applySkipCompletedState(s.id,stepNumber);
+    delete state.skipped[skippedKey];state.completed[skippedKey]=true;
     updateProgress();
     stepTransitionPending=true;pendingStepCleanup=null;
-    setInstructionText('Section '+sectionLabel(s.id)+' · Step '+stepNumber+' skipped. Moving to the next step; the action was not performed.');
+    setInstructionText('Section '+sectionLabel(s.id)+' · Step '+stepNumber+' marked complete using Skip Step. Moving to the next step.');
     advanceCompletedStep();
   }
   var skipToolbar=document.getElementById('btn-skip-step');
@@ -1655,15 +1764,25 @@
 
 
   function setPcText(id,value){var e=document.getElementById(id);if(e)e.textContent=value;}
-  function bfStageZMicrons(){if(state.currentSection===6&&shutdownState.neutralized)return 0;return 250+Number(bfState&&bfState.z||0)*10;}
+  function bfStageZMicrons(){
+    if(state.currentSection===6&&shutdownState.neutralized)return 0;
+    var z=(bfState&&bfState.zMicrons);
+    if(z===null||z===undefined||!Number.isFinite(Number(z)))z=Number(bfState&&bfState.z||0)*10;
+    else z=Number(z);
+    return Math.max(-250,Math.min(250,z));
+  }
+  function bfStageZDisplay(){
+    var z=bfStageZMicrons();
+    return (z>0?'+':'')+z.toFixed(1);
+  }
   function syncPcLiveStatus(){
     if(!bfState||state.currentSection!==3)return;
     var beam=!!bfState.beamOn,mode=bfState.magMode||(bfState.temMode?'TEM':'—'),mag=s3FormatMag? s3FormatMag(bfState.mag||8000):('X'+(bfState.mag||8000));
-    setPcText('pc-live-beam',beam?'ON':'OFF');setPcText('pc-live-mode',mode);setPcText('pc-live-mag',mag);setPcText('pc-live-spot',String(bfState.spot||2));setPcText('pc-live-alpha','α'+String(bfState.alpha||2));setPcText('pc-live-z',bfStageZMicrons().toFixed(1)+' µm');setPcText('pc-stg-x',Number(bfState.stageX||0).toFixed(1));setPcText('pc-stg-y',Number(bfState.stageY||0).toFixed(1));setPcText('readout-x',Number(bfState.stageX||0).toFixed(0));setPcText('readout-y',Number(bfState.stageY||0).toFixed(0));setPcText('readout-z',bfStageZMicrons().toFixed(1));setPcText('pc-live-wobbler',bfState.wobble?('ON · '+String(bfState.wobbleAxis||'X').toUpperCase()):'OFF');setPcText('pc-live-condstig',bfState.condStigOn?'ON':'OFF');setPcText('pc-live-screen',bfState.screenRaised?'UP':'DOWN');setPcText('pc-live-camera',bfState.captured?'SNAPSHOT CAPTURED':(bfState.videoOn?'LIVE':(bfState.itemOpen?'iTEM OPEN':'IDLE')));setPcText('pc-live-v2',bfState.v2Open?'OPEN':'CLOSED');
+    setPcText('pc-live-beam',beam?'ON':'OFF');setPcText('pc-live-mode',mode);setPcText('pc-live-mag',mag);setPcText('pc-live-spot',String(bfState.spot||2));setPcText('pc-live-alpha','α'+String(bfState.alpha||2));setPcText('pc-live-z',bfStageZDisplay()+' µm');setPcText('pc-stg-x',Number(bfState.stageX||0).toFixed(1));setPcText('pc-stg-y',Number(bfState.stageY||0).toFixed(1));setPcText('readout-x',Number(bfState.stageX||0).toFixed(0));setPcText('readout-y',Number(bfState.stageY||0).toFixed(0));setPcText('readout-z',bfStageZDisplay());setPcText('pc-live-wobbler',bfState.wobble?('ON · '+String(bfState.wobbleAxis||'X').toUpperCase()):'OFF');setPcText('pc-live-condstig',bfState.condStigOn?'ON':'OFF');setPcText('pc-live-screen',bfState.screenRaised?'UP':'DOWN');setPcText('pc-live-camera',bfState.captured?'SNAPSHOT CAPTURED':(bfState.videoOn?'LIVE':(bfState.itemOpen?'iTEM OPEN':'IDLE')));setPcText('pc-live-v2',bfState.v2Open?'OPEN':'CLOSED');
     if(state.currentSection===6&&shutdownState.neutralized){
       ['pc-stg-x','pc-stg-y','pc-stg-z','pc-stg-tx','pc-stg-ty','pc-stage-x-detail','pc-stage-y-detail','pc-stage-z-detail','readout-x','readout-y','readout-z'].forEach(function(id){setPcText(id,id.indexOf('detail')!==-1?'0.000':'0.0');});
     }
-    setPcText('pc-spot-value',String(bfState.spot||2));setPcText('pc-spot-value-top',String(bfState.spot||2));setPcText('pc-alpha-value',String(bfState.alpha||2));setPcText('pc-alpha-value-top',String(bfState.alpha||2));setPcText('pc-mag-value',mag);setPcText('pc-stg-z',bfStageZMicrons().toFixed(1));setPcText('pc-stage-z-detail',bfStageZMicrons().toFixed(1));
+    setPcText('pc-spot-value',String(bfState.spot||2));setPcText('pc-spot-value-top',String(bfState.spot||2));setPcText('pc-alpha-value',String(bfState.alpha||2));setPcText('pc-alpha-value-top',String(bfState.alpha||2));setPcText('pc-mag-value',mag);setPcText('pc-stg-z',bfStageZDisplay());setPcText('pc-stage-z-detail',bfStageZDisplay());
     var modeRead=document.getElementById('mag-mode-readout');if(modeRead)modeRead.textContent=mode;
     var magRead=document.getElementById('mag-caml-readout');if(magRead)magRead.textContent=mag;
     var beamLamp=document.getElementById('pc-beam-lamp');if(beamLamp){beamLamp.classList.toggle('is-on',beam);var bs=beamLamp.querySelector('strong');if(bs)bs.textContent=beam?'ON':((state.currentSection===3&&state.currentStep<4)?'NotReady':'OFF');}
@@ -2395,7 +2514,7 @@
       // The focus-pair assets are both derived from that exact field so there
       // is no jump in viewing angle, crop, or specimen position.
       if(n===25&&!bfState.wobble)return 'mag50Region';
-      if(Math.abs(Number(bfState.z||0))<=.5)return 'cameraLiveA';
+      if(bfState.zWobbleMinimized)return 'cameraLiveA';
       if(bfState.wobble)return bfState.wobblePhase?'wobbleOver20':'wobbleUnder20';
       return 'mag50Region';
     }
@@ -2843,7 +2962,7 @@
       mag:200,magIndex:0,magMode:'',beamOn:false,coverOpen:false,
       featureX:72,featureY:67,stageX:0,stageY:0,surveyThinLocated:false,
       surveyStageProgress:0,surveyTravelProgress:0,surveyImageKey:'grid200',surveyCentered:false,
-      z:-6,zSensitivity:1,wobble:false,wobbleAxis:'',wobblePhase:false,step17MagChanged:false,
+      z:-6,zMicrons:null,zSensitivity:1,zWobbleMinimized:false,wobble:false,wobbleAxis:'',wobblePhase:false,step17MagChanged:false,
       spot:2,alpha:2,spotMoved:false,alphaMoved:false,
       c2:55,beamX:7,beamY:-6,caX:0,caY:0,condX:5,condY:-4,condStigOn:false,
       focusCoarse:0,focusFine:0,captured:false,screenRaised:false,autoUsed:false,
@@ -3843,7 +3962,7 @@
       bfTimers.push(timer);
     }});
   }
-  function runBFAtomic24(){showBfScene();bfState.z=-6;bfState.zSensitivity=1;bfRender();bfSetStatus('Use Z UP / Z DOWN to approach minimum contrast.');s3Activate(['stage-z']);s3SetHandlers({'action:stage-z':function(btn){bfState.z=Math.max(-12,Math.min(12,bfState.z+Number(btn.dataset.dir)*(bfState.zSensitivity||1)));bfRender();if(Math.abs(bfState.z)<=3)s3Complete(350);}});}
+  function runBFAtomic24(){showBfScene();bfState.z=-6;bfState.zSensitivity=1;bfRender();bfSetStatus('Use Z UP / Z DOWN to approach minimum contrast.');s3Activate(['stage-z']);s3SetHandlers({'action:stage-z':function(btn){bfState.z=Math.max(-25,Math.min(25,bfState.z+Number(btn.dataset.dir)*(bfState.zSensitivity||1)));bfState.zMicrons=null;bfRender();if(Math.abs(bfState.z)<=3)s3Complete(350);}});}
   function runBFAtomic25(){s3PreparePcStage();var host=document.querySelector('[data-temcon-page="stage"]');addS3PcPanel(host,'Z Control Sensitivity','<div class="sop-s3-pc-note">Optional: adjust sensitivity only if needed.</div><div class="sop-s3-pc-buttons"><button id="s3ZSensDown">◀ Finer</button><strong id="s3ZSensRead">Normal</strong><button id="s3ZSensUp">Coarser ▶</button></div>');var d=document.getElementById('s3ZSensDown'),u=document.getElementById('s3ZSensUp'),r=document.getElementById('s3ZSensRead');var timer=setTimeout(function(){s3Complete(100);},2400);bfTimers.push(timer);function set(v,label){bfState.zSensitivity=v;if(r)r.textContent=label;clearTimeout(timer);s3Complete(250);}if(d)d.onclick=function(){set(.5,'Fine');};if(u)u.onclick=function(){set(2,'Coarse');};}
   function s3StartWobbleImageAlternation(){
     // Use real focus-pair photographs (rather than simulated brightness shifts).
@@ -3855,7 +3974,7 @@
     bfTimers.push(timer);
   }
   function runBFAtomic26(){
-    showBfScene();bfState.wobble=false;bfState.wobbleAxis='';bfState.wobblePhase=false;
+    showBfScene();bfState.wobble=false;bfState.wobbleAxis='';bfState.wobblePhase=false;bfState.zWobbleMinimized=false;
     // Keep the Step 20 field (Tv7) completely unchanged until MAG WOB is ON.
     bfRender();bfSetStatus('Press MAG WOB X or MAG WOB Y to start alternating focus on the current specimen view.');
     s3Activate(['wobbler']);
@@ -3864,7 +3983,37 @@
       s3SelectButton(btn);bfRender();s3StartWobbleImageAlternation();s3Complete(950);
     }});
   }
-  function runBFAtomic27(){showBfScene();bfState.wobble=true;bfRender();s3StartWobbleImageAlternation();bfSetStatus('Use Z UP / Z DOWN until the stage reads approximately 250 µm and wobble is minimized.');s3Activate(['stage-z']);s3SetHandlers({'action:stage-z':function(btn){bfState.z=Math.max(-8,Math.min(8,bfState.z+Number(btn.dataset.dir)*(bfState.zSensitivity||1)));bfRender();if(Math.abs(bfState.z)<=.5){bfSetSpecimenImage('cameraLiveA');s3Complete(1550);}}});}
+  function runBFAtomic27(){
+    // A real specimen stage has a signed Z range of -250 to +250 microns.
+    // Both approaches must be possible: UP settles at +70, DOWN at -70.
+    // Keep the optical wobble error separate from the physical Z readout.
+    bfState.zMicrons=0;
+    bfState.zWobbleMinimized=false;
+    bfState.z=3;
+    showBfScene();bfState.wobble=true;bfRender();s3StartWobbleImageAlternation();
+    bfSetStatus('Use Z UP for +70 µm or Z DOWN for −70 µm to minimize wobble (limits: ±250 µm).');
+    s3Activate(['stage-z']);
+    s3SetHandlers({'action:stage-z':function(btn){
+      var dir=Math.sign(Number(btn.dataset.dir)||0);if(!dir)return;
+      var sensitivity=Number(bfState.zSensitivity)||1;
+      var increment=10*Math.max(.5,sensitivity);
+      var prev=Number(bfState.zMicrons)||0;
+      var next=Math.max(-250,Math.min(250,prev+dir*increment));
+      // Clamp a movement crossing the eucentric value onto precisely 70 µm,
+      // including the coarser 20-µm sensitivity setting.
+      if(dir>0&&prev<70&&next>=70)next=70;
+      if(dir<0&&prev>-70&&next<=-70)next=-70;
+      bfState.zMicrons=next;
+      bfState.z=Math.min(12,Math.abs(70-Math.abs(next))*3/70);
+      var minimized=Math.abs(Math.abs(next)-70)<.001;
+      if(minimized){bfState.z=0;bfState.zWobbleMinimized=true;}
+      bfRender();
+      if(minimized){
+        bfSetSpecimenImage('cameraLiveA');
+        s3Complete(1550);
+      }
+    }});
+  }
   function runBFAtomic28(){showBfScene();bfState.wobble=true;bfRender();bfSetStatus('Press the same MAG WOB control again to switch wobble OFF.');s3Activate(['wobbler']);s3SetHandlers({'action:mag-wob':function(btn){var ax=btn.dataset.axis||'x';if(bfState.wobbleAxis&&ax!==bfState.wobbleAxis)return;bfState.wobble=false;btn.classList.remove('is-selected');bfRender();s3Complete(350);}});}
   /* v4.9.32 — visual condenser-aperture training on the Viewing Screen only.
      The three checkboxes persist across displayed Steps 26–28. */

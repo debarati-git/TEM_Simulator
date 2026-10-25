@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   var guide=null,previousFocus=null,autoTimer=null;
-  var AUTO_DELAY_MS=1300;
+  var AUTO_DELAY_MS=3000;
   var AUTO_KEY='tem-guide-first-auto-v4.9.65';
   function hasAutoShown(){try{return sessionStorage.getItem(AUTO_KEY)==='1';}catch(_){return window.__temAutoGuideShown===true;}}
   function markAutoShown(){window.__temAutoGuideShown=true;try{sessionStorage.setItem(AUTO_KEY,'1');}catch(_){}}
@@ -17,7 +17,7 @@
       '<li><strong>Choose a module:</strong> explore <b>The Column</b> or select <b>The Microscope → Guided Session</b>.</li>'+
       '<li><strong>Begin:</strong> click <b>Start</b> and choose <b>Nanoparticles / Suspension</b>.</li>'+
       '<li><strong>Follow each step:</strong> read the instruction bar and interact with the highlighted microscope controls; use <b>Show Step</b> to reopen guidance.</li>'+
-      '<li><strong>Navigate freely:</strong> use <b>Skip Step</b> to move on without performing an action, <b>Undo</b> to return, or a section tab to change sections.</li>'+
+      '<li><strong>Navigate freely:</strong> use <b>Skip Step</b> to mark the current simulation step complete and continue, <b>Undo</b> to return, or a section tab to change sections.</li>'+
       '<li><strong>Use the controls:</strong> turn audio on/off, switch to <b>Full Screen</b> for clearer viewing, or select <b>Restart</b> to start over.</li>'+
       '</ol><p class="tem-welcome-note">Four section tabs are shown: Safety & Startup, Specimen Loading, Bright Field, and Shutdown. Shutdown guidance is not yet available.</p>'+
       '<div class="tem-welcome-actions"><button type="button" data-welcome-close class="tem-welcome-continue">Got it — Explore Simulator →</button></div></section>';

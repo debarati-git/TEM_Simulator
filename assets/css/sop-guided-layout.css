@@ -2909,3 +2909,6 @@ body.iit-sop #btn-skip-step[hidden]{display:none!important;}
   color:#09552c;font:700 11px Tahoma,Arial,sans-serif;
 }
 .s4-acd-on-state[hidden]{display:none!important;}
+
+/* v4.9.80: Keep toolbar Skip Step accessible above step confirmation modals. */
+body.iit-sop:has(.sop-flow-modal.is-open) .guided-context{z-index:1202!important}
